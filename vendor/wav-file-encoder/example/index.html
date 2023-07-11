@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+ <link rel="stylesheet" type="text/css" href="app.css">
+ <script type="text/javascript" src="app.js"></script>
+ <title>WAV file encoder example</title>
+</head>
+
+<body>
+
+<h1>WAV file encoder example / Sine wave generator</h1>
+
+<p>This example program generates a WAV file containing a sine wave signal.</p>
+
+<div class="parmBlock">
+ <div class="parmPair">
+  <label class="parmLabel" for="frequency">Frequency [Hz]:</label>
+  <input id="frequency"  type="number" step="any" required value="440">
+ </div>
+ <div class="parmPair">
+  <label class="parmLabel" for="amplitude">Amplitude [0..1]:</label>
+  <input id="amplitude"  type="number" step="any" required value="0.95">
+ </div>
+ <div class="parmPair">
+  <label class="parmLabel" for="duration">Duration [s]:</label>
+  <input id="duration" type="number" step="any" required value="1">
+ </div>
+ <div class="parmPair">
+  <label class="parmLabel" for="channels">Channels:</label>
+  <input id="channels" type="number" required value="1">
+ </div>
+ <div class="parmPair">
+  <label class="parmLabel" for="sampleRate">Sample rate [Hz]:</label>
+  <input id="sampleRate" type="number" required value="44100">
+ </div>
+ <div class="parmPair">
+  <label class="parmLabel" for="">WAV file type:</label>
+  <input id="wavFileType0" class="firstRadioButton" type="radio" name="wavFileType" value="0" checked>
+  <label for="wavFileType0">16 bit signed integer</label>
+  <input id="wavFileType1" class="nextRadioButton" type="radio" name="wavFileType" value="1">
+  <label for="wavFileType1">32 bit float</label>
+ </div>
+</div>
+
+<button id="generateWavFileButton">Generate WAV file</button>
+
+</body>
+</html>

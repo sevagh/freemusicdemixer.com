@@ -1,0 +1,9 @@
+/build/
+/build-wasm/
+/build-cpp/
+*.bin
+*.bin.gz
+*.wav
+!/test/data/*.wav
+*.json
+!models/*.bin.gz

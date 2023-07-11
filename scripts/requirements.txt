@@ -1,0 +1,7 @@
+#openunmix==1.2.1
+# pass local path to openunmix in vendored folder
+-e ./vendor/open-unmix-pytorch
+librosa
+museval
+musdb
+numpy
