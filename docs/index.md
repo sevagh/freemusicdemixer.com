@@ -4,8 +4,7 @@
 
 # Free AI-based music demixing web app
 
-
-Upload a song to decompose it into **bass, drums, vocals, other, and karaoke** components by applying **music source separation** (aka **music demixing**), powered by a near-state-of-the-art AI model, [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch), with the [UMX-L](https://zenodo.org/record/5069601) pretrained weights.
+Upload a song to decompose it into **bass, drums, vocals, other, and karaoke** components by applying **music source separation** (aka **music demixing**), powered by a near-state-of-the-art AI model, [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch), with the [UMX-L](https://zenodo.org/record/5069601) pretrained weights. This site is created and maintained by [Sevag H](https://github.com/sevagh).
 <div style="text-align:center"><img src="./assets/images/music-demix.png" width="40%"/></div>
 
 ### Runs locally in your browser!
@@ -14,7 +13,7 @@ Unlike competing products, **it's free to use and doesn't store your data.** All
 
 ## Demixer app
 
-Need a music file for a demo? Download a free-to-use song [here]() to get started!
+Need a music file for a demo? Download [a free song by Jaxius Music](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f) to get started!
 
 <div class="mdx-container" id="mdx-app">
     <button id="load-weights">Download weights (45 MB)</button>
