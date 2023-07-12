@@ -78,10 +78,10 @@ div.demo-container {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   width: 80%; /* Adjust width as per your requirement */
   height: auto; /* Adjust height as per your requirement */
-  margin: 1vh 1vw; /* Auto horizontal margins for centering and 2vh vertical margin */
+  margin: 2vh auto; /* Auto horizontal margins for centering and 2vh vertical margin */
   border-radius: 10px; /* Rounded corners */
   color: #e0ffff; /* Text color - Light Cyan */
   padding: 1%;
@@ -115,8 +115,8 @@ div.mdx-container {
 
 .bottom-right {
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 5%;
+  right: 5%;
 }
 
 #mdx-app a {
@@ -135,4 +135,21 @@ div.mdx-container {
   border-radius: 10px; /* Rounded corners */
   color: #e0ffff; /* Text color - Light Cyan */
   overflow: auto; /* Will add a scrollbar if the content overflows */
+}
+
+
+/* Base styles for the image */
+img.responsive-img {
+  width: 100%; /* default width for mobile devices */
+}
+
+div.image-container {
+  text-align: center;
+}
+
+/* Media query for larger screens */
+@media screen and (min-width: 768px) {
+  img.responsive-img {
+    width: 50%; /* width for larger screens */
+  }
 }

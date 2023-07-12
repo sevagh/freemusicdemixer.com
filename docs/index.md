@@ -5,7 +5,9 @@
 # Free AI-based music demixing web app
 
 Upload a song to decompose it into **bass, drums, vocals, other, and karaoke** components by applying **music source separation** (aka **music demixing**), powered by a near-state-of-the-art AI model, [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch), with the [UMX-L](https://zenodo.org/record/5069601) pretrained weights. This site is created and maintained by [Sevag H](https://github.com/sevagh).
-<div style="text-align:center"><img src="./assets/images/music-demix.png" width="40%"/></div>
+<div class="image-container">
+<img class="responsive-img" src="./assets/images/music-demix.png"/>
+</div>
 
 ### Runs locally in your browser!
 
