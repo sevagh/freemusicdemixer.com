@@ -2,7 +2,7 @@
 
 A free client-side static website for music demixing (aka music source separation) using the AI model Open-Unmix (with UMX-L weights):
 <br>
-<img src=".github/music-demix.png" width="50%"/>
+<img src="docs/assets/images/music-demix.png" width="50%"/>
 
 I transliterated the original PyTorch model Python code to C++ using Eigen. It compiles to WebAssembly with Emscripten. The UMX-L weights are quantized (mostly uint8, uint16 for the last 4 layers) and saved with the ggml binary file format. They are then gzipped. This reduces the 425 MB of UMX-L weights down to 45 MB, while achieving similar performance (verified empirically using BSS metrics).
 
@@ -44,4 +44,12 @@ npm install typescript
 npx tsc --module es6 ../vendor/wav-file-encoder/src/WavFileEncoder.ts
 ```
 
+### Output quality
 
+MUSDB18-HQ test track 'Zeno - Signs', demixed by this app:
+```
+vocals          ==> SDR:   6.550  SIR:  14.583  ISR:  13.820  SAR:   6.974
+drums           ==> SDR:   6.538  SIR:  11.209  ISR:  11.163  SAR:   8.317
+bass            ==> SDR:   1.646  SIR:   0.931  ISR:   5.261  SAR:   2.944
+other           ==> SDR:   5.190  SIR:   6.623  ISR:  10.221  SAR:   8.599
+```

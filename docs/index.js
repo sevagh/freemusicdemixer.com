@@ -27,11 +27,16 @@ worker.onmessage = function(e) {
         // Encode target waveforms to WAV files
         console.log(targetWaveforms)
         packageAndDownload(targetWaveforms);
+
+        document.getElementById('audio-upload').disabled = false;
+        document.getElementById('load-waveform').disabled = false;
     }
 };
 
-// Send a message to the worker to load the WASM module
-worker.postMessage({ msg: 'LOAD_WASM' });
+// Send a message to the worker to load the WASM module if the user requests it
+document.getElementById('load-weights').addEventListener('click', () => {
+    worker.postMessage({ msg: 'LOAD_WASM' });
+});
 
 document.getElementById('load-waveform').addEventListener('click', () => {
     const fileInput = document.getElementById('audio-upload');
@@ -58,6 +63,10 @@ document.getElementById('load-waveform').addEventListener('click', () => {
                 leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
                 rightChannel = decodedData.getChannelData(1); // Float32Array representing right channel data
             }
+
+            // disable buttons when working
+            document.getElementById('audio-upload').disabled = true;
+            document.getElementById('load-waveform').disabled = true;
 
             worker.postMessage({
                 msg: 'PROCESS_AUDIO',
@@ -118,6 +127,8 @@ function packageAndDownload(targetWaveforms) {
     const vocalsUrl = URL.createObjectURL(vocalsBlob);
     const karaokeUrl = URL.createObjectURL(karaokeBlob);
 
+    let downloadLinksDiv = document.getElementById('output-links');
+
     const bassLink = document.createElement('a');
     const drumsLink = document.createElement('a');
     const otherLink = document.createElement('a');
@@ -130,24 +141,22 @@ function packageAndDownload(targetWaveforms) {
     vocalsLink.href = vocalsUrl;
     karaokeLink.href = karaokeUrl;
 
-    // Set the download attribute of the link elements to specify the filename
-    bassLink.download = 'bass.wav';
+    drumsLink.textContent = 'drums.wav';
+    bassLink.textContent = 'bass.wav';
+    otherLink.textContent = 'other.wav';
+    vocalsLink.textContent = 'vocals.wav';
+    karaokeLink.textContent = 'karaoke.wav';
+
     drumsLink.download = 'drums.wav';
+    bassLink.download = 'bass.wav';
     otherLink.download = 'other.wav';
     vocalsLink.download = 'vocals.wav';
     karaokeLink.download = 'karaoke.wav';
 
     // Append the link elements to the document body
-    document.body.appendChild(bassLink);
-    document.body.appendChild(drumsLink);
-    document.body.appendChild(otherLink);
-    document.body.appendChild(vocalsLink);
-    document.body.appendChild(karaokeLink);
-
-    // Trigger the download by simulating a click on the link elements
-    bassLink.click();
-    drumsLink.click();
-    otherLink.click();
-    vocalsLink.click();
-    karaokeLink.click();
+    downloadLinksDiv.appendChild(bassLink);
+    downloadLinksDiv.appendChild(drumsLink);
+    downloadLinksDiv.appendChild(otherLink);
+    downloadLinksDiv.appendChild(vocalsLink);
+    downloadLinksDiv.appendChild(karaokeLink);
 }

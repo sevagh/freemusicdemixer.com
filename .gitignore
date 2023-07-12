@@ -7,3 +7,5 @@
 !/test/data/*.wav
 *.json
 !models/*.bin.gz
+docs/_site
+.sass-cache/
