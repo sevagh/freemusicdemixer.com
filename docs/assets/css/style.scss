@@ -76,38 +76,38 @@ header h1:before {
 
 div.demo-container {
   position: relative;
-  //display: flex;
-  justify-content: left;
-  align-items: left;
-  width: 8vw; /* Adjust width as per your requirement */
-  height: 15vh; /* Adjust height as per your requirement */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 80%; /* Adjust width as per your requirement */
+  height: auto; /* Adjust height as per your requirement */
   margin: 1vh 1vw; /* Auto horizontal margins for centering and 2vh vertical margin */
   border-radius: 10px; /* Rounded corners */
-  //box-shadow: 0 1vw 1vw rgba(0, 0, 0, 0.19), 0 0.6vw 0.6vw rgba(0, 0, 0, 0.23); /* Shadow for 3D effect */
   color: #e0ffff; /* Text color - Light Cyan */
-  text-align: left;
-  padding: 1vw;
- // overflow: hidden; /* This will ensure the pseudo-element won't overflow the div */
+  padding: 1%;
   overflow: auto; /* Will add a scrollbar if the content overflows */
-  //background: url('../images/mixer.jpg') no-repeat center center/cover;
   background-color: rgba(0, 64, 128, 1.0); /* Light cyan background color with 50% opacity */
 }
 
 
+/* Media query for larger screens */
+@media screen and (min-width: 768px) {
+  div.demo-container {
+    width: 50%; /* width for larger screens */
+  }
+}
+
 div.mdx-container {
   position: relative;
-  //display: flex;
-  justify-content: center;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  width: 40vw; /* Adjust width as per your requirement */
-  height: 42vh; /* Adjust height as per your requirement */
+  width: 80%; /* Adjust width as per your requirement */
+  height: auto; /* Adjust height as per your requirement */
   margin: 2vh auto; /* Auto horizontal margins for centering and 2vh vertical margin */
   border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 1vw 2vw rgba(0, 0, 0, 0.19), 0 0.6vw 0.6vw rgba(0, 0, 0, 0.23); /* Shadow for 3D effect */
   color: #e0ffff; /* Text color - Light Cyan */
-  text-align: center;
-  padding: 2vw;
- // overflow: hidden; /* This will ensure the pseudo-element won't overflow the div */
+  padding: 2%;
   overflow: auto; /* Will add a scrollbar if the content overflows */
   z-index: 1;
   background: url('../images/mixer.jpg') no-repeat center center/cover;
@@ -119,23 +119,20 @@ div.mdx-container {
   right: 0;
 }
 
-#mdx-app a:link { color: #70DB93; }
-#mdx-app a:visited { color: #70DB93; }
-#mdx-app a:hover { color: #70DB93; }
-#mdx-app a:active { color: #70DB93; }
+#mdx-app a {
+  color: #70DB93;
+}
 
 .output-link-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 30vw; /* Adjust width as per your requirement */
+  width: 80%; /* Adjust width as per your requirement */
   margin: 2vh auto; /* Auto horizontal margins for centering and 2vh vertical margin */
-  padding: 2vw;
+  padding: 2%;
   background-color: rgba(0, 64, 128, 1.0); /* Light cyan background color with 50% opacity */
   border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 1vw 2vw rgba(0, 0, 0, 0.19), 0 0.6vw 0.6vw rgba(0, 0, 0, 0.23); /* Shadow for 3D effect */
   color: #e0ffff; /* Text color - Light Cyan */
-  text-align: center;
   overflow: auto; /* Will add a scrollbar if the content overflows */
 }
