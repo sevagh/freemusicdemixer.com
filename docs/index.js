@@ -160,3 +160,73 @@ function packageAndDownload(targetWaveforms) {
     downloadLinksDiv.appendChild(vocalsLink);
     downloadLinksDiv.appendChild(karaokeLink);
 }
+
+let trackDataPromises = ['drums', 'vocals', 'bass', 'other'].map((name) => {
+  return fetch(`assets/clips/paranoid_jaxius_${name}.wav`)
+    .then(response => response.arrayBuffer())
+    .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+    .then(audioBuffer => ({name, audioBuffer}));
+});
+
+Promise.all(trackDataPromises).then((trackDataArray) => {
+  // Now trackDataArray is an array of objects, each containing the name of the track
+  // and the AudioBuffer for the track
+
+  let trackDataMap = {};
+  trackDataArray.forEach(trackData => {
+    trackDataMap[trackData.name] = trackData;
+  });
+  let tracks;
+
+  // Play button logic
+  document.getElementById('playButton').addEventListener('click', function() {
+    if (tracks) {
+      tracks.forEach(track => {
+        track.sourceNode.stop();
+        try { 
+          track.sourceNode.disconnect(track.gainNode);
+        } catch(e) {
+          console.log(e);
+        }
+      });
+    }
+
+    tracks = createTracks(trackDataMap);
+    tracks.forEach(track => {
+      if (track.gainNode.gain.value !== 0) {
+        track.sourceNode.start();
+      }
+      document.getElementById(`button-${track.name}`).checked = true;
+    });
+  });
+
+  // Checkbox logic
+  ['drums', 'vocals', 'bass', 'other'].forEach(name => {
+    document.getElementById(`button-${name}`).addEventListener('change', function(e) {
+      let track = tracks.find(track => track.name === name);
+      if (e.target.checked) {
+        track.gainNode.gain.value = 1;
+      } else {
+        track.gainNode.gain.value = 0;
+      }
+    });
+  });
+});
+
+function createTracks(trackDataMap) {
+  return Object.keys(trackDataMap).map(name => {
+    let gainNode = audioContext.createGain();
+    gainNode.connect(audioContext.destination);
+
+    let sourceNode = audioContext.createBufferSource();
+    sourceNode.buffer = trackDataMap[name].audioBuffer;
+    sourceNode.connect(gainNode);
+    sourceNode.onended = function() {
+      sourceNode.disconnect();
+      gainNode.disconnect();
+    };
+
+    return {name, sourceNode, gainNode};
+  });
+}
+

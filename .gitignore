@@ -9,3 +9,4 @@
 !models/*.bin.gz
 docs/_site
 .sass-cache/
+!/docs/assets/clips/*.wav

@@ -9,11 +9,28 @@ Upload a song to decompose it into **bass, drums, vocals, other, and karaoke** c
 
 ### Runs locally in your browser!
 
-Unlike competing products, **it's free to use and doesn't store your data.** All processing is done in your browser, and your files are never uploaded anywhere. It works on computers and smartphones.
+Unlike similar products, **it's free to use and doesn't store your data.** All processing is done in your browser, and your files are never uploaded anywhere. It runs well on computers and **very slowly** on smartphones; user beware.
+
+## Demo
+
+For the demo, I used [a free song by Jaxius Music](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f), which you can also download if you don't have any music files handy.
+
+Here's a demo of 20 seconds of demixed outputs; press the play button and toggle sources to add or remove them from the mix:
+<div class="demo-container" id="demo-app">
+<button id="playButton">Play now!</button>
+<br>
+<label><input type="checkbox" id="button-drums" checked>Drums</label>
+<br>
+<label><input type="checkbox" id="button-vocals" checked>Vocals</label>
+<br>
+<label><input type="checkbox" id="button-bass" checked>Bass</label>
+<br>
+<label><input type="checkbox" id="button-other" checked>Other</label>
+</div>
+
+Ready to try it on your own music files?  
 
 ## Demixer app
-
-Need a music file for a demo? Download [a free song by Jaxius Music](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f) to get started!
 
 <div class="mdx-container" id="mdx-app">
     <button id="load-weights">Download weights (45 MB)</button>

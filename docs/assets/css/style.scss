@@ -74,6 +74,26 @@ header h1:before {
   margin-top: 10px;
 }
 
+div.demo-container {
+  position: relative;
+  //display: flex;
+  justify-content: left;
+  align-items: left;
+  width: 8vw; /* Adjust width as per your requirement */
+  height: 15vh; /* Adjust height as per your requirement */
+  margin: 1vh 1vw; /* Auto horizontal margins for centering and 2vh vertical margin */
+  border-radius: 10px; /* Rounded corners */
+  //box-shadow: 0 1vw 1vw rgba(0, 0, 0, 0.19), 0 0.6vw 0.6vw rgba(0, 0, 0, 0.23); /* Shadow for 3D effect */
+  color: #e0ffff; /* Text color - Light Cyan */
+  text-align: left;
+  padding: 1vw;
+ // overflow: hidden; /* This will ensure the pseudo-element won't overflow the div */
+  overflow: auto; /* Will add a scrollbar if the content overflows */
+  //background: url('../images/mixer.jpg') no-repeat center center/cover;
+  background-color: rgba(0, 64, 128, 1.0); /* Light cyan background color with 50% opacity */
+}
+
+
 div.mdx-container {
   position: relative;
   //display: flex;
