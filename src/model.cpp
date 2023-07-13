@@ -1,5 +1,6 @@
 #include "model.hpp"
 #include "dsp.hpp"
+#include "lstm.hpp"
 #include <Eigen/Dense>
 #include <cassert>
 #include <filesystem>
@@ -8,7 +9,6 @@
 #include <string>
 #include <unsupported/Eigen/FFT>
 #include <vector>
-#include "lstm.hpp"
 #include <zlib.h>
 
 // forward declaration
@@ -17,8 +17,9 @@ static size_t load_single_matrix(FILE *f, std::string &name,
                                  int32_t nelements, float scale, float offset);
 
 static size_t load_single_matrix_uint16(FILE *f, std::string &name,
-                                 Eigen::MatrixXf &matrix, int ne[2],
-                                 int32_t nelements, float scale, float offset);
+                                        Eigen::MatrixXf &matrix, int ne[2],
+                                        int32_t nelements, float scale,
+                                        float offset);
 
 // from scripts/convert-pth-to-ggml.py
 bool umxcpp::load_umx_model(const std::string &model_file,
@@ -33,21 +34,21 @@ bool umxcpp::load_umx_model(const std::string &model_file,
             .count();
 
     // gzip decompress file that ends with .gz
-    std::cout << "Decompressing model_file... " << model_file
-                << std::endl;
+    std::cout << "Decompressing model_file... " << model_file << std::endl;
 
     std::string tempFilename = "temp.decompressed";
 
     gzFile gzFile = gzopen(model_file.c_str(), "rb");
     if (!gzFile)
     {
-        fprintf(stderr, "%s: failed to open %s\n", __func__, model_file.c_str());
+        fprintf(stderr, "%s: failed to open %s\n", __func__,
+                model_file.c_str());
         return false;
     }
 
     model->load_progress += 0.1f;
 
-    FILE* tempFile = fopen(tempFilename.c_str(), "wb");
+    FILE *tempFile = fopen(tempFilename.c_str(), "wb");
     if (!tempFile)
     {
         fprintf(stderr, "%s: failed to create temporary file\n", __func__);
@@ -57,14 +58,15 @@ bool umxcpp::load_umx_model(const std::string &model_file,
 
     char buffer[128];
     int numRead = 0;
-    while ((numRead = gzread(gzFile, buffer, sizeof(buffer))) > 0) {
+    while ((numRead = gzread(gzFile, buffer, sizeof(buffer))) > 0)
+    {
         fwrite(buffer, 1, numRead, tempFile);
     }
 
     fclose(tempFile);
     gzclose(gzFile);
 
-    FILE* f = fopen(tempFilename.c_str(), "rb");
+    FILE *f = fopen(tempFilename.c_str(), "rb");
     if (!f)
     {
         fprintf(stderr, "%s: failed to open decompressed file\n", __func__);
@@ -76,15 +78,13 @@ bool umxcpp::load_umx_model(const std::string &model_file,
     uint32_t magic;
 
     // equivalent of with open(...) as f on each model_file
-    std::cout << "Checking the magic of model_file " << model_file
-                << std::endl;
+    std::cout << "Checking the magic of model_file " << model_file << std::endl;
 
     // read the size of uint32_t bytes from f into magic
     fread(&magic, sizeof(uint32_t), 1, f);
     if (magic != 0x756d7867)
     {
-        fprintf(stderr, "%s: invalid model data (bad magic)\n",
-                __func__);
+        fprintf(stderr, "%s: invalid model data (bad magic)\n", __func__);
         return false;
     }
 
@@ -175,7 +175,8 @@ bool umxcpp::load_umx_model(const std::string &model_file,
 
     // load weights
     {
-        std::cout << "Loading weights from model_file " << model_file << std::endl;
+        std::cout << "Loading weights from model_file " << model_file
+                  << std::endl;
 
         // continue reading from file after magic, hidden_size
         int target_counter = 0;
@@ -213,8 +214,8 @@ bool umxcpp::load_umx_model(const std::string &model_file,
                 break;
             }
 
-            std::cout << "Loading tensor " << name << " with shape ["
-                        << ne[0] << ", " << ne[1] << "]" << std::endl;
+            std::cout << "Loading tensor " << name << " with shape [" << ne[0]
+                      << ", " << ne[1] << "]" << std::endl;
 
             // match the tensor name to the correct tensor in the model
             size_t loaded_size = 0;
@@ -222,8 +223,8 @@ bool umxcpp::load_umx_model(const std::string &model_file,
             if (name == "input_mean")
             {
                 Eigen::MatrixXf mean_tmp = Eigen::MatrixXf(1487, 1);
-                loaded_size =
-                    load_single_matrix(f, name, mean_tmp, ne, nelements, scale, offset);
+                loaded_size = load_single_matrix(f, name, mean_tmp, ne,
+                                                 nelements, scale, offset);
                 // duplicate mean_tmp into model->input_mean[target_counter]
                 model->input_mean[target_counter].block(0, 0, 1487, 1) =
                     mean_tmp;
@@ -234,8 +235,8 @@ bool umxcpp::load_umx_model(const std::string &model_file,
             if (name == "input_scale")
             {
                 Eigen::MatrixXf scale_tmp = Eigen::MatrixXf(1487, 1);
-                loaded_size =
-                    load_single_matrix(f, name, scale_tmp, ne, nelements, scale, offset);
+                loaded_size = load_single_matrix(f, name, scale_tmp, ne,
+                                                 nelements, scale, offset);
                 // duplicate scale_tmp into
                 // model->input_scale[target_counter]
                 model->input_scale[target_counter].block(0, 0, 1487, 1) =
@@ -247,8 +248,8 @@ bool umxcpp::load_umx_model(const std::string &model_file,
             if (name == "output_mean")
             {
                 Eigen::MatrixXf mean_tmp = Eigen::MatrixXf(2049, 1);
-                loaded_size =
-                    load_single_matrix(f, name, mean_tmp, ne, nelements, scale, offset);
+                loaded_size = load_single_matrix(f, name, mean_tmp, ne,
+                                                 nelements, scale, offset);
                 // duplicate mean_tmp into
                 // model->output_mean[target_counter]
                 model->output_mean[target_counter].block(0, 0, 2049, 1) =
@@ -260,43 +261,48 @@ bool umxcpp::load_umx_model(const std::string &model_file,
             if (name == "output_scale")
             {
                 Eigen::MatrixXf scale_tmp = Eigen::MatrixXf(2049, 1);
-                loaded_size =
-                    load_single_matrix(f, name, scale_tmp, ne, nelements, scale, offset);
+                loaded_size = load_single_matrix(f, name, scale_tmp, ne,
+                                                 nelements, scale, offset);
                 // duplicate scale_tmp into
                 // model->output_scale[target_counter]
                 model->output_scale[target_counter].block(0, 0, 2049, 1) =
                     scale_tmp;
-                model->output_scale[target_counter].block(2049, 0, 2049,
-                                                            1) = scale_tmp;
+                model->output_scale[target_counter].block(2049, 0, 2049, 1) =
+                    scale_tmp;
                 model->output_scale[target_counter].transposeInPlace();
             }
             if (name == "fc1.weight")
             {
-                loaded_size = load_single_matrix(
-                    f, name, model->fc1_w[target_counter], ne, nelements, scale, offset);
+                loaded_size =
+                    load_single_matrix(f, name, model->fc1_w[target_counter],
+                                       ne, nelements, scale, offset);
             }
             if (name == "bn1.weight")
             {
-                loaded_size = load_single_matrix(
-                    f, name, model->bn1_w[target_counter], ne, nelements, scale, offset);
+                loaded_size =
+                    load_single_matrix(f, name, model->bn1_w[target_counter],
+                                       ne, nelements, scale, offset);
                 model->bn1_w[target_counter].transposeInPlace();
             }
             if (name == "bn1.bias")
             {
-                loaded_size = load_single_matrix(
-                    f, name, model->bn1_b[target_counter], ne, nelements, scale, offset);
+                loaded_size =
+                    load_single_matrix(f, name, model->bn1_b[target_counter],
+                                       ne, nelements, scale, offset);
                 model->bn1_b[target_counter].transposeInPlace();
             }
             if (name == "bn1.running_mean")
             {
-                loaded_size = load_single_matrix(
-                    f, name, model->bn1_rm[target_counter], ne, nelements, scale, offset);
+                loaded_size =
+                    load_single_matrix(f, name, model->bn1_rm[target_counter],
+                                       ne, nelements, scale, offset);
                 model->bn1_rm[target_counter].transposeInPlace();
             }
             if (name == "bn1.running_var")
             {
-                loaded_size = load_single_matrix(
-                    f, name, model->bn1_rv[target_counter], ne, nelements, scale, offset);
+                loaded_size =
+                    load_single_matrix(f, name, model->bn1_rv[target_counter],
+                                       ne, nelements, scale, offset);
                 model->bn1_rv[target_counter].transposeInPlace();
             }
             if (name == "lstm.weight_ih_l0")
@@ -446,59 +452,69 @@ bool umxcpp::load_umx_model(const std::string &model_file,
             if (name == "fc2.weight")
             {
                 loaded_size = load_single_matrix_uint16(
-                    f, name, model->fc2_w[target_counter], ne, nelements, scale, offset);
+                    f, name, model->fc2_w[target_counter], ne, nelements, scale,
+                    offset);
             }
             if (name == "bn2.weight")
             {
                 loaded_size = load_single_matrix_uint16(
-                    f, name, model->bn2_w[target_counter], ne, nelements, scale, offset);
+                    f, name, model->bn2_w[target_counter], ne, nelements, scale,
+                    offset);
                 model->bn2_w[target_counter].transposeInPlace();
             }
             if (name == "bn2.bias")
             {
                 loaded_size = load_single_matrix_uint16(
-                    f, name, model->bn2_b[target_counter], ne, nelements, scale, offset);
+                    f, name, model->bn2_b[target_counter], ne, nelements, scale,
+                    offset);
                 model->bn2_b[target_counter].transposeInPlace();
             }
             if (name == "bn2.running_mean")
             {
                 loaded_size = load_single_matrix_uint16(
-                    f, name, model->bn2_rm[target_counter], ne, nelements, scale, offset);
+                    f, name, model->bn2_rm[target_counter], ne, nelements,
+                    scale, offset);
                 model->bn2_rm[target_counter].transposeInPlace();
             }
             if (name == "bn2.running_var")
             {
                 loaded_size = load_single_matrix_uint16(
-                    f, name, model->bn2_rv[target_counter], ne, nelements, scale, offset);
+                    f, name, model->bn2_rv[target_counter], ne, nelements,
+                    scale, offset);
                 model->bn2_rv[target_counter].transposeInPlace();
             }
             if (name == "fc3.weight")
             {
                 loaded_size = load_single_matrix_uint16(
-                    f, name, model->fc3_w[target_counter], ne, nelements, scale, offset);
+                    f, name, model->fc3_w[target_counter], ne, nelements, scale,
+                    offset);
             }
             if (name == "bn3.weight")
             {
                 loaded_size = load_single_matrix_uint16(
-                    f, name, model->bn3_w[target_counter], ne, nelements, scale, offset);
+                    f, name, model->bn3_w[target_counter], ne, nelements, scale,
+                    offset);
                 model->bn3_w[target_counter].transposeInPlace();
             }
             if (name == "bn3.bias")
             {
                 loaded_size = load_single_matrix_uint16(
-                    f, name, model->bn3_b[target_counter], ne, nelements, scale, offset);
+                    f, name, model->bn3_b[target_counter], ne, nelements, scale,
+                    offset);
                 model->bn3_b[target_counter].transposeInPlace();
             }
             if (name == "bn3.running_mean")
             {
                 loaded_size = load_single_matrix_uint16(
-                    f, name, model->bn3_rm[target_counter], ne, nelements, scale, offset);
+                    f, name, model->bn3_rm[target_counter], ne, nelements,
+                    scale, offset);
                 model->bn3_rm[target_counter].transposeInPlace();
             }
             if (name == "bn3.running_var")
             {
                 loaded_size = load_single_matrix_uint16(
-                    f, name, model->bn3_rv[target_counter], ne, nelements, scale, offset);
+                    f, name, model->bn3_rv[target_counter], ne, nelements,
+                    scale, offset);
                 model->bn3_rv[target_counter].transposeInPlace();
 
                 // this marks the end of the current target
@@ -520,10 +536,7 @@ bool umxcpp::load_umx_model(const std::string &model_file,
         }
     }
 
-    if (model->load_progress != 1.0f)
-    {
-        model->load_progress = 1.0f;
-    }
+    model->load_progress = 1.0f;
 
     // finally, close the file
     fclose(f);
@@ -589,12 +602,12 @@ static size_t load_single_matrix(FILE *f, std::string &name,
     return nbytes_tensor;
 }
 
-
 // write a variant of load_single_tensor called load_single_matrix
 // that takes an Eigen::MatrixXf &matrix and populates it from a file
 static size_t load_single_matrix_uint16(FILE *f, std::string &name,
-                                 Eigen::MatrixXf &matrix, int ne[2],
-                                 int32_t nelements, float scale, float offset)
+                                        Eigen::MatrixXf &matrix, int ne[2],
+                                        int32_t nelements, float scale,
+                                        float offset)
 {
     if (matrix.size() != nelements ||
         (matrix.rows() != ne[0] || matrix.cols() != ne[1]))
@@ -635,8 +648,9 @@ static size_t load_single_matrix_uint16(FILE *f, std::string &name,
     return nbytes_tensor;
 }
 
-std::array<Eigen::MatrixXf, 4> umxcpp::umx_inference(
-    struct umx_model *model, const Eigen::MatrixXf &x, int hidden_size)
+std::array<Eigen::MatrixXf, 4> umxcpp::umx_inference(struct umx_model *model,
+                                                     const Eigen::MatrixXf &x,
+                                                     int hidden_size)
 {
     // clone input mix mag x to operate on targets x_{0,1,2,3}
     std::array<Eigen::MatrixXf, 4> x_inputs;
@@ -689,9 +703,8 @@ std::array<Eigen::MatrixXf, 4> umxcpp::umx_inference(
         // LSTMCell-like approach
         // https://pytorch.org/docs/stable/generated/torch.nn.LSTMCell.html
 
-        auto lstm_data = umxcpp::create_lstm_data(
-            lstm_hidden_size, x_inputs[target].rows()
-        );
+        auto lstm_data =
+            umxcpp::create_lstm_data(lstm_hidden_size, x_inputs[target].rows());
 
         std::cout << "Target " << target << " lstm" << std::endl;
         auto lstm_out_0 = umxcpp::umx_lstm_forward(

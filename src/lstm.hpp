@@ -7,7 +7,8 @@
 namespace umxcpp
 {
 
-struct lstm_data {
+struct lstm_data
+{
     Eigen::MatrixXf output_per_direction[3][2];
     Eigen::MatrixXf output[3];
     Eigen::MatrixXf h[3][2];
@@ -18,8 +19,7 @@ struct lstm_data create_lstm_data(int hidden_size, int seq_len);
 
 Eigen::MatrixXf umx_lstm_forward(struct umx_model *model, int target,
                                  const Eigen::MatrixXf &input,
-                                 struct lstm_data *data,
-                                 int hidden_size);
+                                 struct lstm_data *data, int hidden_size);
 
 }; // namespace umxcpp
 

@@ -3,18 +3,18 @@
 #include "model.hpp"
 #include <Eigen/Core>
 #include <Eigen/Dense>
+#include <array>
 #include <cassert>
 #include <filesystem>
 #include <iostream>
-#include <sstream>
-#include <string>
-#include <thread>
-#include <array>
-#include <unsupported/Eigen/FFT>
-#include <vector>
 #include <libnyquist/Common.h>
 #include <libnyquist/Decoders.h>
 #include <libnyquist/Encoders.h>
+#include <sstream>
+#include <string>
+#include <thread>
+#include <unsupported/Eigen/FFT>
+#include <vector>
 
 using namespace umxcpp;
 using namespace nqr;
@@ -23,9 +23,10 @@ using namespace nqr;
 static StereoWaveform load_audio(std::string filename);
 
 static void write_audio_file(const umxcpp::StereoWaveform &waveform,
-                      std::string filename);
+                             std::string filename);
 
-static std::array<StereoWaveform, 4> separate(struct umxcpp::umx_model *model, const StereoWaveform &audio);
+static std::array<StereoWaveform, 4> separate(struct umxcpp::umx_model *model,
+                                              const StereoWaveform &audio);
 
 int main(int argc, const char **argv)
 {
@@ -65,7 +66,8 @@ int main(int argc, const char **argv)
 
     std::array<StereoWaveform, 4> target_waveforms = separate(&model, audio);
 
-    for (int target = 0; target < 4; target++) {
+    for (int target = 0; target < 4; target++)
+    {
         // now write the 4 audio waveforms to files in the output dir
         // using libnyquist
         // join out_dir with "/target_0.wav"
@@ -76,19 +78,20 @@ int main(int argc, const char **argv)
         std::filesystem::create_directories(p);
 
         auto p_target = p;
-        switch(target) {
-            case 0:
-                p_target = p_target / "bass.wav";
-                break;
-            case 1:
-                p_target = p_target / "drums.wav";
-                break;
-            case 2:
-                p_target = p_target / "other.wav";
-                break;
-            case 3:
-                p_target = p_target / "vocals.wav";
-                break;
+        switch (target)
+        {
+        case 0:
+            p_target = p_target / "bass.wav";
+            break;
+        case 1:
+            p_target = p_target / "drums.wav";
+            break;
+        case 2:
+            p_target = p_target / "other.wav";
+            break;
+        case 3:
+            p_target = p_target / "vocals.wav";
+            break;
         }
 
         std::cout << "Writing wav file " << p_target << std::endl;
@@ -157,7 +160,7 @@ static umxcpp::StereoWaveform load_audio(std::string filename)
 
 // write a function to write a StereoWaveform to a wav file
 static void write_audio_file(const umxcpp::StereoWaveform &waveform,
-                              std::string filename)
+                             std::string filename)
 {
     // create a struct to hold the audio data
     std::shared_ptr<AudioData> fileData = std::make_shared<AudioData>();
@@ -189,9 +192,9 @@ static void write_audio_file(const umxcpp::StereoWaveform &waveform,
     std::cout << "Encoder Status: " << encoderStatus << std::endl;
 }
 
-std::array<StereoWaveform, 4> separate(
-    struct umxcpp::umx_model *model,
-    const StereoWaveform &audio) {
+std::array<StereoWaveform, 4> separate(struct umxcpp::umx_model *model,
+                                       const StereoWaveform &audio)
+{
     std::array<StereoWaveform, 4> ret;
 
     StereoSpectrogramC spectrogram = stft(audio);
@@ -232,20 +235,22 @@ std::array<StereoWaveform, 4> separate(
         }
     }
 
-    std::array<Eigen::MatrixXf, 4> x_inputs = umx_inference(model, x, hidden_size);
+    std::array<Eigen::MatrixXf, 4> x_inputs =
+        umx_inference(model, x, hidden_size);
 
-    for (int target = 0; target < x_inputs.size(); ++target) {
+    for (int target = 0; target < x_inputs.size(); ++target)
+    {
         // print min and max elements of x_inputs[target]
         std::cout << "POST-RELU-FINAL x_inputs[target] min: "
-                    << x_inputs[target].minCoeff()
-                    << " x_inputs[target] max: " << x_inputs[target].maxCoeff()
-                    << std::endl;
+                  << x_inputs[target].minCoeff()
+                  << " x_inputs[target] max: " << x_inputs[target].maxCoeff()
+                  << std::endl;
 
         // copy mix-mag
         StereoSpectrogramR mix_mag_target(mix_mag);
 
-        // element-wise multiplication, taking into account the stacked outputs of the
-        // neural network
+        // element-wise multiplication, taking into account the stacked outputs
+        // of the neural network
         for (std::size_t i = 0; i < mix_mag.left.size(); i++)
         {
             for (std::size_t j = 0; j < mix_mag.left[0].size(); j++)

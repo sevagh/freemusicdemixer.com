@@ -1,50 +1,47 @@
 // wasm_glue.cpp
-#include "model.hpp"
-#include "lstm.hpp"
 #include "dsp.hpp"
-#include <emscripten.h>
+#include "lstm.hpp"
+#include "model.hpp"
 #include <cstdlib>
+#include <emscripten.h>
 #include <iostream>
 
 using namespace umxcpp;
 
-extern "C" {
+extern "C"
+{
     static umx_model model;
 
     // Define a JavaScript function using EM_JS
     EM_JS(void, sendProgressUpdate, (float progress), {
         // This code will be run in JavaScript
         // pass data from worker.js to index.js
-        postMessage({ msg: 'PROGRESS_UPDATE', data: progress });
+        postMessage({msg : 'PROGRESS_UPDATE', data : progress});
     });
 
     EMSCRIPTEN_KEEPALIVE
-    void umxInit() {
+    void umxInit()
+    {
         bool success = load_umx_model("ggml-model-umxl-u8.bin.gz", &model);
-        if (!success) {
+        if (!success)
+        {
             fprintf(stderr, "Error loading model\n");
             exit(1);
         }
     }
 
     EMSCRIPTEN_KEEPALIVE
-    float umxLoadProgress() {
-        return model.load_progress;
-    }
+    float umxLoadProgress() { return model.load_progress; }
 
     EMSCRIPTEN_KEEPALIVE
-    float umxInferenceProgress() {
-        return model.inference_progress;
-    }
+    float umxInferenceProgress() { return model.inference_progress; }
 
     EMSCRIPTEN_KEEPALIVE
-    void umxDemix(
-        float* left, float* right, int length,
-        float *left_bass, float *right_bass,
-        float *left_drums, float *right_drums,
-        float *left_other, float *right_other,
-        float *left_vocals, float *right_vocals
-    ) {
+    void umxDemix(const float *left, const float *right, int length,
+                  float *left_bass, float *right_bass, float *left_drums,
+                  float *right_drums, float *left_other, float *right_other,
+                  float *left_vocals, float *right_vocals)
+    {
         model.inference_progress = 0.0f;
         sendProgressUpdate(model.inference_progress);
 
@@ -75,7 +72,8 @@ extern "C" {
         int nb_frames = mix_mag.left.size();
         int nb_bins = mix_mag.left[0].size();
 
-        // input shape is (nb_frames*nb_samples, nb_channels*nb_bins) i.e. 2049*2
+        // input shape is (nb_frames*nb_samples, nb_channels*nb_bins) i.e.
+        // 2049*2
         assert(nb_bins == 2049);
 
         // 2974 is related to bandwidth=16000 Hz in open-unmix
@@ -107,9 +105,7 @@ extern "C" {
         // create one struct for lstm data to not blow up memory too much
         int lstm_hidden_size = model.hidden_size / 2;
 
-        auto lstm_data = umxcpp::create_lstm_data(
-            lstm_hidden_size, x.rows()
-        );
+        auto lstm_data = umxcpp::create_lstm_data(lstm_hidden_size, x.rows());
 
         std::cout << "Input scaling" << std::endl;
 
@@ -123,12 +119,12 @@ extern "C" {
             // apply formula x = x*input_scale + input_mean
             for (int i = 0; i < x_input.rows(); i++)
             {
-                x_input.row(i) = x_input.row(i).array() *
-                                            model.input_scale[target].array() +
-                                        model.input_mean[target].array();
+                x_input.row(i) =
+                    x_input.row(i).array() * model.input_scale[target].array() +
+                    model.input_mean[target].array();
             }
 
-            model.inference_progress += 0.1f/4.; // 10% = all stfts, /4
+            model.inference_progress += 0.1f / 4.; // 10% = all stfts, /4
             sendProgressUpdate(model.inference_progress);
 
             std::cout << "Target " << target << " fc1" << std::endl;
@@ -140,11 +136,10 @@ extern "C" {
             for (int i = 0; i < x_input.rows(); i++)
             {
                 x_input.row(i) =
-                    (((x_input.row(i).array() -
-                    model.bn1_rm[target].array()) /
-                    (model.bn1_rv[target].array() + 1e-5).sqrt()) *
-                        model.bn1_w[target].array() +
-                    model.bn1_b[target].array())
+                    (((x_input.row(i).array() - model.bn1_rm[target].array()) /
+                      (model.bn1_rv[target].array() + 1e-5).sqrt()) *
+                         model.bn1_w[target].array() +
+                     model.bn1_b[target].array())
                         .tanh();
             }
             model.inference_progress += 0.05f; // 5% = layer 1 per-target
@@ -161,11 +156,9 @@ extern "C" {
             //    # lstm skip connection
             //    x = torch.cat([x, lstm_out[0]], -1)
             // concat the lstm_out with the input x
-            Eigen::MatrixXf x_inputs_target_concat(x_input.rows(),
-                                                x_input.cols() +
-                                                    lstm_out_0.cols());
-            x_inputs_target_concat.leftCols(x_input.cols()) =
-                x_input;
+            Eigen::MatrixXf x_inputs_target_concat(
+                x_input.rows(), x_input.cols() + lstm_out_0.cols());
+            x_inputs_target_concat.leftCols(x_input.cols()) = x_input;
             x_inputs_target_concat.rightCols(lstm_out_0.cols()) = lstm_out_0;
 
             x_input = x_inputs_target_concat;
@@ -184,11 +177,10 @@ extern "C" {
             for (int i = 0; i < x_input.rows(); i++)
             {
                 x_input.row(i) =
-                    (((x_input.row(i).array() -
-                    model.bn2_rm[target].array()) /
-                    (model.bn2_rv[target].array() + 1e-5).sqrt()) *
-                        model.bn2_w[target].array() +
-                    model.bn2_b[target].array())
+                    (((x_input.row(i).array() - model.bn2_rm[target].array()) /
+                      (model.bn2_rv[target].array() + 1e-5).sqrt()) *
+                         model.bn2_w[target].array() +
+                     model.bn2_b[target].array())
                         .cwiseMax(0);
             }
             model.inference_progress += 0.05f; // 5% = layer2 per-target
@@ -204,9 +196,8 @@ extern "C" {
             for (int i = 0; i < x_input.rows(); i++)
             {
                 x_input.row(i) =
-                    ((x_input.row(i).array() -
-                    model.bn3_rm[target].array()) /
-                    (model.bn3_rv[target].array() + 1e-5).sqrt()) *
+                    ((x_input.row(i).array() - model.bn3_rm[target].array()) /
+                     (model.bn3_rv[target].array() + 1e-5).sqrt()) *
                         model.bn3_w[target].array() +
                     model.bn3_b[target].array();
             }
@@ -217,9 +208,9 @@ extern "C" {
             for (int i = 0; i < x_input.rows(); i++)
             {
                 x_input.row(i) = (x_input.row(i).array() *
-                                            model.output_scale[target].array() +
-                                        model.output_mean[target].array())
-                                            .cwiseMax(0);
+                                      model.output_scale[target].array() +
+                                  model.output_mean[target].array())
+                                     .cwiseMax(0);
             }
 
             model.inference_progress += 0.05f; // 5% = layer3 per-target
@@ -229,8 +220,8 @@ extern "C" {
             // copy mix-mag
             StereoSpectrogramR mix_mag_target(mix_mag);
 
-            // element-wise multiplication, taking into account the stacked outputs of the
-            // neural network
+            // element-wise multiplication, taking into account the stacked
+            // outputs of the neural network
             for (std::size_t i = 0; i < mix_mag.left.size(); i++)
             {
                 for (std::size_t j = 0; j < mix_mag.left[0].size(); j++)
@@ -248,26 +239,27 @@ extern "C" {
             std::cout << "Getting waveforms from istft" << std::endl;
             target_waveform = istft(mix_complex_target);
 
-            float* left_dest = nullptr;
-            float* right_dest = nullptr;
+            float *left_dest = nullptr;
+            float *right_dest = nullptr;
 
-            switch(target) {
-                case 0:
-                    left_dest = left_bass;
-                    right_dest = right_bass;
-                    break;
-                case 1:
-                    left_dest = left_drums;
-                    right_dest = right_drums;
-                    break;
-                case 2:
-                    left_dest = left_other;
-                    right_dest = right_other;
-                    break;
-                case 3:
-                    left_dest = left_vocals;
-                    right_dest = right_vocals;
-                    break;
+            switch (target)
+            {
+            case 0:
+                left_dest = left_bass;
+                right_dest = right_bass;
+                break;
+            case 1:
+                left_dest = left_drums;
+                right_dest = right_drums;
+                break;
+            case 2:
+                left_dest = left_other;
+                right_dest = right_other;
+                break;
+            case 3:
+                left_dest = left_vocals;
+                right_dest = right_vocals;
+                break;
             }
 
             // now populate the output float* arrays with ret
@@ -276,7 +268,7 @@ extern "C" {
                 left_dest[i] = target_waveform.left[i];
                 right_dest[i] = target_waveform.right[i];
             }
-            model.inference_progress += 0.1f/4.0; // 10% = final istft, /4
+            model.inference_progress += 0.1f / 4.0; // 10% = final istft, /4
             sendProgressUpdate(model.inference_progress);
         }
 
