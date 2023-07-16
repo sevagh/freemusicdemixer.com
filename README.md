@@ -33,7 +33,7 @@ mkdir -p build-wasm && cd build-wasm && emcmake cmake .. && make
 ```
 Build a regular library and the `file_demixer` binary (only tested on Linux):
 ```
-mkdir -p build-cpp && cd build-cpp && cmake .. && make
+mkdir -p build-cpp && cd build-cpp && cmake .. && make -j
 ```
 
 ### Notes
