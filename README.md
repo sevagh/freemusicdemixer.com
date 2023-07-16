@@ -24,7 +24,7 @@ To generate a weights file with Python, first create a Python venv, then:
 ```
 python -m pip install -r ./scripts/requirements.txt
 python ./scripts/convert-pth-to-ggml.py --model=umxl ./ggml-umxl
-gzip -k ./ggml-umxl/ggml-model-umxhl-u8.bin
+gzip -k ./ggml-umxl/ggml-model-umxl-u8.bin
 ```
 
 Build for WebAssembly with Emscripten using `emcmake`:
