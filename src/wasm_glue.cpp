@@ -2,6 +2,7 @@
 #include "dsp.hpp"
 #include "lstm.hpp"
 #include "model.hpp"
+#include <cassert>
 #include <cstdlib>
 #include <emscripten.h>
 #include <iostream>
