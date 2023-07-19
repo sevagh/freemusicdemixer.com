@@ -11,7 +11,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 # improve CMAKE_CXX_FLAGS_RELEASE to every possible optimization considering Eigen3, target arch (my CPU is a Ryzen 5950X), and compiler
 # also linux kernel features and whatnot
 # aside from "-O3"
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -mfma -ffast-math -fno-signed-zeros -fno-trapping-math -fassociative-math -freciprocal-math -fno-math-errno -fno-rounding-math -fno-signaling-nans -fno-unsafe-math-optimizations -fno-trapping-math -fno-math-errno")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -mfma -ffast-math -fno-signed-zeros -fno-trapping-math -fassociative-math -freciprocal-math -fno-math-errno -fno-rounding-math -fno-signaling-nans -fno-unsafe-math-optimizations -fno-trapping-math -fno-math-errno")
 
 # define a macro NDEBUG for Eigen3 release builds
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
