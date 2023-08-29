@@ -72,10 +72,6 @@ extern "C"
         int nb_frames = mix_mag.left.size();
         int nb_bins = mix_mag.left[0].size();
 
-        // input shape is (nb_frames*nb_samples, nb_channels*nb_bins) i.e.
-        // 2049*2
-        assert(nb_bins == 2049);
-
         // 2974 is related to bandwidth=16000 Hz in open-unmix
         // wherein frequency bins above 16000 Hz, corresponding to
         // 2974/2 = 1487 bins, are discarded

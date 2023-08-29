@@ -7,3 +7,6 @@
 [submodule "vendor/wav-file-encoder"]
 	path = vendor/wav-file-encoder
 	url = https://github.com/chdh/wav-file-encoder
+[submodule "vendor/eigen"]
+	path = vendor/eigen
+	url = https://gitlab.com/libeigen/eigen.git

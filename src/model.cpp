@@ -2,7 +2,6 @@
 #include "dsp.hpp"
 #include "lstm.hpp"
 #include <Eigen/Dense>
-#include <cassert>
 #include <filesystem>
 #include <iostream>
 #include <sstream>
