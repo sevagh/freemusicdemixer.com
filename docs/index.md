@@ -1,6 +1,8 @@
 <script src="umx.js"></script>
 <script src="WavFileEncoder.js" type="module"></script>
 <script src="index.js" type="module"></script>
+<script data-goatcounter="https://sevagh.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 
 # Free AI-based music demixing web app
 
