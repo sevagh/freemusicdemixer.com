@@ -695,19 +695,57 @@ std::array<Eigen::MatrixXf, 4> umxcpp::umx_inference(struct umx_model *model,
                     .tanh();
         }
 
+        std::cout << "Target " << target << " lstm" << std::endl;
+
         // now lstm time
         int lstm_hidden_size = hidden_size / 2;
+
+        const int SUB_SEQ_FRAMES = 10;
+        int seq_len = x_inputs[target].rows();
+        int sub_seq_len = SUB_SEQ_FRAMES;
+
+        // find out how many sub sequences we need
+        // taking into account imperfectly divisible seq_len
+        int n_sub_seqs = seq_len / sub_seq_len;
+        if (seq_len % sub_seq_len != 0)
+        {
+            n_sub_seqs += 1;
+        }
 
         // umx_lstm_forward applies bidirectional 3-layer lstm using a
         // LSTMCell-like approach
         // https://pytorch.org/docs/stable/generated/torch.nn.LSTMCell.html
 
-        auto lstm_data =
-            umxcpp::create_lstm_data(lstm_hidden_size, x_inputs[target].rows());
+        // use a streaming lstm
+        auto streaming_lstm_data =
+            umxcpp::create_lstm_data(lstm_hidden_size, sub_seq_len);
 
-        std::cout << "Target " << target << " lstm" << std::endl;
-        auto lstm_out_0 = umxcpp::umx_lstm_forward(
-            model, target, x_inputs[target], &lstm_data, lstm_hidden_size);
+        umxcpp::umx_lstm_set_zero(&streaming_lstm_data);
+
+        // now loop over the sub sequences
+        // prepare a large Eigen::MatrixXf to hold
+        // concatenated sub sequences
+        Eigen::MatrixXf lstm_out_total(seq_len, x_inputs[target].cols());
+
+        for (int sub_seq = 0; sub_seq < n_sub_seqs; ++sub_seq)
+        {
+            std::cout << "Sub sequence for streaming LSTM: " << sub_seq << std::endl;
+            // get the sub sequence
+            Eigen::MatrixXf sub_seq_x =
+                x_inputs[target]
+                    .block(sub_seq * sub_seq_len, 0, sub_seq_len,
+                           x_inputs[target].cols())
+                    .transpose();
+
+            // apply the lstm
+            auto lstm_out_subseq = umxcpp::umx_lstm_forward(
+                model, target, sub_seq_x, &streaming_lstm_data,
+                lstm_hidden_size);
+
+            // assign lstm_out_subseq into lstm_out_total
+            lstm_out_total.block(sub_seq * sub_seq_len, 0, sub_seq_len,
+                                 x_inputs[target].cols()) = lstm_out_subseq;
+        }
 
         // now the concat trick from umx for the skip conn
         //    # apply 3-layers of stacked LSTM
@@ -717,10 +755,10 @@ std::array<Eigen::MatrixXf, 4> umxcpp::umx_inference(struct umx_model *model,
         // concat the lstm_out with the input x
         Eigen::MatrixXf x_inputs_target_concat(x_inputs[target].rows(),
                                                x_inputs[target].cols() +
-                                                   lstm_out_0.cols());
+                                                   lstm_out_total.cols());
         x_inputs_target_concat.leftCols(x_inputs[target].cols()) =
             x_inputs[target];
-        x_inputs_target_concat.rightCols(lstm_out_0.cols()) = lstm_out_0;
+        x_inputs_target_concat.rightCols(lstm_out_total.cols()) = lstm_out_total;
 
         x_inputs[target] = x_inputs_target_concat;
 
