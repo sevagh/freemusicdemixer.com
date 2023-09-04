@@ -1,0 +1,30 @@
+georgia wonder - siren, wasm freemdx custom streaming lstm:
+        (umxcpp) sevagh@pop-os:~/repos/free-music-demixer$ python scripts/evaluate-demixed-output.py --musdb-root ~/Music/MDX-datasets/MUSDB18-HQ/ ~/Downloads/free-mdx-streaming-umx-lstm-all-work-4-georgia-wonder/ 'Georgia Wonder - Siren'
+        loading path /home/sevagh/Downloads/free-mdx-streaming-umx-lstm-all-work-4-georgia-wonder/bass.wav for bass
+        (18979538, 2) float32
+        loading path /home/sevagh/Downloads/free-mdx-streaming-umx-lstm-all-work-4-georgia-wonder/drums.wav for drums
+        (18979538, 2) float32
+        loading path /home/sevagh/Downloads/free-mdx-streaming-umx-lstm-all-work-4-georgia-wonder/other.wav for other
+        (18979538, 2) float32
+        loading path /home/sevagh/Downloads/free-mdx-streaming-umx-lstm-all-work-4-georgia-wonder/vocals.wav for vocals
+        (18979538, 2) float32
+        vocals          ==> SDR:   5.552  SIR:  10.400  ISR:  13.089  SAR:   5.969
+        drums           ==> SDR:   6.402  SIR:  11.153  ISR:  10.102  SAR:   7.653
+        bass            ==> SDR:   5.368  SIR:   8.419  ISR:  10.691  SAR:   6.393
+        other           ==> SDR:   3.992  SIR:   3.361  ISR:   8.008  SAR:   5.056
+
+georgia wonder - siren, umx.cpp (full/proper no streaming no quantization):
+        (umxcpp) sevagh@pop-os:~/repos/umx.cpp/build$ python ../scripts/evaluate-demixed-output.py --musdb-root ~/Music/MDX-datasets/MUSDB18-HQ/ ./demix-out-umxl-georgia-wonder/ 'Georgia Wonder - Siren'
+        loading path ./demix-out-umxl-georgia-wonder/target_0.wav for bass
+        (18978816, 2) float32
+        loading path ./demix-out-umxl-georgia-wonder/target_1.wav for drums
+        (18978816, 2) float32
+        loading path ./demix-out-umxl-georgia-wonder/target_2.wav for other
+        (18978816, 2) float32
+        loading path ./demix-out-umxl-georgia-wonder/target_3.wav for vocals
+        (18978816, 2) float32
+        vocals          ==> SDR:   5.553  SIR:  10.395  ISR:  13.159  SAR:   5.862
+        drums           ==> SDR:   6.767  SIR:  12.154  ISR:  12.629  SAR:   7.438
+        bass            ==> SDR:   5.515  SIR:   8.352  ISR:  12.376  SAR:   6.606
+        other           ==> SDR:   3.667  SIR:   3.124  ISR:   6.302  SAR:   4.585
+
