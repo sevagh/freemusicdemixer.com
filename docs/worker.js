@@ -38,6 +38,24 @@ function processAudio(leftChannel, rightChannel, module) {
     let wasmArrayR = new Float32Array(module.HEAPF32.buffer, arrayPointerR, rightChannel.length);
     wasmArrayR.set(rightChannel);
 
+    // Call the WASM function for each target
+    // this is blocking, of course, so setInterval won't do anything... how to fix
+    console.log("1. Bass")
+    module._umxDemix(
+        arrayPointerL, arrayPointerR, leftChannel.length, 0);
+
+    console.log("2. Drums")
+    module._umxDemix(
+        arrayPointerL, arrayPointerR, leftChannel.length, 1);
+
+    console.log("3. Other")
+    module._umxDemix(
+        arrayPointerL, arrayPointerR, leftChannel.length, 2);
+
+    console.log("4. Vocals")
+    module._umxDemix(
+        arrayPointerL, arrayPointerR, leftChannel.length, 3);
+
     // create 8 similar arrays for 4 targets * 2 channels
     // with allocated but empty contents to be filled by the WASM function
     let arrayPointerLBass = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
@@ -50,27 +68,14 @@ function processAudio(leftChannel, rightChannel, module) {
     let arrayPointerROther = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
     let arrayPointerRVocals = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
 
-    // Call the WASM function for both channels
-    // this is blocking, of course, so setInterval won't do anything... how to fix
-    console.log("1. Bass")
-    module._umxDemix(
-        arrayPointerL, arrayPointerR, leftChannel.length,
-        arrayPointerLBass, arrayPointerRBass, 0);
-
-    console.log("2. Drums")
-    module._umxDemix(
-        arrayPointerL, arrayPointerR, leftChannel.length,
-        arrayPointerLDrums, arrayPointerRDrums, 1);
-
-    console.log("3. Other")
-    module._umxDemix(
-        arrayPointerL, arrayPointerR, leftChannel.length,
-        arrayPointerLOther, arrayPointerROther, 2);
-
-    console.log("4. Vocals")
-    module._umxDemix(
-        arrayPointerL, arrayPointerR, leftChannel.length,
-        arrayPointerLVocals, arrayPointerRVocals, 3);
+    console.log("Mix phase + istft")
+    module._umxFinalize(
+        arrayPointerLBass, arrayPointerRBass,
+        arrayPointerLDrums, arrayPointerRDrums,
+        arrayPointerLOther, arrayPointerROther,
+        arrayPointerLVocals, arrayPointerRVocals,
+        leftChannel.length
+    )
 
     let wasmArrayLBass = new Float32Array(module.HEAPF32.buffer, arrayPointerLBass, leftChannel.length);
     let wasmArrayLDrums = new Float32Array(module.HEAPF32.buffer, arrayPointerLDrums, leftChannel.length);
