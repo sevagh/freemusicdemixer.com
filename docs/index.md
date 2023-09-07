@@ -11,9 +11,24 @@ Upload a song to decompose it into **bass, drums, vocals, other, and karaoke** c
 <img class="responsive-img" src="./assets/images/music-demix.png"/>
 </div>
 
-### Runs locally in your browser!
+## Runs locally in your browser!
 
 Unlike similar products, **it's free to use and doesn't store your data.** All processing is done in your browser, and your files are never uploaded anywhere. It runs well on computers and **very slowly** on smartphones; user beware.
+
+### Support and partnership opportunities
+
+**For individuals:**
+Love what we're doing? You can support this free service through [GitHub Sponsors](https://github.com/sponsors/sevagh) or [PayPal](https://paypal.me/sevagh1337?country.x=CA&locale.x=en_US). Your contributions help keep this site up and running!
+
+**For companies:**
+If you're a company in the pro music space (mixing/demixing, DAW, etc.) and are interested in advertising on this platform, we offer targeted visibility within the music and technology community. [Contact us](mailto:sevagh+freemdx@protonmail.com) to learn more about partnership opportunities.
+
+**Planned features**
+- Post-processing with Wiener Expectation-Maximization (may improve separation scores by ~1 dB SDR)
+- Multi-track uploading and batch processing
+- Adding the [demucs](https://github.com/facebookresearch/demucs) algorithm
+
+Your support, whether its personal or corporate, helps make these features possible!
 
 ## Demo
 
@@ -32,7 +47,7 @@ Here's a demo of 20 seconds of demixed outputs; press the play button and toggle
 <label><input type="checkbox" id="button-other" checked>Other</label>
 </div>
 
-Ready to try it on your own music files?  
+Ready to try it on your own music files?
 
 ## Demixer app
 
@@ -44,7 +59,7 @@ Ready to try it on your own music files?
             <div class="progress-bar-inner" id="load-progress-bar" style="width: 0%"></div>
         </div>
     </div>
-    
+
     <input type="file" id="audio-upload">
     <br>
     <button id="load-waveform" class="button">Load audio and demix</button>
@@ -68,15 +83,16 @@ To cancel the running job, refresh the page
     </div>
 </div>
 
+**Latest release: September 7, 2023**
+* Custom streaming architecture for UMX to allow larger tracks to be separated without crashing
+* Split up the inference into distinct steps to reduce total memory usage and prevent crashes
+
 ### **Disclaimers!**
 
 * You can only use the outputs for non-commercial applications as per the <a href="https://zenodo.org/record/5069601">UMX-L weights license</a>
-* The task is CPU and memory intensive (up to 4 GB), please be patient!
-* Long tracks may crash due to the 4 GB RAM limitation; try to keep them 5 minutes or shorter
+* The task is CPU and memory intensive (up to 4 GB), please be patient! Very very large tracks may still crash!
 * Input files can be almost any audio format, but the outputs are always stereo wav files @ 44100 Hz
 
 ## Technical details
 
-The inference code is written in C++, using Eigen3 for numerical operations. Emscripten is used to compile it to WebAssembly. The model weights are quantized and compressed from 424 MB down to 45 MB with a slight hit to performance. [View source code on GitHub](https://github.com/sevagh/free-music-demixer).
-
-This is a web adaptation of [umx.cpp](https://github.com/sevagh/umx.cpp), which is more focused on parity with the original model. This project was inspired by the "AI at the edge" [GGML project](https://ggml.ai/) (including [whisper.cpp](https://github.com/ggerganov/whisper.cpp) and [llama.cpp](https://github.com/ggerganov/llama.cpp)), and WebAssembly is a great demo of client-side AI.
+See [About](./about) page for more info.

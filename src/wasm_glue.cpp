@@ -42,6 +42,9 @@ extern "C"
     EMSCRIPTEN_KEEPALIVE
     void umxDemix(const float *left, const float *right, int length, int target_param)
     {
+        if (target_param == 0) {
+            model.inference_progress = 0.0f;
+        }
         sendProgressUpdate(model.inference_progress);
 
         // number of samples per channel
@@ -266,11 +269,14 @@ extern "C"
         std::cout << "Getting complex specs from magnitude spectrograms" << std::endl;
 
         std::cout << "Getting waveforms from istft" << std::endl;
+        StereoSpectrogramR mix_phase = umxcpp::phase(spectrogram);
+
         for (int target = 0; target < 4; ++target) {
             // get complex spectrogram from magnitude spectrogram and mix phase
-            StereoSpectrogramR mix_phase = umxcpp::phase(spectrogram);
             StereoSpectrogramC mix_complex_target = umxcpp::combine(mix_mags[target], mix_phase);
             StereoWaveform target_waveform = umxcpp::istft(mix_complex_target);
+
+            std::cout << "Populating output arrays" << std::endl;
 
             // switch on target to use the correct output arrays
             float *left_target;

@@ -49,6 +49,14 @@ document.getElementById('load-waveform').addEventListener('click', () => {
     const reader = new FileReader();
 
     reader.onload = function(event) {
+        // reset the progress bar
+        document.getElementById('inference-progress-bar').style.width = '0%';
+        // delete the previous download links
+        let downloadLinksDiv = document.getElementById('output-links');
+        while (downloadLinksDiv.firstChild) {
+            downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
+        }
+
         const arrayBuffer = event.target.result;
 
         audioContext.decodeAudioData(arrayBuffer, function(decodedData) {
@@ -183,7 +191,7 @@ Promise.all(trackDataPromises).then((trackDataArray) => {
     if (tracks) {
       tracks.forEach(track => {
         track.sourceNode.stop();
-        try { 
+        try {
           track.sourceNode.disconnect(track.gainNode);
         } catch(e) {
           console.log(e);
@@ -229,4 +237,3 @@ function createTracks(trackDataMap) {
     return {name, sourceNode, gainNode};
   });
 }
-
