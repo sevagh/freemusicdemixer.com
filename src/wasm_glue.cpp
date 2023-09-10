@@ -12,8 +12,6 @@ using namespace umxcpp;
 extern "C"
 {
     static umx_model model;
-    static std::array<StereoSpectrogramR, 4> mix_mags;
-    static StereoSpectrogramC spectrogram;
 
     // Define a JavaScript function using EM_JS
     EM_JS(void, sendProgressUpdate, (float progress), {
@@ -40,11 +38,9 @@ extern "C"
     float umxInferenceProgress() { return model.inference_progress; }
 
     EMSCRIPTEN_KEEPALIVE
-    void umxDemix(const float *left, const float *right, int length, int target_param)
+    void umxDemix(const float *left, const float *right, int length,
+                  float *left_target, float *right_target, int target_param)
     {
-        if (target_param == 0) {
-            model.inference_progress = 0.0f;
-        }
         sendProgressUpdate(model.inference_progress);
 
         // number of samples per channel
@@ -64,8 +60,9 @@ extern "C"
 
         std::cout << "Generating spectrograms" << std::endl;
 
-        spectrogram = stft(audio);
+        StereoSpectrogramC spectrogram = stft(audio);
         StereoSpectrogramR mix_mag = magnitude(spectrogram);
+        StereoSpectrogramR mix_phase = phase(spectrogram);
 
         // apply umx inference to the magnitude spectrogram
         int hidden_size = model.hidden_size;
@@ -254,65 +251,24 @@ extern "C"
             }
         }
 
-        // update global mix_mags
-        mix_mags[target] = mix_mag;
-    }
+        std::cout << "Getting complex spec from mix-phase" << std::endl;
 
-    EMSCRIPTEN_KEEPALIVE
-    void umxFinalize(
-        float *left_target_0, float *right_target_0,
-        float *left_target_1, float *right_target_1,
-        float *left_target_2, float *right_target_2,
-        float *left_target_3, float *right_target_3,
-        int N
-    ) {
-        std::cout << "Getting complex specs from magnitude spectrograms" << std::endl;
+        // now let's get a stereo waveform back first with phase
+        StereoSpectrogramC mix_complex_target =
+            combine(mix_mag, mix_phase);
 
         std::cout << "Getting waveforms from istft" << std::endl;
-        StereoSpectrogramR mix_phase = umxcpp::phase(spectrogram);
+        StereoWaveform target_waveform = istft(mix_complex_target);
 
-        for (int target = 0; target < 4; ++target) {
-            // get complex spectrogram from magnitude spectrogram and mix phase
-            StereoSpectrogramC mix_complex_target = umxcpp::combine(mix_mags[target], mix_phase);
-            StereoWaveform target_waveform = umxcpp::istft(mix_complex_target);
-
-            std::cout << "Populating output arrays" << std::endl;
-
-            // switch on target to use the correct output arrays
-            float *left_target;
-            float *right_target;
-            switch (target)
-            {
-            case 0:
-                left_target = left_target_0;
-                right_target = right_target_0;
-                break;
-            case 1:
-                left_target = left_target_1;
-                right_target = right_target_1;
-                break;
-            case 2:
-                left_target = left_target_2;
-                right_target = right_target_2;
-                break;
-            case 3:
-                left_target = left_target_3;
-                right_target = right_target_3;
-                break;
-            default:
-                std::cerr << "Invalid target" << std::endl;
-                exit(1);
-            }
-
-            // now populate the output float* arrays with ret
-            for (size_t i = 0; i < N; ++i)
-            {
-                left_target[i] = target_waveform.left[i];
-                right_target[i] = target_waveform.right[i];
-            }
-            model.inference_progress += 0.1f/4.0f; // 10% = final istft, /4
-            sendProgressUpdate(model.inference_progress);
-            // 100% total
+        // now populate the output float* arrays with ret
+        for (size_t i = 0; i < N; ++i)
+        {
+            left_target[i] = target_waveform.left[i];
+            right_target[i] = target_waveform.right[i];
         }
+        model.inference_progress += 0.1f / 4.0f; // 10% = final istft, /4
+        sendProgressUpdate(model.inference_progress);
+
+        // 100% total
     }
 }

@@ -4,9 +4,13 @@
 <script data-goatcounter="https://sevagh.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 
+**Latest release:** improved demixing quality by ~1 dB SDR and reduced memory usage to demix larger tracks
+
 # Free AI-based music demixing web app
 
-Upload a song to decompose it into **bass, drums, vocals, other, and karaoke** components by applying **music source separation** (aka **music demixing**), powered by a near-state-of-the-art AI model, [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch), with the [UMX-L](https://zenodo.org/record/5069601) pretrained weights. This site is created and maintained by [Sevag H](https://github.com/sevagh).
+In music demixing or music source separation, AI models are used to separate the different instruments from a music recording into stems. This web application allows you to demix your music files, free and with no usage limits since it runs on **your computer!** 🫵🏽
+
+Upload a song to decompose it into **bass, drums, vocals, other, and karaoke** using a near-state-of-the-art AI model, [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch) with the [UMX-L](https://zenodo.org/record/5069601) pretrained weights. This site is created and maintained by [Sevag H](https://github.com/sevagh).
 <div class="image-container">
 <img class="responsive-img" src="./assets/images/music-demix.png"/>
 </div>
@@ -18,17 +22,12 @@ Unlike similar products, **it's free to use and doesn't store your data.** All p
 ### Support and partnership opportunities
 
 **For individuals:**
-Love what we're doing? You can support this free service through [GitHub Sponsors](https://github.com/sponsors/sevagh) or [PayPal](https://paypal.me/sevagh1337?country.x=CA&locale.x=en_US). Your contributions help keep this site up and running!
+Love this free site? You can support my work through [GitHub Sponsors](https://github.com/sponsors/sevagh) or [PayPal](https://paypal.me/sevagh1337?country.x=CA&locale.x=en_US)
 
 **For companies:**
-If you're a company in the pro music space (mixing/demixing, DAW, etc.) and are interested in advertising on this platform, we offer targeted visibility within the music and technology community. [Contact us](mailto:sevagh+freemdx@protonmail.com) to learn more about partnership opportunities.
+If you're a company in the pro music space (mixing/demixing, DAW, etc.), advertising on this platform may offer targeted visibility within the music and technology community. [Contact me](mailto:sevagh+freemdx@protonmail.com) for partnership opportunities.
 
-**Planned features**
-- Post-processing with Wiener Expectation-Maximization (may improve separation scores by ~1 dB SDR)
-- Multi-track uploading and batch processing
-- Adding the [demucs](https://github.com/facebookresearch/demucs) algorithm
-
-Your support, whether its personal or corporate, helps make these features possible!
+Your support helps make these features possible!
 
 ## Demo
 
@@ -83,14 +82,11 @@ To cancel the running job, refresh the page
     </div>
 </div>
 
-**Latest release: September 7, 2023**
-* Custom streaming architecture for UMX to allow larger tracks to be separated without crashing
-* Split up the inference into distinct steps to reduce total memory usage and prevent crashes
-
 ### **Disclaimers!**
 
 * You can only use the outputs for non-commercial applications as per the <a href="https://zenodo.org/record/5069601">UMX-L weights license</a>
 * The task is CPU and memory intensive (up to 4 GB), please be patient! Very very large tracks may still crash!
+* Please open a [GitHub Issue](https://github.com/sevagh/free-music-demixer/issues) for any bugs or feature requests.
 * Input files can be almost any audio format, but the outputs are always stereo wav files @ 44100 Hz
 
 ## Technical details
