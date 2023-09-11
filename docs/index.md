@@ -4,8 +4,6 @@
 <script data-goatcounter="https://sevagh.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 
-**Latest release:** improved demixing quality by ~1 dB SDR and reduced memory usage to demix larger tracks
-
 # Free AI-based music demixing web app
 
 In music demixing or music source separation, AI models are used to separate the different instruments from a music recording into stems. This web application allows you to demix your music files, free and with no usage limits since it runs on **your computer!** 🫵🏽
@@ -81,6 +79,11 @@ To cancel the running job, refresh the page
  <small>Photo by <a href="https://unsplash.com/@son_of_media?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Dylan McLeod</a></small>
     </div>
 </div>
+
+### **Latest news**
+
+* Improved demixing quality by ~1 dB SDR by implementing Wiener filtering
+* Reduced memory usage, allowing larger tracks to be demixed
 
 ### **Disclaimers!**
 

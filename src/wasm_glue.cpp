@@ -6,12 +6,19 @@
 #include <emscripten.h>
 #include <iostream>
 #include <algorithm>
+#include <vector>
+#include "wiener.hpp"
 
 using namespace umxcpp;
 
 extern "C"
 {
     static umx_model model;
+    static std::vector<StereoSpectrogramR> target_mix_mags;
+    static StereoWaveform audio;
+    static StereoSpectrogramC spectrogram;
+    static StereoSpectrogramR mix_mag;
+    static lstm_data streaming_lstm_data;
 
     // Define a JavaScript function using EM_JS
     EM_JS(void, sendProgressUpdate, (float progress), {
@@ -37,32 +44,36 @@ extern "C"
     EMSCRIPTEN_KEEPALIVE
     float umxInferenceProgress() { return model.inference_progress; }
 
+
     EMSCRIPTEN_KEEPALIVE
     void umxDemix(const float *left, const float *right, int length,
-                  float *left_target, float *right_target, int target_param)
+                 int target_param)
     {
-        sendProgressUpdate(model.inference_progress);
-
         // number of samples per channel
         size_t N = length;
 
-        // create a struct to hold two float vectors for left and right channels
-        umxcpp::StereoWaveform audio;
-        audio.left.resize(N);
-        audio.right.resize(N);
+        if (target_param == 0) {
+            model.inference_progress = 0.0f;
+            target_mix_mags.clear();
+            sendProgressUpdate(model.inference_progress);
 
-        // Stereo case
-        for (size_t i = 0; i < N; ++i)
-        {
-            audio.left[i] = left[i];   // left channel
-            audio.right[i] = right[i]; // right channel
+            // fill audio struct with zeros
+            audio.left.resize(N);
+            audio.right.resize(N);
+
+            // Stereo case
+            // copy input float* arrays into audio struct
+            for (size_t i = 0; i < N; ++i)
+            {
+                audio.left[i] = left[i];   // left channel
+                audio.right[i] = right[i]; // right channel
+            }
+
+            std::cout << "Generating spectrograms" << std::endl;
+
+            spectrogram = stft(audio);
+            mix_mag = magnitude(spectrogram);
         }
-
-        std::cout << "Generating spectrograms" << std::endl;
-
-        StereoSpectrogramC spectrogram = stft(audio);
-        StereoSpectrogramR mix_mag = magnitude(spectrogram);
-        StereoSpectrogramR mix_phase = phase(spectrogram);
 
         // apply umx inference to the magnitude spectrogram
         int hidden_size = model.hidden_size;
@@ -87,7 +98,9 @@ extern "C"
 
         int nb_bins_stacked_cropped = 2974;
 
-        auto streaming_lstm_data = umxcpp::create_lstm_data(lstm_hidden_size, SUB_SEQ_FRAMES);
+        if (target_param == 0) {
+            streaming_lstm_data = umxcpp::create_lstm_data(lstm_hidden_size, SUB_SEQ_FRAMES);
+        }
 
         // 2974 is related to bandwidth=16000 Hz in open-unmix
         // wherein frequency bins above 16000 Hz, corresponding to
@@ -233,7 +246,7 @@ extern "C"
             x_target.block(sub_seq * sub_seq_len, 0, right_lim,
                         x_input.cols()) = x_input;
 
-            model.inference_progress += 0.9f/4.0f/n_sub_seqs;
+            model.inference_progress += 0.8f/4.0f/n_sub_seqs;
             sendProgressUpdate(model.inference_progress);
         } // end of sub-sequences
 
@@ -241,33 +254,72 @@ extern "C"
         // outputs of the neural network
         std::cout << "Multiply mix mag with computed mask" << std::endl;
 
+        // create copy of mix_mag to store the target mix mags
+        umxcpp::StereoSpectrogramR mix_mag_copy = umxcpp::magnitude(spectrogram);
+
         for (std::size_t i = 0; i < mix_mag.left.size(); i++)
         {
             for (std::size_t j = 0; j < mix_mag.left[0].size(); j++)
             {
-                mix_mag.left[i][j] *= x_target(i, j);
-                mix_mag.right[i][j] *=
-                    x_target(i, j + mix_mag.left[0].size());
+                mix_mag_copy.left[i][j] = x_target(i, j) * mix_mag.left[i][j];
+                mix_mag_copy.right[i][j] =
+                    x_target(i, j + mix_mag.left[0].size()) * mix_mag.right[i][j];
             }
         }
 
-        std::cout << "Getting complex spec from mix-phase" << std::endl;
+        target_mix_mags.push_back(mix_mag_copy);
+    }
+
+    EMSCRIPTEN_KEEPALIVE
+    void umxFinalize(
+        float *left_0, float *right_0,
+        float *left_1, float *right_1,
+        float *left_2, float *right_2,
+        float *left_3, float *right_3,
+        int length
+    ) {
+        std::size_t N = length;
+        std::cout << "Getting complex spec from wiener filtering" << std::endl;
 
         // now let's get a stereo waveform back first with phase
-        StereoSpectrogramC mix_complex_target =
-            combine(mix_mag, mix_phase);
+        std::array<StereoSpectrogramC, 4> mix_complex_targets =
+            wiener_filter(spectrogram, target_mix_mags);
 
         std::cout << "Getting waveforms from istft" << std::endl;
-        StereoWaveform target_waveform = istft(mix_complex_target);
+        for (int target = 0; target < 4; ++target) {
+            StereoWaveform target_waveform = istft(mix_complex_targets[target]);
 
-        // now populate the output float* arrays with ret
-        for (size_t i = 0; i < N; ++i)
-        {
-            left_target[i] = target_waveform.left[i];
-            right_target[i] = target_waveform.right[i];
+            float *left_target;
+            float *right_target;
+
+            switch (target) {
+                case 0:
+                    left_target = left_0;
+                    right_target = right_0;
+                    break;
+                case 1:
+                    left_target = left_1;
+                    right_target = right_1;
+                    break;
+                case 2:
+                    left_target = left_2;
+                    right_target = right_2;
+                    break;
+                case 3:
+                    left_target = left_3;
+                    right_target = right_3;
+                    break;
+            };
+
+            // now populate the output float* arrays with ret
+            for (size_t i = 0; i < N; ++i)
+            {
+                left_target[i] = target_waveform.left[i];
+                right_target[i] = target_waveform.right[i];
+            }
+            model.inference_progress += 0.2f / 4.0f; // 10% = final istft, /4
+            sendProgressUpdate(model.inference_progress);
         }
-        model.inference_progress += 0.1f / 4.0f; // 10% = final istft, /4
-        sendProgressUpdate(model.inference_progress);
 
         // 100% total
     }

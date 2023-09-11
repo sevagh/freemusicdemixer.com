@@ -55,22 +55,30 @@ function processAudio(leftChannel, rightChannel, module) {
     console.log("1. Bass")
     module._umxDemix(
         arrayPointerL, arrayPointerR, leftChannel.length,
-        arrayPointerLBass, arrayPointerRBass, 0);
+        0);
 
     console.log("2. Drums")
     module._umxDemix(
-        arrayPointerL, arrayPointerR, leftChannel.length,
-        arrayPointerLDrums, arrayPointerRDrums, 1);
+        null, null, leftChannel.length,
+        1);
 
     console.log("3. Other")
     module._umxDemix(
-        arrayPointerL, arrayPointerR, leftChannel.length,
-        arrayPointerLOther, arrayPointerROther, 2);
+        null, null, leftChannel.length,
+        2);
 
     console.log("4. Vocals")
     module._umxDemix(
-        arrayPointerL, arrayPointerR, leftChannel.length,
-        arrayPointerLVocals, arrayPointerRVocals, 3);
+        null, null, leftChannel.length,
+        3);
+
+    console.log("Finalize waveforms")
+    module._umxFinalize(
+        arrayPointerLBass, arrayPointerRBass,
+        arrayPointerLDrums, arrayPointerRDrums,
+        arrayPointerLOther, arrayPointerROther,
+        arrayPointerLVocals, arrayPointerRVocals,
+        leftChannel.length);
 
     let wasmArrayLBass = new Float32Array(module.HEAPF32.buffer, arrayPointerLBass, leftChannel.length);
     let wasmArrayLDrums = new Float32Array(module.HEAPF32.buffer, arrayPointerLDrums, leftChannel.length);
