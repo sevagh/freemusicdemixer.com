@@ -1,6 +1,7 @@
 #include "wiener.hpp"
 #include "dsp.hpp"
 #include <Eigen/Dense>
+#include <Eigen/Core>
 #include <algorithm>
 #include <cmath>
 #include <complex>
@@ -11,6 +12,28 @@
 #include <array>
 #include <cassert>
 #include <tuple>
+
+namespace Eigen {
+    typedef Tensor<std::complex<float>, 4> Tensor4dXcf;
+    typedef Tensor<std::complex<float>, 3> Tensor3dXcf;
+    typedef Tensor<float, 3> Tensor3dXf;
+    typedef Tensor<std::complex<float>, 2> Tensor2dXcf;
+}
+
+void fill_diagonal(Eigen::Tensor2dXcf& tensor, float value) {
+    // Get the dimensions of the tensor
+    int dim1 = tensor.dimension(0);
+    int dim2 = tensor.dimension(1);
+
+    // Loop over each 2D slice (matrix) and fill its diagonal
+    for (int i = 0; i < dim1; ++i) {
+        for (int j = 0; j < dim2; ++j) {
+            if (i == j) {
+                tensor(i, j) = std::complex<float>{value, 0.0f};
+            }
+        }
+    }
+}
 
 // Function to compute the absolute maximum value from a complex 2D vector
 static float find_max_abs(const umxcpp::StereoSpectrogramC &data, float scale_factor) {
@@ -27,20 +50,19 @@ static float find_max_abs(const umxcpp::StereoSpectrogramC &data, float scale_fa
     return std::max(1.0f, max_val_im/scale_factor);
 }
 
-static void invert5D(umxcpp::Tensor5D& M) {
-    for (auto& frame : M.data) {
-        for (auto& bin : frame) {
-            std::complex<float> a(bin[0][0][0], bin[0][0][1]);
-            std::complex<float> b(bin[0][1][0], bin[0][1][1]);
-            std::complex<float> c(bin[1][0][0], bin[1][0][1]);
-            std::complex<float> d(bin[1][1][0], bin[1][1][1]);
+static void invert4D(Eigen::Tensor4dXcf &M) {
+    for (int frame = 0; frame < M.dimension(0); ++frame) {
+        for (int bin = 0; bin < M.dimension(1); ++bin) {
+            std::complex<float> a = M(frame, bin, 0, 0);
+            std::complex<float> b = M(frame, bin, 0, 1);
+            std::complex<float> c = M(frame, bin, 1, 0);
+            std::complex<float> d = M(frame, bin, 1, 1);
 
             // Compute the determinant
             std::complex<float> det = a * d - b * c;
 
             // Compute the inverse determinant
-            // INEXPLICABLE 4.0 factor!
-            std::complex<float> invDet = 4.0f*std::conj(det)/std::norm(det);
+            std::complex<float> invDet = std::conj(det)/std::norm(det);
 
             // Compute the inverse matrix
             std::complex<float> tmp00 = invDet * d;
@@ -49,51 +71,17 @@ static void invert5D(umxcpp::Tensor5D& M) {
             std::complex<float> tmp11 = invDet * a;
 
             // Update the original tensor
-            bin[0][0][0] = tmp00.real();
-            bin[0][0][1] = tmp00.imag();
-
-            bin[0][1][0] = tmp01.real();
-            bin[0][1][1] = tmp01.imag();
-
-            bin[1][0][0] = tmp10.real();
-            bin[1][0][1] = tmp10.imag();
-
-            bin[1][1][0] = tmp11.real();
-            bin[1][1][1] = tmp11.imag();
+            M(frame, bin, 0, 0) = tmp00;
+            M(frame, bin, 0, 1) = tmp01;
+            M(frame, bin, 1, 0) = tmp10;
+            M(frame, bin, 1, 1) = tmp11;
         }
     }
-}
-
-
-
-static umxcpp::Tensor4D sumAlongFirstDimension(const umxcpp::Tensor5D& tensor5d) {
-    int nb_frames = tensor5d.data.size();
-    int nb_bins = tensor5d.data[0].size();
-    int nb_channels1 = tensor5d.data[0][0].size();
-    int nb_channels2 = tensor5d.data[0][0][0].size();
-    int nb_reim = tensor5d.data[0][0][0][0].size();
-
-    // Initialize a 4D tensor filled with zeros
-    umxcpp::Tensor4D result(nb_bins, nb_channels1, nb_channels2, nb_reim);
-
-    for (int frame = 0; frame < nb_frames; ++frame) {
-        for (int bin = 0; bin < nb_bins; ++bin) {
-            for (int ch1 = 0; ch1 < nb_channels1; ++ch1) {
-                for (int ch2 = 0; ch2 < nb_channels2; ++ch2) {
-                    for (int reim = 0; reim < nb_reim; ++reim) {
-                        result.data[bin][ch1][ch2][reim] += tensor5d.data[frame][bin][ch1][ch2][reim];
-                    }
-                }
-            }
-        }
-    }
-
-    return result;
 }
 
 // Compute the empirical covariance for a source.
 // forward decl
-static umxcpp::Tensor5D calculateCovariance(
+static Eigen::Tensor4dXcf calculateCovariance(
     const umxcpp::StereoSpectrogramC &y_j,
     const int pos,
     const int t_end
@@ -158,18 +146,17 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
 
     std::cout << "Wiener-EM: Initialize tensors" << std::endl;
 
-    // Create and initialize the 5D tensor
-    umxcpp::Tensor3D regularization(nb_channels, nb_channels, 2); // The 3D tensor
-    // Fill the diagonal with sqrt(eps) for all 3D slices in dimensions 0 and 1
-    regularization.fill_diagonal(std::sqrt(eps));
+    Eigen::Tensor2dXcf regularization(nb_channels, nb_channels);
+    // Fill the diagonal with sqrt(eps)
+    fill_diagonal(regularization, std::sqrt(eps));
 
-    std::vector<Tensor4D> R; // A vector to hold each source's covariance matrix
+    std::vector<Eigen::Tensor3dXcf> R; // A vector to hold each source's covariance matrix
     for (int j = 0; j < nb_sources; ++j) {
-        R.emplace_back(Tensor4D(nb_bins, nb_channels, nb_channels, 2));
+        R.emplace_back(Eigen::Tensor3dXcf(nb_bins, nb_channels, nb_channels));
     }
 
-    Tensor1D weight(nb_bins);  // A 1D tensor (vector) of zeros
-    Tensor3D v(nb_frames, nb_bins, nb_sources);  // A 3D tensor of zeros
+    Eigen::ArrayXf weight(nb_bins);  // A 1D tensor (vector) of zeros
+    Eigen::Tensor3dXf v(nb_frames, nb_bins, nb_sources);  // A 3D tensor of zeros
 
     for (int it = 0; it < WIENER_ITERATIONS; ++it) {
         std::cout << "Wiener-EM: iteration: " << it << std::endl;
@@ -191,14 +178,14 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
                     }
                     // Divide by the number of channels to get the average
                     // statistical summation, distributing v values for all frames
-                    v.data[frame][bin][source] = sumSquare / nb_channels;
+                    v(frame, bin, source) = sumSquare / nb_channels;
                 }
             }
         }
 
         for (int source = 0; source < nb_sources; ++source) {
-            R[source].setZero();  // Assume Tensor4d has a method to set all its elements to zero
-            weight.fill(WIENER_EPS); // Initialize with small epsilon (assume Tensor1d has a fill method)
+            R[source].setZero();
+            weight.setConstant(WIENER_EPS); // Initialize with small epsilon
 
             int pos = 0;
             int batchSize = WIENER_EM_BATCH_SIZE > 0 ? WIENER_EM_BATCH_SIZE : nb_frames;
@@ -207,27 +194,33 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
                 std::cout << "\tCovariance loop for source: " << source << ", pos: " << pos << std::endl;
                 int t_end = std::min(nb_frames, pos + batchSize);
 
-                umxcpp::Tensor5D tempR = calculateCovariance(y[source], pos, t_end);
+                Eigen::Tensor4dXcf tempR = calculateCovariance(y[source], pos, t_end);
 
-                umxcpp::Tensor4D tempR4D = sumAlongFirstDimension(tempR);
+                Eigen::Tensor3dXcf tempR3D(
+                    tempR.dimension(1),
+                    tempR.dimension(2),
+                    tempR.dimension(3)
+                );
+                tempR3D.setZero();
 
-                // Sum the calculated covariance into R[j]
-                // Sum along the first (time/frame) dimension to get a 4D tensor
-                // Directly sum tempR into R[source], avoiding the need for an additional 4D tensor
-                for (std::size_t bin = 0; bin < nb_bins; ++bin) {
-                    for (std::size_t ch1 = 0; ch1 < nb_channels; ++ch1) {
-                        for (std::size_t ch2 = 0; ch2 < nb_channels; ++ch2) {
-                            for (std::size_t reim = 0; reim < 2; ++reim) {
-                                R[source].data[bin][ch1][ch2][reim] += tempR4D.data[bin][ch1][ch2][reim];
+                // Sum across the first dimension
+                for (int i = 0; i < tempR.dimension(0); ++i) {
+                    for (int j = 0; j < tempR.dimension(1); ++j) {
+                        for (int k = 0; k < tempR.dimension(2); ++k) {
+                            for (int l = 0; l < tempR.dimension(3); ++l) {
+                                tempR3D(j, k, l) += tempR(i, j, k, l);
                             }
                         }
                     }
                 }
 
+                // Sum the calculated covariance into R[j]
+                R[source] += tempR3D;
+
                 // Update the weight summed v values across the frames for this batch
                 for (int t = pos; t < t_end; ++t) {
                     for (int bin = 0; bin < nb_bins; ++bin) {
-                        weight.data[bin] += v.data[t][bin][source];
+                        weight(bin) += v(t, bin, source);
                     }
                 }
 
@@ -238,15 +231,13 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
             for (int bin = 0; bin < nb_bins; ++bin) {
                 for (int ch1 = 0; ch1 < nb_channels; ++ch1) {
                     for (int ch2 = 0; ch2 < nb_channels; ++ch2) {
-                        for (int k = 0; k < 2; ++k) {
-                            R[source].data[bin][ch1][ch2][k] /= weight.data[bin];
-                        }
+                        R[source](bin, ch1, ch2) /= weight(bin);
                     }
                 }
             }
 
             // Reset the weight for the next iteration
-            weight.fill(0.0f);
+            weight.setConstant(0.0f);
         }
 
         int pos = 0;
@@ -268,19 +259,17 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
             int nb_frames_chunk = t_end-pos;
 
             // Compute mix covariance matrix Cxx
-            //Tensor3D Cxx = regularization;
-            Tensor5D Cxx(nb_frames_chunk, nb_bins, nb_channels, nb_channels, 2);
+            Eigen::Tensor4dXcf Cxx(nb_frames_chunk, nb_bins, nb_channels, nb_channels);
+            Cxx.setZero();
 
             // copy regularization into expanded form in middle of broadcast loop
             for (int frame = 0; frame < nb_frames_chunk; ++frame) {
                 for (int bin = 0; bin < nb_bins; ++bin) {
                     for (int source = 0; source < nb_sources; ++source) {
-                        float multiplier = v.data[(frame+pos)][bin][source];
+                        float multiplier = v(frame+pos, bin, source);
                         for (int ch1 = 0; ch1 < nb_channels; ++ch1) {
                             for (int ch2 = 0; ch2 < nb_channels; ++ch2) {
-                                for (int re_im = 0; re_im < 2; ++re_im) {
-                                    Cxx.data[frame][bin][ch1][ch2][re_im] += regularization.data[ch1][ch2][re_im] + multiplier * R[source].data[bin][ch1][ch2][re_im];
-                                }
+                                Cxx(frame, bin, ch1, ch2) += regularization(ch1, ch2) + multiplier * R[source](bin, ch1, ch2);
                             }
                         }
                     }
@@ -289,14 +278,14 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
 
             // Invert Cxx
             std::cout << "\tInvert Cxx and Wiener gain calculation" << std::endl;
-            invert5D(Cxx);  // Assuming invertMatrix performs element-wise inversion
-            Tensor5D inv_Cxx = Cxx;  // Assuming copy constructor or assignment operator performs deep copy
+            invert4D(Cxx);  // Assuming invertMatrix performs element-wise inversion
+            // Cxx is now inv_Cxx
 
             // Separate the sources
             for (int source = 0; source < nb_sources; ++source) {
                 // Initialize with zeros
                 // create gain with broadcast size of inv_Cxx
-                Tensor5D gain(nb_frames_chunk, nb_bins, nb_channels, nb_channels, 2);
+                Eigen::Tensor4dXcf gain(nb_frames_chunk, nb_bins, nb_channels, nb_channels);
                 gain.setZero();
 
                 for (int frame = 0; frame < nb_frames_chunk; ++frame) {
@@ -304,11 +293,7 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
                         for (int ch1 = 0; ch1 < nb_channels; ++ch1) {
                             for (int ch2 = 0; ch2 < nb_channels; ++ch2) {
                                 for (int ch3 = 0; ch3 < nb_channels; ++ch3) {
-                                    auto a = R[source].data[bin][ch1][ch3];
-                                    auto b = inv_Cxx.data[frame][bin][ch3][ch2];
-
-                                    gain.data[frame][bin][ch1][ch2][0] += a[0]*b[0] - a[1]*b[1];
-                                    gain.data[frame][bin][ch1][ch2][1] += a[0]*b[1] + a[1]*b[0];
+                                    gain(frame, bin, ch1, ch2) += R[source](bin, ch1, ch3)*Cxx(frame, bin, ch3, ch2);
                                 }
                             }
                         }
@@ -320,10 +305,7 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
                     for (int bin = 0; bin < nb_bins; ++bin) {
                         for (int ch1 = 0; ch1 < nb_channels; ++ch1) {
                             for (int ch2 = 0; ch2 < nb_channels; ++ch2) {
-                                for (int re_im = 0; re_im < 2; ++re_im) { // Assuming last dimension has size 2 (real/imaginary)
-                                    // undoing the inv_Cxx factor of 4.0f
-                                    gain.data[frame][bin][ch1][ch2][re_im] *= v.data[(frame+pos)][bin][source]/4.0f;
-                                }
+                                gain(frame, bin, ch1, ch2) *= v(frame+pos, bin, source);
                             }
                         }
                     }
@@ -335,23 +317,16 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
                     for (int bin = 0; bin < nb_bins; ++bin) {
                         for (int ch1 = 0; ch1 < nb_channels; ++ch1) {
                             for (int ch2 = 0; ch2 < nb_channels; ++ch2) {
-                                float sample_real = ch2 == 0 ? y[source].left[frame+pos][bin].real() : y[source].right[frame+pos][bin].real();
-                                float sample_imag = ch2 == 0 ? y[source].left[frame+pos][bin].imag() : y[source].right[frame+pos][bin].imag();
+                                std::complex<float> sample_cpx = ch2 == 0 ? y[source].left[frame+pos][bin] : y[source].right[frame+pos][bin];
 
-                                float a_real = gain.data[frame][bin][ch2][ch1][0];
-                                float a_imag = gain.data[frame][bin][ch2][ch1][1];
+                                std::complex<float> a = gain(frame, bin, ch2, ch1);
 
-                                float b_real = ch1 == 0 ? mix_stft.left[frame+pos][bin].real() : mix_stft.right[frame+pos][bin].real();
-                                float b_imag = ch1 == 0 ? mix_stft.left[frame+pos][bin].imag() : mix_stft.right[frame+pos][bin].imag();
+                                std::complex<float> b = ch1 == 0 ? mix_stft.left[frame+pos][bin] : mix_stft.right[frame+pos][bin];
 
                                 if (ch2 == 0) {
-                                    y[source].left[frame+pos][bin] = std::complex<float>{
-                                        sample_real + (a_real*b_real - a_imag*b_imag),
-                                        sample_imag + (a_real*b_imag + a_imag*b_real)};
+                                    y[source].left[frame+pos][bin] = sample_cpx + a*b;
                                 } else {
-                                    y[source].right[frame+pos][bin] = std::complex<float>{
-                                        sample_real + (a_real*b_real - a_imag*b_imag),
-                                        sample_imag + (a_real*b_imag + a_imag*b_real)};
+                                    y[source].right[frame+pos][bin] = sample_cpx + a*b;
                                 }
                             }
                         }
@@ -388,7 +363,7 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
  *   returns Cj:
  *       shape: nb_frames, nb_bins, nb_channels, nb_channels, realim
  */
-static umxcpp::Tensor5D calculateCovariance(
+static Eigen::Tensor4dXcf calculateCovariance(
     const umxcpp::StereoSpectrogramC &y_j,
     const int pos,
     const int t_end
@@ -399,7 +374,7 @@ static umxcpp::Tensor5D calculateCovariance(
     int nb_channels = 2;
 
     // Initialize Cj tensor with zeros
-    umxcpp::Tensor5D Cj(nb_frames, nb_bins, nb_channels, nb_channels, 2);
+    Eigen::Tensor4dXcf Cj(nb_frames, nb_bins, nb_channels, nb_channels);
     Cj.setZero();
 
     for (int frame = 0; frame < nb_frames; ++frame) {
@@ -410,16 +385,17 @@ static umxcpp::Tensor5D calculateCovariance(
                     std::complex<float> a = ch1 == 0 ? y_j.left[frame+pos][bin] : y_j.right[frame+pos][bin];
                     std::complex<float> b = ch2 == 0 ? std::conj(y_j.left[frame+pos][bin]) : std::conj(y_j.right[frame+pos][bin]);
 
-                    float a_real = a.real();
-                    float a_imag = a.imag();
+                    //float a_real = a.real();
+                    //float a_imag = a.imag();
 
-                    float b_real = b.real();
-                    float b_imag = b.imag();
+                    //float b_real = b.real();
+                    //float b_imag = b.imag();
 
                     // Update the tensor
                     // _mul_add y_j, conj(y_j) -> y_j = a, conj = b
-                    Cj.data[frame][bin][ch1][ch2][0] += (a_real*b_real - a_imag*b_imag);
-                    Cj.data[frame][bin][ch1][ch2][1] += (a_real*b_imag + a_imag*b_real);
+                    //Cj(frame, bin, ch1, ch2, 0) += (a_real*b_real - a_imag*b_imag);
+                    //Cj(frame, bin, ch1, ch2, 1) += (a_real*b_imag + a_imag*b_real);
+                    Cj(frame, bin, ch1, ch2) += a*b;
                 }
             }
         }

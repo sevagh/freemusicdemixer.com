@@ -63,14 +63,20 @@ npx tsc --module es6 ../vendor/wav-file-encoder/src/WavFileEncoder.ts
 
 ### Output quality
 
-MUSDB18-HQ test track 'Zeno - Signs', demixed by this app:
+MUSDB18-HQ test track 'Zeno - Signs':
+
+'Zeno - Signs':
+```
+vocals          ==> SDR:   6.846  SIR:  16.382  ISR:  13.897  SAR:   7.024
+drums           ==> SDR:   7.679  SIR:  14.462  ISR:  12.606  SAR:   9.001
+bass            ==> SDR:   2.386  SIR:   4.504  ISR:   5.802  SAR:   3.731
+other           ==> SDR:   6.020  SIR:   9.854  ISR:  11.963  SAR:   7.472
+```
+
+Previous release results on 'Zeno - Signs' (no streaming LSTM, no Wiener filtering):
 ```
 vocals          ==> SDR:   6.550  SIR:  14.583  ISR:  13.820  SAR:   6.974
 drums           ==> SDR:   6.538  SIR:  11.209  ISR:  11.163  SAR:   8.317
 bass            ==> SDR:   1.646  SIR:   0.931  ISR:   5.261  SAR:   2.944
 other           ==> SDR:   5.190  SIR:   6.623  ISR:  10.221  SAR:   8.599
-```
-
-With Wiener:
-```
 ```
