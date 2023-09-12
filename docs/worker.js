@@ -72,6 +72,9 @@ function processAudio(leftChannel, rightChannel, module) {
         null, null, leftChannel.length,
         3);
 
+    console.log("Wiener filter")
+    module._umxWiener();
+
     console.log("Finalize waveforms")
     module._umxFinalize(
         arrayPointerLBass, arrayPointerRBass,

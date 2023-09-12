@@ -70,3 +70,7 @@ drums           ==> SDR:   6.538  SIR:  11.209  ISR:  11.163  SAR:   8.317
 bass            ==> SDR:   1.646  SIR:   0.931  ISR:   5.261  SAR:   2.944
 other           ==> SDR:   5.190  SIR:   6.623  ISR:  10.221  SAR:   8.599
 ```
+
+With Wiener:
+```
+```

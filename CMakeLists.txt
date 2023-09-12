@@ -11,7 +11,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 # improve CMAKE_CXX_FLAGS_RELEASE to every possible optimization considering Eigen3, target arch (my CPU is a Ryzen 5950X), and compiler
 # also linux kernel features and whatnot
 # aside from "-O3"
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -mfma -ffast-math -fno-signed-zeros -fno-trapping-math -fassociative-math -freciprocal-math -fno-math-errno -fno-rounding-math -fno-signaling-nans -fno-unsafe-math-optimizations -fno-trapping-math -fno-math-errno -msimd128")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math -fno-signed-zeros -fno-trapping-math -fassociative-math -freciprocal-math -fno-math-errno -fno-rounding-math -fno-signaling-nans -fno-unsafe-math-optimizations -fno-trapping-math -fno-math-errno -msimd128")
 
 # define a macro NDEBUG for Eigen3 release builds
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
@@ -52,7 +52,7 @@ if(EMSCRIPTEN)
     file(COPY ${CMAKE_SOURCE_DIR}/models/ggml-model-umxl-u8.bin.gz DESTINATION ${CMAKE_BINARY_DIR})
 
     set_target_properties(umx PROPERTIES
-        LINK_FLAGS "-s WASM=1 -s NO_DISABLE_EXCEPTION_CATCHING -s ASSERTIONS=1 -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4GB -s MODULARIZE=1 -s EXPORT_NAME=libumx --preload-file ${CMAKE_BINARY_DIR}/ggml-model-umxl-u8.bin.gz -s EXPORTED_FUNCTIONS=\"['_malloc', '_free', '_umxInit', '_umxLoadProgress', '_umxInferenceProgress', '_umxDemix', '_umxFinalize']\""
+        LINK_FLAGS "-s WASM=1 -s ASSERTIONS=1 -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4GB -s MODULARIZE=1 -s EXPORT_NAME=libumx --preload-file ${CMAKE_BINARY_DIR}/ggml-model-umxl-u8.bin.gz -s EXPORTED_FUNCTIONS=\"['_malloc', '_free', '_umxInit', '_umxLoadProgress', '_umxInferenceProgress', '_umxDemix', '_umxWiener', '_umxFinalize']\""
     )
 
     # copy umx.js, umx.wasm to ${CMAKE_SOURCE_DIR}/docs

@@ -15,6 +15,8 @@ const float WIENER_SCALE_FACTOR = 10.0f;
 const int WIENER_EM_BATCH_SIZE = 200;
 const int WIENER_ITERATIONS = 1;
 
+const int WIENER_PSD_WINDOW = 100;
+
 std::array<umxcpp::StereoSpectrogramC, 4>
 wiener_filter(umxcpp::StereoSpectrogramC &mix_spectrogram,
               const std::vector<umxcpp::StereoSpectrogramR> &targets_mag_spectrograms);

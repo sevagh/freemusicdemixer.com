@@ -64,13 +64,7 @@ static void invert5D(umxcpp::Tensor5D& M) {
     }
 }
 
-// Compute the empirical covariance for a source.
-// forward decl
-static umxcpp::Tensor5D calculateCovariance(
-    const umxcpp::StereoSpectrogramC &y_j,
-    const int pos,
-    const int t_end
-);
+
 
 static umxcpp::Tensor4D sumAlongFirstDimension(const umxcpp::Tensor5D& tensor5d) {
     int nb_frames = tensor5d.data.size();
@@ -96,6 +90,14 @@ static umxcpp::Tensor4D sumAlongFirstDimension(const umxcpp::Tensor5D& tensor5d)
 
     return result;
 }
+
+// Compute the empirical covariance for a source.
+// forward decl
+static umxcpp::Tensor5D calculateCovariance(
+    const umxcpp::StereoSpectrogramC &y_j,
+    const int pos,
+    const int t_end
+);
 
 // Wiener filter function
 std::array<umxcpp::StereoSpectrogramC, 4>
@@ -188,6 +190,7 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
                         sumSquare += (realPart * realPart) + (imagPart * imagPart);
                     }
                     // Divide by the number of channels to get the average
+                    // statistical summation, distributing v values for all frames
                     v.data[frame][bin][source] = sumSquare / nb_channels;
                 }
             }
@@ -206,15 +209,15 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
 
                 umxcpp::Tensor5D tempR = calculateCovariance(y[source], pos, t_end);
 
-                // Sum the calculated covariance into R[j]
-                // Sum along the first (time/frame) dimension to get a 4D tensor
                 umxcpp::Tensor4D tempR4D = sumAlongFirstDimension(tempR);
 
-                // Add to existing R[j]; (R[j], tempR4D have the same dimensions)
-                for (std::size_t bin = 0; bin < R[source].data.size(); ++bin) {
-                    for (std::size_t ch1 = 0; ch1 < R[source].data[0].size(); ++ch1) {
-                        for (std::size_t ch2 = 0; ch2 < R[source].data[0][0].size(); ++ch2) {
-                            for (std::size_t reim = 0; reim < R[source].data[0][0][0].size(); ++reim) {
+                // Sum the calculated covariance into R[j]
+                // Sum along the first (time/frame) dimension to get a 4D tensor
+                // Directly sum tempR into R[source], avoiding the need for an additional 4D tensor
+                for (std::size_t bin = 0; bin < nb_bins; ++bin) {
+                    for (std::size_t ch1 = 0; ch1 < nb_channels; ++ch1) {
+                        for (std::size_t ch2 = 0; ch2 < nb_channels; ++ch2) {
+                            for (std::size_t reim = 0; reim < 2; ++reim) {
                                 R[source].data[bin][ch1][ch2][reim] += tempR4D.data[bin][ch1][ch2][reim];
                             }
                         }
@@ -272,7 +275,7 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
             for (int frame = 0; frame < nb_frames_chunk; ++frame) {
                 for (int bin = 0; bin < nb_bins; ++bin) {
                     for (int source = 0; source < nb_sources; ++source) {
-                        float multiplier = v.data[frame+pos][bin][source];
+                        float multiplier = v.data[(frame+pos)][bin][source];
                         for (int ch1 = 0; ch1 < nb_channels; ++ch1) {
                             for (int ch2 = 0; ch2 < nb_channels; ++ch2) {
                                 for (int re_im = 0; re_im < 2; ++re_im) {
@@ -319,7 +322,7 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
                             for (int ch2 = 0; ch2 < nb_channels; ++ch2) {
                                 for (int re_im = 0; re_im < 2; ++re_im) { // Assuming last dimension has size 2 (real/imaginary)
                                     // undoing the inv_Cxx factor of 4.0f
-                                    gain.data[frame][bin][ch1][ch2][re_im] *= v.data[frame+pos][bin][source]/4.0f;
+                                    gain.data[frame][bin][ch1][ch2][re_im] *= v.data[(frame+pos)][bin][source]/4.0f;
                                 }
                             }
                         }

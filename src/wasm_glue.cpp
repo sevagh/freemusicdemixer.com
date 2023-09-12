@@ -19,6 +19,7 @@ extern "C"
     static StereoSpectrogramC spectrogram;
     static StereoSpectrogramR mix_mag;
     static lstm_data streaming_lstm_data;
+    static std::array<StereoSpectrogramC, 4> mix_complex_targets;
 
     // Define a JavaScript function using EM_JS
     EM_JS(void, sendProgressUpdate, (float progress), {
@@ -271,6 +272,18 @@ extern "C"
     }
 
     EMSCRIPTEN_KEEPALIVE
+    void umxWiener()
+    {
+        std::cout << "Getting complex spec from wiener filtering" << std::endl;
+
+        // now let's get a stereo waveform back first with phase
+        mix_complex_targets =
+            wiener_filter(spectrogram, target_mix_mags);
+
+        model.inference_progress += 0.15f; // 10% = final istft, /4
+    }
+
+    EMSCRIPTEN_KEEPALIVE
     void umxFinalize(
         float *left_0, float *right_0,
         float *left_1, float *right_1,
@@ -279,12 +292,7 @@ extern "C"
         int length
     ) {
         std::size_t N = length;
-        std::cout << "Getting complex spec from wiener filtering" << std::endl;
-
-        // now let's get a stereo waveform back first with phase
-        std::array<StereoSpectrogramC, 4> mix_complex_targets =
-            wiener_filter(spectrogram, target_mix_mags);
-
+        
         std::cout << "Getting waveforms from istft" << std::endl;
         for (int target = 0; target < 4; ++target) {
             StereoWaveform target_waveform = istft(mix_complex_targets[target]);
@@ -317,7 +325,7 @@ extern "C"
                 left_target[i] = target_waveform.left[i];
                 right_target[i] = target_waveform.right[i];
             }
-            model.inference_progress += 0.2f / 4.0f; // 10% = final istft, /4
+            model.inference_progress += 0.05f / 4.0f; // 10% = final istft, /4
             sendProgressUpdate(model.inference_progress);
         }
 
