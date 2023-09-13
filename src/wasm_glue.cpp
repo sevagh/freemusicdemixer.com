@@ -55,23 +55,22 @@ extern "C"
         model.inference_progress = 0.0f;
         sendProgressUpdate(model.inference_progress);
 
-        StereoWaveform audio;
+        Eigen::MatrixXf audio(2, N);
         // fill audio struct with zeros
-        audio.left.resize(N);
-        audio.right.resize(N);
+        audio.setZero();
 
         // Stereo case
         // copy input float* arrays into audio struct
         for (size_t i = 0; i < N; ++i)
         {
-            audio.left[i] = left[i];   // left channel
-            audio.right[i] = right[i]; // right channel
+            audio(0, i) = left[i];   // left channel
+            audio(1, i) = right[i]; // right channel
         }
 
-        std::vector<StereoWaveform> target_waveforms = umxcpp::umx_inference(
+        std::vector<Eigen::MatrixXf> target_waveforms = umxcpp::umx_inference(
             model, audio);
 
-        std::cout << "Getting waveforms from istft" << std::endl;
+        std::cout << "Copying waveforms" << std::endl;
         for (int target = 0; target < 4; ++target) {
             float *left_target;
             float *right_target;
@@ -98,8 +97,8 @@ extern "C"
             // now populate the output float* arrays with ret
             for (size_t i = 0; i < N; ++i)
             {
-                left_target[i] = target_waveforms[target].left[i];
-                right_target[i] = target_waveforms[target].right[i];
+                left_target[i] = target_waveforms[target](0, i);
+                right_target[i] = target_waveforms[target](1, i);
             }
             model.inference_progress += 0.05f / 4.0f; // 10% = final istft, /4
             sendProgressUpdate(model.inference_progress);

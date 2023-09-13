@@ -87,7 +87,8 @@ other           ==> SDR:   5.190  SIR:   6.623  ISR:  10.221  SAR:   8.599
 * Now trying entire Demucs segmentation pipeline
 
 Steps:
-1. Move inference logic out of wasm_glue
-2. After implement demucs chunking
+1. Bundle reusable buffers together in inference.hpp/cpp
+1. Use bundle from wasm_glue, pass into umx_inference
+1. Implement demucs chunking
     1. Use demucs chunking to delete/eliminate wiener windowing
-    1. Use demucs chunking to set streaming lstm size
+    1. Use demucs chunking to influence or implement streaming lstm

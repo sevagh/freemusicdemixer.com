@@ -12,13 +12,7 @@
 #include <array>
 #include <cassert>
 #include <tuple>
-
-namespace Eigen {
-    typedef Tensor<std::complex<float>, 4> Tensor4dXcf;
-    typedef Tensor<std::complex<float>, 3> Tensor3dXcf;
-    typedef Tensor<float, 3> Tensor3dXf;
-    typedef Tensor<std::complex<float>, 2> Tensor2dXcf;
-}
+#include "tensor.hpp"
 
 void fill_diagonal(Eigen::Tensor2dXcf& tensor, float value) {
     // Get the dimensions of the tensor
@@ -36,13 +30,13 @@ void fill_diagonal(Eigen::Tensor2dXcf& tensor, float value) {
 }
 
 // Function to compute the absolute maximum value from a complex 2D vector
-static float find_max_abs(const umxcpp::StereoSpectrogramC &data, float scale_factor) {
+static float find_max_abs(const Eigen::Tensor3dXcf &data, float scale_factor) {
     float max_val_im = -1.0f;
     for (int i = 0; i < 2; ++i) {
-        for (int j = 0; j < data.left.size(); ++j) {
-            for (int k = 0; k < data.left[0].size(); ++k) {
+        for (int j = 0; j < data.dimension(1); ++j) {
+            for (int k = 0; k < data.dimension(2); ++k) {
                 max_val_im = std::max(max_val_im, std::sqrt(std::norm(
-                    i == 0 ? data.left[j][k] : data.right[j][k]
+                    data(i, j, k)
                 )));
             }
         }
@@ -82,25 +76,26 @@ static void invert4D(Eigen::Tensor4dXcf &M) {
 // Compute the empirical covariance for a source.
 // forward decl
 static Eigen::Tensor4dXcf calculateCovariance(
-    const umxcpp::StereoSpectrogramC &y_j,
+    const Eigen::Tensor3dXcf &y_j,
     const int pos,
     const int t_end
 );
 
 // Wiener filter function
-std::array<umxcpp::StereoSpectrogramC, 4>
-umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
-              const std::vector<umxcpp::StereoSpectrogramR> &targets_mag_spectrograms)
+std::array<Eigen::Tensor3dXcf, 4>
+umxcpp::wiener_filter(Eigen::Tensor3dXcf &mix_stft,
+              const std::vector<Eigen::Tensor3dXf> &targets_mag_spectrograms)
 {
     // first just do naive mix-phase
-    std::array<umxcpp::StereoSpectrogramC, 4> y;
+    std::array<Eigen::Tensor3dXcf, 4> y;
 
-    umxcpp::StereoSpectrogramR mix_phase = umxcpp::phase(mix_stft);
+    Eigen::Tensor3dXf mix_phase = mix_stft.unaryExpr(
+        [](const std::complex<float> &c) { return std::arg(c); });
 
     std::cout << "Wiener-EM: Getting first estimates from naive mix-phase" << std::endl;
 
     for (int target = 0; target < 4; ++target) {
-        y[target] = umxcpp::combine(targets_mag_spectrograms[target], mix_phase);
+        y[target] = umxcpp::polar_to_complex(targets_mag_spectrograms[target], mix_phase);
     }
 
     std::cout << "Wiener-EM: Scaling down by max_abs" << std::endl;
@@ -110,27 +105,27 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
     float max_abs = find_max_abs(mix_stft, WIENER_SCALE_FACTOR);
 
     // Dividing mix_stft by max_abs
-    for (int i = 0; i < mix_stft.left.size(); ++i) {
-        for (int j = 0; j < mix_stft.left[0].size(); ++j) {
-            mix_stft.left[i][j] = std::complex<float>{
-                    mix_stft.left[i][j].real()/max_abs,
-                    mix_stft.left[i][j].imag()/max_abs};
-            mix_stft.right[i][j] = std::complex<float>{
-                    mix_stft.right[i][j].real()/max_abs,
-                    mix_stft.right[i][j].imag()/max_abs};
+    for (int i = 0; i < mix_stft.dimension(1); ++i) {
+        for (int j = 0; j < mix_stft.dimension(2); ++j) {
+            mix_stft(0, i, j) = std::complex<float>{
+                    mix_stft(0, i, j).real()/max_abs,
+                    mix_stft(0, i, j).imag()/max_abs};
+            mix_stft(1, i, j) = std::complex<float>{
+                    mix_stft(1, i, j).real()/max_abs,
+                    mix_stft(1, i, j).imag()/max_abs};
         }
     }
 
     // Dividing y by max_abs
     for (int source = 0; source < 4; ++source) {
-        for (int i = 0; i < mix_stft.left.size(); ++i) {
-            for (int j = 0; j < mix_stft.left[0].size(); ++j) {
-                y[source].left[i][j] = std::complex<float>{
-                        y[source].left[i][j].real()/max_abs,
-                        y[source].left[i][j].imag()/max_abs};
-                y[source].right[i][j] = std::complex<float>{
-                        y[source].right[i][j].real()/max_abs,
-                        y[source].right[i][j].imag()/max_abs};
+        for (int i = 0; i < mix_stft.dimension(1); ++i) {
+            for (int j = 0; j < mix_stft.dimension(2); ++j) {
+                y[source](0, i, j) = std::complex<float>{
+                        y[source](0, i, j).real()/max_abs,
+                        y[source](0, i, j).imag()/max_abs};
+                y[source](1, i, j) = std::complex<float>{
+                        y[source](1, i, j).real()/max_abs,
+                        y[source](1, i, j).imag()/max_abs};
             }
         }
     }
@@ -139,8 +134,8 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
     // y = expectation_maximization(y, mix_stft, iterations, eps=eps)[0]
 
     const int nb_channels = 2;
-    const int nb_frames = mix_stft.left.size();
-    const int nb_bins = mix_stft.left[0].size();
+    const int nb_frames = mix_stft.dimension(1);
+    const int nb_bins = mix_stft.dimension(2);
     const int nb_sources = 4;
     const float eps = WIENER_EPS;
 
@@ -171,8 +166,8 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
                         float realPart = 0.0f;
                         float imagPart = 0.0f;
 
-                        realPart += channel == 0 ? y[source].left[frame][bin].real() : y[source].right[frame][bin].real();
-                        realPart += channel == 0 ? y[source].left[frame][bin].imag() : y[source].right[frame][bin].imag();
+                        realPart += y[source](channel, frame, bin).real();
+                        realPart += y[source](channel, frame, bin).imag();
 
                         sumSquare += (realPart * realPart) + (imagPart * imagPart);
                     }
@@ -251,8 +246,8 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
             for (int source = 0; source < 4; ++source) {
                 for (int i = pos; i < t_end; ++i) {
                      for (int j = 0; j < nb_bins; ++j) {
-                         y[source].left[i][j] = std::complex<float>{0.0f, 0.0f};
-                         y[source].right[i][j] = std::complex<float>{0.0f, 0.0f};
+                         y[source](0, i, j) = std::complex<float>{0.0f, 0.0f};
+                         y[source](1, i, j) = std::complex<float>{0.0f, 0.0f};
                      }
                 }
             }
@@ -317,17 +312,10 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
                     for (int bin = 0; bin < nb_bins; ++bin) {
                         for (int ch1 = 0; ch1 < nb_channels; ++ch1) {
                             for (int ch2 = 0; ch2 < nb_channels; ++ch2) {
-                                std::complex<float> sample_cpx = ch2 == 0 ? y[source].left[frame+pos][bin] : y[source].right[frame+pos][bin];
-
+                                std::complex<float> sample_cpx = y[source](ch2, frame+pos, bin);
                                 std::complex<float> a = gain(frame, bin, ch2, ch1);
-
-                                std::complex<float> b = ch1 == 0 ? mix_stft.left[frame+pos][bin] : mix_stft.right[frame+pos][bin];
-
-                                if (ch2 == 0) {
-                                    y[source].left[frame+pos][bin] = sample_cpx + a*b;
-                                } else {
-                                    y[source].right[frame+pos][bin] = sample_cpx + a*b;
-                                }
+                                std::complex<float> b = mix_stft(ch1, frame+pos, bin);
+                                y[source](ch2, frame+pos, bin) = sample_cpx + a*b;
                             }
                         }
                     }
@@ -340,14 +328,14 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
 
     // scale y by max_abs again
     for (int source = 0; source < 4; ++source) {
-        for (int i = 0; i < mix_stft.left.size(); ++i) {
-            for (int j = 0; j < mix_stft.left[0].size(); ++j) {
-                y[source].left[i][j] = std::complex<float>{
-                    y[source].left[i][j].real()*max_abs,
-                    y[source].left[i][j].imag()*max_abs};
-                y[source].right[i][j] = std::complex<float>{
-                    y[source].right[i][j].real()*max_abs,
-                    y[source].right[i][j].imag()*max_abs};
+        for (int i = 0; i < mix_stft.dimension(1); ++i) {
+            for (int j = 0; j < mix_stft.dimension(2); ++j) {
+                y[source](0, i, j) = std::complex<float>{
+                    y[source](0, i, j).real()*max_abs,
+                    y[source](0, i, j).imag()*max_abs};
+                y[source](1, i, j) = std::complex<float>{
+                    y[source](1, i, j).real()*max_abs,
+                    y[source](1, i, j).imag()*max_abs};
             }
         }
     }
@@ -364,13 +352,13 @@ umxcpp::wiener_filter(umxcpp::StereoSpectrogramC &mix_stft,
  *       shape: nb_frames, nb_bins, nb_channels, nb_channels, realim
  */
 static Eigen::Tensor4dXcf calculateCovariance(
-    const umxcpp::StereoSpectrogramC &y_j,
+    const Eigen::Tensor3dXcf &y_j,
     const int pos,
     const int t_end
 ) {
     //int nb_frames = y_j.dimension(1);
     int nb_frames = t_end-pos;
-    int nb_bins = y_j.left[0].size();
+    int nb_bins = y_j.dimension(2);
     int nb_channels = 2;
 
     // Initialize Cj tensor with zeros
@@ -382,8 +370,8 @@ static Eigen::Tensor4dXcf calculateCovariance(
             for (int ch1 = 0; ch1 < nb_channels; ++ch1) {
                 for (int ch2 = 0; ch2 < nb_channels; ++ch2) {
                     // assign real
-                    std::complex<float> a = ch1 == 0 ? y_j.left[frame+pos][bin] : y_j.right[frame+pos][bin];
-                    std::complex<float> b = ch2 == 0 ? std::conj(y_j.left[frame+pos][bin]) : std::conj(y_j.right[frame+pos][bin]);
+                    std::complex<float> a = y_j(ch1, frame+pos, bin);
+                    std::complex<float> b = std::conj(y_j(ch2, frame+pos, bin));
 
                     //float a_real = a.real();
                     //float a_imag = a.imag();

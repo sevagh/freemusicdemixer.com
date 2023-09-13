@@ -10,25 +10,33 @@
 #include "wiener.hpp"
 #include <array>
 
-std::vector<umxcpp::StereoWaveform> umxcpp::umx_inference(
+std::vector<Eigen::MatrixXf> umxcpp::umx_inference(
     struct umxcpp::umx_model &model,
-    umxcpp::StereoWaveform audio
+    const Eigen::MatrixXf audio
 )
 {
         // number of samples per channel
-        size_t N = audio.left.size();
+        size_t N = audio.cols();
 
         std::cout << "Generating spectrograms" << std::endl;
 
-        umxcpp::StereoSpectrogramC spectrogram = stft(audio);
-        umxcpp::StereoSpectrogramR mix_mag = magnitude(spectrogram);
-        std::vector<StereoSpectrogramR> target_mix_mags;
+        struct umxcpp::stft_buffers reusable_stft_buf(N);
+
+        // copy audio to reusable stft buffers
+        reusable_stft_buf.waveform = audio;
+
+        // in-place stft
+        stft(reusable_stft_buf);
+        Eigen::Tensor3dXcf spectrogram = reusable_stft_buf.spec;
+
+        Eigen::Tensor3dXf mix_mag = spectrogram.abs();
+        std::vector<Eigen::Tensor3dXf> target_mix_mags;
 
         // apply umx inference to the magnitude spectrogram
         int hidden_size = model.hidden_size;
 
-        int nb_frames = mix_mag.left.size();
-        int nb_bins = mix_mag.left[0].size();
+        int nb_frames = mix_mag.dimension(1);
+        int nb_bins = mix_mag.dimension(2);
 
         // create one struct for lstm data to not blow up memory too much
         int lstm_hidden_size = model.hidden_size / 2;
@@ -74,9 +82,9 @@ std::vector<umxcpp::StereoWaveform> umxcpp::umx_inference(
             {
                 // interleave fft frames from each channel
                 // fill first half of 2974/2 bins from left
-                x(i, j) = mix_mag.left[i][j];
+                x(i, j) = mix_mag(0, i, j);
                 // fill second half of 2974/2 bins from right
-                x(i, j + nb_bins_cropped) = mix_mag.right[i][j];
+                x(i, j + nb_bins_cropped) = mix_mag(1, i, j);
             }
         }
 
@@ -201,15 +209,15 @@ std::vector<umxcpp::StereoWaveform> umxcpp::umx_inference(
             std::cout << "Multiply mix mag with computed mask" << std::endl;
 
             // create copy of mix_mag to store the target mix mags
-            umxcpp::StereoSpectrogramR mix_mag_copy = umxcpp::magnitude(spectrogram);
+            Eigen::Tensor3dXf mix_mag_copy = mix_mag;
 
-            for (std::size_t i = 0; i < mix_mag.left.size(); i++)
+            for (int i = 0; i < mix_mag.dimension(1); i++)
             {
-                for (std::size_t j = 0; j < mix_mag.left[0].size(); j++)
+                for (int j = 0; j < mix_mag.dimension(2); j++)
                 {
-                    mix_mag_copy.left[i][j] = x_target(i, j) * mix_mag.left[i][j];
-                    mix_mag_copy.right[i][j] =
-                        x_target(i, j + mix_mag.left[0].size()) * mix_mag.right[i][j];
+                    mix_mag_copy(0, i, j) = x_target(i, j) * mix_mag(0, i, j);
+                    mix_mag_copy(1, i, j) =
+                        x_target(i, j + mix_mag.dimension(2)) * mix_mag(1, i, j);
                 }
             }
 
@@ -220,15 +228,17 @@ std::vector<umxcpp::StereoWaveform> umxcpp::umx_inference(
         std::cout << "Getting complex spec from wiener filtering" << std::endl;
 
         // now let's get a stereo waveform back first with phase
-        std::array<StereoSpectrogramC, 4> mix_complex_targets =
+        std::array<Eigen::Tensor3dXcf, 4> mix_complex_targets =
             wiener_filter(spectrogram, target_mix_mags);
 
         std::cout << "Getting waveforms from istft" << std::endl;
 
-        std::vector<StereoWaveform> return_waveforms;
+        std::vector<Eigen::MatrixXf> return_waveforms;
 
         for (int target = 0; target < 4; ++target) {
-            return_waveforms.push_back(istft(mix_complex_targets[target]));
+            reusable_stft_buf.spec = mix_complex_targets[target];
+            istft(reusable_stft_buf);
+            return_waveforms.push_back(reusable_stft_buf.waveform);
         }
 
         return return_waveforms;

@@ -10,9 +10,9 @@ namespace umxcpp {
 
 // return 4 target waveforms from 1 target mix
 // do wiener-filtering and everything per-chunk
-std::vector<StereoWaveform> umx_inference(
+std::vector<Eigen::MatrixXf> umx_inference(
      struct umx_model &model,
-     StereoWaveform audio
+     const Eigen::MatrixXf audio
 );
 
 }; // namespace umxcpp

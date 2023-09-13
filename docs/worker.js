@@ -52,36 +52,13 @@ function processAudio(leftChannel, rightChannel, module) {
 
     // Call the WASM function for both channels
     // this is blocking, of course, so setInterval won't do anything... how to fix
-    console.log("1. Bass")
+    console.log("Beginning UMX-L Demix inference")
     module._umxDemix(
         arrayPointerL, arrayPointerR, leftChannel.length,
-        0);
-
-    console.log("2. Drums")
-    module._umxDemix(
-        null, null, leftChannel.length,
-        1);
-
-    console.log("3. Other")
-    module._umxDemix(
-        null, null, leftChannel.length,
-        2);
-
-    console.log("4. Vocals")
-    module._umxDemix(
-        null, null, leftChannel.length,
-        3);
-
-    console.log("Wiener filter")
-    module._umxWiener();
-
-    console.log("Finalize waveforms")
-    module._umxFinalize(
         arrayPointerLBass, arrayPointerRBass,
         arrayPointerLDrums, arrayPointerRDrums,
         arrayPointerLOther, arrayPointerROther,
-        arrayPointerLVocals, arrayPointerRVocals,
-        leftChannel.length);
+        arrayPointerLVocals, arrayPointerRVocals);
 
     let wasmArrayLBass = new Float32Array(module.HEAPF32.buffer, arrayPointerLBass, leftChannel.length);
     let wasmArrayLDrums = new Float32Array(module.HEAPF32.buffer, arrayPointerLDrums, leftChannel.length);
