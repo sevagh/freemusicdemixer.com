@@ -10,6 +10,7 @@
 #include "wiener.hpp"
 #include "inference.hpp"
 #include <unsupported/Eigen/MatrixFunctions>
+#include <cmath>
 
 using namespace umxcpp;
 
@@ -110,8 +111,6 @@ extern "C"
                 left_target[i] = target_waveforms[target](0, i);
                 right_target[i] = target_waveforms[target](1, i);
             }
-            model.inference_progress += 0.05f / 4.0f; // 10% = final istft, /4
-            sendProgressUpdate(model.inference_progress);
         }
         // 100% total
     }
@@ -215,6 +214,11 @@ static std::vector<Eigen::MatrixXf> split_inference(
     weight /= weight.maxCoeff();
     weight = weight.array().pow(umxcpp::TRANSITION_POWER);
 
+    float total_reps = std::ceil(static_cast<float>(length) / stride_samples);
+    float per_segment_progress = 1.0f / total_reps;
+
+    std::cout << "Per-segment progress: " << per_segment_progress << std::endl;
+
     // for loop from 0 to length with stride stride_samples
     for (int offset = 0; offset < length; offset += stride_samples) {
         // create a chunk of the padded_full_audio
@@ -226,6 +230,9 @@ static std::vector<Eigen::MatrixXf> split_inference(
 
         // REPLACE THIS WITH UMX INFERENCE!
         std::vector<Eigen::MatrixXf> chunk_out = umx_inference(model, chunk, reusable_stft_buf, streaming_lstm_data);
+
+        model.inference_progress += per_segment_progress;
+        sendProgressUpdate(model.inference_progress);
 
         // add the weighted chunk to the output
         // out[..., offset:offset + segment] += (weight[:chunk_length] * chunk_out).to(mix.device)

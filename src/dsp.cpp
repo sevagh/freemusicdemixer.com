@@ -81,13 +81,8 @@ void umxcpp::stft(struct stft_buffers &stft_buf)
 
 void umxcpp::istft(struct stft_buffers &stft_buf)
 {
-    std::cout << "this is fucked!" << std::endl;
     // get the fft config
     Eigen::FFT<float> cfg = get_fft_cfg();
-
-    std::cout << "stft_buf: " << stft_buf.nb_frames << ", " << stft_buf.nb_bins << std::endl;
-    std::cout << "stft_buf.spec: " << stft_buf.spec.dimension(0) << ", " << stft_buf.spec.dimension(1) << ", " << stft_buf.spec.dimension(2) << std::endl;
-    std::cout << "stft buf complex spec mono: " << stft_buf.complex_spec_mono.size() << ", " << stft_buf.complex_spec_mono[0].size() << std::endl;
 
     /*****************************************/
     /*  operate on each channel sequentially */
@@ -110,8 +105,6 @@ void umxcpp::istft(struct stft_buffers &stft_buf)
         stft_buf.waveform.row(channel) =
             Eigen::Map<Eigen::MatrixXf>(stft_buf.padded_waveform_mono_out.data() + stft_buf.pad, 1, stft_buf.padded_waveform_mono_out.size()-FFT_WINDOW_SIZE);
     }
-
-    std::cout << "Now we good!" << std::endl;
 }
 
 void

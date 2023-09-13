@@ -65,7 +65,16 @@ npx tsc --module es6 ../vendor/wav-file-encoder/src/WavFileEncoder.ts
 
 MUSDB18-HQ test track 'Zeno - Signs':
 
-'Zeno - Signs':
+'Zeno - Signs', fully segmented inference + wiener + streaming lstm:
+**60 second segment**
+```
+vocals          ==> SDR:   6.830  SIR:  16.421  ISR:  14.044  SAR:   7.104
+drums           ==> SDR:   7.425  SIR:  14.570  ISR:  12.062  SAR:   8.905
+bass            ==> SDR:   2.462  SIR:   4.859  ISR:   5.346  SAR:   3.566
+other           ==> SDR:   6.197  SIR:   9.437  ISR:  12.519  SAR:   7.627
+```
+
+'Zeno - Signs', unsegmented inference w/ streaming lstm + wiener:
 ```
 vocals          ==> SDR:   6.846  SIR:  16.382  ISR:  13.897  SAR:   7.024
 drums           ==> SDR:   7.679  SIR:  14.462  ISR:  12.606  SAR:   9.001
@@ -83,12 +92,27 @@ other           ==> SDR:   5.190  SIR:   6.623  ISR:  10.221  SAR:   8.599
 
 ### Memory usage
 
-* Invented streaming UMX LSTM module for longer tracks
-* Now trying entire Demucs segmentation pipeline
+* Streaming UMX LSTM module for longer tracks with entire Demucs segmentation pipeline
 
-Steps:
-1. Bundle reusable buffers together in inference.hpp/cpp
-1. Use bundle from wasm_glue, pass into umx_inference
-1. Implement demucs chunking
-    1. Use demucs chunking to delete/eliminate wiener windowing
-    1. Use demucs chunking to influence or implement streaming lstm
+Testing 'Georgia Wonder - Siren' (largest MUSDB track) for memory usage - it worked!:
+**60s**
+```
+vocals          ==> SDR:   5.858  SIR:  10.880  ISR:  14.336  SAR:   6.187
+drums           ==> SDR:   7.654  SIR:  14.933  ISR:  11.459  SAR:   8.466
+bass            ==> SDR:   7.256  SIR:  12.007  ISR:  10.743  SAR:   6.757
+other           ==> SDR:   4.699  SIR:   7.452  ISR:   9.142  SAR:   4.298
+```
+
+vs. pytorch inference (w/ wiener):
+```
+vocals          ==> SDR:   5.899  SIR:  10.766  ISR:  14.348  SAR:   6.187
+drums           ==> SDR:   7.939  SIR:  14.676  ISR:  12.485  SAR:   8.383
+bass            ==> SDR:   7.576  SIR:  12.712  ISR:  11.188  SAR:   6.951
+other           ==> SDR:   4.624  SIR:   7.937  ISR:   8.845  SAR:   4.270
+```
+
+### Features to add
+
+* Batch upload
+* Developer output console/log on UI?
+* Crescent ad banner w/ Yibo
