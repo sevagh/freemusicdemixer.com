@@ -39,6 +39,7 @@ The architecture of UMX has been modified to make it more suitable for use in a 
 - Quantizing the model weights to 8-bit integers
 - Compressing the model weights with gzip
 - Implementing a streaming LSTM architecture to allow larger tracks to be separated without crashing
+- Implementing segmented inference (copied from Demucs) to allow much larger tracks to be separated without crashing
 
 ### umx.cpp and demucs.cpp
 

@@ -113,6 +113,22 @@ div.mdx-container {
   background: url('../images/mixer.jpg') no-repeat center center/cover;
 }
 
+div.mdx-container-batch {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%; /* Adjust width as per your requirement */
+  height: auto; /* Adjust height as per your requirement */
+  margin: 2vh auto; /* Auto horizontal margins for centering and 2vh vertical margin */
+  border-radius: 10px; /* Rounded corners */
+  color: #e0ffff; /* Text color - Light Cyan */
+  padding: 2%;
+  overflow: auto; /* Will add a scrollbar if the content overflows */
+  z-index: 1;
+  background: url('../images/mixer_batch.jpg') no-repeat center center/cover;
+}
+
 .bottom-right {
   position: absolute;
   bottom: 5%;
@@ -152,4 +168,61 @@ div.image-container {
   img.responsive-img {
     width: 50%; /* width for larger screens */
   }
+}
+
+/* debug terminal */
+
+
+/* To center the outer "checkbox" div */
+#checkbox {
+  text-align: center;
+}
+
+/* To ensure the hidden "devLogs" div also appears centered when visible */
+#devLogs {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* To center the terminals next to each other */
+#terminalContainer {
+  display: flex;
+  justify-content: center;
+}
+
+/* Style for terminal if you have any, just added for demonstration */
+.terminal {
+  border: 1px solid black;
+  padding: 10px;
+  margin: 5px;
+}
+
+/* Hidden class for your convenience */
+.hidden {
+  display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+#terminalContainer {
+    display: flex;
+}
+
+.terminal {
+    background-color: black;
+    color: lime;
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    font-family: "Courier New", monospace;
+    border: 1px solid lime;
+    flex: 1;
+}
+
+#jsTerminal {
+    border-right: 1px solid lime;
 }

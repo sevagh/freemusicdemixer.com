@@ -8,7 +8,7 @@
 
 In music demixing or music source separation, AI models are used to separate the different instruments from a music recording into stems. This web application allows you to demix your music files, free and with no usage limits since it runs on **your computer!** 🫵🏽
 
-Upload a song to decompose it into **bass, drums, vocals, other, and karaoke** using a near-state-of-the-art AI model, [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch) with the [UMX-L](https://zenodo.org/record/5069601) pretrained weights. This site is created and maintained by [Sevag H](https://github.com/sevagh).
+Load a song to decompose it into **bass, drums, vocals, other, and karaoke** using a near-state-of-the-art AI model, [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch) with the [UMX-L](https://zenodo.org/record/5069601) pretrained weights. This site is created and maintained by [Sevag H](https://github.com/sevagh).
 <div class="image-container">
 <img class="responsive-img" src="./assets/images/music-demix.png"/>
 </div>
@@ -17,15 +17,13 @@ Upload a song to decompose it into **bass, drums, vocals, other, and karaoke** u
 
 Unlike similar products, **it's free to use and doesn't store your data.** All processing is done in your browser, and your files are never uploaded anywhere. It runs well on computers and **very slowly** on smartphones; user beware.
 
-### Support and partnership opportunities
+## Support this site!
 
 **For individuals:**
 Love this free site? You can support my work through [GitHub Sponsors](https://github.com/sponsors/sevagh) or [PayPal](https://paypal.me/sevagh1337?country.x=CA&locale.x=en_US)
 
 **For companies:**
 If you're a company in the pro music space (mixing/demixing, DAW, etc.), advertising on this platform may offer targeted visibility within the music and technology community. [Contact me](mailto:sevagh+freemdx@protonmail.com) for partnership opportunities.
-
-Your support helps make these features possible!
 
 ## Demo
 
@@ -46,9 +44,10 @@ Here's a demo of 20 seconds of demixed outputs; press the play button and toggle
 
 Ready to try it on your own music files?
 
-## Demixer app
+## Demixer apps
 
 <div class="mdx-container" id="mdx-app">
+    <b><p>Single track</p></b>
     <button id="load-weights">Download weights (45 MB)</button>
     <div class="progress-container">
         <div class="progress-text" id="load-progress-text">Downloading weights...</div>
@@ -80,10 +79,52 @@ To cancel the running job, refresh the page
     </div>
 </div>
 
+<div class="mdx-container-batch" id="mdx-app-batch">
+    <b><p>Multiple tracks</p></b>
+    <button id="load-weights-2">Download weights (45 MB)</button>
+    <div class="progress-container">
+        <div class="progress-text" id="load-progress-text-2">Downloading weights...</div>
+        <div class="progress-bar">
+            <div class="progress-bar-inner" id="load-progress-bar-2" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <input type="file" id="batch-upload" webkitdirectory directory multiple />
+
+    <br>
+    <button id="load-batch" class="button">Batch demix folder</button>
+    <br>
+    <div class="progress-container">
+        <div class="progress-text" id="inference-progress-text-batch">Batch demix progress...</div>
+        <div class="progress-bar">
+            <div class="progress-bar-inner" id="inference-progress-bar-batch" style="width: 0%"></div>
+        </div>
+    </div>
+To cancel the running job, refresh the page
+<br>
+<br>
+    <div class="bottom-right">
+ <small> Photo by <a href="https://unsplash.com/@llane_a?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Amin Asbaghipour</a></small>
+    </div>
+</div>
+
+<div id="checkbox">
+    <label><input type="checkbox" id="toggleDevLogs"> Show dev logs</label>
+    <div id="devLogs" class="hidden">
+        <button onclick="clearLogs()">Clear</button>
+        <div id="terminalContainer">
+            <div id="jsTerminal" class="terminal"></div>
+            <div id="wasmTerminal" class="terminal"></div>
+        </div>
+    </div>
+</div>
+<br>
+
 ### **Latest news**
 
-* Improved demixing quality by ~1 dB SDR by implementing Wiener filtering
-* Reduced memory usage, allowing larger tracks to be demixed
+* Improved demixing quality by 1+ dB SDR with Wiener filtering
+* Support demixing larger tracks with low-memory segmented inference and streaming LSTM 
+* Added batch demixing and a checkbox to enable dev output logs
 
 ### **Disclaimers!**
 

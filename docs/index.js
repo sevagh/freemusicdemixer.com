@@ -8,15 +8,24 @@ const worker = new Worker('worker.js');
 // disable the input file upload and the waveform upload button
 document.getElementById('audio-upload').disabled = true;
 document.getElementById('load-waveform').disabled = true;
+document.getElementById('batch-upload').disabled = true;
+document.getElementById('load-batch').disabled = true;
 
 // Listen for messages from the worker
 worker.onmessage = function(e) {
     if (e.data.msg === 'WASM_READY') {
         // WASM module is ready, enable the buttons
+        // disable load-weight buttons
+        document.getElementById('load-weights').disabled = true;
+        document.getElementById('load-weights-2').disabled = true;
         document.getElementById('audio-upload').disabled = false;
+        document.getElementById('batch-upload').disabled = false;
         document.getElementById('load-waveform').disabled = false;
+        document.getElementById('load-batch').disabled = false;
         document.getElementById('load-progress-bar').style.width = '100%';
         document.getElementById('load-progress-text').textContent = 'Finished loading!';
+        document.getElementById('load-progress-bar-2').style.width = '100%';
+        document.getElementById('load-progress-text-2').textContent = 'Finished loading!';
     } else if (e.data.msg === 'PROGRESS_UPDATE') {
         // Update the progress bar
         const progress = e.data.data;
@@ -35,6 +44,10 @@ worker.onmessage = function(e) {
 
 // Send a message to the worker to load the WASM module if the user requests it
 document.getElementById('load-weights').addEventListener('click', () => {
+    worker.postMessage({ msg: 'LOAD_WASM' });
+});
+
+document.getElementById('load-weights-2').addEventListener('click', () => {
     worker.postMessage({ msg: 'LOAD_WASM' });
 });
 
@@ -237,3 +250,93 @@ function createTracks(trackDataMap) {
     return {name, sourceNode, gainNode};
   });
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    let checkbox = document.getElementById("toggleDevLogs");
+    let devLogs = document.getElementById("devLogs");
+
+    checkbox.addEventListener("change", function() {
+        if (checkbox.checked) {
+            devLogs.classList.remove("hidden");
+        } else {
+            devLogs.classList.add("hidden");
+        }
+    });
+});
+
+function clearLogs() {
+    let jsTerminal = document.getElementById("jsTerminal");
+    let wasmTerminal = document.getElementById("wasmTerminal");
+    jsTerminal.textContent = "";
+    wasmTerminal.textContent = "";
+}
+
+function writeJsLog(str) {
+    let jsTerminal = document.getElementById("jsTerminal");
+    jsTerminal.textContent += str + "\n";
+    jsTerminal.scrollTop = jsTerminal.scrollHeight;
+}
+
+function writeWasmLog(str) {
+    let wasmTerminal = document.getElementById("wasmTerminal");
+    wasmTerminal.textContent += str + "\n";
+    wasmTerminal.scrollTop = wasmTerminal.scrollHeight;
+}
+
+/* TODO: flesh this out */
+document.getElementById('load-batch').addEventListener('click', () => {
+    const folderSelector = document.getElementById("batch-upload");
+    
+    folderSelector.addEventListener("change", function() {
+        const fileList = this.files;
+        for (let i = 0; i < fileList.length; i++) {
+            const file = fileList[i];
+            console.log(file.webkitRelativePath);
+        }
+    });
+
+    if (!file) {
+        console.log('No file selected.');
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        // reset the progress bar
+        document.getElementById('inference-progress-bar').style.width = '0%';
+        // delete the previous download links
+        let downloadLinksDiv = document.getElementById('output-links');
+        while (downloadLinksDiv.firstChild) {
+            downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
+        }
+
+        const arrayBuffer = event.target.result;
+
+        audioContext.decodeAudioData(arrayBuffer, function(decodedData) {
+            let leftChannel, rightChannel;
+            // decodedData is an AudioBuffer
+            if (decodedData.numberOfChannels == 1) {
+                // Mono case
+                leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
+                rightChannel = decodedData.getChannelData(0); // Float32Array representing right channel data
+            } else {
+                // Stereo case
+                leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
+                rightChannel = decodedData.getChannelData(1); // Float32Array representing right channel data
+            }
+
+            // disable buttons when working
+            document.getElementById('audio-upload').disabled = true;
+            document.getElementById('load-waveform').disabled = true;
+
+            worker.postMessage({
+                msg: 'PROCESS_AUDIO',
+                leftChannel: leftChannel,
+                rightChannel: rightChannel,
+            });
+        });
+    };
+
+    reader.readAsArrayBuffer(file);
+});
