@@ -80,3 +80,14 @@ drums           ==> SDR:   6.538  SIR:  11.209  ISR:  11.163  SAR:   8.317
 bass            ==> SDR:   1.646  SIR:   0.931  ISR:   5.261  SAR:   2.944
 other           ==> SDR:   5.190  SIR:   6.623  ISR:  10.221  SAR:   8.599
 ```
+
+### Memory usage
+
+* Invented streaming UMX LSTM module for longer tracks
+* Now trying entire Demucs segmentation pipeline
+
+Steps:
+1. Move inference logic out of wasm_glue
+2. After implement demucs chunking
+    1. Use demucs chunking to delete/eliminate wiener windowing
+    1. Use demucs chunking to set streaming lstm size

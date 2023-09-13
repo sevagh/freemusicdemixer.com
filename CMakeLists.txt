@@ -52,7 +52,7 @@ if(EMSCRIPTEN)
     file(COPY ${CMAKE_SOURCE_DIR}/models/ggml-model-umxl-u8.bin.gz DESTINATION ${CMAKE_BINARY_DIR})
 
     set_target_properties(umx PROPERTIES
-        LINK_FLAGS "-s WASM=1 -s ASSERTIONS=1 -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4GB -s MODULARIZE=1 -s EXPORT_NAME=libumx --preload-file ${CMAKE_BINARY_DIR}/ggml-model-umxl-u8.bin.gz -s EXPORTED_FUNCTIONS=\"['_malloc', '_free', '_umxInit', '_umxLoadProgress', '_umxInferenceProgress', '_umxDemix', '_umxWiener', '_umxFinalize']\""
+        LINK_FLAGS "-s WASM=1 -s ASSERTIONS=1 -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4GB -s MODULARIZE=1 -s EXPORT_NAME=libumx --preload-file ${CMAKE_BINARY_DIR}/ggml-model-umxl-u8.bin.gz -s EXPORTED_FUNCTIONS=\"['_malloc', '_free', '_umxInit', '_umxLoadProgress', '_umxInferenceProgress', '_umxDemix']\""
     )
 
     # copy umx.js, umx.wasm to ${CMAKE_SOURCE_DIR}/docs
