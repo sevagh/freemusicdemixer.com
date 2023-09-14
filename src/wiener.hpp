@@ -2,12 +2,13 @@
 #define WIENER_HPP
 
 #include "dsp.hpp"
+#include <cmath>
+#include <complex>
 #include <string>
 #include <vector>
-#include <complex>
-#include <cmath>
 
-namespace umxcpp {
+namespace umxcpp
+{
 const float WIENER_EPS = 1e-10f;
 const float WIENER_SCALE_FACTOR = 10.0f;
 

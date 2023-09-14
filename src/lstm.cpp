@@ -43,15 +43,16 @@ struct umxcpp::lstm_data umxcpp::create_lstm_data(int hidden_size, int seq_len)
     int hidden_state_size = hidden_size;
     int cell_state_size = hidden_state_size;
 
-    struct umxcpp::lstm_data ret{// output_per_direction[3][2]
-            {
-                {Eigen::MatrixXf::Zero(seq_len, hidden_state_size),
-                 Eigen::MatrixXf::Zero(seq_len, hidden_state_size)},
-                {Eigen::MatrixXf::Zero(seq_len, hidden_state_size),
-                 Eigen::MatrixXf::Zero(seq_len, hidden_state_size)},
-                {Eigen::MatrixXf::Zero(seq_len, hidden_state_size),
-                 Eigen::MatrixXf::Zero(seq_len, hidden_state_size)},
-            },
+    struct umxcpp::lstm_data ret
+    { // output_per_direction[3][2]
+        {
+            {Eigen::MatrixXf::Zero(seq_len, hidden_state_size),
+             Eigen::MatrixXf::Zero(seq_len, hidden_state_size)},
+            {Eigen::MatrixXf::Zero(seq_len, hidden_state_size),
+             Eigen::MatrixXf::Zero(seq_len, hidden_state_size)},
+            {Eigen::MatrixXf::Zero(seq_len, hidden_state_size),
+             Eigen::MatrixXf::Zero(seq_len, hidden_state_size)},
+        },
             // output[3]
             {
                 Eigen::MatrixXf::Zero(seq_len, 2 * hidden_state_size),
@@ -67,21 +68,23 @@ struct umxcpp::lstm_data umxcpp::create_lstm_data(int hidden_size, int seq_len)
                 {Eigen::MatrixXf::Zero(hidden_state_size, 1),
                  Eigen::MatrixXf::Zero(hidden_state_size, 1)},
             },
-            // c[3][2]
-            {
+        // c[3][2]
+        {
+            {Eigen::MatrixXf::Zero(cell_state_size, 1),
+             Eigen::MatrixXf::Zero(cell_state_size, 1)},
                 {Eigen::MatrixXf::Zero(cell_state_size, 1),
                  Eigen::MatrixXf::Zero(cell_state_size, 1)},
                 {Eigen::MatrixXf::Zero(cell_state_size, 1),
                  Eigen::MatrixXf::Zero(cell_state_size, 1)},
-                {Eigen::MatrixXf::Zero(cell_state_size, 1),
-                 Eigen::MatrixXf::Zero(cell_state_size, 1)},
-            }};
+        }
+    };
 
     umxcpp::umx_lstm_set_zero(&ret);
     return ret;
 }
 
-void umxcpp::umx_lstm_set_zero(struct umxcpp::lstm_data *data) {
+void umxcpp::umx_lstm_set_zero(struct umxcpp::lstm_data *data)
+{
     // set all data to zero between targets
     for (int i = 0; i < 3; ++i)
     {

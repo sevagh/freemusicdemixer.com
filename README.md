@@ -8,26 +8,8 @@ I transliterated the original PyTorch model Python code to C++ using Eigen. It c
 
 This is based on [umx.cpp](https://github.com/sevagh/umx.cpp), my other project. This repo focuses on the WASM and web aspects, while umx.cpp is more about maintaining 1:1 performance parity with the original Open-Unmix (supporting both umxhq and umxl). 
 
-### Streaming UMX architecture
-
-Aside from the quantization, I recently implemented a streaming version of UMX inference to reduce the memory usage and allow for longer songs to be demixed on <https://freemusicdemixer.com>. The results are that the longest MUSDB18-HQ test song, 'Georgia Wonder - Siren', is now demixable by the WASM code in the web app:
-```
-umx.cpp results (non-streaming, default UMXL inference with quantized weights):
-    vocals          ==> SDR:   5.553  SIR:  10.395  ISR:  13.159  SAR:   5.862
-    drums           ==> SDR:   6.767  SIR:  12.154  ISR:  12.629  SAR:   7.438
-    bass            ==> SDR:   5.515  SIR:   8.352  ISR:  12.376  SAR:   6.606
-    other           ==> SDR:   3.667  SIR:   3.124  ISR:   6.302  SAR:   4.585
-
-UMXL streaming architecture with quantized weights:
-    vocals          ==> SDR:   5.552  SIR:  10.400  ISR:  13.089  SAR:   5.969
-    drums           ==> SDR:   6.402  SIR:  11.153  ISR:  10.102  SAR:   7.653
-    bass            ==> SDR:   5.368  SIR:   8.419  ISR:  10.691  SAR:   6.393
-    other           ==> SDR:   3.992  SIR:   3.361  ISR:   8.008  SAR:   5.056
-```
-
 ### Roadmap
 
-- Implement Wiener Expectation-Maximization post-processing (adds ~1 dB performance overall); see [umx.cpp issue #1](https://github.com/sevagh/umx.cpp/issues/1)
 - Implement demucs v4 (hybrid transformer, `htdemucs`) and the 6-source (`htdemucs_6s`) variants
 
 ### Dev instructions
@@ -47,10 +29,6 @@ gzip -k ./ggml-umxl/ggml-model-umxhl-u8.bin
 Build for WebAssembly with Emscripten using `emcmake`:
 ```
 mkdir -p build-wasm && cd build-wasm && emcmake cmake .. && make
-```
-Build a regular library and the `file_demixer` binary (only tested on Linux):
-```
-mkdir -p build-cpp && cd build-cpp && cmake .. && make
 ```
 
 ### Notes
@@ -89,9 +67,9 @@ bass            ==> SDR:   1.646  SIR:   0.931  ISR:   5.261  SAR:   2.944
 other           ==> SDR:   5.190  SIR:   6.623  ISR:  10.221  SAR:   8.599
 ```
 
-### Memory usage
+### Memory usage with segmented inference and streaming LSTM
 
-* Streaming UMX LSTM module for longer tracks with entire Demucs segmentation pipeline
+* Streaming UMX LSTM module for longer tracks with Demucs overlapping segment inference
 
 Testing 'Georgia Wonder - Siren' (largest MUSDB track) for memory usage with 60s segments:
 ```
