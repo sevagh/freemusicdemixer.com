@@ -27,6 +27,7 @@ static std::vector<Eigen::MatrixXf> split_inference(
 extern "C"
 {
     static umx_model model;
+    bool batch_mode = false;
 
     // Define a JavaScript function using EM_JS
     EM_JS(void, sendProgressUpdate, (float progress), {
@@ -58,13 +59,17 @@ extern "C"
         float *left_0, float *right_0,
         float *left_1, float *right_1,
         float *left_2, float *right_2,
-        float *left_3, float *right_3)
+        float *left_3, float *right_3, bool batch_mode_param)
     {
+        batch_mode = batch_mode_param;
+
         // number of samples per channel
         size_t N = length;
 
         model.inference_progress = 0.0f;
-        sendProgressUpdate(model.inference_progress);
+        if (not batch_mode) {
+            sendProgressUpdate(model.inference_progress);
+        }
 
         Eigen::MatrixXf audio(2, N);
         // fill audio struct with zeros
@@ -232,7 +237,9 @@ static std::vector<Eigen::MatrixXf> split_inference(
         std::vector<Eigen::MatrixXf> chunk_out = umx_inference(model, chunk, reusable_stft_buf, streaming_lstm_data);
 
         model.inference_progress += per_segment_progress;
-        sendProgressUpdate(model.inference_progress);
+        if (not batch_mode) {
+            sendProgressUpdate(model.inference_progress);
+        }
 
         // add the weighted chunk to the output
         // out[..., offset:offset + segment] += (weight[:chunk_length] * chunk_out).to(mix.device)

@@ -3,6 +3,7 @@
 <script src="index.js" type="module"></script>
 <script data-goatcounter="https://sevagh.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
 # Free AI-based music demixing web app
 
@@ -92,7 +93,8 @@ To cancel the running job, refresh the page
     <input type="file" id="batch-upload" webkitdirectory directory multiple />
 
     <br>
-    <button id="load-batch" class="button">Batch demix folder</button>
+    <br>
+    <button id="load-batch" class="button">Start batch demix</button>
     <br>
     <div class="progress-container">
         <div class="progress-text" id="inference-progress-text-batch">Batch demix progress...</div>
@@ -103,6 +105,11 @@ To cancel the running job, refresh the page
 To cancel the running job, refresh the page
 <br>
 <br>
+    <div class="output-container">
+        <div class="output-text" id="output-progress-text">Batch outputs...</div>
+        <div class="output-link-container" id="output-links-batch">
+        </div>
+    </div>
     <div class="bottom-right">
  <small> Photo by <a href="https://unsplash.com/@llane_a?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Amin Asbaghipour</a></small>
     </div>
@@ -124,7 +131,7 @@ To cancel the running job, refresh the page
 
 * Improved demixing quality by 1+ dB SDR with Wiener filtering
 * Support demixing larger tracks with low-memory segmented inference and streaming LSTM 
-* Added batch demixing and a checkbox to enable dev output logs
+* Added batch demixing and a checkbox to show developer output logs
 
 ### **Disclaimers!**
 

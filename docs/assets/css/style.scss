@@ -126,6 +126,7 @@ div.mdx-container-batch {
   padding: 2%;
   overflow: auto; /* Will add a scrollbar if the content overflows */
   z-index: 1;
+  opacity: 0.9;
   background: url('../images/mixer_batch.jpg') no-repeat center center/cover;
 }
 

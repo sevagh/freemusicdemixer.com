@@ -39,6 +39,16 @@ worker.onmessage = function(e) {
 
         document.getElementById('audio-upload').disabled = false;
         document.getElementById('load-waveform').disabled = false;
+    } else if (e.data.msg === 'PROCESSING_DONE_BATCH') {
+        const targetWaveforms = e.data.waveforms;
+        const filename = e.data.filename;
+        // Process the target waveforms
+        // Encode target waveforms to WAV files
+        console.log(filename)
+        console.log(targetWaveforms)
+        const progressBar = document.getElementById('inference-progress-bar-batch');
+        progressBar.style.width = (parseFloat(progressBar.style.width) + e.data.progressIncrement) + '%';
+        packageAndZip(targetWaveforms, filename);
     }
 };
 
@@ -283,60 +293,157 @@ function writeWasmLog(str) {
     wasmTerminal.scrollTop = wasmTerminal.scrollHeight;
 }
 
-/* TODO: flesh this out */
-document.getElementById('load-batch').addEventListener('click', () => {
-    const folderSelector = document.getElementById("batch-upload");
-    
-    folderSelector.addEventListener("change", function() {
-        const fileList = this.files;
-        for (let i = 0; i < fileList.length; i++) {
-            const file = fileList[i];
-            console.log(file.webkitRelativePath);
-        }
-    });
-
-    if (!file) {
-        console.log('No file selected.');
+document.getElementById('load-batch').addEventListener('click', async () => {
+    // Check if a folder is selected
+    const inputDir = document.getElementById("batch-upload");
+    if (!inputDir) {
+        console.log('No input folder selected.');
         return;
     }
 
-    const reader = new FileReader();
+    const files = inputDir.files;
+    if (!files) {
+        console.log('No files in input folder.');
+        return;
+    }
 
-    reader.onload = function(event) {
-        // reset the progress bar
-        document.getElementById('inference-progress-bar').style.width = '0%';
-        // delete the previous download links
-        let downloadLinksDiv = document.getElementById('output-links');
-        while (downloadLinksDiv.firstChild) {
-            downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
-        }
+    console.log("Disabling buttons!")
+    document.getElementById('batch-upload').disabled = true;
+    document.getElementById('load-batch').disabled = true;
+    document.getElementById('inference-progress-bar-batch').style.width = '0%';
 
-        const arrayBuffer = event.target.result;
+    // delete the previous download links
+    let downloadLinksDiv = document.getElementById('output-links-batch');
+    while (downloadLinksDiv.firstChild) {
+        downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
+    }
 
-        audioContext.decodeAudioData(arrayBuffer, function(decodedData) {
-            let leftChannel, rightChannel;
-            // decodedData is an AudioBuffer
-            if (decodedData.numberOfChannels == 1) {
-                // Mono case
-                leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
-                rightChannel = decodedData.getChannelData(0); // Float32Array representing right channel data
-            } else {
-                // Stereo case
-                leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
-                rightChannel = decodedData.getChannelData(1); // Float32Array representing right channel data
-            }
-
-            // disable buttons when working
-            document.getElementById('audio-upload').disabled = true;
-            document.getElementById('load-waveform').disabled = true;
-
-            worker.postMessage({
-                msg: 'PROCESS_AUDIO',
-                leftChannel: leftChannel,
-                rightChannel: rightChannel,
-            });
-        });
-    };
-
-    reader.readAsArrayBuffer(file);
+    await processFiles(files);
 });
+
+async function processFiles(files) {
+    if (!files || files.length === 0) {
+        console.log('Folder has no files.');
+        return;
+    }
+
+    const progressIncrement = 100 / files.length;
+
+    for (const file of files) {
+        console.log(`Processing ${file.name}`);
+
+        const reader = new FileReader();
+        await new Promise(resolve => {
+            reader.onload = async function(event) {
+                const arrayBuffer = event.target.result;
+
+                audioContext.decodeAudioData(
+                    arrayBuffer,
+                    function(decodedData) {
+                        let leftChannel, rightChannel;
+                        if (decodedData.numberOfChannels === 1) {
+                            leftChannel = decodedData.getChannelData(0);
+                            rightChannel = decodedData.getChannelData(0);
+                        } else {
+                            leftChannel = decodedData.getChannelData(0);
+                            rightChannel = decodedData.getChannelData(1);
+                        }
+                        const filenameWithoutExt = file.name.slice(0, file.name.lastIndexOf('.'));
+
+                        worker.postMessage({
+                            msg: 'PROCESS_AUDIO_BATCH',
+                            leftChannel: leftChannel,
+                            rightChannel: rightChannel,
+                            filename: filenameWithoutExt,
+                            progressIncrement: progressIncrement
+                        });
+
+                        resolve();
+                    },
+                    function(err) {
+                        console.log(`Skipping ${file.name} due to decoding error.`);
+                        resolve(); // resolve the Promise to continue with the next file
+                    }
+                );
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
+    document.getElementById('batch-upload').disabled = false;
+    document.getElementById('load-batch').disabled = false;
+    console.log('Finished processing all files.');
+}
+
+async function packageAndZip(targetWaveforms, filename) {
+    // Create a new JSZip object
+    const zip = new JSZip();
+
+    // Create separate stereo AudioBuffers for vocals, bass, drums, and other
+    let vocalsBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+    let bassBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+    let drumsBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+    let otherBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+    let karaokeBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+
+    bassBuffer.copyToChannel(targetWaveforms[0], 0);
+    bassBuffer.copyToChannel(targetWaveforms[1], 1);
+
+    drumsBuffer.copyToChannel(targetWaveforms[2], 0);
+    drumsBuffer.copyToChannel(targetWaveforms[3], 1);
+
+    otherBuffer.copyToChannel(targetWaveforms[4], 0);
+    otherBuffer.copyToChannel(targetWaveforms[5], 1);
+
+    vocalsBuffer.copyToChannel(targetWaveforms[6], 0);
+    vocalsBuffer.copyToChannel(targetWaveforms[7], 1);
+
+    // store sum of bass, drums, and other in karaokeBuffer
+    for (let i = 0; i < targetWaveforms[0].length; i++) {
+        karaokeBuffer.getChannelData(0)[i] = targetWaveforms[0][i] + targetWaveforms[2][i] + targetWaveforms[4][i];
+        karaokeBuffer.getChannelData(1)[i] = targetWaveforms[1][i] + targetWaveforms[3][i] + targetWaveforms[5][i];
+    }
+
+    // now create audio wav files
+    // and create downloadable links for them
+    // from the 4 returned targetWaveforms
+    // 0 = bass, 1 = drums, 2 = other, 3 = vocals
+    const bassBuf = encodeWavFileFromAudioBuffer(bassBuffer, 1);
+    const drumsBuf = encodeWavFileFromAudioBuffer(drumsBuffer, 1);
+    const otherBuf = encodeWavFileFromAudioBuffer(otherBuffer, 1);
+    const vocalsBuf = encodeWavFileFromAudioBuffer(vocalsBuffer, 1);
+    const karaokeBuf = encodeWavFileFromAudioBuffer(karaokeBuffer, 1);
+
+    const bassBlob = new Blob([bassBuf], {type: 'audio/wav'});
+    const drumsBlob = new Blob([drumsBuf], {type: 'audio/wav'});
+    const otherBlob = new Blob([otherBuf], {type: 'audio/wav'});
+    const vocalsBlob = new Blob([vocalsBuf], {type: 'audio/wav'});
+    const karaokeBlob = new Blob([karaokeBuf], {type: 'audio/wav'});
+  
+    // Add your blobs as files to the zip
+    zip.file("bass.wav", bassBlob);
+    zip.file("drums.wav", drumsBlob);
+    zip.file("other.wav", otherBlob);
+    zip.file("vocals.wav", vocalsBlob);
+    zip.file("karaoke.wav", karaokeBlob);
+  
+    // Generate the zip file as a Blob
+    const content = await zip.generateAsync({ type: "blob" });
+  
+    // Use blob to allow download
+    const zipUrl = URL.createObjectURL(content);
+
+    const zipName = `${filename}_stems.zip`;
+ 
+    let downloadLinksBatchDiv = document.getElementById('output-links-batch');
+
+    const zipLink = document.createElement('a');
+    zipLink.href = zipUrl;
+
+    zipLink.textContent = zipName;
+    zipLink.download = zipName;
+
+    // Append the link elements to the document body
+    downloadLinksBatchDiv.appendChild(zipLink);
+}
