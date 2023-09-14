@@ -56,11 +56,6 @@ struct umx_model
 };
 
 bool load_umx_model(const std::string &model_dir, struct umx_model *model);
-
-std::array<Eigen::MatrixXf, 4> umx_inference(struct umx_model *model,
-                                             const Eigen::MatrixXf &x,
-                                             int hidden_size);
-
 } // namespace umxcpp
 
 #endif // MODEL_HPP

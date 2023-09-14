@@ -1,16 +1,31 @@
 // wasm_glue.cpp
 #include "dsp.hpp"
+#include "inference.hpp"
 #include "lstm.hpp"
 #include "model.hpp"
+#include "wiener.hpp"
+#include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <emscripten.h>
 #include <iostream>
+#include <unsupported/Eigen/MatrixFunctions>
+#include <vector>
 
 using namespace umxcpp;
+
+// forward declarations
+
+static std::vector<Eigen::MatrixXf>
+shift_inference(struct umxcpp::umx_model &model, Eigen::MatrixXf &full_audio);
+
+static std::vector<Eigen::MatrixXf>
+split_inference(struct umxcpp::umx_model &model, Eigen::MatrixXf &full_audio);
 
 extern "C"
 {
     static umx_model model;
+    bool batch_mode = false;
 
     // Define a JavaScript function using EM_JS
     EM_JS(void, sendProgressUpdate, (float progress), {
@@ -19,9 +34,47 @@ extern "C"
         postMessage({msg : 'PROGRESS_UPDATE', data : progress});
     });
 
+    EM_JS(void, callWriteWasmLog, (const char *str),
+          { postMessage({msg : 'WASM_LOG', data : UTF8ToString(str)}); });
+
+    class CustomBuf : public std::streambuf
+    {
+      public:
+        CustomBuf() {}
+        virtual int overflow(int c)
+        {
+            if (c == '\n')
+            {
+                flushBuffer();
+            }
+            else
+            {
+                buffer += static_cast<char>(c);
+            }
+            return c;
+        }
+        void flushBuffer()
+        {
+            if (!buffer.empty())
+            {
+                callWriteWasmLog(buffer.c_str());
+                buffer.clear();
+            }
+        }
+
+      private:
+        std::string buffer;
+    };
+
+    // Global instances
+    static CustomBuf customCoutBuffer;
+    static CustomBuf customCerrBuffer;
+
     EMSCRIPTEN_KEEPALIVE
     void umxInit()
     {
+        std::cout.rdbuf(&customCoutBuffer);
+        std::cerr.rdbuf(&customCerrBuffer);
         bool success = load_umx_model("ggml-model-umxl-u8.bin.gz", &model);
         if (!success)
         {
@@ -37,237 +90,273 @@ extern "C"
     float umxInferenceProgress() { return model.inference_progress; }
 
     EMSCRIPTEN_KEEPALIVE
-    void umxDemix(const float *left, const float *right, int length,
-                  float *left_bass, float *right_bass, float *left_drums,
-                  float *right_drums, float *left_other, float *right_other,
-                  float *left_vocals, float *right_vocals)
+    void umxDemixSegment(const float *left, const float *right, int length,
+                         float *left_0, float *right_0, float *left_1,
+                         float *right_1, float *left_2, float *right_2,
+                         float *left_3, float *right_3, bool batch_mode_param)
     {
-        model.inference_progress = 0.0f;
-        sendProgressUpdate(model.inference_progress);
+        std::cout << "Beginning UMX-L Demix inference" << std::endl;
+        batch_mode = batch_mode_param;
 
         // number of samples per channel
         size_t N = length;
 
-        // create a struct to hold two float vectors for left and right channels
-        umxcpp::StereoWaveform audio;
-        audio.left.resize(N);
-        audio.right.resize(N);
+        model.inference_progress = 0.0f;
+        if (not batch_mode)
+        {
+            sendProgressUpdate(model.inference_progress);
+        }
+
+        Eigen::MatrixXf audio(2, N);
+        // fill audio struct with zeros
+        audio.setZero();
 
         // Stereo case
+        // copy input float* arrays into audio struct
         for (size_t i = 0; i < N; ++i)
         {
-            audio.left[i] = left[i];   // left channel
-            audio.right[i] = right[i]; // right channel
+            audio(0, i) = left[i];  // left channel
+            audio(1, i) = right[i]; // right channel
         }
 
-        std::cout << "Generating spectrograms" << std::endl;
+        std::vector<Eigen::MatrixXf> target_waveforms =
+            shift_inference(model, audio);
 
-        StereoSpectrogramC spectrogram = stft(audio);
-        StereoSpectrogramR mix_mag = magnitude(spectrogram);
-        StereoSpectrogramR mix_phase = phase(spectrogram);
-
-        // apply umx inference to the magnitude spectrogram
-        int hidden_size = model.hidden_size;
-
-        int nb_frames = mix_mag.left.size();
-        int nb_bins = mix_mag.left[0].size();
-
-        // 2974 is related to bandwidth=16000 Hz in open-unmix
-        // wherein frequency bins above 16000 Hz, corresponding to
-        // 2974/2 = 1487 bins, are discarded
-        //
-        // left = 2049 fft bins, cropped to 16000 Hz or :1487
-        // right = 2049 fft bins, cropped to :1487
-        // stack on top of each other for 2974 total input features
-        //
-        // this will be fed into the first linear encoder into hidden size
-        Eigen::MatrixXf x(nb_frames, 2974);
-
-        int nb_bins_cropped = 2974 / 2;
-
-        std::cout << "populate eigen matrixxf" << std::endl;
-        for (int i = 0; i < nb_frames; i++)
-        {
-            for (int j = 0; j < nb_bins_cropped; j++)
-            {
-                // interleave fft frames from each channel
-                // fill first half of 2974/2 bins from left
-                x(i, j) = mix_mag.left[i][j];
-                // fill second half of 2974/2 bins from right
-                x(i, j + nb_bins_cropped) = mix_mag.right[i][j];
-            }
-        }
-
-        // create one struct for lstm data to not blow up memory too much
-        int lstm_hidden_size = model.hidden_size / 2;
-
-        auto lstm_data = umxcpp::create_lstm_data(lstm_hidden_size, x.rows());
-
-        std::cout << "Input scaling" << std::endl;
-
-        Eigen::MatrixXf x_input;
-        StereoWaveform target_waveform;
-
+        std::cout << "Copying waveforms" << std::endl;
         for (int target = 0; target < 4; ++target)
         {
-            x_input = x; // copy x
-
-            // apply formula x = x*input_scale + input_mean
-            for (int i = 0; i < x_input.rows(); i++)
-            {
-                x_input.row(i) =
-                    x_input.row(i).array() * model.input_scale[target].array() +
-                    model.input_mean[target].array();
-            }
-
-            model.inference_progress += 0.1f / 4.; // 10% = all stfts, /4
-            sendProgressUpdate(model.inference_progress);
-
-            std::cout << "Target " << target << " fc1" << std::endl;
-            x_input *= model.fc1_w[target];
-
-            std::cout << "Target " << target << " bn1" << std::endl;
-            // batchnorm1d calculation
-            // y=(x-E[x])/(sqrt(Var[x]+ϵ) * gamma + Beta
-            for (int i = 0; i < x_input.rows(); i++)
-            {
-                x_input.row(i) =
-                    (((x_input.row(i).array() - model.bn1_rm[target].array()) /
-                      (model.bn1_rv[target].array() + 1e-5).sqrt()) *
-                         model.bn1_w[target].array() +
-                     model.bn1_b[target].array())
-                        .tanh();
-            }
-            model.inference_progress += 0.05f; // 5% = layer 1 per-target
-            sendProgressUpdate(model.inference_progress);
-            // 30% total
-
-            std::cout << "Target " << target << " lstm" << std::endl;
-            auto lstm_out_0 = umxcpp::umx_lstm_forward(
-                &model, target, x_input, &lstm_data, lstm_hidden_size);
-
-            // now the concat trick from umx for the skip conn
-            //    # apply 3-layers of stacked LSTM
-            //    lstm_out = self.lstm(x)
-            //    # lstm skip connection
-            //    x = torch.cat([x, lstm_out[0]], -1)
-            // concat the lstm_out with the input x
-            Eigen::MatrixXf x_inputs_target_concat(
-                x_input.rows(), x_input.cols() + lstm_out_0.cols());
-            x_inputs_target_concat.leftCols(x_input.cols()) = x_input;
-            x_inputs_target_concat.rightCols(lstm_out_0.cols()) = lstm_out_0;
-
-            x_input = x_inputs_target_concat;
-
-            model.inference_progress += 0.05f; // 5% = lstm per-target
-            sendProgressUpdate(model.inference_progress);
-            // 50% total
-
-            std::cout << "Target " << target << " fc2" << std::endl;
-            // now time for fc2
-            x_input *= model.fc2_w[target];
-
-            std::cout << "Target " << target << " bn2" << std::endl;
-            // batchnorm1d calculation
-            // y=(x-E[x])/(sqrt(Var[x]+ϵ) * gamma + Beta
-            for (int i = 0; i < x_input.rows(); i++)
-            {
-                x_input.row(i) =
-                    (((x_input.row(i).array() - model.bn2_rm[target].array()) /
-                      (model.bn2_rv[target].array() + 1e-5).sqrt()) *
-                         model.bn2_w[target].array() +
-                     model.bn2_b[target].array())
-                        .cwiseMax(0);
-            }
-            model.inference_progress += 0.05f; // 5% = layer2 per-target
-            sendProgressUpdate(model.inference_progress);
-            // 70% total
-
-            std::cout << "Target " << target << " fc3" << std::endl;
-            x_input *= model.fc3_w[target];
-
-            std::cout << "Target " << target << " bn3" << std::endl;
-            // batchnorm1d calculation
-            // y=(x-E[x])/(sqrt(Var[x]+ϵ) * gamma + Beta
-            for (int i = 0; i < x_input.rows(); i++)
-            {
-                x_input.row(i) =
-                    ((x_input.row(i).array() - model.bn3_rm[target].array()) /
-                     (model.bn3_rv[target].array() + 1e-5).sqrt()) *
-                        model.bn3_w[target].array() +
-                    model.bn3_b[target].array();
-            }
-
-            std::cout << "Target " << target << " output scaling" << std::endl;
-            // now output scaling
-            // apply formula x = x*output_scale + output_mean
-            for (int i = 0; i < x_input.rows(); i++)
-            {
-                x_input.row(i) = (x_input.row(i).array() *
-                                      model.output_scale[target].array() +
-                                  model.output_mean[target].array())
-                                     .cwiseMax(0);
-            }
-
-            model.inference_progress += 0.05f; // 5% = layer3 per-target
-            sendProgressUpdate(model.inference_progress);
-            // 90% total
-
-            // copy mix-mag
-            StereoSpectrogramR mix_mag_target(mix_mag);
-
-            // element-wise multiplication, taking into account the stacked
-            // outputs of the neural network
-            for (std::size_t i = 0; i < mix_mag.left.size(); i++)
-            {
-                for (std::size_t j = 0; j < mix_mag.left[0].size(); j++)
-                {
-                    mix_mag_target.left[i][j] *= x_input(i, j);
-                    mix_mag_target.right[i][j] *=
-                        x_input(i, j + mix_mag.left[0].size());
-                }
-            }
-
-            // now let's get a stereo waveform back first with phase
-            StereoSpectrogramC mix_complex_target =
-                combine(mix_mag_target, mix_phase);
-
-            std::cout << "Getting waveforms from istft" << std::endl;
-            target_waveform = istft(mix_complex_target);
-
-            float *left_dest = nullptr;
-            float *right_dest = nullptr;
+            float *left_target;
+            float *right_target;
 
             switch (target)
             {
             case 0:
-                left_dest = left_bass;
-                right_dest = right_bass;
+                left_target = left_0;
+                right_target = right_0;
                 break;
             case 1:
-                left_dest = left_drums;
-                right_dest = right_drums;
+                left_target = left_1;
+                right_target = right_1;
                 break;
             case 2:
-                left_dest = left_other;
-                right_dest = right_other;
+                left_target = left_2;
+                right_target = right_2;
                 break;
             case 3:
-                left_dest = left_vocals;
-                right_dest = right_vocals;
+                left_target = left_3;
+                right_target = right_3;
                 break;
-            }
+            };
 
             // now populate the output float* arrays with ret
             for (size_t i = 0; i < N; ++i)
             {
-                left_dest[i] = target_waveform.left[i];
-                right_dest[i] = target_waveform.right[i];
+                left_target[i] = target_waveforms[target](0, i);
+                right_target[i] = target_waveforms[target](1, i);
             }
-            model.inference_progress += 0.1f / 4.0; // 10% = final istft, /4
+        }
+        // 100% total
+    }
+}
+
+static std::vector<Eigen::MatrixXf>
+shift_inference(struct umxcpp::umx_model &model, Eigen::MatrixXf &full_audio)
+{
+    int length = full_audio.cols();
+
+    // first, apply shifts for time invariance
+    // we simply only support shift=1, the demucs default
+    // shifts (int): if > 0, will shift in time `mix` by a random amount between
+    // 0 and 0.5 sec
+    //     and apply the oppositve shift to the output. This is repeated
+    //     `shifts` time and all predictions are averaged. This effectively
+    //     makes the model time equivariant and improves SDR by up to 0.2
+    //     points.
+    int max_shift =
+        (int)(umxcpp::MAX_SHIFT_SECS * umxcpp::SUPPORTED_SAMPLE_RATE);
+
+    int offset = rand() % max_shift;
+
+    // populate padded_full_audio with full_audio starting from
+    // max_shift to max_shift + full_audio.cols()
+    // incorporate random offset at the same time
+    Eigen::MatrixXf shifted_audio =
+        Eigen::MatrixXf::Zero(2, length + max_shift - offset);
+    shifted_audio.block(0, offset, 2, length) = full_audio;
+
+    std::vector<Eigen::MatrixXf> waveform_outputs =
+        split_inference(model, shifted_audio);
+
+    // trim the output to the original length
+    // waveform_outputs = waveform_outputs[..., max_shift:max_shift + length]
+    std::vector<Eigen::MatrixXf> trimmed_waveform_outputs;
+
+    trimmed_waveform_outputs.push_back(Eigen::MatrixXf(2, length));
+    trimmed_waveform_outputs.push_back(Eigen::MatrixXf(2, length));
+    trimmed_waveform_outputs.push_back(Eigen::MatrixXf(2, length));
+    trimmed_waveform_outputs.push_back(Eigen::MatrixXf(2, length));
+
+    for (int i = 0; i < 4; ++i)
+    {
+        trimmed_waveform_outputs[i].setZero();
+        for (int j = 0; j < 2; ++j)
+        {
+            for (int k = 0; k < length; ++k)
+            {
+                trimmed_waveform_outputs[i](j, k) =
+                    waveform_outputs[i](j, k + offset);
+            }
+        }
+    }
+
+    return trimmed_waveform_outputs;
+}
+
+static std::vector<Eigen::MatrixXf>
+split_inference(struct umxcpp::umx_model &model, Eigen::MatrixXf &full_audio)
+{
+    // calculate segment in samples
+    int segment_samples =
+        (int)(umxcpp::SEGMENT_LEN_SECS * umxcpp::SUPPORTED_SAMPLE_RATE);
+
+    // let's create reusable buffers - LATER
+    // struct umxcpp::stft_buffers stft_buf(buffers.segment_samples);
+    struct umxcpp::stft_buffers reusable_stft_buf(segment_samples);
+
+    int nb_stft_frames_segment = (segment_samples / umxcpp::FFT_HOP_SIZE + 1);
+
+    int lstm_hidden_size = model.hidden_size / 2;
+
+    std::array<struct umxcpp::lstm_data, 4> streaming_lstm_data = {
+        umxcpp::create_lstm_data(lstm_hidden_size, nb_stft_frames_segment),
+        umxcpp::create_lstm_data(lstm_hidden_size, nb_stft_frames_segment),
+        umxcpp::create_lstm_data(lstm_hidden_size, nb_stft_frames_segment),
+        umxcpp::create_lstm_data(lstm_hidden_size, nb_stft_frames_segment)};
+
+    // next, use splits with weighted transition and overlap
+    // split (bool): if True, the input will be broken down in 8 seconds
+    // extracts
+    //     and predictions will be performed individually on each and
+    //     concatenated. Useful for model with large memory footprint like
+    //     Tasnet.
+
+    int stride_samples = (int)((1 - umxcpp::OVERLAP) * segment_samples);
+
+    int length = full_audio.cols();
+
+    // create an output tensor of zeros for four source waveforms
+    std::vector<Eigen::MatrixXf> out;
+    out.push_back(Eigen::MatrixXf(2, length));
+    out.push_back(Eigen::MatrixXf(2, length));
+    out.push_back(Eigen::MatrixXf(2, length));
+    out.push_back(Eigen::MatrixXf(2, length));
+
+    for (int i = 0; i < 4; ++i)
+    {
+        out[i].setZero();
+    }
+
+    // create weight tensor
+    Eigen::VectorXf weight(segment_samples);
+    Eigen::VectorXf sum_weight(length);
+    for (int i = 0; i < segment_samples / 2; ++i)
+    {
+        weight(i) = i + 1;
+        weight(segment_samples - i - 1) = i + 1;
+        sum_weight(i) = 0.0f;
+    }
+    weight /= weight.maxCoeff();
+    weight = weight.array().pow(umxcpp::TRANSITION_POWER);
+
+    float total_reps = std::ceil(static_cast<float>(length) / stride_samples);
+    float per_segment_progress = 1.0f / total_reps;
+
+    std::cout << "Per-segment progress: " << per_segment_progress << std::endl;
+
+    // for loop from 0 to length with stride stride_samples
+    for (int offset = 0; offset < length; offset += stride_samples)
+    {
+        // create a chunk of the padded_full_audio
+        int chunk_end = std::min(segment_samples, length - offset);
+        Eigen::MatrixXf chunk = full_audio.block(0, offset, 2, chunk_end);
+        int chunk_length = chunk.cols();
+
+        std::cout << "2., apply model w/ split, offset: " << offset
+                  << ", chunk shape: (" << chunk.rows() << ", " << chunk.cols()
+                  << ")" << std::endl;
+
+        // REPLACE THIS WITH UMX INFERENCE!
+        std::vector<Eigen::MatrixXf> chunk_out =
+            umx_inference(model, chunk, reusable_stft_buf, streaming_lstm_data);
+
+        model.inference_progress += per_segment_progress;
+        if (not batch_mode)
+        {
             sendProgressUpdate(model.inference_progress);
         }
 
-        // 100% total
+        // add the weighted chunk to the output
+        // out[..., offset:offset + segment] += (weight[:chunk_length] *
+        // chunk_out).to(mix.device)
+        for (int i = 0; i < 4; ++i)
+        {
+            for (int j = 0; j < 2; ++j)
+            {
+                for (int k = 0; k < segment_samples; ++k)
+                {
+                    if (offset + k >= length)
+                    {
+                        break;
+                    }
+                    out[i](j, offset + k) +=
+                        weight(k % chunk_length) * chunk_out[i](j, k);
+                }
+            }
+        }
+
+        // sum_weight[offset:offset + segment] +=
+        // weight[:chunk_length].to(mix.device)
+        for (int k = 0; k < segment_samples; ++k)
+        {
+            if (offset + k >= length)
+            {
+                break;
+            }
+            sum_weight(offset + k) += weight(k % chunk_length);
+        }
     }
+
+    assert(sum_weight.minCoeff() > 0);
+
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j < 2; ++j)
+        {
+            for (int k = 0; k < length; ++k)
+            {
+                out[i](j, k) /= sum_weight[k];
+            }
+        }
+    }
+
+    // now copy the appropriate segment of the output
+    // into the output tensor same shape as the input
+    std::vector<Eigen::MatrixXf> waveform_outputs;
+    waveform_outputs.push_back(Eigen::MatrixXf(2, length));
+    waveform_outputs.push_back(Eigen::MatrixXf(2, length));
+    waveform_outputs.push_back(Eigen::MatrixXf(2, length));
+    waveform_outputs.push_back(Eigen::MatrixXf(2, length));
+
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j < 2; ++j)
+        {
+            for (int k = 0; k < length; ++k)
+            {
+                waveform_outputs[i](j, k) = out[i](j, k);
+            }
+        }
+    }
+
+    return waveform_outputs;
 }

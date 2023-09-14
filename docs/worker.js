@@ -19,15 +19,25 @@ onmessage = function(e) {
             const leftChannel = e.data.leftChannel;
             const rightChannel = e.data.rightChannel;
 
-            const targetWaveforms = processAudio(leftChannel, rightChannel, module);
+            const targetWaveforms = processAudio(leftChannel, rightChannel, module, false);
 
             // Send the processed audio data back to the main thread
             postMessage({ msg: 'PROCESSING_DONE', data: targetWaveforms });
         });
+    } else if (e.data.msg === 'PROCESS_AUDIO_BATCH') {
+        wasmModule.then((module) => {
+            const leftChannel = e.data.leftChannel;
+            const rightChannel = e.data.rightChannel;
+
+            const targetWaveforms = processAudio(leftChannel, rightChannel, module, true);
+
+            // Send the processed audio data back to the main thread
+            postMessage({ msg: 'PROCESSING_DONE_BATCH', waveforms: targetWaveforms, filename: e.data.filename });
+        });
     }
 };
 
-function processAudio(leftChannel, rightChannel, module) {
+function processAudio(leftChannel, rightChannel, module, is_batch_mode) {
     // Handle left channel
     let arrayPointerL = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
     let wasmArrayL = new Float32Array(module.HEAPF32.buffer, arrayPointerL, leftChannel.length);
@@ -52,13 +62,12 @@ function processAudio(leftChannel, rightChannel, module) {
 
     // Call the WASM function for both channels
     // this is blocking, of course, so setInterval won't do anything... how to fix
-    module._umxDemix(
+    module._umxDemixSegment(
         arrayPointerL, arrayPointerR, leftChannel.length,
         arrayPointerLBass, arrayPointerRBass,
         arrayPointerLDrums, arrayPointerRDrums,
         arrayPointerLOther, arrayPointerROther,
-        arrayPointerLVocals, arrayPointerRVocals,
-    );
+        arrayPointerLVocals, arrayPointerRVocals, is_batch_mode);
 
     let wasmArrayLBass = new Float32Array(module.HEAPF32.buffer, arrayPointerLBass, leftChannel.length);
     let wasmArrayLDrums = new Float32Array(module.HEAPF32.buffer, arrayPointerLDrums, leftChannel.length);

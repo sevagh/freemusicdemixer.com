@@ -17,6 +17,8 @@ struct lstm_data
 
 struct lstm_data create_lstm_data(int hidden_size, int seq_len);
 
+void umx_lstm_set_zero(struct lstm_data *data);
+
 Eigen::MatrixXf umx_lstm_forward(struct umx_model *model, int target,
                                  const Eigen::MatrixXf &input,
                                  struct lstm_data *data, int hidden_size);
