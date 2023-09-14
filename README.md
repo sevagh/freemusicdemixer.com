@@ -65,8 +65,7 @@ npx tsc --module es6 ../vendor/wav-file-encoder/src/WavFileEncoder.ts
 
 MUSDB18-HQ test track 'Zeno - Signs':
 
-'Zeno - Signs', fully segmented inference + wiener + streaming lstm:
-**60 second segment**
+'Zeno - Signs', fully segmented (60s) inference + wiener + streaming lstm:
 ```
 vocals          ==> SDR:   6.830  SIR:  16.421  ISR:  14.044  SAR:   7.104
 drums           ==> SDR:   7.425  SIR:  14.570  ISR:  12.062  SAR:   8.905
@@ -74,7 +73,7 @@ bass            ==> SDR:   2.462  SIR:   4.859  ISR:   5.346  SAR:   3.566
 other           ==> SDR:   6.197  SIR:   9.437  ISR:  12.519  SAR:   7.627
 ```
 
-'Zeno - Signs', unsegmented inference w/ streaming lstm + wiener:
+'Zeno - Signs', unsegmented inference (crashes with large tracks) w/ streaming lstm + wiener:
 ```
 vocals          ==> SDR:   6.846  SIR:  16.382  ISR:  13.897  SAR:   7.024
 drums           ==> SDR:   7.679  SIR:  14.462  ISR:  12.606  SAR:   9.001
@@ -94,8 +93,7 @@ other           ==> SDR:   5.190  SIR:   6.623  ISR:  10.221  SAR:   8.599
 
 * Streaming UMX LSTM module for longer tracks with entire Demucs segmentation pipeline
 
-Testing 'Georgia Wonder - Siren' (largest MUSDB track) for memory usage - it worked!:
-**60s**
+Testing 'Georgia Wonder - Siren' (largest MUSDB track) for memory usage with 60s segments:
 ```
 vocals          ==> SDR:   5.858  SIR:  10.880  ISR:  14.336  SAR:   6.187
 drums           ==> SDR:   7.654  SIR:  14.933  ISR:  11.459  SAR:   8.466
@@ -110,9 +108,3 @@ drums           ==> SDR:   7.939  SIR:  14.676  ISR:  12.485  SAR:   8.383
 bass            ==> SDR:   7.576  SIR:  12.712  ISR:  11.188  SAR:   6.951
 other           ==> SDR:   4.624  SIR:   7.937  ISR:   8.845  SAR:   4.270
 ```
-
-### Features to add
-
-* Batch upload
-* Developer output console/log on UI?
-* Crescent ad banner w/ Yibo

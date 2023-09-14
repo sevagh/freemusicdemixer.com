@@ -197,6 +197,7 @@ div.image-container {
   border: 1px solid black;
   padding: 10px;
   margin: 5px;
+  text-align: left;
 }
 
 /* Hidden class for your convenience */
@@ -226,4 +227,9 @@ div.image-container {
 
 #jsTerminal {
     border-right: 1px solid lime;
+    color: cyan;
+}
+
+.terminal-container {
+    margin-bottom: 20px;
 }

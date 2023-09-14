@@ -14,6 +14,8 @@ document.getElementById('load-batch').disabled = true;
 // Listen for messages from the worker
 worker.onmessage = function(e) {
     if (e.data.msg === 'WASM_READY') {
+        writeJsLog("WASM UMX module is now ready")
+
         // WASM module is ready, enable the buttons
         // disable load-weight buttons
         document.getElementById('load-weights').disabled = true;
@@ -30,27 +32,35 @@ worker.onmessage = function(e) {
         // Update the progress bar
         const progress = e.data.data;
         document.getElementById('inference-progress-bar').style.width = `${progress * 100}%`;
+    } else if (e.data.msg === 'WASM_LOG') {
+        writeWasmLog(e.data.data)
     } else if (e.data.msg === 'PROCESSING_DONE') {
+        writeJsLog("Demix job finished")
         const targetWaveforms = e.data.data;
         // Process the target waveforms
         // Encode target waveforms to WAV files
-        console.log(targetWaveforms)
         packageAndDownload(targetWaveforms);
 
         document.getElementById('audio-upload').disabled = false;
         document.getElementById('load-waveform').disabled = false;
     } else if (e.data.msg === 'PROCESSING_DONE_BATCH') {
-        const targetWaveforms = e.data.waveforms;
         const filename = e.data.filename;
+        writeJsLog(`Batch job finished for ${filename}`)
+        const targetWaveforms = e.data.waveforms;
         // Process the target waveforms
         // Encode target waveforms to WAV files
-        console.log(filename)
-        console.log(targetWaveforms)
+        writeJsLog(filename)
         const progressBar = document.getElementById('inference-progress-bar-batch');
         progressBar.style.width = (parseFloat(progressBar.style.width) + e.data.progressIncrement) + '%';
         packageAndZip(targetWaveforms, filename);
+        document.getElementById('batch-upload').disabled = false;
+        document.getElementById('load-batch').disabled = false;
     }
 };
+
+document.getElementById('log-clear').addEventListener('click', () => {
+    clearLogs();
+});
 
 // Send a message to the worker to load the WASM module if the user requests it
 document.getElementById('load-weights').addEventListener('click', () => {
@@ -62,10 +72,11 @@ document.getElementById('load-weights-2').addEventListener('click', () => {
 });
 
 document.getElementById('load-waveform').addEventListener('click', () => {
+    writeJsLog("Beginning demix job")
     const fileInput = document.getElementById('audio-upload');
     const file = fileInput.files[0];
     if (!file) {
-        console.log('No file selected.');
+        writeJsLog('No file selected.');
         return;
     }
 
@@ -111,6 +122,8 @@ document.getElementById('load-waveform').addEventListener('click', () => {
 });
 
 function packageAndDownload(targetWaveforms) {
+    writeJsLog("Preparing stems for download")
+
     // Create separate stereo AudioBuffers for vocals, bass, drums, and other
     let vocalsBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
     let bassBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
@@ -282,34 +295,41 @@ function clearLogs() {
 }
 
 function writeJsLog(str) {
+    const currentTime = new Date();
+    const timeString = currentTime.toTimeString().split(" ")[0];
+    const formattedStr = `[Javascript ${timeString}] ${str}`;
+    
     let jsTerminal = document.getElementById("jsTerminal");
-    jsTerminal.textContent += str + "\n";
+    jsTerminal.textContent += formattedStr + "\n";
     jsTerminal.scrollTop = jsTerminal.scrollHeight;
 }
 
 function writeWasmLog(str) {
+    const currentTime = new Date();
+    const timeString = currentTime.toTimeString().split(" ")[0];
+    const formattedStr = `[WASM/C++ ${timeString}] ${str}`;
+    
     let wasmTerminal = document.getElementById("wasmTerminal");
-    wasmTerminal.textContent += str + "\n";
+    wasmTerminal.textContent += formattedStr + "\n";
     wasmTerminal.scrollTop = wasmTerminal.scrollHeight;
 }
 
 document.getElementById('load-batch').addEventListener('click', async () => {
+    writeJsLog("Beginning batch demix job")
+
     // Check if a folder is selected
     const inputDir = document.getElementById("batch-upload");
     if (!inputDir) {
-        console.log('No input folder selected.');
+        writeJsLog('No input folder selected.');
         return;
     }
 
     const files = inputDir.files;
     if (!files) {
-        console.log('No files in input folder.');
+        writeJsLog('No files in input folder.');
         return;
     }
 
-    console.log("Disabling buttons!")
-    document.getElementById('batch-upload').disabled = true;
-    document.getElementById('load-batch').disabled = true;
     document.getElementById('inference-progress-bar-batch').style.width = '0%';
 
     // delete the previous download links
@@ -318,23 +338,23 @@ document.getElementById('load-batch').addEventListener('click', async () => {
         downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
     }
 
-    await processFiles(files);
+    processFiles(files);
 });
 
 async function processFiles(files) {
     if (!files || files.length === 0) {
-        console.log('Folder has no files.');
+        writeJsLog('Folder has no files.');
         return;
     }
 
     const progressIncrement = 100 / files.length;
 
     for (const file of files) {
-        console.log(`Processing ${file.name}`);
 
         const reader = new FileReader();
         await new Promise(resolve => {
             reader.onload = async function(event) {
+                writeJsLog(`Submitting ${file.name}`);
                 const arrayBuffer = event.target.result;
 
                 audioContext.decodeAudioData(
@@ -350,6 +370,9 @@ async function processFiles(files) {
                         }
                         const filenameWithoutExt = file.name.slice(0, file.name.lastIndexOf('.'));
 
+                        document.getElementById('batch-upload').disabled = true;
+                        document.getElementById('load-batch').disabled = true;
+
                         worker.postMessage({
                             msg: 'PROCESS_AUDIO_BATCH',
                             leftChannel: leftChannel,
@@ -361,7 +384,7 @@ async function processFiles(files) {
                         resolve();
                     },
                     function(err) {
-                        console.log(`Skipping ${file.name} due to decoding error.`);
+                        writeJsLog(`Skipping ${file.name} due to decoding error.`);
                         resolve(); // resolve the Promise to continue with the next file
                     }
                 );
@@ -370,13 +393,11 @@ async function processFiles(files) {
             reader.readAsArrayBuffer(file);
         });
     }
-
-    document.getElementById('batch-upload').disabled = false;
-    document.getElementById('load-batch').disabled = false;
-    console.log('Finished processing all files.');
 }
 
 async function packageAndZip(targetWaveforms, filename) {
+    writeJsLog(`Packaging and zipping waveforms for ${filename}`)
+
     // Create a new JSZip object
     const zip = new JSZip();
 

@@ -36,9 +36,40 @@ extern "C"
         postMessage({msg : 'PROGRESS_UPDATE', data : progress});
     });
 
+    EM_JS(void, callWriteWasmLog, (const char* str), {
+        postMessage({msg : 'WASM_LOG', data : UTF8ToString(str)});
+    });
+
+    class CustomBuf : public std::streambuf {
+    public:
+        CustomBuf() {}
+        virtual int overflow(int c) {
+            if (c == '\n') {
+                flushBuffer();
+            } else {
+                buffer += static_cast<char>(c);
+            }
+            return c;
+        }
+        void flushBuffer() {
+            if (!buffer.empty()) {
+                callWriteWasmLog(buffer.c_str());
+                buffer.clear();
+            }
+        }
+    private:
+        std::string buffer;
+    };
+    
+    // Global instances
+    static CustomBuf customCoutBuffer;
+    static CustomBuf customCerrBuffer;
+
     EMSCRIPTEN_KEEPALIVE
     void umxInit()
     {
+        std::cout.rdbuf(&customCoutBuffer);
+        std::cerr.rdbuf(&customCerrBuffer);
         bool success = load_umx_model("ggml-model-umxl-u8.bin.gz", &model);
         if (!success)
         {
@@ -61,6 +92,7 @@ extern "C"
         float *left_2, float *right_2,
         float *left_3, float *right_3, bool batch_mode_param)
     {
+        std::cout << "Beginning UMX-L Demix inference" << std::endl;
         batch_mode = batch_mode_param;
 
         // number of samples per channel
@@ -142,7 +174,6 @@ static std::vector<Eigen::MatrixXf> shift_inference(
     // incorporate random offset at the same time
     Eigen::MatrixXf shifted_audio = Eigen::MatrixXf::Zero(2, length+max_shift-offset);
     shifted_audio.block(0, offset, 2, length) = full_audio;
-    int shifted_length = shifted_audio.cols();
 
     std::vector<Eigen::MatrixXf> waveform_outputs = split_inference(model, shifted_audio);
 

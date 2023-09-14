@@ -81,7 +81,7 @@ To cancel the running job, refresh the page
 </div>
 
 <div class="mdx-container-batch" id="mdx-app-batch">
-    <b><p>Multiple tracks</p></b>
+    <b><p>Batch demix (experimental!!)</p></b>
     <button id="load-weights-2">Download weights (45 MB)</button>
     <div class="progress-container">
         <div class="progress-text" id="load-progress-text-2">Downloading weights...</div>
@@ -118,7 +118,7 @@ To cancel the running job, refresh the page
 <div id="checkbox">
     <label><input type="checkbox" id="toggleDevLogs"> Show dev logs</label>
     <div id="devLogs" class="hidden">
-        <button onclick="clearLogs()">Clear</button>
+        <button id="log-clear">Clear</button>
         <div id="terminalContainer">
             <div id="jsTerminal" class="terminal"></div>
             <div id="wasmTerminal" class="terminal"></div>
@@ -127,13 +127,13 @@ To cancel the running job, refresh the page
 </div>
 <br>
 
-### **Latest news**
+## Latest news
 
 * Improved demixing quality by 1+ dB SDR with Wiener filtering
 * Support demixing larger tracks with low-memory segmented inference and streaming LSTM 
 * Added batch demixing and a checkbox to show developer output logs
 
-### **Disclaimers!**
+## Disclaimers!
 
 * You can only use the outputs for non-commercial applications as per the <a href="https://zenodo.org/record/5069601">UMX-L weights license</a>
 * The task is CPU and memory intensive (up to 4 GB), please be patient! Very very large tracks may still crash!
