@@ -157,6 +157,8 @@ std::array<Eigen::Tensor3dXcf, 4> umxcpp::wiener_filter(
     std::cout << "Wiener-EM: Initialize tensors" << std::endl;
 
     Eigen::Tensor2dXcf regularization(nb_channels, nb_channels);
+    // first set to zero
+    regularization.setZero();
     // Fill the diagonal with sqrt(eps)
     fill_diagonal(regularization, std::sqrt(eps));
 
