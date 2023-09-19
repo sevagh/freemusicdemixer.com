@@ -20,9 +20,10 @@ onmessage = function(e) {
             const rightChannel = e.data.rightChannel;
 
             const targetWaveforms = processAudio(leftChannel, rightChannel, module, false);
+            const transferList = targetWaveforms.map(arr => arr.buffer);
 
             // Send the processed audio data back to the main thread
-            postMessage({ msg: 'PROCESSING_DONE', data: targetWaveforms });
+            postMessage({ msg: 'PROCESSING_DONE', data: targetWaveforms }, transferList);
         });
     } else if (e.data.msg === 'PROCESS_AUDIO_BATCH') {
         wasmModule.then((module) => {
@@ -30,9 +31,10 @@ onmessage = function(e) {
             const rightChannel = e.data.rightChannel;
 
             const targetWaveforms = processAudio(leftChannel, rightChannel, module, true);
+            const transferList = targetWaveforms.map(arr => arr.buffer);
 
             // Send the processed audio data back to the main thread
-            postMessage({ msg: 'PROCESSING_DONE_BATCH', waveforms: targetWaveforms, filename: e.data.filename });
+            postMessage({ msg: 'PROCESSING_DONE_BATCH', waveforms: targetWaveforms, filename: e.data.filename }, transferList);
         });
     }
 };
@@ -93,10 +95,11 @@ function processAudio(leftChannel, rightChannel, module, is_batch_mode) {
 
     // Return the separate stereo AudioBuffers
     //return [bassBuffer, drumsBuffer, otherBuffer, vocalsBuffer];
+    // return them as javascript float buffers
     return [
-        wasmArrayLBass, wasmArrayRBass,
-        wasmArrayLDrums, wasmArrayRDrums,
-        wasmArrayLOther, wasmArrayROther,
-        wasmArrayLVocals, wasmArrayRVocals,
+        new Float32Array(wasmArrayLBass), new Float32Array(wasmArrayRBass),
+        new Float32Array(wasmArrayLDrums), new Float32Array(wasmArrayRDrums),
+        new Float32Array(wasmArrayLOther), new Float32Array(wasmArrayROther),
+        new Float32Array(wasmArrayLVocals), new Float32Array(wasmArrayRVocals),
     ];
 }
