@@ -254,3 +254,18 @@ div.image-container {
   flex: 1;  /* Allows this content area to grow and take up the available width */
   padding: 20px;
 }
+
+.banner-right {
+  right: 0;
+}
+
+@media (max-width: 768px) {
+  .banner-left, .banner-right {
+    transform: scale(0.5);
+    transform-origin: top left;
+  }
+  .banner-right {
+    transform-origin: top right;
+    right: 0;
+  }
+}
