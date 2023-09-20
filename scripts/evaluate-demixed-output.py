@@ -39,7 +39,11 @@ if __name__ == '__main__':
     for target in target_digit_map.keys():
         # load target_{target_digit_map[target]}.wav
         #target_path = os.path.join(args.input_dir, f"target_{target_digit_map[target]}.wav")
-        target_path = os.path.join(args.input_dir, f"{target}.wav")
+
+        if target != 'other':
+            target_path = os.path.join(args.input_dir, f"{target}.wav")
+        else:
+            target_path = os.path.join(args.input_dir, "melody.wav")
         print(f"loading path {target_path} for {target}")
 
         # load wav file with numpy

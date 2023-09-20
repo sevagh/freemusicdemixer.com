@@ -187,13 +187,13 @@ function packageAndDownload(targetWaveforms) {
 
     drumsLink.textContent = 'drums.wav';
     bassLink.textContent = 'bass.wav';
-    otherLink.textContent = 'other.wav';
+    otherLink.textContent = 'melody.wav';
     vocalsLink.textContent = 'vocals.wav';
     karaokeLink.textContent = 'karaoke.wav';
 
     drumsLink.download = 'drums.wav';
     bassLink.download = 'bass.wav';
-    otherLink.download = 'other.wav';
+    otherLink.download = 'melody.wav';
     vocalsLink.download = 'vocals.wav';
     karaokeLink.download = 'karaoke.wav';
 
@@ -205,7 +205,7 @@ function packageAndDownload(targetWaveforms) {
     downloadLinksDiv.appendChild(karaokeLink);
 }
 
-let trackDataPromises = ['drums', 'vocals', 'bass', 'other'].map((name) => {
+let trackDataPromises = ['drums', 'vocals', 'bass', 'melody'].map((name) => {
   return fetch(`assets/clips/paranoid_jaxius_${name}.wav`)
     .then(response => response.arrayBuffer())
     .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
@@ -245,7 +245,7 @@ Promise.all(trackDataPromises).then((trackDataArray) => {
   });
 
   // Checkbox logic
-  ['drums', 'vocals', 'bass', 'other'].forEach(name => {
+  ['drums', 'vocals', 'bass', 'melody'].forEach(name => {
     document.getElementById(`button-${name}`).addEventListener('change', function(e) {
       let track = tracks.find(track => track.name === name);
       if (e.target.checked) {
@@ -441,13 +441,15 @@ async function packageAndZip(targetWaveforms, filename) {
     const otherBlob = new Blob([otherBuf], {type: 'audio/wav'});
     const vocalsBlob = new Blob([vocalsBuf], {type: 'audio/wav'});
     const karaokeBlob = new Blob([karaokeBuf], {type: 'audio/wav'});
-  
+
+    const directoryName = `${filename}_stems/`; // note the trailing slash to specify a directory
+
     // Add your blobs as files to the zip
-    zip.file("bass.wav", bassBlob);
-    zip.file("drums.wav", drumsBlob);
-    zip.file("other.wav", otherBlob);
-    zip.file("vocals.wav", vocalsBlob);
-    zip.file("karaoke.wav", karaokeBlob);
+    zip.file(`${directoryName}bass.wav`, bassBlob);
+    zip.file(`${directoryName}drums.wav`, drumsBlob);
+    zip.file(`${directoryName}melody.wav`, otherBlob);
+    zip.file(`${directoryName}vocals.wav`, vocalsBlob);
+    zip.file(`${directoryName}karaoke.wav`, karaokeBlob);
   
     // Generate the zip file as a Blob
     const content = await zip.generateAsync({ type: "blob" });

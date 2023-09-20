@@ -4,10 +4,9 @@ plugins:
 
 favicon: assets/favicon.ico
 
-#title: "Free music demixer"
-description: "AI-based music demixer running for free in your browser"
-#description: "In music demixing, AI models are used to separate the different instruments from a music recording. This web application allows you to demix your own music files for free, and without having to install any software."
-#tagline: kinda sucks
+# dont mess with SEO here
+human_description: "AI-based music demixer running for free in your browser"
+description: ""
 
 url: "https://freemusicdemixer.com"
 

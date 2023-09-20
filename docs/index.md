@@ -1,3 +1,7 @@
+---
+seo_keywords: music demixing, AI model, Open-Unmix, UMX-L, free music demixer, stem separation, free stem separation, stems, music demixer, isolate stems, isolate sources
+seo_description: Free AI-based music demixer. Perform music demixing or stem separation with AI on your own computer, private, free, and with no usage limits
+---
 <script src="umx.js"></script>
 <script src="WavFileEncoder.js" type="module"></script>
 <script src="index.js" type="module"></script>
@@ -5,11 +9,11 @@
         async src="//gc.zgo.at/count.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
-# Free AI-based music demixing web app
+# Free AI-based music demixer
 
 In music demixing or music source separation, AI models are used to separate the different instruments from a music recording into stems. This web application allows you to demix your music files, free and with no usage limits since it runs on **your computer!** 🫵🏽
 
-Load a song to decompose it into **bass, drums, vocals, other, and karaoke** using a near-state-of-the-art AI model, [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch) with the [UMX-L](https://zenodo.org/record/5069601) pretrained weights. This site is created and maintained by [Sevag H](https://github.com/sevagh).
+Load a song to decompose it into **bass, drums, vocals, melody, and karaoke** using a near-state-of-the-art AI model, [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch) with the [UMX-L](https://zenodo.org/record/5069601) pretrained weights. This site is created and maintained by [Sevag H](https://github.com/sevagh).
 <div class="image-container">
 <img class="responsive-img" src="./assets/images/music-demix.png"/>
 </div>
@@ -24,7 +28,7 @@ Unlike similar products, **it's free to use and doesn't store your data.** All p
 Love this free site? You can support my work through [GitHub Sponsors](https://github.com/sponsors/sevagh) or [PayPal](https://paypal.me/sevagh1337?country.x=CA&locale.x=en_US)
 
 **For companies:**
-If you're a company in the pro music space (mixing/demixing, DAW, etc.), advertising on this platform may offer targeted visibility within the music and technology community. [Contact me](mailto:sevagh+freemdx@protonmail.com) for partnership opportunities.
+If you're a company in the pro music space (production, mixing/demixing, DAW, etc.), advertising on this platform may offer targeted visibility within the music and technology community. [Contact me](mailto:sevagh+freemdx@protonmail.com) for partnership opportunities.
 
 ## Demo
 
@@ -40,7 +44,7 @@ Here's a demo of 20 seconds of demixed outputs; press the play button and toggle
 <br>
 <label><input type="checkbox" id="button-bass" checked>Bass</label>
 <br>
-<label><input type="checkbox" id="button-other" checked>Other</label>
+<label><input type="checkbox" id="button-melody" checked>Melody</label>
 </div>
 
 Ready to try it on your own music files?
@@ -129,6 +133,7 @@ To cancel the running job, refresh the page
 
 ## Latest news
 
+* Fixed bugs ([1](https://github.com/sevagh/free-music-demixer/issues/4), [2](https://github.com/sevagh/free-music-demixer/issues/7)), added initial sponsors, and improved batch zip folder layout
 * Improved demixing quality by 1+ dB SDR with Wiener filtering
 * Support demixing larger tracks with low-memory segmented inference and streaming LSTM 
 * Added batch demixing and a checkbox to show developer output logs

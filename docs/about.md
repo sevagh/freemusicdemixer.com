@@ -23,9 +23,9 @@ This website is a simple, easy-to-use interface for the AI model [UMX-L](https:/
 When the demixing is complete, you can download the following stems in wav files (stereo, 44100 Hz):
 - Bass
 - Drums
-- Other (catchall for non-bass/drums/vocals)
+- Melody (catchall for non-bass/drums/vocals - also called 'other' in music demixing research)
 - Vocals
-- Karaoke (bass+drums+other)
+- Karaoke (bass + drums + melody)
 
 ### Technical implementation
 

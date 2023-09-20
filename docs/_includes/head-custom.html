@@ -6,6 +6,14 @@
 <!-- Setup Google Analytics -->
 {% include head-custom-google-analytics.html %}
 
+<!-- SEO meta tags -->
+{% if page.seo_keywords %}
+<meta name="keywords" content="{{ page.seo_keywords }}">
+{% endif %}
+{% if page.seo_description %}
+<meta name="description" content="{{ page.seo_description }}">
+{% endif %}
+
 <!-- You can set your favicon here -->
 <link rel="shortcut icon" type="image/x-icon" href="{{ 'assets/favicon.ico' | relative_url }}"/>
 

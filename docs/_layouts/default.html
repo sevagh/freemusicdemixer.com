@@ -17,7 +17,7 @@
         <a id="a-title" href="{{ '/' | relative_url }}">
           <h1>{{ site.title | default: site.github.repository_name }}</h1>
         </a>
-        <h2>{{ site.description | default: site.github.project_tagline }}</h2>
+        <h2>{{ site.human_description | default: site.github.project_tagline }}</h2>
         <section id="downloads">
           {% if site.show_downloads %}
             <a href="{{ site.github.zip_url }}" class="btn">Download as .zip</a>
@@ -25,14 +25,32 @@
           {% endif %}
           <a href="{{ '/' | relative_url }}" class="btn btn-github">Home</a>
           <a href="{{ '/about' | relative_url }}" class="btn btn-github">About</a>
+          <a href="{{ '/sponsors' | relative_url }}" class="btn btn-github">Sponsors</a>
           <a href="{{ site.github.repository_url }}" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
         </section>
       </div>
     </header>
-    <div class="container">
-      <section id="main_content">
-        {{ content }}
-      </section>
+
+    <div class="wrapper">
+      <div class="banner-left">
+        <p>Ads from our sponsors</p>
+        <a href="https://www.youtube.com/@TheCrescent/videos">
+          <img src="/assets/sponsors/left_banner_crescent.jpg" alt="Left sponsor banner">
+        </a>
+      </div>
+
+      <div class="container">
+        <section id="main_content">
+          {{ content }}
+        </section>
+      </div>
+
+      <div class="banner-right">
+        <p>Ads from our sponsors</p>
+        <a href="https://open.spotify.com/artist/7IYLENV1pGGPvL6wkyl7t5">
+          <img src="/assets/sponsors/right_banner_onair.jpg" alt="Right sponsor banner" width="160px" height="600px">
+        </a>
+      </div>
     </div>
   </body>
 </html>
