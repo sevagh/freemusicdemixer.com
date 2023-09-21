@@ -289,8 +289,8 @@ div.image-container {
   }
 }
 
-@media (max-width: 580px) {
+@media (max-width: 600px) {
     header {
-        width: max-content;
+        width: calc(100vw + (595px - 100%));
     }
 }
