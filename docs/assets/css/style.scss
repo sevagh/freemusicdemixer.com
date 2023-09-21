@@ -3,6 +3,12 @@
 
 @import "{{ site.theme }}";
 
+header {
+  box-sizing: border-box;
+  /*width: max-content;*/
+  width: 100%;
+}
+
 body {
     background: #e0ffff; /* Light Cyan */
     color: #c71585; /* Medium Violet Red (a more readable variant of Magenta) */
@@ -241,22 +247,24 @@ div.image-container {
 }
 
 .banner-left {
+  box-sizing: border-box; /* This ensures that padding and borders are included in the width */
   width: 160px;
   margin-left: 5px;
+  margin-right: 5px;
 }
 
 .banner-right {
+  box-sizing: border-box; /* This ensures that padding and borders are included in the width */
   width: 160px;
+  margin-left: 5px;
   margin-right: 5px;
 }
 
 .content {
   flex: 1;  /* Allows this content area to grow and take up the available width */
   padding: 20px;
-}
-
-.banner-right {
-  right: 0;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 @media (max-width: 768px) {
@@ -266,6 +274,23 @@ div.image-container {
   }
   .banner-right {
     transform-origin: top right;
-    right: 0;
+    right: 5px;
   }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .banner-left, .banner-right {
+    transform: scale(0.75);
+    transform-origin: top left;
+  }
+  .banner-right {
+    transform-origin: top right;
+    right: 5px;
+  }
+}
+
+@media (max-width: 580px) {
+    header {
+        width: max-content;
+    }
 }
