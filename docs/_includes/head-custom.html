@@ -3,11 +3,16 @@
 <!-- Setup theme-color -->
 {% include head-custom-theme-colors.html %}
 
-<!-- Setup Google Analytics -->
-{% include head-custom-google-analytics.html %}
+{% if site.google_analytics %}
+<!-- Setup Google Analytics and Goat Counter -->
+{% include head-custom-analytics.html %}
+{% endif %}
 
-<!-- SEO meta tags -->
-<!-- no disabling on the live site -->
+{% if site.lab_site %}
+<!-- Disabling SEO for the lab site -->
+<meta name="robots" content="noindex, nofollow">
+{% endif %}
+
 {% if page.keywords %}
 <meta name="keywords" content="{{ page.keywords }}">
 {% endif %}

@@ -26,7 +26,7 @@ layout: default
 
 {{ content }}
 
-<!-- social + giscus is live on main site -->
+{% unless site.lab_site == "yes" %}
 <div class="giscus-spacing"></div>
 
 <div class="social-share-bar">
@@ -70,3 +70,4 @@ layout: default
         crossorigin="anonymous"
         async>
 </script>
+{% endunless %}
