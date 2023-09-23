@@ -256,6 +256,8 @@ PLATFORMS
 DEPENDENCIES
   github-pages
   jekyll
+  jekyll-feed
+  jekyll-sitemap
   netrc
   webrick
 

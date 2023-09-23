@@ -3,6 +3,77 @@
 
 @import "{{ site.theme }}";
 
+pre, code {
+    max-width: 90%;
+    box-sizing: border-box;
+}
+
+#markdown-toc {
+    border: 1px solid #8b008b; /* Dark Magenta border */
+    padding: 10px 15px;
+    background-color: #85d4d4; /* Muted greyish cyan */
+    border-radius: 5px; /* Rounded corners */
+    margin-bottom: 60px; /* Space between ToC and subsequent content */
+    max-width: 80%;
+}
+
+#markdown-toc li {
+    list-style-image: none !important;
+    list-style-type: decimal;
+    color: #8b008b; /* Dark Magenta for list item numbers */
+    margin-bottom: 5px; /* Spacing between list items */
+    margin-left: 10px; /* Spacing from the left edge, making room for numbers */
+}
+
+#markdown-toc a {
+    color: #8b008b; /* Dark Magenta for links */
+    text-decoration: none; /* No underline */
+    font-weight: bold; /* Bold links */
+}
+
+#markdown-toc a:hover {
+    color: #c71585; /* Medium Violet Red for hover state */
+    text-decoration: underline; /* Underline on hover */
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Merge borders */
+    margin-bottom: 1em; /* Space below the table */
+}
+
+/* Table Header */
+table th {
+    background-color: #8b008b; /* Dark Magenta for header background */
+    color: #e0ffff; /* Light Cyan for header text */
+    padding: 8px 12px; /* Some padding to make it look nice */
+    border: 1px solid #c71585; /* Medium Violet Red border around cells */
+    text-align: left; /* Left-align text */
+}
+
+/* Table Body */
+table td {
+    background-color: #f7f7f7; /* A light gray for contrast */
+    color: #c71585; /* Medium Violet Red for the text */
+    padding: 8px 12px; /* Consistent padding with the header */
+    border: 1px solid #c71585; /* Medium Violet Red border around cells */
+}
+
+/* Hover over table rows */
+table tr:hover {
+    background-color: #ffe5e5; /* A soft pink for row hovering */
+}
+
+/* Links inside table */
+table a {
+    color: #8b008b; /* Dark Magenta for links in table */
+}
+
+table a:hover {
+    color: #c71585; /* Medium Violet Red for hover on links in table */
+}
+
 header {
   box-sizing: border-box;
   /*width: max-content;*/
@@ -25,6 +96,12 @@ header h2 {
 
 h1, h2, h3, h4, h5, h6 {
     color: #8b008b; /* Dark Magenta, to give headings a bit more contrast */
+}
+
+.tag-heading {
+  color: #8b008b; /* Dark Magenta, same as your other headings */
+  //font-weight: bold; /* for a bold appearance like headings */
+  //font-size: 1.2em; /* adjust the size if needed */
 }
 
 a {
@@ -54,6 +131,17 @@ header h1:before {
 
 .btn-github:hover {
   background: #8b008b; /* Dark Magenta */
+}
+
+.btn-github:disabled {
+  color: #cccccc;  /* A lighter grey for the text */
+  background: #a9a9a9;  /* A light grey for the background */
+  cursor: not-allowed;  /* Shows a 'no-entry' sign when hovered */
+}
+
+.btn-github:disabled .icon {
+  color: #cccccc; /* A lighter grey for the icon */
+  opacity: 0.6;   /* Reduced opacity for the icon */
 }
 
 // demix webapp stuff
@@ -247,50 +335,170 @@ div.image-container {
 }
 
 .banner-left {
-  box-sizing: border-box; /* This ensures that padding and borders are included in the width */
+  box-sizing: border-box;
   width: 160px;
   margin-left: 5px;
   margin-right: 5px;
 }
 
-.banner-right {
-  box-sizing: border-box; /* This ensures that padding and borders are included in the width */
-  width: 160px;
-  margin-left: 5px;
-  margin-right: 5px;
+.banner-left img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Adding vertical spacing between the banners */
+.banner-left a {
+  display: block;
+  margin-bottom: 15px; /* Adjust this value as per your needs */
+}
+
+/* Removing the margin from the last banner to avoid extra space at the bottom */
+.banner-left a:last-child {
+  margin-bottom: 5px;
 }
 
 .content {
-  flex: 1;  /* Allows this content area to grow and take up the available width */
+  flex: 1;  
   padding: 20px;
   margin-left: 5px;
   margin-right: 5px;
 }
 
-@media (max-width: 768px) {
-  .banner-left, .banner-right {
-    transform: scale(0.5);
-    transform-origin: top left;
-  }
-  .banner-right {
-    transform-origin: top right;
-    right: 5px;
+@media (min-width: 1025px) and (max-width: 1500px) {
+  .banner-left {
+    width: 136px; /* 85% of 160px */
+    margin-right: 10px;
   }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-  .banner-left, .banner-right {
-    transform: scale(0.75);
-    transform-origin: top left;
-  }
-  .banner-right {
-    transform-origin: top right;
-    right: 5px;
+  .banner-left {
+    width: 120px; /* 75% of 160px */
+    margin-right: 10px;
   }
 }
 
-@media (max-width: 600px) {
-    header {
-        width: calc(100vw + (595px - 100%));
-    }
+@media (max-width: 768px) {
+  .banner-left {
+    width: 104px; /* 65% of 160px */
+    margin-right: 10px;
+  }
+  .post1-header {
+    width: calc(100vw + 20px);
+  }
+}
+
+@media (max-width: 500px) {
+  .banner-left {
+    width: 88px; /* 55% of 160px */
+    margin-right: 10px;
+  }
+  .post1-header {
+    width: calc(100vw + 40px);
+  }
+}
+
+@media (max-width: 400px) {
+  .banner-left {
+    width: 88px; /* 55% of 160px */
+    margin-right: 10px;
+  }
+  .post1-header {
+    width: calc(100vw + 50px);
+  }
+}
+
+@media (max-width: 350px) {
+  .index-header {
+      width: calc(100vw + 15px);
+  }
+  .post1-header {
+    width: calc(100vw + 50px);
+  }
+}
+
+/* blog section */
+
+.tag-size-5 {
+    font-size: 1.25rem;
+}
+
+.tag-size-4 {
+    font-size: 1.10rem;
+}
+
+.tag-size-3 {
+    font-size: 0.95rem;
+}
+
+.tag-size-2 {
+    font-size: 0.80rem;
+}
+
+.tag-size-1 {
+    font-size: 0.65rem;
+}
+
+.post-item {
+  display: none;
+}
+
+div.category-cloud {
+  padding-bottom: 30px;
+}
+
+div.tag-cloud {
+  padding-bottom: 30px;
+}
+
+
+.blog-post {
+    margin-bottom: 40px;
+}
+
+.blog-post h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.blog-post .meta {
+    font-size: 0.9em;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.blog-post .description {
+    font-size: 1em;
+    color: #555;
+}
+
+.giscus-spacing {
+    height: 50px; /* Adjust the value to your preference */
+    display: block;
+}
+
+/* social bar */
+.social-share-bar {
+    text-align: left; /* Center the content */
+    margin-top: 20px; /* Add some space at the top */
+    margin-bottom: 20px; /* Add some space at the bottom */
+}
+
+.social-share-bar .share-text {
+    vertical-align: middle; /* Align middle to make sure it aligns well with the icons */
+    margin-right: 10px; /* Add some spacing between the text and icons */
+}
+
+.social-share-bar a img {
+    width: 24px; /* Set width for icons */
+    height: 24px; /* Set height for icons */
+    margin: 0 10px; /* Add some horizontal margin between icons */
+    vertical-align: middle; /* Align middle to make sure it aligns well with the text */
+}
+
+.share-text {
+  color: #8b008b; /* Dark Magenta, same as your other headings */
+  //font-weight: bold; /* for a bold appearance like headings */
+  //font-size: 1.2em; /* adjust the size if needed */
 }

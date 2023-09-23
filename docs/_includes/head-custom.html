@@ -7,11 +7,9 @@
 {% include head-custom-google-analytics.html %}
 
 <!-- SEO meta tags -->
-{% if page.seo_keywords %}
-<meta name="keywords" content="{{ page.seo_keywords }}">
-{% endif %}
-{% if page.seo_description %}
-<meta name="description" content="{{ page.seo_description }}">
+<!-- no disabling on the live site -->
+{% if page.keywords %}
+<meta name="keywords" content="{{ page.keywords }}">
 {% endif %}
 
 <!-- You can set your favicon here -->

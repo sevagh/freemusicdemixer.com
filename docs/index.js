@@ -50,8 +50,12 @@ worker.onmessage = function(e) {
         // Process the target waveforms
         // Encode target waveforms to WAV files
         writeJsLog(filename)
-        const progressBar = document.getElementById('inference-progress-bar-batch');
-        progressBar.style.width = (parseFloat(progressBar.style.width) + e.data.progressIncrement) + '%';
+
+        // Get current width of the progress bar
+        const currentWidth = parseFloat(document.getElementById('inference-progress-bar-batch').style.width);
+        // Update the progress bar
+        document.getElementById('inference-progress-bar-batch').style.width = (currentWidth + e.data.progressIncrement) + '%';
+
         packageAndZip(targetWaveforms, filename);
         document.getElementById('batch-upload').disabled = false;
         document.getElementById('load-batch').disabled = false;
@@ -354,7 +358,7 @@ async function processFiles(files) {
         const reader = new FileReader();
         await new Promise(resolve => {
             reader.onload = async function(event) {
-                writeJsLog(`Submitting ${file.name}`);
+                writeJsLog(`Submitting ${file.name} with progress increment ${progressIncrement}`);
                 const arrayBuffer = event.target.result;
 
                 audioContext.decodeAudioData(

@@ -11,8 +11,7 @@
   </head>
 
   <body>
-
-    <header>
+    <header class="{{ page.header_class }}-header">
       <div class="container">
         <a id="a-title" href="{{ '/' | relative_url }}">
           <h1>{{ site.title | default: site.github.repository_name }}</h1>
@@ -25,6 +24,7 @@
           {% endif %}
           <a href="{{ '/' | relative_url }}" class="btn btn-github">Home</a>
           <a href="{{ '/about' | relative_url }}" class="btn btn-github">About</a>
+          <a href="{{ '/blog' | relative_url }}" class="btn btn-github">Blog</a>
           <a href="{{ '/sponsors' | relative_url }}" class="btn btn-github">Sponsors</a>
           <a href="{{ site.github.repository_url }}" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
         </section>
@@ -33,9 +33,12 @@
 
     <div class="wrapper">
       <div class="banner-left">
-        <p>Ads from our sponsors</p>
+        <p>Our sponsors</p>
         <a href="https://www.youtube.com/@TheCrescent/videos">
           <img src="/assets/sponsors/left_banner_crescent.jpg" alt="Left sponsor banner">
+        </a>
+        <a href="https://open.spotify.com/artist/7IYLENV1pGGPvL6wkyl7t5">
+          <img src="/assets/sponsors/right_banner_onair.jpg" alt="Right sponsor banner" width="160px" height="600px">
         </a>
       </div>
 
@@ -43,13 +46,6 @@
         <section id="main_content">
           {{ content }}
         </section>
-      </div>
-
-      <div class="banner-right">
-        <p>Ads from our sponsors</p>
-        <a href="https://open.spotify.com/artist/7IYLENV1pGGPvL6wkyl7t5">
-          <img src="/assets/sponsors/right_banner_onair.jpg" alt="Right sponsor banner" width="160px" height="600px">
-        </a>
       </div>
     </div>
   </body>
