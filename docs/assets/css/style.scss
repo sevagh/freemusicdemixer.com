@@ -358,11 +358,28 @@ div.image-container {
   margin-bottom: 5px;
 }
 
-.content {
-  flex: 1;  
-  padding: 20px;
-  margin-left: 5px;
-  margin-right: 5px;
+//.container {
+//  flex: 1;  
+//  padding: 20px;
+//  margin-left: 5px;
+//  margin-right: 5px;
+//}
+
+/* This is for larger screens */
+@media (min-width: 1200px) {
+  .wrapper {
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 52%;  /* Adjust based on your preferred content width */
+    //margin-left: auto;  /* Center the content */
+    //margin-right: auto; 
+  }
+
+  .banner-left {
+    flex-shrink: 0;  /* Prevents the banner from shrinking */
+  }
 }
 
 @media (min-width: 1025px) and (max-width: 1500px) {
