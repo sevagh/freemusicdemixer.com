@@ -1,0 +1,7 @@
+User-agent: *
+
+{% if site.lab_site %}
+Disallow: /
+{% else %}
+Allow: /
+{% endif %}

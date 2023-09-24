@@ -1,4 +1,8 @@
-# About this site
+---
+header_class: about
+---
+
+# About
 
 ### What is music demixing used for?
 

@@ -1,6 +1,16 @@
-# Our sponsors
+---
+header_class: sponsors
+---
+
+# Sponsors
 
 We are eagerly establishing partnerships with our friends in pro audio recording, production, and any slice of the music industry related to mixing, remixing, demixing, and stem separation.
+
+The current format is 160px-wide skyscraper ad banners on the left side of the website, provided directly by our sponsors, that redirect to our sponsors' chosen link. The ads are dynamically resized for smaller screen sizes but are always present on every page of the site.
+
+We don't use any ad networks, and we want to establish 1:1, artisanal relationships with high-quality companies and hand-picked ad banners that are uploaded directly to our site.
+
+If you offer a pro demixing service, we can explore a deeper partnership where this site is encouraged for free proofs of stems for the user's demo project, and the user is funneled to your pro service for the final stems.
 
 Interested? [Contact us!](mailto:sevagh+freemdx@protonmail.com)
 

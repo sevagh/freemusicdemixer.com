@@ -34,7 +34,7 @@ onmessage = function(e) {
             const transferList = targetWaveforms.map(arr => arr.buffer);
 
             // Send the processed audio data back to the main thread
-            postMessage({ msg: 'PROCESSING_DONE_BATCH', waveforms: targetWaveforms, filename: e.data.filename }, transferList);
+            postMessage({ msg: 'PROCESSING_DONE_BATCH', waveforms: targetWaveforms, filename: e.data.filename, progressIncrement: e.data.progressIncrement }, transferList);
         });
     }
 };

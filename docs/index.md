@@ -1,12 +1,11 @@
 ---
-seo_keywords: music demixing, AI model, Open-Unmix, UMX-L, free music demixer, stem separation, free stem separation, stems, music demixer, isolate stems, isolate sources
-seo_description: Free AI-based music demixer. Perform music demixing or stem separation with AI on your own computer, private, free, and with no usage limits
+header_class: index
+keywords: music demixing, AI model, Open-Unmix, UMX-L, free music demixer, stem separation, free stem separation, stems, music demixer, isolate stems, isolate sources, proofing stems, stem proofs
+description: Free AI-based music demixer. Perform music demixing or stem separation with AI on your own computer, private, free, and with no usage limits
 ---
 <script src="umx.js"></script>
 <script src="WavFileEncoder.js" type="module"></script>
 <script src="index.js" type="module"></script>
-<script data-goatcounter="https://sevagh.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
 # Free AI-based music demixer
@@ -28,7 +27,7 @@ Unlike similar products, **it's free to use and doesn't store your data.** All p
 Love this free site? You can support my work through [GitHub Sponsors](https://github.com/sponsors/sevagh) or [PayPal](https://paypal.me/sevagh1337?country.x=CA&locale.x=en_US)
 
 **For companies:**
-If you're a company in the pro music space (production, mixing/demixing, DAW, etc.), advertising on this platform may offer targeted visibility within the music and technology community. [Contact me](mailto:sevagh+freemdx@protonmail.com) for partnership opportunities.
+If you're a company in the pro music space (production, mixing/demixing, DAW, etc.), advertising on this platform may offer targeted visibility within the music and technology community. [Contact me](mailto:sevagh+freemdx@protonmail.com) for partnership opportunities or see [our sponsors page](/sponsors) for more info.
 
 ## Demo
 

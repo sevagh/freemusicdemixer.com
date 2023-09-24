@@ -1,4 +1,3 @@
-{% if site.google_analytics %}
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
 <script>
@@ -8,4 +7,9 @@
 
   gtag('config', '{{ site.google_analytics }}');
 </script>
-{% endif %}
+
+<!-- stick goat counter in here too -->
+<!-- and also counting goat analytics everywhere -->
+<!-- disabling both in one go -->
+<script data-goatcounter="https://sevagh.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
