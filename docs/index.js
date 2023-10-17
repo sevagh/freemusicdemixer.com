@@ -157,11 +157,11 @@ function packageAndDownload(targetWaveforms) {
     // and create downloadable links for them
     // from the 4 returned targetWaveforms
     // 0 = bass, 1 = drums, 2 = other, 3 = vocals
-    const bassBuf = encodeWavFileFromAudioBuffer(bassBuffer, 1);
-    const drumsBuf = encodeWavFileFromAudioBuffer(drumsBuffer, 1);
-    const otherBuf = encodeWavFileFromAudioBuffer(otherBuffer, 1);
-    const vocalsBuf = encodeWavFileFromAudioBuffer(vocalsBuffer, 1);
-    const karaokeBuf = encodeWavFileFromAudioBuffer(karaokeBuffer, 1);
+    const bassBuf = encodeWavFileFromAudioBuffer(bassBuffer, 0);
+    const drumsBuf = encodeWavFileFromAudioBuffer(drumsBuffer, 0);
+    const otherBuf = encodeWavFileFromAudioBuffer(otherBuffer, 0);
+    const vocalsBuf = encodeWavFileFromAudioBuffer(vocalsBuffer, 0);
+    const karaokeBuf = encodeWavFileFromAudioBuffer(karaokeBuffer, 0);
 
     const bassBlob = new Blob([bassBuf], {type: 'audio/wav'});
     const drumsBlob = new Blob([drumsBuf], {type: 'audio/wav'});
@@ -434,11 +434,11 @@ async function packageAndZip(targetWaveforms, filename) {
     // and create downloadable links for them
     // from the 4 returned targetWaveforms
     // 0 = bass, 1 = drums, 2 = other, 3 = vocals
-    const bassBuf = encodeWavFileFromAudioBuffer(bassBuffer, 1);
-    const drumsBuf = encodeWavFileFromAudioBuffer(drumsBuffer, 1);
-    const otherBuf = encodeWavFileFromAudioBuffer(otherBuffer, 1);
-    const vocalsBuf = encodeWavFileFromAudioBuffer(vocalsBuffer, 1);
-    const karaokeBuf = encodeWavFileFromAudioBuffer(karaokeBuffer, 1);
+    const bassBuf = encodeWavFileFromAudioBuffer(bassBuffer, 0);
+    const drumsBuf = encodeWavFileFromAudioBuffer(drumsBuffer, 0);
+    const otherBuf = encodeWavFileFromAudioBuffer(otherBuffer, 0);
+    const vocalsBuf = encodeWavFileFromAudioBuffer(vocalsBuffer, 0);
+    const karaokeBuf = encodeWavFileFromAudioBuffer(karaokeBuffer, 0);
 
     const bassBlob = new Blob([bassBuf], {type: 'audio/wav'});
     const drumsBlob = new Blob([drumsBuf], {type: 'audio/wav'});
