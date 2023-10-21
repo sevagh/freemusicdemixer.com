@@ -1,4 +1,5 @@
 ---
+description: Support freemusicdemixer.com through sponsorships and donations. Find out how you can help us continue to provide free AI-based music demixing and stem separation tools for amateur and professional audio engineers and musicians.
 header_class: sponsors
 ---
 
@@ -18,10 +19,10 @@ Interested? [Contact us!](mailto:sevagh+freemdx@protonmail.com)
 
 We are currently partnered with [The Crescent](https://www.thecrescentmtl.com), a company based in Montreal that provides music, live stream concerts, and content production. Check them out!
 
-![crescent-medium](./assets/sponsors/crescent.jpg)
+![crescent-music-sponsor](./assets/sponsors/crescent.webp)
 
 ## OnAir Music
 
 We also work with [OnAir Music](https://open.spotify.com/artist/7IYLENV1pGGPvL6wkyl7t5), a collection of royalty-free music for use in Twitch streams and other applications. OnAir has also contributed a [stem dataset for AI music demixing research](https://github.com/sevagh/OnAir-Music-Dataset) to help researchers develop better AI stem separation applications (like the one that powers this website).
 
-<img src="./assets/sponsors/onair-banner-spotify.png" width="200px"/>
+<img src="./assets/sponsors/onair-banner-spotify.webp" width="200px" alt="onair-music-sponsor"/>

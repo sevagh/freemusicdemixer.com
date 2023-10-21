@@ -126,7 +126,7 @@ header h1:before {
 .btn-github .icon {
   color: #94ffff; /* Light Cyan */
   opacity: 1.0;
-  background: url("../images/cyantocat.png") 0 0 no-repeat;
+  background: url("../images/cyantocat.webp") 0 0 no-repeat;
 }
 
 .btn-github:hover {
@@ -204,7 +204,7 @@ div.mdx-container {
   padding: 2%;
   overflow: auto; /* Will add a scrollbar if the content overflows */
   z-index: 1;
-  background: url('../images/mixer.jpg') no-repeat center center/cover;
+  background: url('../images/mixer.webp') no-repeat center center/cover;
 }
 
 div.mdx-container-batch {
@@ -221,7 +221,7 @@ div.mdx-container-batch {
   overflow: auto; /* Will add a scrollbar if the content overflows */
   z-index: 1;
   opacity: 0.9;
-  background: url('../images/mixer_batch.jpg') no-repeat center center/cover;
+  background: url('../images/mixer_batch.webp') no-repeat center center/cover;
 }
 
 .bottom-right {
@@ -481,13 +481,13 @@ div.tag-cloud {
 
 .blog-post .meta {
     font-size: 0.9em;
-    color: #777;
+    //color: #777;
     margin-bottom: 10px;
 }
 
-.blog-post .description {
+.blog-post .summary {
     font-size: 1em;
-    color: #555;
+    //color: #555;
 }
 
 .giscus-spacing {

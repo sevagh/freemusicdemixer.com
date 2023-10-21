@@ -14,7 +14,7 @@ In music demixing or music source separation, AI models are used to separate the
 
 Load a song to decompose it into **bass, drums, vocals, melody, and karaoke** using a near-state-of-the-art AI model, [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch) with the [UMX-L](https://zenodo.org/record/5069601) pretrained weights. This site is created and maintained by [Sevag H](https://github.com/sevagh).
 <div class="image-container">
-<img class="responsive-img" src="./assets/images/music-demix.png"/>
+<img class="responsive-img" src="./assets/images/music-demix.webp" alt="music-demixing-diagram"/>
 </div>
 
 ## Runs locally in your browser!
@@ -60,7 +60,7 @@ Ready to try it on your own music files?
         </div>
     </div>
 
-    <input type="file" id="audio-upload">
+    <input type="file" id="audio-upload" aria-label="File:">
     <br>
     <button id="load-waveform" class="button">Load audio and demix</button>
     <br>
@@ -93,7 +93,7 @@ To cancel the running job, refresh the page
         </div>
     </div>
 
-    <input type="file" id="batch-upload" webkitdirectory directory multiple />
+    <input type="file" id="batch-upload" webkitdirectory directory multiple aria-label="Folder:"/>
 
     <br>
     <br>

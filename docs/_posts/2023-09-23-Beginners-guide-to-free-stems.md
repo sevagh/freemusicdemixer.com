@@ -9,7 +9,7 @@ keywords: stem separation, proofing, free, easy to use, private, privacy, AI, no
 intro: "Hello! I'm the creator of this site, and this post describes how I use my own website to get stems from mixed songs for free. Let's dive right in."
 ---
 
-<h3>Table of contents</h3>
+<h2>Table of contents</h2>
 * Table of contents
 {:toc}
 
@@ -27,13 +27,13 @@ Most common audio file extensions (wav, mp3, opus, flac, webm) should work. Note
 
 When you visit <https://freemusicdemixer.com>, you land on the homepage of this site. From this blog post, you can also click [Home](/) in the top bar. Once you're on the home page, scroll down to the section named "Demixer apps", or [go there directly](/#demixer-apps):
 
-<img src="/assets/blog/post1/freemdx.png" width="50%"/>
+<img src="/assets/blog/post1/freemdx.webp" width="50%" alt="freemusicdemixer-site-screenshot"/>
 
 ## Download weights
 
 In either app, click the "Download weights" button. You can also check the "Show dev logs" checkbox to display developer messages on the screen to describe how the model weights were loaded:
 
-<img src="/assets/blog/post1/weights_downloaded.png" width="50%"/>
+<img src="/assets/blog/post1/weights_downloaded.webp" width="50%" alt="weights-download-screenshot"/>
 
 Both apps should show "Finished loading!" with 100% full, green progress bars on the weight load. The AI model is now initialized and ready to demix your tracks.
 
@@ -41,7 +41,7 @@ Both apps should show "Finished loading!" with 100% full, green progress bars on
 
 In the "Single track" app (the first one), click "Choose file", browse to your song file, and then click "Load audio and demix." As the demixing proceeds, the progress bar will start filling up:
 
-<img src="/assets/blog/post1/single_inprogress.png" width="50%"/>
+<img src="/assets/blog/post1/single_inprogress.webp" width="50%" alt="track-screenshot"/>
 
 The track is demixed in 1-minute segments. Each segment that finishes demixing adds a notch to the progress bar.
 
@@ -81,7 +81,7 @@ Finally, on the Javascript log pane, there will be a finished message:
 
 In the app itself, at the bottom under "Demixed outputs" there will be 5 files available for download:
 
-<img src="/assets/blog/post1/single_finished.png" width="50%"/>
+<img src="/assets/blog/post1/single_finished.webp" width="50%" alt="track-finished-screenshot"/>
 
 These are the demixed stems from your track! Enjoy.
 
@@ -89,7 +89,7 @@ These are the demixed stems from your track! Enjoy.
 
 In the "Batch demix" app (the second one), click "Choose file", browse to your folder of tracks, and then click "Start batch demix," where you will be asked if you accept to upload all of the files:
 
-<img src="/assets/blog/post1/batch_start.png" width="50%"/>
+<img src="/assets/blog/post1/batch_start.webp" width="50%" alt="batch-screenshot"/>
 
 **N.B.!** I use the word "upload" but there is **no uploading being done anywhere outside of your computer.** A more accurate term is "load", since it's your web browser that is locally loading your audio file.
 
@@ -108,7 +108,7 @@ After you accept, the progress bar will fill up as each entire song is finished.
 
 When the entire folder is done, you will have links to download zip files for each song in the folder containing the 5 demixed stems per song:
 
-<img src="/assets/blog/post1/batch_finished.png" width="50%"/>
+<img src="/assets/blog/post1/batch_finished.webp" width="50%" alt="batch-finished-screenshot"/>
 
 ## Canceling a running job
 

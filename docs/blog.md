@@ -71,7 +71,7 @@ Over time, I hope to add the following categories:
         <div class="meta">
             {{ post.date | date: "%Y-%m-%d" }} | Category: {{ post.categories | join: ',' }} | Tags: {{ post.tags | join: ',' }}
         </div>
-        <div class="description">
+        <div class="summary">
             {{ post.intro | truncate: 200 }}
         </div>
     </div>
