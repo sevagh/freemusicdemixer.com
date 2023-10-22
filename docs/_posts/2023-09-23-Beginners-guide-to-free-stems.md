@@ -6,7 +6,7 @@ tags: [introduction, basics, free-music-demixer]
 header_class: post1
 description: "An introduction and tutorial on how to use freemusicdemixer.com for free stem separation and music demixing, aimed for all users"
 keywords: stem separation, proofing, free, easy to use, private, privacy, AI, no limits
-intro: "Hello! I'm the creator of this site, and this post describes how I use my own website to get stems from mixed songs for free. Let's dive right in."
+intro: "Hello! I'm the creator of this site, and this post describes how I use my own website to get stems from mixed songs for free."
 ---
 
 <h2>Table of contents</h2>

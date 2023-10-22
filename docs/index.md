@@ -146,4 +146,4 @@ To cancel the running job, refresh the page
 
 ## Technical details
 
-See [About](./about) page for more info.
+See [About](/about) page for more info, and check out our [Blog](/blog) for updates and extra content.

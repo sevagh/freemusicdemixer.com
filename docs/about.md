@@ -38,6 +38,8 @@ Free-music-demixer is a web adaptation of [umx.cpp](https://github.com/sevagh/um
 
 The inference code is written in C++, using Eigen3 for numerical operations. Emscripten is used to compile it to WebAssembly. The model weights are quantized and compressed from 424 MB down to 45 MB. [View source code on GitHub](https://github.com/sevagh/free-music-demixer).
 
+Be sure to check the [Blog](/blog) for technical articles and deep dives.
+
 ## Customizations to UMX
 
 The architecture of UMX has been modified to make it more suitable for use in a web application. These include:
