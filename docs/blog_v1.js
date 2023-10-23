@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let filteredPosts = allPosts.slice(); // Default to all posts
 
     function filterPosts(type, value) {
+        value = decodeURIComponent(value.replace(/\+/g, '%20')); // Replace + with %20
         filteredPosts = [];  // clear previously filtered posts
 
         allPosts.forEach(function(post) {

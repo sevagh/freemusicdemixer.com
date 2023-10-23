@@ -30,7 +30,7 @@ Over time, I hope to add the following categories:
 <div class="clouds">
 <span class="tag-size-5">Categories:</span> {% for category in site.categories %}
     <span class="tag-size-5">
-        <a class="category-link js-filter-landing" href="/blog?category={{ category[0] | slugify }}" data-type="category" data-value="{{ category[0] | slugify }}">{{ category[0] }}</a> ({{ category[1].size }})
+        <a class="category-link js-filter-landing" href="/blog?category={{ category[0] | url_encode }}" data-type="category" data-value="{{ category[0] | url_encode }}">{{ category[0] }}</a> ({{ category[1].size }})
     </span>
 {% endfor %}
 <br>
@@ -54,7 +54,7 @@ Over time, I hope to add the following categories:
         {% assign size = max_size | minus: 2 %}
     {% endif %}
     <span class="tag-size-{{ size }}">
-        <a class="tag-link js-filter-landing" href="/blog?tag={{ tag | slugify }}" data-type="tag" data-value="{{ tag | slugify }}">{{ tag }}</a> ({{ count }})
+        <a class="tag-link js-filter-landing" href="/blog?tag={{ tag | url_encode }}" data-type="tag" data-value="{{ tag | url_encode }}">{{ tag }}</a> ({{ count }})
     </span>
 {% endfor %}
 </div>
@@ -81,4 +81,4 @@ Over time, I hope to add the following categories:
 <button id="prevPage" disabled class="btn btn-github">← Previous</button>
 <button id="nextPage" disabled class="btn btn-github">Next →</button>
 
-<script src="/blog.js"></script>
+<script src="/blog_v1.js"></script>
