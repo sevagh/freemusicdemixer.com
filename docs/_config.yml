@@ -7,7 +7,7 @@ plugins:
 favicon: assets/favicon.ico
 
 # dont mess with SEO here
-human_description: "AI-based music demixer running for free in your browser"
+human_description: "Split songs, demix music, and separate stems with our AI-based tool: free, private, and unlimited use directly in your browser"
 description: ""
 
 url: "https://freemusicdemixer.com"
@@ -22,3 +22,4 @@ social:
     - https://github.com/sevagh
 
 google_analytics: 'G-B0BF5H94FM'
+future: false

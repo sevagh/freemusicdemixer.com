@@ -5,6 +5,7 @@
 *.bin.gz
 *.wav
 !/test/data/*.wav
+!/test/*.wav
 *.json
 !models/*.bin.gz
 docs/_site

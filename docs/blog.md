@@ -1,7 +1,7 @@
 ---
 header_class: blog
 description: Freemusicdemixer's blog, with content on music demixing, stem separation, source separation, neural networks, C++, webassembly, and more
-keywords: music demixing, AI model, Open-Unmix, UMX-L, free music demixer, stem separation, free stem separation, stems, music demixer, isolate stems, isolate sources
+keywords: music demixing, stem separation, song splitting, AI model, Open-Unmix, UMX-L, free music demixer, isolate stems, private, unlimited use
 ---
 
 # Blog

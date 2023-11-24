@@ -1,16 +1,16 @@
 ---
 header_class: index
-keywords: music demixing, AI model, Open-Unmix, UMX-L, free music demixer, stem separation, free stem separation, stems, music demixer, isolate stems, isolate sources, proofing stems, stem proofs
-description: Free AI-based music demixer. Perform music demixing or stem separation with AI on your own computer, private, free, and with no usage limits
+keywords: music demixing, stem separation, song splitting, AI model, Open-Unmix, UMX-L, free music demixer, private, unlimited use, in-browser tool
+description: "Split songs, demix music, and separate stems with our AI-based tool: free, private, and unlimited use directly in your browser."
 ---
 <script src="umx.js"></script>
 <script src="WavFileEncoder.js" type="module"></script>
-<script src="index.js" type="module"></script>
+<script src="main_v1.js" type="module"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
-# Free AI-based music demixer
+# Free AI-powered song splitter/music demixer/step separator
 
-In music demixing or music source separation, AI models are used to separate the different instruments from a music recording into stems. This web application allows you to demix your music files, free and with no usage limits since it runs on **your computer!** 🫵🏽
+In music demixing, music source separation, or song splitting, AI models are used to separate the different instruments from a music recording into stems. This web application allows you to demix or split your music files, free and with no usage limits since it runs on **your computer!** 🫵🏽
 
 Load a song to decompose it into **bass, drums, vocals, melody, and karaoke** using a near-state-of-the-art AI model, [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch) with the [UMX-L](https://zenodo.org/record/5069601) pretrained weights. This site is created and maintained by [Sevag H](https://github.com/sevagh).
 <div class="image-container">
@@ -19,7 +19,7 @@ Load a song to decompose it into **bass, drums, vocals, melody, and karaoke** us
 
 ## Runs locally in your browser!
 
-Unlike similar products, **it's free to use and doesn't store your data.** All processing is done in your browser, and your files are never uploaded anywhere. It runs well on computers and **very slowly** on smartphones; user beware.
+Unlike similar products, **it's free to use and doesn't store your data.** All processing is done in your browser, and your files are never uploaded anywhere to **fully respect user privacy.** It runs well on computers and **very slowly** on smartphones; user beware.
 
 ## Support this site!
 
@@ -50,8 +50,16 @@ Ready to try it on your own music files?
 
 ## Demixer apps
 
+Click on any of the **"DOWNLOAD WEIGHTS"** buttons below to get started, or [read the beginner's tutorial](./getting-started/2023/09/23/Beginners-guide-to-free-stems.html) if you need help!
+
 <div class="mdx-container" id="mdx-app">
-    <b><p>Single track</p></b>
+    <div class="overlay" id="overlay-single">
+        <div class="loader"></div>
+    </div>
+    <div class="centered-text">
+        <p><b>SINGLE TRACK</b></p>
+        <p>Split song into stems</p>
+    </div>
     <button id="load-weights">Download weights (45 MB)</button>
     <div class="progress-container">
         <div class="progress-text" id="load-progress-text">Downloading weights...</div>
@@ -84,7 +92,13 @@ To cancel the running job, refresh the page
 </div>
 
 <div class="mdx-container-batch" id="mdx-app-batch">
-    <b><p>Batch demix (experimental!!)</p></b>
+    <div class="overlay" id="overlay-batch">
+        <div class="loader"></div>
+    </div>
+    <div class="centered-text">
+        <p><b>BATCH DEMIX (Experimental!!)</b></p>
+        <p>Split all songs in a folder</p>
+    </div>
     <button id="load-weights-2">Download weights (45 MB)</button>
     <div class="progress-container">
         <div class="progress-text" id="load-progress-text-2">Downloading weights...</div>

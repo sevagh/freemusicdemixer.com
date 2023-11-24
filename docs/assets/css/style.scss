@@ -220,7 +220,6 @@ div.mdx-container-batch {
   padding: 2%;
   overflow: auto; /* Will add a scrollbar if the content overflows */
   z-index: 1;
-  opacity: 0.9;
   background: url('../images/mixer_batch.webp') no-repeat center center/cover;
 }
 
@@ -518,4 +517,104 @@ div.tag-cloud {
   color: #8b008b; /* Dark Magenta, same as your other headings */
   //font-weight: bold; /* for a bold appearance like headings */
   //font-size: 1.2em; /* adjust the size if needed */
+}
+
+// spinner for loading weights
+
+.overlay {
+    position: absolute; /* Changed to absolute within the container */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.9); /* semi-transparent overlay */
+    z-index: 2;
+    cursor: pointer;
+}
+
+.loader {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 46.5%;
+    border: 5px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 5px solid #3498db;
+    width: 50px;
+    height: 50px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#load-weights, #load-weights-2 {
+    position: relative; /* Needed to use z-index */
+    z-index: 3; /* Higher than the overlay's z-index */
+}
+
+#load-weights, #load-weights-2 {
+  font-size: 20px; /* Larger font size for better visibility */
+  padding: 16px 24px; /* Adjust padding to maintain visual balance with larger font */
+  margin-bottom: 16px; /* Extra space below the button */
+  cursor: pointer; /* Cursor indicates it's clickable */
+  color: #94ffff; /* White text color for better contrast */
+  background-color: #c71585; /* Add a background color to make it stand out (Tomato color for example) */
+  font-family: "Courier New", monospace;
+  border: none; /* Remove border for a modern look */
+  border-radius: 5px; /* Rounded corners */
+  text-transform: uppercase; /* Uppercase text for emphasis */
+  font-weight: bold; /* Bold font weight */
+  transition: background-color 0.3s; /* Smooth background color transition for hover effect */
+}
+//color: #94ffff; /* Light Cyan */
+//background: #c71585; /* Medium Violet Red */
+
+#load-weights:hover, #load-weights-2:hover {
+  background-color: #8b008b; /* Slightly darker background on hover */
+}
+
+#load-weights:disabled, #load-weights-2:disabled {
+  background-color: #cccccc; /* Greyed out background for disabled state */
+  color: #b7b7b7; // darker grey for the text
+  cursor: not-allowed; /* 'Not allowed' cursor for disabled button */
+}
+
+.centered-text {
+    text-align: center;
+    margin-bottom: 10px; /* Adjust this value as needed for spacing */
+}
+
+.centered-text p {
+    margin-top: 5px; /* Adjust top margin */
+    margin-bottom: 5px; /* Adjust bottom margin */
+    /* Other styles, if needed */
+}
+
+blockquote {
+    color: #8b008b; /* Dark Magenta */
+    border-left: 3px solid #8b008b; /* Optional: adds a left border to your blockquote */
+    margin: 10px 20px; /* Adjusts top and bottom margin */
+    padding-left: 15px; /* Adds padding to the left of the blockquote */
+    font-style: italic; /* Optional: italicizes the quote text */
+}
+
+.highlight {
+    background-color: #e1f77e; /* Light yellow background */
+    color: #333; /* Darker text color for contrast */
+    padding: 2px 5px; /* Padding around the text */
+    border-radius: 3px; /* Optional: rounded corners */
+    font-size: 18px;
 }

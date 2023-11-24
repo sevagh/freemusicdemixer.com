@@ -1,8 +1,6 @@
 # free-music-demixer
 
-A free client-side static website for music demixing (aka music source separation) using the AI model Open-Unmix (with UMX-L weights):
-<br>
-<img src="docs/assets/images/music-demix.png" width="50%"/>
+A [free static website](https://freemusicdemixer.com) for client-side music demixing (aka music source separation) using the AI model Open-Unmix (with UMX-L weights).
 
 I transliterated the original PyTorch model Python code to C++ using Eigen. It compiles to WebAssembly with Emscripten. The UMX-L weights are quantized (mostly uint8, uint16 for the last 4 layers) and saved with the ggml binary file format. They are then gzipped. This reduces the 425 MB of UMX-L weights down to 45 MB, while achieving similar performance (verified empirically using BSS metrics).
 
