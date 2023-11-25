@@ -8,7 +8,7 @@ description: "Split songs, demix music, and separate stems with our AI-based too
 <script src="main_v1.js" type="module"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
-# Free AI-powered song splitter/music demixer/step separator
+# Free AI-powered music demixer
 
 In music demixing, music source separation, or song splitting, AI models are used to separate the different instruments from a music recording into stems. This web application allows you to demix or split your music files, free and with no usage limits since it runs on **your computer!** 🫵🏽
 
