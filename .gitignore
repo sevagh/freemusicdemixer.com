@@ -7,7 +7,10 @@
 !/test/data/*.wav
 !/test/*.wav
 *.json
+!models/*.bin
 !models/*.bin.gz
 docs/_site
 .sass-cache/
 !/docs/assets/clips/*.wav
+*.pyc
+__pycache__

@@ -1,5 +1,7 @@
+#demucs==4.0.1
+# pass local path to demucs in vendored folder
+-e ./vendor/demucs
 #openunmix==1.2.1
-# pass local path to openunmix in vendored folder
 -e ./vendor/open-unmix-pytorch
 librosa
 museval

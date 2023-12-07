@@ -3,16 +3,15 @@ header_class: index
 keywords: music demixing, stem separation, song splitting, AI model, Open-Unmix, UMX-L, free music demixer, private, unlimited use, in-browser tool
 description: "Split songs, demix music, and separate stems with our AI-based tool: free, private, and unlimited use directly in your browser."
 ---
-<script src="umx.js"></script>
 <script src="WavFileEncoder.js" type="module"></script>
-<script src="main_v1.js" type="module"></script>
+<script src="main_v2.js" type="module"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
 # Free AI-powered music demixer
 
 In music demixing, music source separation, or song splitting, AI models are used to separate the different instruments from a music recording into stems. This web application allows you to demix or split your music files, free and with no usage limits since it runs on **your computer!** 🫵🏽
 
-Load a song to decompose it into **bass, drums, vocals, melody, and karaoke** using a near-state-of-the-art AI model, [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch) with the [UMX-L](https://zenodo.org/record/5069601) pretrained weights. This site is created and maintained by [Sevag H](https://github.com/sevagh).
+Load a song to decompose it into **bass, drums, vocals, melody, and karaoke** using high-quality AI models! We provide [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch) [UMX-L](https://zenodo.org/record/5069601) as the fast base model, and [Demucs v4 Hybrid Transformer](https://github.com/facebookresearch/demucs) as the high-quality option, making this website the best free web-based song splitter available today! This site is created and maintained by [Sevag H](https://github.com/sevagh).
 <div class="image-container">
 <img class="responsive-img" src="./assets/images/music-demix.webp" alt="music-demixing-diagram"/>
 </div>
@@ -33,7 +32,7 @@ If you're a company in the pro music space (production, mixing/demixing, DAW, et
 
 For the demo, I used [a free song by Jaxius Music](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f), which you can also download if you don't have any music files handy.
 
-Here's a demo of 20 seconds of demixed outputs; press the play button and toggle sources to add or remove them from the mix:
+Here's a short demo using the Demucs v4 HT model; press the play button and toggle sources to add or remove them from the mix:
 <div class="demo-container" id="demo-app">
 <button id="playButton">Play now!</button>
 <br>
@@ -50,17 +49,19 @@ Ready to try it on your own music files?
 
 ## Demixer apps
 
-Click on any of the **"DOWNLOAD WEIGHTS"** buttons below to get started, or [read the beginner's tutorial](./getting-started/2023/09/23/Beginners-guide-to-free-stems.html) if you need help!
+Click on a **"DOWNLOAD WEIGHTS"** button for a model below to get started, or [read the beginner's tutorial](./getting-started/2023/09/23/Beginners-guide-to-free-stems.html) if you need help!
 
 <div class="mdx-container" id="mdx-app">
     <div class="overlay" id="overlay-single">
         <div class="loader"></div>
+        <button id="load-weights">Download UMXL weights (45 MB)<br>Faster, lower quality</button>
+        <br>
+        <button id="load-weights-2">Download Demucs weights (81 MB)<br>Slower, higher quality<br>⚠️ EARLY ALPHA!</button>
     </div>
     <div class="centered-text">
         <p><b>SINGLE TRACK</b></p>
         <p>Split song into stems</p>
     </div>
-    <button id="load-weights">Download weights (45 MB)</button>
     <div class="progress-container">
         <div class="progress-text" id="load-progress-text">Downloading weights...</div>
         <div class="progress-bar">
@@ -94,12 +95,20 @@ To cancel the running job, refresh the page
 <div class="mdx-container-batch" id="mdx-app-batch">
     <div class="overlay" id="overlay-batch">
         <div class="loader"></div>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSek_QU_BGd7CL2BLVOLDs7JmTZzcLKJiK5k4ysxoCEMjEGrtA/viewform?usp=sf_link" target="_blank" id="sign-up" class="button-sign-up">
+          <span class="sign-up-text">SIGN UP FOR UPDATES!</span>
+          <br>
+          <span class="sign-up-details">
+            <div>COMING SOON:</div>
+            <div>- MULTI-THREADING</div>
+            <div>- PIANO AND GUITAR STEMS</div>
+          </span>
+        </a>
     </div>
     <div class="centered-text">
         <p><b>BATCH DEMIX (Experimental!!)</b></p>
         <p>Split all songs in a folder</p>
     </div>
-    <button id="load-weights-2">Download weights (45 MB)</button>
     <div class="progress-container">
         <div class="progress-text" id="load-progress-text-2">Downloading weights...</div>
         <div class="progress-bar">
@@ -146,16 +155,15 @@ To cancel the running job, refresh the page
 
 ## Latest news
 
-* Fixed bugs ([1](https://github.com/sevagh/free-music-demixer/issues/4), [2](https://github.com/sevagh/free-music-demixer/issues/7)), added initial sponsors, and improved batch zip folder layout
-* Improved demixing quality by 1+ dB SDR with Wiener filtering
-* Support demixing larger tracks with low-memory segmented inference and streaming LSTM 
-* Added batch demixing and a checkbox to show developer output logs
+* Added a new AI model, Demucs v4 Hybrid Transformer, with higher separation quality
+* Add batch demix job for folder of songs
+* First launch with AI model Open-Unmix UMXL using custom quantized + compressed weights and streaming LSTM
 
 ## Disclaimers!
 
-* You can only use the outputs for non-commercial applications as per the <a href="https://zenodo.org/record/5069601">UMX-L weights license</a>
+* You can only use the outputs of these models for non-commercial applications 
 * The task is CPU and memory intensive (up to 4 GB), please be patient! Very very large tracks may still crash!
-* Please open a [GitHub Issue](https://github.com/sevagh/free-music-demixer/issues) for any bugs or feature requests.
+* Please open a [GitHub Issue](https://github.com/sevagh/free-music-demixer/issues) or e-mail me directly (sevagh+freemdx at protonmail dot com) for any bugs or feature requests
 * Input files can be almost any audio format, but the outputs are always stereo wav files @ 44100 Hz
 
 ## Technical details
