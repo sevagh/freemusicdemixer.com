@@ -41,10 +41,10 @@ Fewer memory issues from segmented design (largest track tested is ~7 minutes, '
 
 'Georgia Wonder - Siren' (takes ~41 minutes):
 ```
-vocals          ==> SDR:   8.326  SIR:  18.257  ISR:  15.927  SAR:   8.311
-drums           ==> SDR:  10.041  SIR:  18.413  ISR:  17.054  SAR:  10.692
-bass            ==> SDR:   3.893  SIR:  12.221  ISR:   7.076  SAR:   3.237
-other           ==> SDR:   7.432  SIR:  11.422  ISR:  14.161  SAR:   8.201
+vocals          ==> SDR:   7.261  SIR:  13.550  ISR:  13.158  SAR:   6.763
+drums           ==> SDR:  10.629  SIR:  17.819  ISR:  17.373  SAR:  10.829
+bass            ==> SDR:  10.593  SIR:  19.696  ISR:  12.244  SAR:  10.007
+other           ==> SDR:   6.324  SIR:   9.005  ISR:  13.223  SAR:   6.067
 ```
 
 'Zeno - Signs' (takes ~20 minutes):
