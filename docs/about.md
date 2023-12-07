@@ -23,7 +23,11 @@ Demixed stems can be used for:
 
 Most demixing applications are complex Artificial Intelligence (AI) models that require a lot of computational power to run. Similar websites will have a job queue, where you submit your track and hope it gets processed in the backend on a heavyweight machine that's possibly running an expensive GPU.
 
-This website is a simple, easy-to-use interface for the AI model [UMX-L](https://zenodo.org/record/5069601), hand-crafted to run fast on your web browser. You can simply upload the track you want demixed and watch while it gets processed immediately on your own computer. **Your privacy is 100% respected** since your files are never uploaded to a server or job queue.
+This website is a simple, easy-to-use interface for two AI models:
+* [UMX-L](https://zenodo.org/record/5069601)
+* [Demucs v4](https://arxiv.org/abs/2211.08553)
+
+These have been rewritten from Python to C++ to run fast and lean in your web browser. You can simply upload the track you want demixed and watch while it gets processed immediately on your own computer. **Your privacy is 100% respected** since your files are never uploaded to a server or job queue.
 
 When the demixing is complete, you can download the following stems in wav files (stereo, 44100 Hz):
 - Bass
@@ -34,22 +38,6 @@ When the demixing is complete, you can download the following stems in wav files
 
 ## Technical implementation
 
-Free-music-demixer is a web adaptation of [umx.cpp](https://github.com/sevagh/umx.cpp), which is more focused on parity with the original model. This project was inspired by the "AI at the edge" [GGML project](https://ggml.ai/) (including [whisper.cpp](https://github.com/ggerganov/whisper.cpp) and [llama.cpp](https://github.com/ggerganov/llama.cpp)), and WebAssembly is a great demo of client-side AI.
+Free-music-demixer started as a web adaptation of [umx.cpp](https://github.com/sevagh/umx.cpp), which is more focused on parity with the original model. This project was inspired by the "AI at the edge" [GGML project](https://ggml.ai/) (including [whisper.cpp](https://github.com/ggerganov/whisper.cpp) and [llama.cpp](https://github.com/ggerganov/llama.cpp)), and WebAssembly is a great demo of client-side AI. It has since added support for [demucs.cpp](https://github.com/sevagh/demucs.cpp) for much better demixing quality.
 
-The inference code is written in C++, using Eigen3 for numerical operations. Emscripten is used to compile it to WebAssembly. The model weights are quantized and compressed from 424 MB down to 45 MB. [View source code on GitHub](https://github.com/sevagh/free-music-demixer).
-
-Be sure to check the [Blog](/blog) for technical articles and deep dives.
-
-## Customizations to UMX
-
-The architecture of UMX has been modified to make it more suitable for use in a web application. These include:
-- Quantizing the model weights to 8-bit integers
-- Compressing the model weights with gzip
-- Implementing a streaming LSTM architecture to allow larger tracks to be separated without crashing
-- Implementing segmented inference (copied from Demucs) to allow much larger tracks to be separated without crashing
-
-## umx.cpp and demucs.cpp
-
-I intend to continue working on improving umx.cpp, and eventually working on demucs.cpp. Demucs is one of the current leading state-of-the-art models for music demixing, but it is computationally more intensive and harder to implement than umx.cpp.
-
-The goal is to trickle features from the umx.cpp and demucs.cpp codebases into freemusicdemixer.com over time.
+The inference code is written in C++, using Eigen3 for numerical operations. Emscripten is used to compile it to WebAssembly. Be sure to check the [Blog](/blog) for technical articles and deep dives.
