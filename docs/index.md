@@ -9,6 +9,8 @@ description: "Split songs, demix music, and separate stems with our AI-based too
 
 # Free AI-powered music demixer
 
+<a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img width="250" src="https://media.theresanaiforthat.com/featured3.png"></a>
+
 In music demixing, music source separation, or song splitting, AI models are used to separate the different instruments from a music recording into stems. This web application allows you to demix or split your music files, free and with no usage limits since it runs on **your computer!** 🫵🏽
 
 Load a song to decompose it into **bass, drums, vocals, melody, and karaoke** using high-quality AI models! We provide [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch) [UMX-L](https://zenodo.org/record/5069601) as the fast base model, and [Demucs v4 Hybrid Transformer](https://github.com/facebookresearch/demucs) as the high-quality option, making this website the best free web-based song splitter available today! This site is created and maintained by [Sevag H](https://github.com/sevagh).
