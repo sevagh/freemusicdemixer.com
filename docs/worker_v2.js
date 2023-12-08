@@ -10,7 +10,7 @@ onmessage = function(e) {
         // Load the WASM module and initialize the model
         // Determine which WASM module to load based on the message
         model = e.data.model;
-        const scriptName = e.data.model === 'demucs' ? 'demucs.js' : 'umx.js';
+        const scriptName = e.data.model === 'demucs' ? 'demucs.js' : 'umx_v1.js';
 
         // Load the WASM module
         importScripts(scriptName);

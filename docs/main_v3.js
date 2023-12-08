@@ -22,7 +22,7 @@ document.addEventListener('click', function() {
 });
 
 // Create a new Worker using the worker.js file
-const worker = new Worker('worker_v1.js');
+const worker = new Worker('worker_v2.js');
 
 // disable the input file upload and the waveform upload button
 document.getElementById('audio-upload').disabled = true;

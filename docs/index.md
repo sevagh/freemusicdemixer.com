@@ -4,7 +4,7 @@ keywords: music demixing, stem separation, song splitting, AI model, Open-Unmix,
 description: "Split songs, demix music, and separate stems with our AI-based tool: free, private, and unlimited use directly in your browser."
 ---
 <script src="WavFileEncoder.js" type="module"></script>
-<script src="main_v2.js" type="module"></script>
+<script src="main_v3.js" type="module"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
 # Free AI-powered music demixer

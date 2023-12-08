@@ -44,16 +44,16 @@ add_custom_command(TARGET demucs POST_BUILD
 
 # umx executable
 file(GLOB UMX_SOURCES "src-umx/*.cpp" "src-umx/wasm_glue.cpp")
-add_executable(umx ${UMX_SOURCES})
-target_include_directories(umx PRIVATE src-umx) # Include src-umx only for umx target
-target_link_libraries(umx zlibstatic)
-set_target_properties(umx PROPERTIES
+add_executable(umx_v1 ${UMX_SOURCES})
+target_include_directories(umx_v1 PRIVATE src-umx) # Include src-umx only for umx target
+target_link_libraries(umx_v1 zlibstatic)
+set_target_properties(umx_v1 PROPERTIES
     LINK_FLAGS "${COMMON_LINK_FLAGS} -s EXPORT_NAME='libumx'  --preload-file ${CMAKE_BINARY_DIR}/ggml-model-umxl-u8.bin.gz -s EXPORTED_FUNCTIONS=\"['_malloc', '_free', '_modelInit', '_modelLoadProgress', '_modelInferenceProgress', '_modelDemixSegment']\""
 )
-add_custom_command(TARGET umx POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/umx.js ${CMAKE_SOURCE_DIR}/docs
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/umx.wasm ${CMAKE_SOURCE_DIR}/docs
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/umx.data ${CMAKE_SOURCE_DIR}/docs
+add_custom_command(TARGET umx_v1 POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/umx_v1.js ${CMAKE_SOURCE_DIR}/docs
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/umx_v1.wasm ${CMAKE_SOURCE_DIR}/docs
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/umx_v1.data ${CMAKE_SOURCE_DIR}/docs
 )
 
 # Copy models to the build directory
