@@ -1,6 +1,3 @@
-[submodule "vendor/open-unmix-pytorch"]
-	path = vendor/open-unmix-pytorch
-	url = https://github.com/sigsep/open-unmix-pytorch
 [submodule "vendor/libnyquist"]
 	path = vendor/libnyquist
 	url = https://github.com/ddiakopoulos/libnyquist
