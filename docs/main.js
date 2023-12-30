@@ -190,24 +190,6 @@ let completedSongsBatch = 0; // Counter for processed songs in batch mode
 let batchNextFileResolveCallback = null; // Callback for resolving the next file in batch mode
 let globalProgressIncrement = 0; // Global progress increment for batch mode
 
-function fetchAndCacheFiles(model) {
-    let modelFile = "";
-    if (model === 'demucs-4s') {
-        modelFile = `assets/models/ggml-model-htdemucs-4s-f16.bin`;
-    } else if (model === 'demucs-6s') {
-        modelFile = `assets/models/ggml-model-htdemucs-6s-f16.bin`;
-    }
-
-    const filesToFetch = [
-        'demucs.wasm',
-        'demucs.js',
-        modelFile
-    ];
-
-    const fetchPromises = filesToFetch.map(file => fetch(file));
-    return Promise.all(fetchPromises);
-}
-
 function initWorkers() {
    // replace empty global workers with NUM_WORKERS new workers
    // if workers has already been initialized, loop over and terminate
@@ -318,21 +300,53 @@ function initWorkers() {
     }
 };
 
-function initModel() {
-    fetchAndCacheFiles(selectedModel).then(responses => {
-        writeJsLog("Fetched and cached model files");
-        writeJsLog(`Selected model: ${selectedModel}`);
+function fetchAndCacheFiles(model) {
+    let modelFile = "";
+    if (model === 'demucs-4s') {
+        modelFile = `assets/models/ggml-model-htdemucs-4s-f16.bin`;
+    } else if (model === 'demucs-6s') {
+        modelFile = `assets/models/ggml-model-htdemucs-6s-f16.bin`;
+    }
 
-        // WASM module is ready, enable the buttons
-        // disable load-weight buttons
-        hideOverlay();
-        document.getElementById('load-weights-2').disabled = true;
-        document.getElementById('load-weights-3').disabled = true;
-        document.getElementById('audio-upload').disabled = false;
-        document.getElementById('batch-upload').disabled = false;
-        document.getElementById('load-waveform').disabled = false;
-        document.getElementById('load-batch').disabled = false;
-    });
+    const filesToFetch = [
+        'demucs.wasm',
+        'demucs.js',
+        modelFile
+    ];
+
+    // Map each file to a fetch request and then process the response
+    const fetchPromises = filesToFetch.map(file => 
+        fetch(file).then(response => {
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${file}`);
+            }
+            return response.arrayBuffer(); // Or another appropriate method depending on the file type
+        })
+    );
+    return Promise.all(fetchPromises);
+}
+
+function initModel() {
+    fetchAndCacheFiles(selectedModel)
+        .then(buffers => { // buffers are the downloaded file contents
+            writeJsLog("Fetched and cached model files");
+            writeJsLog(`Selected model: ${selectedModel}`);
+
+            // Process buffers if needed, e.g., initialize WASM module
+
+            // WASM module is ready, enable the buttons
+            hideOverlay();
+            document.getElementById('load-weights-2').disabled = true;
+            document.getElementById('load-weights-3').disabled = true;
+            document.getElementById('audio-upload').disabled = false;
+            document.getElementById('batch-upload').disabled = false;
+            document.getElementById('load-waveform').disabled = false;
+            document.getElementById('load-batch').disabled = false;
+        })
+        .catch(error => {
+            writeJsLog(`Error in fetching model files: ${error}`);
+            // Handle errors, maybe keep the overlay visible or show an error message
+        });
 }
 
 document.getElementById('log-clear').addEventListener('click', () => {
