@@ -52,7 +52,7 @@ When Demucs runs on a track, it consumes a max of 4 GB of memory. Demucs can be 
 
 You can now choose up to **32 GB of memory consumption** to launch 8 workers. This can roughly be considered as launching 8 threads or processes in your browser, which should result in dramatic speedups (on my tests, it took a 17 minute track down to 5 minutes).
 
-Note: from my tests, <span class="blog-highlight">up to 32 GB works in FireFox, but only 16 GB in Chrome.</span> I need to run more tests on Chrome to track down the issue (for now I reported [this issue](https://github.com/emscripten-core/emscripten/issues/20946), possibly in the wrong place).
+Note: from my tests, <span class="blog-highlight">up to 32 GB works in Firefox, but only 16 GB in Chrome.</span> I need to run more tests on Chrome to track down the issue (for now I reported [this issue](https://github.com/emscripten-core/emscripten/issues/20946), possibly in the wrong place).
 
 ## Demixing a single track
 

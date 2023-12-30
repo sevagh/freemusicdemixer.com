@@ -53,7 +53,7 @@ Choose a model below to get started:
 
 You can always [read the beginner's tutorial](./getting-started/2023/09/23/Beginners-guide-to-free-stems.html) if you need help!
 
-There is a new **MAX MEMORY** option for faster demixing!🚀🔥 We have tested up to 32 GB in FireFox and 16 GB in Chrome.
+There is a new **MAX MEMORY** option for faster demixing!🚀🔥 We have tested up to 32 GB in Firefox and 16 GB in Chrome.
 
 <div class="mdx-container" id="mdx-app">
     <div class="overlay" id="overlay-single">
