@@ -15,14 +15,18 @@ using namespace demucscpp;
 
 extern "C"
 {
-    static demucs_model_4s model;
+    static demucs_model model;
     bool batch_mode = false;
 
     // Define a JavaScript function using EM_JS
-    EM_JS(void, sendProgressUpdate, (float progress), {
+    EM_JS(void, sendProgressUpdate, (float progress, bool batch_mode), {
         // This code will be run in JavaScript
         // pass data from worker.js to index.js
-        postMessage({msg : 'PROGRESS_UPDATE', data : progress});
+        if (batch_mode) {
+            postMessage({msg : 'PROGRESS_UPDATE_BATCH', data : progress});
+        } else {
+            postMessage({msg : 'PROGRESS_UPDATE', data : progress});
+        }
     });
 
     EM_JS(void, callWriteWasmLog, (const char *str),
@@ -66,10 +70,13 @@ extern "C"
     {
         std::cout.rdbuf(&customCoutBuffer);
         std::cerr.rdbuf(&customCerrBuffer);
-        bool success = load_demucs_model_4s("ggml-model-htdemucs-4s-f16.bin", &model);
+        // this is a virtual filesystem path
+        // javascript will mount either the 4s or 6s model to the same path
+        bool success =
+            load_demucs_model("/selected-model.bin", &model);
         if (!success)
         {
-            std::cerr << "Error loading demucs-4s model" << std::endl;
+            std::cerr << "Error loading demucs model" << std::endl;
             exit(1);
         }
     }
@@ -82,24 +89,29 @@ extern "C"
 
     EMSCRIPTEN_KEEPALIVE
     void modelDemixSegment(const float *left, const float *right, int length,
-                         float *left_0, float *right_0, float *left_1,
-                         float *right_1, float *left_2, float *right_2,
-                         float *left_3, float *right_3, bool batch_mode_param)
+                           float *left_0, float *right_0, float *left_1,
+                           float *right_1, float *left_2, float *right_2,
+                           float *left_3, float *right_3, float *left_4,
+                           float *right_4, float *left_5, float *right_5, bool batch_mode_param)
     {
-        std::cout << "Beginning Demucs v4 Hybrid-Transformer inference" << std::endl;
+        std::cout << "Beginning Demucs v4 Hybrid-Transformer inference"
+                  << std::endl;
 
         // number of samples per channel
         size_t N = length;
 
-        // Create the callback, always defined, and checks batch_mode within itself
-        demucscpp::ProgressCallback progressCallback = [batch_mode_param](float progress) {
-            if (!batch_mode_param) {
-                sendProgressUpdate(progress);
-            }
+        // Create the callback, always defined, and checks batch_mode within
+        // itself
+        demucscpp::ProgressCallback progressCallback =
+            [batch_mode_param](float progress)
+        {
+            sendProgressUpdate(progress, batch_mode_param);
         };
 
         model.inference_progress = 0.0f;
         progressCallback(model.inference_progress);
+
+        int nb_out_targets = model.is_4sources ? 4 : 6;
 
         Eigen::MatrixXf audio(2, N);
         // fill audio struct with zeros
@@ -114,10 +126,10 @@ extern "C"
         }
 
         Eigen::Tensor3dXf target_waveforms =
-            demucs_inference_4s(model, audio, progressCallback);
+            demucs_inference(model, audio, progressCallback);
 
         std::cout << "Copying waveforms" << std::endl;
-        for (int target = 0; target < 4; ++target)
+        for (int target = 0; target < nb_out_targets; ++target)
         {
             float *left_target;
             float *right_target;
@@ -139,6 +151,14 @@ extern "C"
             case 3:
                 left_target = left_3;
                 right_target = right_3;
+                break;
+            case 4:
+                left_target = left_4;
+                right_target = right_4;
+                break;
+            case 5:
+                left_target = left_5;
+                right_target = right_5;
                 break;
             };
 

@@ -1,11 +1,11 @@
 ---
 header_class: index
-keywords: music demixing, stem separation, song splitting, AI model, Open-Unmix, UMX-L, free music demixer, private, unlimited use, in-browser tool
+keywords: music demixing, stem separation, song splitting, AI model, Demucs, Transformer, free music demixer, private, unlimited use, in-browser tool
 description: "Split songs, demix music, and separate stems with our AI-based tool: free, private, and unlimited use directly in your browser."
 ---
 <script src="WavFileEncoder.js" type="module"></script>
-<script src="main_v3.js" type="module"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<script src="main.js" type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
 # Free AI-powered music demixer
 
@@ -13,7 +13,7 @@ description: "Split songs, demix music, and separate stems with our AI-based too
 
 In music demixing, music source separation, or song splitting, AI models are used to separate the different instruments from a music recording into stems. This web application allows you to demix or split your music files, free and with no usage limits since it runs on **your computer!** 🫵🏽
 
-Load a song to decompose it into **bass, drums, vocals, melody, and karaoke** using high-quality AI models! We provide [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch) [UMX-L](https://zenodo.org/record/5069601) as the fast base model, and [Demucs v4 Hybrid Transformer](https://github.com/facebookresearch/demucs) as the high-quality option, making this website the best free web-based song splitter available today! This site is created and maintained by [Sevag H](https://github.com/sevagh).
+Load a song to decompose, split, or separate it into **vocals, instrumental, bass, drums, melody, piano, and guitar stems** using the [Demucs v4 Hybrid Transformer](https://github.com/facebookresearch/demucs) family of AI models. This website is the best free web-based song splitter available today, created and maintained by [Sevag H](https://github.com/sevagh).
 <div class="image-container">
 <img class="responsive-img" src="./assets/images/music-demix.webp" alt="music-demixing-diagram"/>
 </div>
@@ -24,11 +24,7 @@ Unlike similar products, **it's free to use and doesn't store your data.** All p
 
 ## Support this site!
 
-**For individuals:**
-Love this free site? You can support my work through [GitHub Sponsors](https://github.com/sponsors/sevagh) or [PayPal](https://paypal.me/sevagh1337?country.x=CA&locale.x=en_US)
-
-**For companies:**
-If you're a company in the pro music space (production, mixing/demixing, DAW, etc.), advertising on this platform may offer targeted visibility within the music and technology community. [Contact me](mailto:sevagh+freemdx@protonmail.com) for partnership opportunities or see [our sponsors page](/sponsors) for more info.
+If you love this free site and want to support it, [contact me](mailto:sevagh+freemdx@protonmail.com), or visit [the sponsors page](/sponsors) for more info.
 
 ## Demo
 
@@ -51,27 +47,37 @@ Ready to try it on your own music files?
 
 ## Demixer apps
 
-Click on a **"DOWNLOAD WEIGHTS"** button for a model below to get started, or [read the beginner's tutorial](./getting-started/2023/09/23/Beginners-guide-to-free-stems.html) if you need help!
+Choose a model below to get started:
+* Demucs 4-source stems: vocals, drums, bass, melody
+* Demucs 6-source stems: vocals, drums, bass, piano, guitar, other
+
+You can always [read the beginner's tutorial](./getting-started/2023/09/23/Beginners-guide-to-free-stems.html) if you need help!
+
+There is a new **MAX MEMORY** option for faster demixing!🚀🔥 We have tested up to 32 GB in FireFox and 16 GB in Chrome.
 
 <div class="mdx-container" id="mdx-app">
     <div class="overlay" id="overlay-single">
         <div class="loader"></div>
-        <button id="load-weights">Download UMXL weights (45 MB)<br>Faster, lower quality</button>
+        <button id="load-weights-2">Demucs 4-source weights (81 MB)</button>
         <br>
-        <button id="load-weights-2">Download Demucs weights (81 MB)<br>Slower, higher quality<br>⚠️ EARLY ALPHA!</button>
+        <button id="load-weights-3">Demucs 6-source weights (53 MB)</button>
     </div>
     <div class="centered-text">
         <p><b>SINGLE TRACK</b></p>
         <p>Split song into stems</p>
     </div>
-    <div class="progress-container">
-        <div class="progress-text" id="load-progress-text">Downloading weights...</div>
-        <div class="progress-bar">
-            <div class="progress-bar-inner" id="load-progress-bar" style="width: 0%"></div>
-        </div>
-    </div>
-
     <input type="file" id="audio-upload" aria-label="File:">
+    <br>
+    <div class="memory-selection">
+        <label for="memory-select">MAX MEMORY:</label>
+        <select id="memory-select">
+            <option value="4">4 GB</option>
+            <option value="8">8 GB</option>
+            <option value="16" selected>16 GB</option>
+            <option value="32">32 GB</option>
+        </select>
+        <span id="worker-count"> (4 workers)</span>
+    </div>
     <br>
     <button id="load-waveform" class="button">Load audio and demix</button>
     <br>
@@ -102,25 +108,28 @@ To cancel the running job, refresh the page
           <br>
           <span class="sign-up-details">
             <div>COMING SOON:</div>
-            <div>- MULTI-THREADING</div>
-            <div>- PIANO AND GUITAR STEMS</div>
+            <div>- FINE-TUNED VOCAL MODEL</div>
+            <div>- MAX-QUALITY ENSEMBLES</div>
           </span>
         </a>
     </div>
     <div class="centered-text">
-        <p><b>BATCH DEMIX (Experimental!!)</b></p>
+        <p><b>BATCH DEMIX</b></p>
         <p>Split all songs in a folder</p>
-    </div>
-    <div class="progress-container">
-        <div class="progress-text" id="load-progress-text-2">Downloading weights...</div>
-        <div class="progress-bar">
-            <div class="progress-bar-inner" id="load-progress-bar-2" style="width: 0%"></div>
-        </div>
     </div>
 
     <input type="file" id="batch-upload" webkitdirectory directory multiple aria-label="Folder:"/>
-
     <br>
+    <div class="memory-selection">
+        <label for="memory-select-2">MAX MEMORY:</label>
+        <select id="memory-select-2">
+            <option value="4">4 GB</option>
+            <option value="8">8 GB</option>
+            <option value="16" selected>16 GB</option>
+            <option value="32">32 GB</option>
+        </select>
+        <span id="worker-count-2"> (4 workers)</span>
+    </div>
     <br>
     <button id="load-batch" class="button">Start batch demix</button>
     <br>
@@ -157,14 +166,14 @@ To cancel the running job, refresh the page
 
 ## Latest news
 
+* Add piano and guitar stems with Demucs 6-source, and rename karaoke stem to instrumental
+* Added max memory option to run Demucs faster with multi-threading; deprecate UMX
 * Added a new AI model, Demucs v4 Hybrid Transformer, with higher separation quality
-* Add batch demix job for folder of songs
-* First launch with AI model Open-Unmix UMXL using custom quantized + compressed weights and streaming LSTM
 
 ## Disclaimers!
 
-* You can only use the outputs of these models for non-commercial applications 
-* The task is CPU and memory intensive (up to 4 GB), please be patient! Very very large tracks may still crash!
+* You can only use the outputs of these models for non-commercial applications
+* If you experience crashes, try different max memory settings!
 * Please open a [GitHub Issue](https://github.com/sevagh/free-music-demixer/issues) or e-mail me directly (sevagh+freemdx at protonmail dot com) for any bugs or feature requests
 * Input files can be almost any audio format, but the outputs are always stereo wav files @ 44100 Hz
 

@@ -1,7 +1,7 @@
 ---
 header_class: blog
 description: Freemusicdemixer's blog, with content on music demixing, stem separation, source separation, neural networks, C++, webassembly, and more
-keywords: music demixing, stem separation, song splitting, AI model, Open-Unmix, UMX-L, free music demixer, isolate stems, private, unlimited use
+keywords: music demixing, stem separation, song splitting, AI model, Demucs, Transformer, free music demixer, isolate stems, private, unlimited use
 ---
 
 # Blog
@@ -81,4 +81,4 @@ Over time, I hope to add the following categories:
 <button id="prevPage" disabled class="btn btn-github">← Previous</button>
 <button id="nextPage" disabled class="btn btn-github">Next →</button>
 
-<script src="/blog_v1.js"></script>
+<script src="/blog.js"></script>

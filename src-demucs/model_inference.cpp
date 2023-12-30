@@ -45,9 +45,9 @@ static void reflect_padding(Eigen::MatrixXf &padded_mix,
     }
 }
 
-void demucscpp::model_inference_4s(
-    struct demucscpp::demucs_model_4s &model,
-    struct demucscpp::demucs_segment_buffers_4s &buffers,
+void demucscpp::model_inference(
+    struct demucscpp::demucs_model &model,
+    struct demucscpp::demucs_segment_buffers &buffers,
     struct demucscpp::stft_buffers &stft_buf)
 {
     // apply demucs inference
@@ -204,68 +204,91 @@ void demucscpp::model_inference_4s(
     buffers.saved_3 = buffers.x_3;
     buffers.savedt_3 = buffers.xt_3;
 
-    // bottom channels = 512
+    if (model.is_4sources) {
+        auto* ct_4s = static_cast<demucs_crosstransformer_4s*>(model.crosstransformer.get());
+        // bottom channels = 512
 
-    /*****************************/
-    /*  FREQ CHANNEL UPSAMPLING  */
-    /*****************************/
-    int n_stft_frames = buffers.x_3.dimension(2);
+        /*****************************/
+        /*  FREQ CHANNEL UPSAMPLING  */
+        /*****************************/
+        int n_stft_frames = buffers.x_3.dimension(2);
 
-    // Reshape buffers.x_3 into x_3_reshaped
-    // Apply the conv1d function
-    // Reshape back to 512x8x336 and store in buffers.x_3_channel_upsampled
-    Eigen::Tensor3dXf x_3_reshaped =
-        buffers.x_3.reshape(Eigen::array<int, 3>({1, 384, 8 * n_stft_frames}));
-    Eigen::Tensor3dXf x_3_reshaped_upsampled =
-        demucscpp::conv1d<384, 512, 1, 1, 0, 1>(x_3_reshaped, model.channel_upsampler_weight,
-                          model.channel_upsampler_bias);
-    buffers.x_3_channel_upsampled =
-        x_3_reshaped_upsampled.reshape(Eigen::array<int, 3>({512, 8, n_stft_frames}));
+        // Reshape buffers.x_3 into x_3_reshaped
+        // Apply the conv1d function
+        // Reshape back to 512x8x336 and store in buffers.x_3_channel_upsampled
+        Eigen::Tensor3dXf x_3_reshaped =
+            buffers.x_3.reshape(Eigen::array<int, 3>({1, 384, 8 * n_stft_frames}));
+        Eigen::Tensor3dXf x_3_reshaped_upsampled =
+            demucscpp::conv1d<384, 512, 1, 1, 0, 1>(x_3_reshaped,
+                                                    ct_4s->channel_upsampler_weight,
+                                                    ct_4s->channel_upsampler_bias);
+        buffers.x_3_channel_upsampled = x_3_reshaped_upsampled.reshape(
+            Eigen::array<int, 3>({512, 8, n_stft_frames}));
 
-    std::cout << "Freq: channels upsampled" << std::endl;
+        std::cout << "Freq: channels upsampled" << std::endl;
 
-    /*****************************/
-    /*  TIME CHANNEL UPSAMPLING  */
-    /*****************************/
+        /*****************************/
+        /*  TIME CHANNEL UPSAMPLING  */
+        /*****************************/
 
-    // for time channel upsampling
-    // apply upsampler directly to xt_3 no reshaping drama needed
-    buffers.xt_3_channel_upsampled =
-        demucscpp::conv1d<384, 512, 1, 1, 0, 1>(buffers.xt_3, model.channel_upsampler_t_weight,
-                          model.channel_upsampler_t_bias);
+        // for time channel upsampling
+        // apply upsampler directly to xt_3 no reshaping drama needed
+        buffers.xt_3_channel_upsampled = demucscpp::conv1d<384, 512, 1, 1, 0, 1>(
+            buffers.xt_3, ct_4s->channel_upsampler_t_weight,
+            ct_4s->channel_upsampler_t_bias);
 
-    std::cout << "Time: channels upsampled" << std::endl;
+        std::cout << "Time: channels upsampled" << std::endl;
 
-    /*************************/
-    /*  CROSS-TRANSFORMER!  */
-    /************************/
-    demucscpp::apply_crosstransformer(model, buffers.x_3_channel_upsampled,
-                                      buffers.xt_3_channel_upsampled);
+        /*************************/
+        /*  CROSS-TRANSFORMER!  */
+        /************************/
+        demucscpp::apply_crosstransformer(model, buffers.x_3_channel_upsampled,
+                                        buffers.xt_3_channel_upsampled);
 
-    std::cout << "Crosstransformer: finished" << std::endl;
+        std::cout << "Crosstransformer: finished" << std::endl;
 
-    // reshape buffers.x_3_channel_upsampled into 1, 512, 2688
-    // when skipping the crosstransformer
-    // Eigen::Tensor3dXf x_3_reshaped_upsampled_2 =
-    // buffers.x_3_channel_upsampled.reshape(Eigen::array<int, 3>({1, 512,
-    // 8*336})); buffers.x_3_channel_upsampled = x_3_reshaped_upsampled_2;
+        // reshape buffers.x_3_channel_upsampled into 1, 512, 2688
+        // when skipping the crosstransformer
+        // Eigen::Tensor3dXf x_3_reshaped_upsampled_2 =
+        // buffers.x_3_channel_upsampled.reshape(Eigen::array<int, 3>({1, 512,
+        // 8*336})); buffers.x_3_channel_upsampled = x_3_reshaped_upsampled_2;
 
-    // then apply the conv1d_2d function
+        // then apply the conv1d_2d function
 
-    Eigen::Tensor3dXf x_3_reshaped_downsampled = demucscpp::conv1d<512, 384, 1, 1, 0, 0>(
-        buffers.x_3_channel_upsampled, model.channel_downsampler_weight,
-        model.channel_downsampler_bias);
-    buffers.x_3 =
-        x_3_reshaped_downsampled.reshape(Eigen::array<int, 3>({384, 8, n_stft_frames}));
+        Eigen::Tensor3dXf x_3_reshaped_downsampled =
+            demucscpp::conv1d<512, 384, 1, 1, 0, 0>(
+                buffers.x_3_channel_upsampled, ct_4s->channel_downsampler_weight,
+                ct_4s->channel_downsampler_bias);
+        buffers.x_3 = x_3_reshaped_downsampled.reshape(
+            Eigen::array<int, 3>({384, 8, n_stft_frames}));
+        std::cout << "Freq: channels downsampled" << std::endl;
 
-    std::cout << "Freq: channels downsampled" << std::endl;
+        // apply upsampler directly to xt_3
+        buffers.xt_3 = demucscpp::conv1d<512, 384, 1, 1, 0, 0>(
+            buffers.xt_3_channel_upsampled, ct_4s->channel_downsampler_t_weight,
+            ct_4s->channel_downsampler_t_bias);
 
-    // apply upsampler directly to xt_3
-    buffers.xt_3 = demucscpp::conv1d<512, 384, 1, 1, 0, 0>(
-        buffers.xt_3_channel_upsampled, model.channel_downsampler_t_weight,
-        model.channel_downsampler_t_bias);
+        std::cout << "Time: channels downsampled" << std::endl;
+    } else {
+        /*************************/
+        /*  CROSS-TRANSFORMER!  */
+        /************************/
+        demucscpp::apply_crosstransformer(model, buffers.x_3,
+                                        buffers.xt_3);
+        // we need to swap axis and reshape into 384, 8, 336
 
-    std::cout << "Time: channels downsampled" << std::endl;
+        // swap axis
+        Eigen::array<int, 3> perm = {1, 0, 2};
+        Eigen::Tensor3dXf x_3_swapped = buffers.x_3.shuffle(perm);
+        // now unflatten last 2 dims from 1, 2688 to 8, 336
+
+        Eigen::Tensor3dXf x_3_reshaped = x_3_swapped.reshape(
+            Eigen::array<int, 3>({384, 8, 336}));
+
+        buffers.x_3 = x_3_reshaped;
+
+        std::cout << "Crosstransformer: finished" << std::endl;
+    }
 
     // now decoder time!
 
@@ -308,16 +331,24 @@ void demucscpp::model_inference_4s(
     // so we could have symmetry between the tensor3dxf of the freq and time
     // branches
 
+    int nb_out_sources = model.is_4sources ? 4 : 6;
+
     // 4 sources, 2 channels * 2 complex channels (real+imag), F bins, T frames
     Eigen::Tensor4dXf x_4d =
-        Eigen::Tensor4dXf(4, 4, buffers.x.dimension(1), buffers.x.dimension(2));
+        Eigen::Tensor4dXf(nb_out_sources, 4, buffers.x.dimension(1), buffers.x.dimension(2));
 
     // 4 sources, 2 channels, N samples
-    std::array<Eigen::MatrixXf, 4> xt_3d = {
+    std::vector<Eigen::MatrixXf> xt_3d = {
         Eigen::MatrixXf(2, buffers.xt.dimension(2)),
         Eigen::MatrixXf(2, buffers.xt.dimension(2)),
         Eigen::MatrixXf(2, buffers.xt.dimension(2)),
         Eigen::MatrixXf(2, buffers.xt.dimension(2))};
+
+    // add two more sources
+    if (!model.is_4sources) {
+        xt_3d.push_back(Eigen::MatrixXf(2, buffers.xt.dimension(2)));
+        xt_3d.push_back(Eigen::MatrixXf(2, buffers.xt.dimension(2)));
+    }
 
     // distribute the channels of buffers.x into x_4d
     // in pytorch it's (16, 2048, 336) i.e. (chan, freq, time)
@@ -327,7 +358,7 @@ void demucscpp::model_inference_4s(
     // copy buffers.x into x_4d
     // apply opposite of
     // buffers.x(i, j, k) = (buffers.x(i, j, k) - mean) / (epsilon + std_);
-    for (int s = 0; s < 4; ++s)
+    for (int s = 0; s < nb_out_sources; ++s)
     { // loop over 4 sources
         for (int i = 0; i < 4; ++i)
         {
@@ -343,7 +374,7 @@ void demucscpp::model_inference_4s(
     }
 
     // let's also copy buffers.xt into xt_4d
-    for (int s = 0; s < 4; ++s)
+    for (int s = 0; s < nb_out_sources; ++s)
     { // loop over 4 sources
         for (int i = 0; i < 2; ++i)
         {
@@ -356,7 +387,7 @@ void demucscpp::model_inference_4s(
 
     // If `cac` is True, `m` is actually a full spectrogram and `z` is ignored.
     // undo complex-as-channels by splitting the 2nd dim of x_4d into (2, 2)
-    for (int source = 0; source < 4; ++source)
+    for (int source = 0; source < nb_out_sources; ++source)
     {
         Eigen::Tensor3dXcf x_target = Eigen::Tensor3dXcf(
             2, buffers.x.dimension(1), buffers.x.dimension(2));
