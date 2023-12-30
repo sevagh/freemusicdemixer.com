@@ -5,10 +5,10 @@
 #include "tensor.hpp"
 #include <Eigen/Dense>
 #include <array>
+#include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <functional>
 
 namespace demucscpp
 {
@@ -23,8 +23,264 @@ const int TIME_BRANCH_LEN_1 = 21499;
 const int TIME_BRANCH_LEN_2 = 5375;
 const int TIME_BRANCH_LEN_3 = 1344;
 
-struct demucs_model_4s
+struct crosstransformer_base {
+    // crosstransformer.norm_in
+    Eigen::Tensor1dXf crosstransformer_norm_in_weight;
+    Eigen::Tensor1dXf crosstransformer_norm_in_bias;
+
+    // crosstransformer.norm_in_t
+    Eigen::Tensor1dXf crosstransformer_norm_in_t_weight;
+    Eigen::Tensor1dXf crosstransformer_norm_in_t_bias;
+
+    // MyTransformerEncoderLayer: index 0, 2, 4
+    // second index [2] represents the frequency and time weights (same shapes)
+    Eigen::MatrixXf crosstransformer_my_layers_self_attn_in_proj_weight[2][3];
+    Eigen::VectorXf crosstransformer_my_layers_self_attn_in_proj_bias[2][3];
+    Eigen::MatrixXf crosstransformer_my_layers_self_attn_out_proj_weight[2][3];
+    Eigen::VectorXf crosstransformer_my_layers_self_attn_out_proj_bias[2][3];
+    Eigen::MatrixXf crosstransformer_my_layers_linear1_weight[2][3];
+    Eigen::VectorXf crosstransformer_my_layers_linear1_bias[2][3];
+    Eigen::MatrixXf crosstransformer_my_layers_linear2_weight[2][3];
+    Eigen::VectorXf crosstransformer_my_layers_linear2_bias[2][3];
+    Eigen::Tensor1dXf crosstransformer_my_layers_norm1_weight[2][3];
+    Eigen::Tensor1dXf crosstransformer_my_layers_norm1_bias[2][3];
+    Eigen::Tensor1dXf crosstransformer_my_layers_norm2_weight[2][3];
+    Eigen::Tensor1dXf crosstransformer_my_layers_norm2_bias[2][3];
+    Eigen::Tensor1dXf crosstransformer_my_layers_norm_out_weight[2][3];
+    Eigen::Tensor1dXf crosstransformer_my_layers_norm_out_bias[2][3];
+    Eigen::VectorXf crosstransformer_my_layers_gamma_1_scale[2][3];
+    Eigen::VectorXf crosstransformer_my_layers_gamma_2_scale[2][3];
+
+    // CrossTransformerEncoderLayer: index 1, 3
+    // second index [2] represents the frequency and time weights (same shapes)
+    Eigen::MatrixXf
+        crosstransformer_cross_layers_cross_attn_in_proj_weight[2][2];
+    Eigen::VectorXf crosstransformer_cross_layers_cross_attn_in_proj_bias[2][2];
+    Eigen::MatrixXf
+        crosstransformer_cross_layers_cross_attn_out_proj_weight[2][2];
+    Eigen::VectorXf
+        crosstransformer_cross_layers_cross_attn_out_proj_bias[2][2];
+    Eigen::MatrixXf crosstransformer_cross_layers_linear1_weight[2][2];
+    Eigen::VectorXf crosstransformer_cross_layers_linear1_bias[2][2];
+    Eigen::MatrixXf crosstransformer_cross_layers_linear2_weight[2][2];
+    Eigen::VectorXf crosstransformer_cross_layers_linear2_bias[2][2];
+    Eigen::Tensor1dXf crosstransformer_cross_layers_norm1_weight[2][2];
+    Eigen::Tensor1dXf crosstransformer_cross_layers_norm1_bias[2][2];
+    Eigen::Tensor1dXf crosstransformer_cross_layers_norm2_weight[2][2];
+    Eigen::Tensor1dXf crosstransformer_cross_layers_norm2_bias[2][2];
+    Eigen::Tensor1dXf crosstransformer_cross_layers_norm3_weight[2][2];
+    Eigen::Tensor1dXf crosstransformer_cross_layers_norm3_bias[2][2];
+    Eigen::Tensor1dXf crosstransformer_cross_layers_norm_out_weight[2][2];
+    Eigen::Tensor1dXf crosstransformer_cross_layers_norm_out_bias[2][2];
+    Eigen::VectorXf crosstransformer_cross_layers_gamma_1_scale[2][2];
+    Eigen::VectorXf crosstransformer_cross_layers_gamma_2_scale[2][2];
+
+    crosstransformer_base(int size1, int size2, int size3) :
+        crosstransformer_norm_in_weight(Eigen::Tensor1dXf(size1)),
+        crosstransformer_norm_in_bias(Eigen::Tensor1dXf(size1)),
+        crosstransformer_norm_in_t_weight(Eigen::Tensor1dXf(size1)),
+        crosstransformer_norm_in_t_bias(Eigen::Tensor1dXf(size1)),
+        // second index [2] represents the frequency and time weights (same shapes)
+        crosstransformer_my_layers_self_attn_in_proj_weight{
+            {{Eigen::MatrixXf(size2, size1)},
+            {Eigen::MatrixXf(size2, size1)},
+            {Eigen::MatrixXf(size2, size1)}},
+            {{Eigen::MatrixXf(size2, size1)},
+            {Eigen::MatrixXf(size2, size1)},
+            {Eigen::MatrixXf(size2, size1)}}},
+        crosstransformer_my_layers_self_attn_in_proj_bias{
+            {{Eigen::VectorXf(size2)},
+            {Eigen::VectorXf(size2)},
+            {Eigen::VectorXf(size2)}},
+            {{Eigen::VectorXf(size2)},
+            {Eigen::VectorXf(size2)},
+            {Eigen::VectorXf(size2)}}},
+        crosstransformer_my_layers_self_attn_out_proj_weight{
+            {{Eigen::MatrixXf(size1, size1)},
+            {Eigen::MatrixXf(size1, size1)},
+            {Eigen::MatrixXf(size1, size1)}},
+            {{Eigen::MatrixXf(size1, size1)},
+            {Eigen::MatrixXf(size1, size1)},
+            {Eigen::MatrixXf(size1, size1)}}},
+        crosstransformer_my_layers_self_attn_out_proj_bias{
+            {{Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)}},
+            {{Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)}}},
+        crosstransformer_my_layers_linear1_weight{
+            {{Eigen::MatrixXf(size3, size1)},
+            {Eigen::MatrixXf(size3, size1)},
+            {Eigen::MatrixXf(size3, size1)}},
+            {{Eigen::MatrixXf(size3, size1)},
+            {Eigen::MatrixXf(size3, size1)},
+            {Eigen::MatrixXf(size3, size1)}}},
+        crosstransformer_my_layers_linear1_bias{
+            {{Eigen::VectorXf(size3)},
+            {Eigen::VectorXf(size3)},
+            {Eigen::VectorXf(size3)}},
+            {{Eigen::VectorXf(size3)},
+            {Eigen::VectorXf(size3)},
+            {Eigen::VectorXf(size3)}}},
+        crosstransformer_my_layers_linear2_weight{
+            {{Eigen::MatrixXf(size1, size3)},
+            {Eigen::MatrixXf(size1, size3)},
+            {Eigen::MatrixXf(size1, size3)}},
+            {{Eigen::MatrixXf(size1, size3)},
+            {Eigen::MatrixXf(size1, size3)},
+            {Eigen::MatrixXf(size1, size3)}}},
+        crosstransformer_my_layers_linear2_bias{
+            {{Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)}},
+            {{Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)}}},
+        crosstransformer_my_layers_norm1_weight{
+            {{Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_my_layers_norm1_bias{
+            {{Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_my_layers_norm2_weight{
+            {{Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_my_layers_norm2_bias{
+            {{Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_my_layers_norm_out_weight{
+            {{Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_my_layers_norm_out_bias{
+            {{Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)},
+            {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_my_layers_gamma_1_scale{
+            {{Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)}},
+            {{Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)}}},
+        crosstransformer_my_layers_gamma_2_scale{
+            {{Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)}},
+            {{Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)},
+            {Eigen::VectorXf(size1)}}},
+        crosstransformer_cross_layers_cross_attn_in_proj_weight{
+                {{Eigen::MatrixXf(size2, size1)}, {Eigen::MatrixXf(size2, size1)}},
+                {{Eigen::MatrixXf(size2, size1)}, {Eigen::MatrixXf(size2, size1)}}},
+        crosstransformer_cross_layers_cross_attn_in_proj_bias{
+            {{Eigen::VectorXf(size2)}, {Eigen::VectorXf(size2)}},
+            {{Eigen::VectorXf(size2)}, {Eigen::VectorXf(size2)}}},
+        crosstransformer_cross_layers_cross_attn_out_proj_weight{
+                {{Eigen::MatrixXf(size1, size1)}, {Eigen::MatrixXf(size1, size1)}},
+                {{Eigen::MatrixXf(size1, size1)}, {Eigen::MatrixXf(size1, size1)}}},
+        crosstransformer_cross_layers_cross_attn_out_proj_bias{
+                {{Eigen::VectorXf(size1)}, {Eigen::VectorXf(size1)}},
+                {{Eigen::VectorXf(size1)}, {Eigen::VectorXf(size1)}}},
+        crosstransformer_cross_layers_linear1_weight{
+            {{Eigen::MatrixXf(size3, size1)}, {Eigen::MatrixXf(size3, size1)}},
+            {{Eigen::MatrixXf(size3, size1)}, {Eigen::MatrixXf(size3, size1)}}},
+        crosstransformer_cross_layers_linear1_bias{
+            {{Eigen::VectorXf(size3)}, {Eigen::VectorXf(size3)}},
+            {{Eigen::VectorXf(size3)}, {Eigen::VectorXf(size3)}}},
+        crosstransformer_cross_layers_linear2_weight{
+            {{Eigen::MatrixXf(size1, size3)}, {Eigen::MatrixXf(size1, size3)}},
+            {{Eigen::MatrixXf(size1, size3)}, {Eigen::MatrixXf(size1, size3)}}},
+        crosstransformer_cross_layers_linear2_bias{
+            {{Eigen::VectorXf(size1)}, {Eigen::VectorXf(size1)}},
+            {{Eigen::VectorXf(size1)}, {Eigen::VectorXf(size1)}}},
+        crosstransformer_cross_layers_norm1_weight{
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_cross_layers_norm1_bias{
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_cross_layers_norm2_weight{
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_cross_layers_norm2_bias{
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_cross_layers_norm3_weight{
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_cross_layers_norm3_bias{
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_cross_layers_norm_out_weight{
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_cross_layers_norm_out_bias{
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}},
+            {{Eigen::Tensor1dXf(size1)}, {Eigen::Tensor1dXf(size1)}}},
+        crosstransformer_cross_layers_gamma_1_scale{
+            {{Eigen::VectorXf(size1)}, {Eigen::VectorXf(size1)}},
+            {{Eigen::VectorXf(size1)}, {Eigen::VectorXf(size1)}}},
+        crosstransformer_cross_layers_gamma_2_scale{
+            {{Eigen::VectorXf(size1)}, {Eigen::VectorXf(size1)}},
+            {{Eigen::VectorXf(size1)}, {Eigen::VectorXf(size1)}}}
+    {}
+
+    // Common members and methods...
+    virtual ~crosstransformer_base() = default;
+};
+
+struct demucs_crosstransformer_4s : crosstransformer_base {
+    demucs_crosstransformer_4s() : crosstransformer_base(512, 1536, 2048) {};
+
+    // channel_upsampler
+    Eigen::Tensor3dXf channel_upsampler_weight{Eigen::Tensor3dXf(512, 384, 1)};
+    Eigen::Tensor1dXf channel_upsampler_bias{Eigen::Tensor1dXf(512)};
+    // channel_downsampler
+    Eigen::Tensor3dXf channel_downsampler_weight{
+        Eigen::Tensor3dXf(384, 512, 1)};
+    Eigen::Tensor1dXf channel_downsampler_bias{Eigen::Tensor1dXf(384)};
+    // channel_upsampler_t
+    Eigen::Tensor3dXf channel_upsampler_t_weight{
+        Eigen::Tensor3dXf(512, 384, 1)};
+    Eigen::Tensor1dXf channel_upsampler_t_bias{Eigen::Tensor1dXf(512)};
+    // channel_downsampler_t
+    Eigen::Tensor3dXf channel_downsampler_t_weight{
+        Eigen::Tensor3dXf(384, 512, 1)};
+    Eigen::Tensor1dXf channel_downsampler_t_bias{Eigen::Tensor1dXf(384)};
+};
+
+struct demucs_crosstransformer_6s : crosstransformer_base  {
+        demucs_crosstransformer_6s() : crosstransformer_base(384, 1152, 1536) {};
+};
+
+struct demucs_model
 {
+    bool is_4sources;
+
     // Encoders 0-3
     Eigen::Tensor3dXf encoder_conv_weight[4]{
         Eigen::Tensor3dXf(48, 4, 8),
@@ -74,7 +330,8 @@ struct demucs_model_4s
     // Decoders 0-3
     Eigen::Tensor4dXf decoder_conv_tr_weight[4] = {
         Eigen::Tensor4dXf(384, 192, 8, 1), Eigen::Tensor4dXf(192, 96, 8, 1),
-        Eigen::Tensor4dXf(96, 48, 8, 1), Eigen::Tensor4dXf(48, 16, 8, 1)};
+        Eigen::Tensor4dXf(96, 48, 8, 1),
+        Eigen::Tensor4dXf(48, 16, 8, 1)};
 
     Eigen::Tensor1dXf decoder_conv_tr_bias[4] = {
         Eigen::Tensor1dXf(192), Eigen::Tensor1dXf(96), Eigen::Tensor1dXf(48),
@@ -91,7 +348,8 @@ struct demucs_model_4s
     // TDecoder 0-3
     Eigen::Tensor3dXf tdecoder_conv_tr_weight[4] = {
         Eigen::Tensor3dXf(384, 192, 8), Eigen::Tensor3dXf(192, 96, 8),
-        Eigen::Tensor3dXf(96, 48, 8), Eigen::Tensor3dXf(48, 8, 8)};
+        Eigen::Tensor3dXf(96, 48, 8),
+        Eigen::Tensor3dXf(48, 8, 8)};
 
     Eigen::Tensor1dXf tdecoder_conv_tr_bias[4] = {
         Eigen::Tensor1dXf(192), Eigen::Tensor1dXf(96), Eigen::Tensor1dXf(48),
@@ -284,216 +542,26 @@ struct demucs_model_4s
              {Eigen::Tensor1dXf(96), Eigen::Tensor1dXf(96)},
              {Eigen::Tensor1dXf(192), Eigen::Tensor1dXf(192)},
              {Eigen::Tensor1dXf(384), Eigen::Tensor1dXf(384)}},
-        }
-    };
+        }};
 
     // freq_emb
     Eigen::MatrixXf freq_emb_embedding_weight{Eigen::MatrixXf(512, 48)};
 
-    // channel_upsampler
-    Eigen::Tensor3dXf channel_upsampler_weight{Eigen::Tensor3dXf(512, 384, 1)};
-    Eigen::Tensor1dXf channel_upsampler_bias{Eigen::Tensor1dXf(512)};
-    // channel_downsampler
-    Eigen::Tensor3dXf channel_downsampler_weight{
-        Eigen::Tensor3dXf(384, 512, 1)};
-    Eigen::Tensor1dXf channel_downsampler_bias{Eigen::Tensor1dXf(384)};
-    // channel_upsampler_t
-    Eigen::Tensor3dXf channel_upsampler_t_weight{
-        Eigen::Tensor3dXf(512, 384, 1)};
-    Eigen::Tensor1dXf channel_upsampler_t_bias{Eigen::Tensor1dXf(512)};
-    // channel_downsampler_t
-    Eigen::Tensor3dXf channel_downsampler_t_weight{
-        Eigen::Tensor3dXf(384, 512, 1)};
-    Eigen::Tensor1dXf channel_downsampler_t_bias{Eigen::Tensor1dXf(384)};
+    std::unique_ptr<crosstransformer_base> crosstransformer;
 
-    // crosstransformer.norm_in
-    Eigen::Tensor1dXf crosstransformer_norm_in_weight{Eigen::Tensor1dXf(512)};
-    Eigen::Tensor1dXf crosstransformer_norm_in_bias{Eigen::Tensor1dXf(512)};
-
-    // crosstransformer.norm_in_t
-    Eigen::Tensor1dXf crosstransformer_norm_in_t_weight{Eigen::Tensor1dXf(512)};
-    Eigen::Tensor1dXf crosstransformer_norm_in_t_bias{Eigen::Tensor1dXf(512)};
-
-    // MyTransformerEncoderLayer: index 0, 2, 4
-    // second index [2] represents the frequency and time weights (same shapes)
-    Eigen::MatrixXf crosstransformer_my_layers_self_attn_in_proj_weight[2][3]{
-        {{Eigen::MatrixXf(1536, 512)},
-         {Eigen::MatrixXf(1536, 512)},
-         {Eigen::MatrixXf(1536, 512)}},
-        {{Eigen::MatrixXf(1536, 512)},
-         {Eigen::MatrixXf(1536, 512)},
-         {Eigen::MatrixXf(1536, 512)}}};
-    Eigen::VectorXf crosstransformer_my_layers_self_attn_in_proj_bias[2][3]{
-        {{Eigen::VectorXf(1536)},
-         {Eigen::VectorXf(1536)},
-         {Eigen::VectorXf(1536)}},
-        {{Eigen::VectorXf(1536)},
-         {Eigen::VectorXf(1536)},
-         {Eigen::VectorXf(1536)}}};
-    Eigen::MatrixXf crosstransformer_my_layers_self_attn_out_proj_weight[2][3]{
-        {{Eigen::MatrixXf(512, 512)},
-         {Eigen::MatrixXf(512, 512)},
-         {Eigen::MatrixXf(512, 512)}},
-        {{Eigen::MatrixXf(512, 512)},
-         {Eigen::MatrixXf(512, 512)},
-         {Eigen::MatrixXf(512, 512)}}};
-    Eigen::VectorXf crosstransformer_my_layers_self_attn_out_proj_bias[2][3]{
-        {{Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)}},
-        {{Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)}}};
-    Eigen::MatrixXf crosstransformer_my_layers_linear1_weight[2][3]{
-        {{Eigen::MatrixXf(2048, 512)},
-         {Eigen::MatrixXf(2048, 512)},
-         {Eigen::MatrixXf(2048, 512)}},
-        {{Eigen::MatrixXf(2048, 512)},
-         {Eigen::MatrixXf(2048, 512)},
-         {Eigen::MatrixXf(2048, 512)}}};
-    Eigen::VectorXf crosstransformer_my_layers_linear1_bias[2][3]{
-        {{Eigen::VectorXf(2048)},
-         {Eigen::VectorXf(2048)},
-         {Eigen::VectorXf(2048)}},
-        {{Eigen::VectorXf(2048)},
-         {Eigen::VectorXf(2048)},
-         {Eigen::VectorXf(2048)}}};
-    Eigen::MatrixXf crosstransformer_my_layers_linear2_weight[2][3]{
-        {{Eigen::MatrixXf(512, 2048)},
-         {Eigen::MatrixXf(512, 2048)},
-         {Eigen::MatrixXf(512, 2048)}},
-        {{Eigen::MatrixXf(512, 2048)},
-         {Eigen::MatrixXf(512, 2048)},
-         {Eigen::MatrixXf(512, 2048)}}};
-    Eigen::VectorXf crosstransformer_my_layers_linear2_bias[2][3]{
-        {{Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)}},
-        {{Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_my_layers_norm1_weight[2][3]{
-        {{Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_my_layers_norm1_bias[2][3]{
-        {{Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_my_layers_norm2_weight[2][3]{
-        {{Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_my_layers_norm2_bias[2][3]{
-        {{Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_my_layers_norm_out_weight[2][3]{
-        {{Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_my_layers_norm_out_bias[2][3]{
-        {{Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)},
-         {Eigen::Tensor1dXf(512)}}};
-    Eigen::VectorXf crosstransformer_my_layers_gamma_1_scale[2][3]{
-        {{Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)}},
-        {{Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)}}};
-    Eigen::VectorXf crosstransformer_my_layers_gamma_2_scale[2][3]{
-        {{Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)}},
-        {{Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)},
-         {Eigen::VectorXf(512)}}};
-
-    // CrossTransformerEncoderLayer: index 1, 3
-    // second index [2] represents the frequency and time weights (same shapes)
-    Eigen::MatrixXf
-        crosstransformer_cross_layers_cross_attn_in_proj_weight[2][2]{
-            {{Eigen::MatrixXf(1536, 512)}, {Eigen::MatrixXf(1536, 512)}},
-            {{Eigen::MatrixXf(1536, 512)}, {Eigen::MatrixXf(1536, 512)}}};
-    Eigen::VectorXf crosstransformer_cross_layers_cross_attn_in_proj_bias[2][2]{
-        {{Eigen::VectorXf(1536)}, {Eigen::VectorXf(1536)}},
-        {{Eigen::VectorXf(1536)}, {Eigen::VectorXf(1536)}}};
-    Eigen::MatrixXf
-        crosstransformer_cross_layers_cross_attn_out_proj_weight[2][2]{
-            {{Eigen::MatrixXf(512, 512)}, {Eigen::MatrixXf(512, 512)}},
-            {{Eigen::MatrixXf(512, 512)}, {Eigen::MatrixXf(512, 512)}}};
-    Eigen::VectorXf
-        crosstransformer_cross_layers_cross_attn_out_proj_bias[2][2]{
-            {{Eigen::VectorXf(512)}, {Eigen::VectorXf(512)}},
-            {{Eigen::VectorXf(512)}, {Eigen::VectorXf(512)}}};
-    Eigen::MatrixXf crosstransformer_cross_layers_linear1_weight[2][2]{
-        {{Eigen::MatrixXf(2048, 512)}, {Eigen::MatrixXf(2048, 512)}},
-        {{Eigen::MatrixXf(2048, 512)}, {Eigen::MatrixXf(2048, 512)}}};
-    Eigen::VectorXf crosstransformer_cross_layers_linear1_bias[2][2]{
-        {{Eigen::VectorXf(2048)}, {Eigen::VectorXf(2048)}},
-        {{Eigen::VectorXf(2048)}, {Eigen::VectorXf(2048)}}};
-    Eigen::MatrixXf crosstransformer_cross_layers_linear2_weight[2][2]{
-        {{Eigen::MatrixXf(512, 2048)}, {Eigen::MatrixXf(512, 2048)}},
-        {{Eigen::MatrixXf(512, 2048)}, {Eigen::MatrixXf(512, 2048)}}};
-    Eigen::VectorXf crosstransformer_cross_layers_linear2_bias[2][2]{
-        {{Eigen::VectorXf(512)}, {Eigen::VectorXf(512)}},
-        {{Eigen::VectorXf(512)}, {Eigen::VectorXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_cross_layers_norm1_weight[2][2]{
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_cross_layers_norm1_bias[2][2]{
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_cross_layers_norm2_weight[2][2]{
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_cross_layers_norm2_bias[2][2]{
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_cross_layers_norm3_weight[2][2]{
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_cross_layers_norm3_bias[2][2]{
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_cross_layers_norm_out_weight[2][2]{
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}}};
-    Eigen::Tensor1dXf crosstransformer_cross_layers_norm_out_bias[2][2]{
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}},
-        {{Eigen::Tensor1dXf(512)}, {Eigen::Tensor1dXf(512)}}};
-    Eigen::VectorXf crosstransformer_cross_layers_gamma_1_scale[2][2]{
-        {{Eigen::VectorXf(512)}, {Eigen::VectorXf(512)}},
-        {{Eigen::VectorXf(512)}, {Eigen::VectorXf(512)}}};
-    Eigen::VectorXf crosstransformer_cross_layers_gamma_2_scale[2][2]{
-        {{Eigen::VectorXf(512)}, {Eigen::VectorXf(512)}},
-        {{Eigen::VectorXf(512)}, {Eigen::VectorXf(512)}}};
-
-    float load_progress;
     float inference_progress;
+    float load_progress;
 };
 
-struct demucs_segment_buffers_4s
+inline std::unique_ptr<crosstransformer_base> initialize_crosstransformer(bool is_4sources) {
+    if (is_4sources) {
+        return std::make_unique<struct demucs_crosstransformer_4s>();
+    } else {
+        return std::make_unique<struct demucs_crosstransformer_6s>();
+    }
+}
+
+struct demucs_segment_buffers
 {
     int segment_samples;
     int le;
@@ -543,7 +611,7 @@ struct demucs_segment_buffers_4s
 
     // let's do pesky precomputing of the signal repadding to 1/4 hop
     // for time and frequency alignment
-    demucs_segment_buffers_4s(int nb_channels, int segment_samples)
+    demucs_segment_buffers(int nb_channels, int segment_samples, int nb_sources)
         : segment_samples(segment_samples),
           le(int(std::ceil((float)segment_samples / (float)FFT_HOP_SIZE))),
           pad(std::floor((float)FFT_HOP_SIZE / 2.0f) * 3),
@@ -552,22 +620,27 @@ struct demucs_segment_buffers_4s
           nb_stft_frames(segment_samples / demucscpp::FFT_HOP_SIZE + 1),
           nb_stft_bins(demucscpp::FFT_WINDOW_SIZE / 2 + 1),
           mix(nb_channels, segment_samples),
-          targets_out(4, nb_channels, segment_samples),
+          targets_out(nb_sources, nb_channels, segment_samples),
           padded_mix(nb_channels, padded_segment_samples),
           z(nb_channels, nb_stft_bins, nb_stft_frames),
           // complex-as-channels implies 2*nb_channels for real+imag
           x(2 * nb_channels, nb_stft_bins - 1, nb_stft_frames),
-          x_out(4 * 2 * nb_channels, nb_stft_bins - 1, nb_stft_frames),
-          x_0(48, 512, FREQ_BRANCH_LEN), x_1(96, 128, FREQ_BRANCH_LEN), x_2(192, 32, FREQ_BRANCH_LEN),
-          x_3(384, 8, FREQ_BRANCH_LEN), x_3_channel_upsampled(512, 8, FREQ_BRANCH_LEN),
+          x_out(nb_sources * 2 * nb_channels, nb_stft_bins - 1, nb_stft_frames),
+          x_0(48, 512, FREQ_BRANCH_LEN), x_1(96, 128, FREQ_BRANCH_LEN),
+          x_2(192, 32, FREQ_BRANCH_LEN), x_3(384, 8, FREQ_BRANCH_LEN),
+          x_3_channel_upsampled(512, 8, FREQ_BRANCH_LEN),
           xt(1, nb_channels, segment_samples),
-          xt_out(1, 4 * nb_channels, segment_samples),
+          xt_out(1, nb_sources * nb_channels, segment_samples),
           xt_decoded_out(1, 8, segment_samples), xt_0(1, 48, TIME_BRANCH_LEN_0),
-          xt_1(1, 96, TIME_BRANCH_LEN_1), xt_2(1, 192, TIME_BRANCH_LEN_2), xt_3(1, 384, TIME_BRANCH_LEN_3),
-          xt_3_channel_upsampled(1, 512, TIME_BRANCH_LEN_3), saved_0(48, 512, FREQ_BRANCH_LEN),
-          saved_1(96, 128, FREQ_BRANCH_LEN), saved_2(192, 32, FREQ_BRANCH_LEN), saved_3(384, 8, FREQ_BRANCH_LEN),
-          savedt_0(1, 48, TIME_BRANCH_LEN_0), savedt_1(1, 96, TIME_BRANCH_LEN_1),
-          savedt_2(1, 192, TIME_BRANCH_LEN_2), savedt_3(1, 384, TIME_BRANCH_LEN_3)
+          xt_1(1, 96, TIME_BRANCH_LEN_1), xt_2(1, 192, TIME_BRANCH_LEN_2),
+          xt_3(1, 384, TIME_BRANCH_LEN_3),
+          xt_3_channel_upsampled(1, 512, TIME_BRANCH_LEN_3),
+          saved_0(48, 512, FREQ_BRANCH_LEN), saved_1(96, 128, FREQ_BRANCH_LEN),
+          saved_2(192, 32, FREQ_BRANCH_LEN), saved_3(384, 8, FREQ_BRANCH_LEN),
+          savedt_0(1, 48, TIME_BRANCH_LEN_0),
+          savedt_1(1, 96, TIME_BRANCH_LEN_1),
+          savedt_2(1, 192, TIME_BRANCH_LEN_2),
+          savedt_3(1, 384, TIME_BRANCH_LEN_3)
     {
         std::cout << "segment_samples: " << segment_samples << std::endl;
         std::cout << "padded segment_samples: " << padded_segment_samples
@@ -582,8 +655,8 @@ struct demucs_segment_buffers_4s
     };
 };
 
-bool load_demucs_model_4s(const std::string &model_dir,
-                          struct demucs_model_4s *model);
+bool load_demucs_model(const std::string &model_dir,
+                          struct demucs_model *model);
 
 const float SEGMENT_LEN_SECS = 7.8;      // 8 seconds, the demucs chunk size
 const float SEGMENT_OVERLAP_SECS = 0.25; // 0.25 overlap
@@ -591,12 +664,11 @@ const float MAX_SHIFT_SECS = 0.5;        // max shift
 const float OVERLAP = 0.25;              // overlap between segments
 const float TRANSITION_POWER = 1.0;      // transition between segments
 
-Eigen::Tensor3dXf demucs_inference_4s(struct demucs_model_4s &model,
-                                      Eigen::MatrixXf &full_audio,
-                                      ProgressCallback cb);
+Eigen::Tensor3dXf demucs_inference(struct demucs_model &model,
+                                      Eigen::MatrixXf &full_audio, ProgressCallback cb);
 
-void model_inference_4s(struct demucs_model_4s &model,
-                        struct demucscpp::demucs_segment_buffers_4s &buffers,
+void model_inference(struct demucs_model &model,
+                        struct demucscpp::demucs_segment_buffers &buffers,
                         struct demucscpp::stft_buffers &stft_buf);
 } // namespace demucscpp
 
