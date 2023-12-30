@@ -20,13 +20,13 @@ git clone --recurse-submodules https://github.com/sevagh/free-music-demixer
 To generate a weights file with Python, first create a Python venv, then:
 ```
 python -m pip install -r ./scripts/requirements.txt
-python ./scripts/convert-umx-pth-to-ggml.py --model=umxl ./ggml-umxl
-gzip -k ./ggml-umxl/ggml-model-umxhl-u8.bin
+python ./scripts/convert-demucs-pth-to-ggml.py ./models/ # htdemucs 4s
+python ./scripts/convert-demucs-pth-to-ggml.py --six-source ./models/ # htdemucs 6s
 ```
 
 Build for WebAssembly with Emscripten using `emcmake`:
 ```
-mkdir -p build-wasm && cd build-wasm && emcmake cmake .. && make
+mkdir -p build-wasm && cd build-wasm && emcmake cmake -DCMAKE_BUILD_TYPE=Release .. && make
 ```
 
 The [wav-file-encoder](https://github.com/chdh/wav-file-encoder) project has been vendored in; I manually compiled the Typescript file to Javascript with these commands:
