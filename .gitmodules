@@ -11,3 +11,6 @@
 	path = vendor/demucs
 	url = https://github.com/sevagh/demucs
 	branch = release_v4
+[submodule "vendor/demucs.cpp"]
+	path = vendor/demucs.cpp
+	url = https://github.com/sevagh/demucs.cpp

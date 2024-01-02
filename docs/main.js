@@ -315,7 +315,7 @@ function fetchAndCacheFiles(model) {
     ];
 
     // Map each file to a fetch request and then process the response
-    const fetchPromises = filesToFetch.map(file => 
+    const fetchPromises = filesToFetch.map(file =>
         fetch(file).then(response => {
             if (!response.ok) {
                 throw new Error(`Failed to fetch ${file}`);
@@ -418,6 +418,10 @@ document.getElementById('load-waveform').addEventListener('click', () => {
     const file = fileInput.files[0];
     if (!file) {
         writeJsLog('No file selected.');
+        document.getElementById('batch-upload').disabled = false;
+        document.getElementById('load-batch').disabled = false;
+        document.getElementById('audio-upload').disabled = false;
+        document.getElementById('load-waveform').disabled = false;
         return;
     }
 
@@ -719,6 +723,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // Initial update on page load
     updateWorkerCount1();
     updateWorkerCount2();
+
+    // check to see if pop banner should be shown
+    if (!sessionStorage.getItem('bannerDismissed')) {
+        document.getElementById('sticky-banner').style.display = 'block';
+    }
 });
 
 function clearLogs() {
@@ -779,6 +788,10 @@ document.getElementById('load-batch').addEventListener('click', async () => {
     const files = inputDir.files;
     if (!files) {
         writeJsLog('No files in input folder.');
+        document.getElementById('batch-upload').disabled = false;
+        document.getElementById('load-batch').disabled = false;
+        document.getElementById('audio-upload').disabled = false;
+        document.getElementById('load-waveform').disabled = false;
         return;
     }
 
@@ -933,3 +946,11 @@ function packageAndZip(targetWaveforms, filename) {
     zipLink.download = `${filename}_stems.zip`;
     document.getElementById('output-links-batch').appendChild(zipLink);
 }
+
+
+document.getElementById('banner-dismiss-button').addEventListener('click', function() {
+    console.log("Setting bannerDismissed to true")
+    sessionStorage.setItem('bannerDismissed', 'true');
+    document.getElementById('sticky-banner').style.display = 'none';
+    console.log(sessionStorage.getItem('bannerDismissed'))
+});

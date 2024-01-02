@@ -32,7 +32,7 @@ When the demixing is complete, you can download the following stems in wav files
 - Drums
 - Melody (catchall for non-bass/drums/vocals - also called 'other' in music demixing research)
 - Vocals
-- Karaoke (bass + drums + melody)
+- Instrumental (bass + drums + melody)
 
 ## Technical implementation
 

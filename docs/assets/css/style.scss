@@ -585,7 +585,7 @@ blockquote {
 }
 
 #sign-up {
-  color: #ffffff;
+  color: black;
   background-color: #3cb371;
   box-shadow: 0 4px #276324;
 }
@@ -739,6 +739,82 @@ blockquote {
     margin-right: 10px;
 }
 
-#zip-progress-bar-batch {
-    background-color: #2a9cbe; /* Different color for zip progress bar */
+.sticky-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #88ab75; /* Green background */
+    color: black; /* White text */
+    z-index: 5; /* Higher than other content */
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.2); /* Optional shadow for depth */
+}
+
+.banner-content {
+    display: flex;
+    //justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    max-width: 1000px; /* Adjust as needed */
+    margin: 0 auto; /* Center content if banner is not full width */
+    justify-content: center;
+    padding: 5px; /* Reduced padding */
+}
+
+.banner-content > * {
+    margin: 0 10px; /* Adjust space between elements */
+}
+
+/* Additional styling for your image, text, and buttons */
+.banner-button-signup {
+  display: inline-flex; /* Use flexbox for inline layout */
+  flex-direction: column; /* Stack children vertically */
+  align-items: flex-start; /* Align text to the left */
+  justify-content: center; /* Center vertically */
+  text-align: left; /* Left-align text within flex items */
+  display: inline-block; /* Allows padding and width/height if needed */
+  text-decoration: none; /* Removes underline from links */
+  background-color: #f5f5dc; /* Bootstrap primary blue */
+  color: black;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px #d2d2a4;
+  transition: background-color 0.3s, transform 0.3s;
+  cursor: pointer; /* Cursor indicates it's clickable */
+}
+
+.banner-button-signup:hover {
+  background-color: #ebe8d4; /* Slightly darker blue on hover */
+  transform: translateY(-2px);
+}
+.banner-button-signup:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px #d2d2a4;
+}
+
+.banner-dismiss-button {
+  display: inline-flex; /* Use flexbox for inline layout */
+  flex-direction: column; /* Stack children vertically */
+  align-items: flex-start; /* Align text to the left */
+  justify-content: center; /* Center vertically */
+  text-align: left; /* Left-align text within flex items */
+  display: inline-block; /* Allows padding and width/height if needed */
+  background-color: #c0c0c0; /* Soft red color */
+  text-decoration: none;
+  color: black;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px #a8a8a8;
+  transition: background-color 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+
+.banner-dismiss-button:hover {
+    background-color: #b0b0b0; /* Lighter red on hover */
+    transform: translateY(-2px);
+}
+
+.banner-dismiss-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px #a8a8a8;
 }

@@ -12,8 +12,8 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math -flto -msimd128 -fno-exceptions -fno-signed-zeros -fassociative-math -freciprocal-math -fno-math-errno -fno-rounding-math -fno-signaling-nans -funsafe-math-optimizations -fno-trapping-math -fno-rtti -DNDEBUG")
 
-# Add Eigen3 include directory
-include_directories(vendor/eigen)
+# Add Eigen3 and demucs.cpp include directory
+include_directories(vendor/eigen vendor/demucs.cpp/src)
 
 # Check if the build is for Emscripten
 if(NOT EMSCRIPTEN)
@@ -24,9 +24,8 @@ endif()
 set(COMMON_LINK_FLAGS "-flto -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4GB -s MODULARIZE=1 -s 'EXPORTED_RUNTIME_METHODS=[\"FS\"]'")
 
 # demucs executable
-file(GLOB DEMUCS_SOURCES "src-demucs/*.cpp" "src-demucs/wasm_glue.cpp")
+file(GLOB DEMUCS_SOURCES "vendor/demucs.cpp/src/*.cpp" "src/wasm_glue.cpp")
 add_executable(demucs ${DEMUCS_SOURCES})
-target_include_directories(demucs PRIVATE src-demucs) # Include src-demucs only for demucs target
 set_target_properties(demucs PROPERTIES
     LINK_FLAGS "${COMMON_LINK_FLAGS} -s EXPORT_NAME='libdemucs' -s EXPORTED_FUNCTIONS=\"['_malloc', '_free', '_modelInit', '_modelLoadProgress', '_modelInferenceProgress', '_modelDemixSegment']\""
 )
