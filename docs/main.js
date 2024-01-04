@@ -723,11 +723,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // Initial update on page load
     updateWorkerCount1();
     updateWorkerCount2();
-
-    // check to see if pop banner should be shown
-    if (!sessionStorage.getItem('bannerDismissed')) {
-        document.getElementById('sticky-banner').style.display = 'block';
-    }
 });
 
 function clearLogs() {
@@ -946,11 +941,3 @@ function packageAndZip(targetWaveforms, filename) {
     zipLink.download = `${filename}_stems.zip`;
     document.getElementById('output-links-batch').appendChild(zipLink);
 }
-
-
-document.getElementById('banner-dismiss-button').addEventListener('click', function() {
-    console.log("Setting bannerDismissed to true")
-    sessionStorage.setItem('bannerDismissed', 'true');
-    document.getElementById('sticky-banner').style.display = 'none';
-    console.log(sessionStorage.getItem('bannerDismissed'))
-});

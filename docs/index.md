@@ -7,14 +7,6 @@ description: "Split songs, demix music, and separate stems with our AI-based too
 <script src="main.js" type="module"></script>
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
-<div id="sticky-banner" class="sticky-banner" style="display: none;">
-    <div class="banner-content">
-        Get news and sneak previews of upcoming features!
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSek_QU_BGd7CL2BLVOLDs7JmTZzcLKJiK5k4ysxoCEMjEGrtA/viewform?usp=sf_link" class="banner-button-signup" target="_blank">Sign up</a>
-         <button class="banner-dismiss-button" id="banner-dismiss-button">Dismiss</button>
-    </div>
-</div>
-
 # Free AI-powered music demixer
 
 <a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img width="250" src="https://media.theresanaiforthat.com/featured3.png" alt="theresanaiforthat-promo"></a>
