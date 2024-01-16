@@ -2,6 +2,8 @@
 
 A [free static website](https://freemusicdemixer.com) for client-side music demixing (aka music source separation) with two AI models: Open-Unmix (with UMX-L weights) and the Demucs v4 hybrid transformer model. It runs on GitHub Pages and CloudFlare.
 
+<img alt="freemusicdemixer-logo" src="./.github/logo.png" width="20%"/>
+
 [demucs.cpp](https://github.com/sevagh/demucs.cpp): transliterated the original PyTorch model Python code to C++ with Eigen3, compiled to WebAssembly with Emscripten. No quantization: the weights of Demucs v4 `htdemucs` and `htdemucs_6s` are 81 MB and 53 MB respectively, stored as float16. Anything smaller affects the quality of the network, and compression only gets down to ~70 MB: not worth the extra loading time.
 
 ### Roadmap

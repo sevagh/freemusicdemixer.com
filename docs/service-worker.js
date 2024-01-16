@@ -1,4 +1,4 @@
-const CACHE_NAME = "v20240102";
+const CACHE_NAME = "v20240115";
 const RESOURCES_TO_PRELOAD = [
   "demucs.js",
   "demucs.wasm",

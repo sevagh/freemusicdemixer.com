@@ -818,3 +818,34 @@ blockquote {
     transform: translateY(1px);
     box-shadow: 0 1px #a8a8a8;
 }
+
+.btn-gold-github {
+  color: #122620; /* Light Cyan */
+  background: #d4af37;
+  animation: goldpulse 2s infinite;
+}
+
+.btn-gold-github:hover {
+  color: #122620; /* Light Cyan */
+  background: #d4af37;
+  animation: none; /* Stop the pulse animation on hover */
+}
+
+@keyframes goldpulse {
+  0% {
+    box-shadow: 0 0 5px #d1b000;
+    transform: scale(1);
+    background-color: #d4af37;
+  }
+  50% {
+    box-shadow: 0 0 15px #d1b000; /* Increase the glow size and change color */
+    transform: scale(1.05); /* Slightly increase the scale for emphasis */
+    background-color: #d4af37;
+  }
+  100% {
+    box-shadow: 0 0 5px #d1b000;
+    transform: scale(1);
+    background-color: #d4af37;
+  }
+}
+

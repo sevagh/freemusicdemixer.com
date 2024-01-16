@@ -8,6 +8,7 @@
 #include <iostream>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <vector>
+#include <nmmintrin.h>
 
 using namespace demucscpp;
 

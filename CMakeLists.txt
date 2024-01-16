@@ -10,7 +10,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # Global compiler options
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math -flto -msimd128 -fno-exceptions -fno-signed-zeros -fassociative-math -freciprocal-math -fno-math-errno -fno-rounding-math -fno-signaling-nans -funsafe-math-optimizations -fno-trapping-math -fno-rtti -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math -msimd128 -msse4.2 -flto -fno-exceptions -fno-signed-zeros -fassociative-math -freciprocal-math -fno-math-errno -fno-rounding-math -fno-signaling-nans -funsafe-math-optimizations -fno-trapping-math -fno-rtti -DNDEBUG")
 
 # Add Eigen3 and demucs.cpp include directory
 include_directories(vendor/eigen vendor/demucs.cpp/src)
@@ -20,8 +20,7 @@ if(NOT EMSCRIPTEN)
     message(FATAL_ERROR "Only Emscripten build target is supported")
 endif()
 
-# Common settings for preloading files
-set(COMMON_LINK_FLAGS "-flto -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4GB -s MODULARIZE=1 -s 'EXPORTED_RUNTIME_METHODS=[\"FS\"]'")
+set(COMMON_LINK_FLAGS "-flto -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4GB -s STACK_SIZE=5MB -s MODULARIZE=1 -s 'EXPORTED_RUNTIME_METHODS=[\"FS\"]'")
 
 # demucs executable
 file(GLOB DEMUCS_SOURCES "vendor/demucs.cpp/src/*.cpp" "src/wasm_glue.cpp")

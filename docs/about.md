@@ -5,6 +5,8 @@ header_class: about
 
 # About
 
+<img src="/assets/images/ig_banner.webp" height="50"/>
+
 ## What is music demixing used for?
 
 Music demixing allows stems for isolated components (vocals, drums, bass, other) to be extracted from a mixed song. Oftentimes, songs are available without the original stems, and you may wish to only use an isolated section of it in your own music project.

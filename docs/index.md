@@ -9,7 +9,7 @@ description: "Split songs, demix music, and separate stems with our AI-based too
 
 # Free AI-powered music demixer
 
-<a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img width="250" src="https://media.theresanaiforthat.com/featured3.png" alt="theresanaiforthat-promo"></a>
+<a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="50" src="https://media.theresanaiforthat.com/featured3.png" alt="theresanaiforthat-promo"></a> <a href="https://www.instagram.com/freemusicdemixer/" target="_blank"><img src="./assets/images/ig_banner.webp" height="50" alt="freemusicdemixer-instagram"/></a>
 
 In music demixing, music source separation, or song splitting, AI models are used to separate the different instruments from a music recording into stems. This web application allows you to demix or split your music files, free and with no usage limits since it runs on **your computer!** 🫵🏽
 
@@ -166,6 +166,7 @@ To cancel the running job, refresh the page
 
 ## Latest news
 
+* Made Demucs run up to 25% faster
 * Add piano and guitar stems with Demucs 6-source, and rename karaoke stem to instrumental
 * Added max memory option to run Demucs faster with multi-threading; deprecate UMX
 * Added a new AI model, Demucs v4 Hybrid Transformer, with higher separation quality
