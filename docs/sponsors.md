@@ -11,4 +11,6 @@ The current format is 160px-wide skyscraper ad banners on the left side of the w
 
 If you offer a pro demixing service, we can explore a deeper partnership where this site is encouraged for free proofs of stems for the user's demo project, and the user is funneled to your pro service for the final stems.
 
-Interested? [Contact us!](mailto:sevagh+freemdx@protonmail.com)
+Interested? Contact us! [E-mail](mailto:sevagh+freemdx@protonmail.com), [Instagram](https://www.instagram.com/freemusicdemixer).
+
+<img src="/assets/images/logo.webp" width="20%"/>

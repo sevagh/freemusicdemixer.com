@@ -166,6 +166,7 @@ To cancel the running job, refresh the page
 
 ## Latest news
 
+* Made Demucs run up to 25% faster
 * Add piano and guitar stems with Demucs 6-source, and rename karaoke stem to instrumental
 * Added max memory option to run Demucs faster with multi-threading; deprecate UMX
 * Added a new AI model, Demucs v4 Hybrid Transformer, with higher separation quality
