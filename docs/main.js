@@ -144,26 +144,22 @@ document.addEventListener('click', function() {
 
 // disable the input file upload and the waveform upload button
 document.getElementById('audio-upload').disabled = true;
-document.getElementById('load-waveform').disabled = true;
 document.getElementById('batch-upload').disabled = true;
-document.getElementById('load-batch').disabled = true;
+document.getElementById('load-and-demix').disabled = true;
 
 // enable the overlay to indicate the apps are not ready to process tracks yet
 // until user presses download-weights
 document.getElementById('overlay-single').style.display = 'block';
-document.getElementById('overlay-batch').style.display = 'block';
 
 // When the download is complete, hide the overlay and spinner
 function hideOverlay() {
     document.getElementById('overlay-single').style.display = 'none';
-    document.getElementById('overlay-batch').style.display = 'none';
     document.getElementById('load-weights-2').style.display = 'none';
     document.getElementById('load-weights-3').style.display = 'none';
 }
 
 function showSpinner() {
     document.getElementById('overlay-single').querySelector('.loader').style.display = 'block';
-    document.getElementById('overlay-batch').querySelector('.loader').style.display = 'block';
 }
 
 document.querySelectorAll('.increment').forEach(item => {
@@ -224,7 +220,7 @@ function initWorkers() {
                 const totalProgressForCurrentSong = averageProgressPerWorker * globalProgressIncrement; // Now in percentage
                 const startingPointForCurrentSong = (completedSongsBatch * globalProgressIncrement);
                 const newBatchWidth = startingPointForCurrentSong + totalProgressForCurrentSong;
-                document.getElementById('inference-progress-bar-batch').style.width = `${newBatchWidth}%`;
+                document.getElementById('inference-progress-bar').style.width = `${newBatchWidth}%`;
             } else if (e.data.msg === 'WASM_LOG') {
                 // writeWasmLog but prepend worker index
                 writeWasmLog(`(WORKER ${i}) ${e.data.data}`)
@@ -247,10 +243,10 @@ function initWorkers() {
                     completedSegments = 0;
 
                     // re-enable the buttons
-                    document.getElementById('batch-upload').disabled = false;
-                    document.getElementById('load-batch').disabled = false;
+                    document.getElementById('single-mode').click();
+                    document.getElementById('load-and-demix').disabled = false;
                     document.getElementById('audio-upload').disabled = false;
-                    document.getElementById('load-waveform').disabled = false;
+                    document.getElementById('batch-upload').disabled = true;
                 }
             } else if (e.data.msg === 'PROCESSING_DONE_BATCH') {
                 // similar global bs here
@@ -281,10 +277,10 @@ function initWorkers() {
                     if (completedSongsBatch === document.getElementById('batch-upload').files.length) {
                         completedSongsBatch = 0;
                         // re-enable the buttons
+                        document.getElementById('batch-mode').click();
+                        document.getElementById('load-and-demix').disabled = false;
+                        document.getElementById('audio-upload').disabled = true;
                         document.getElementById('batch-upload').disabled = false;
-                        document.getElementById('load-batch').disabled = false;
-                        document.getElementById('audio-upload').disabled = false;
-                        document.getElementById('load-waveform').disabled = false;
 
                         // terminate the workers
                         workers.forEach(worker => {
@@ -338,10 +334,10 @@ function initModel() {
             hideOverlay();
             document.getElementById('load-weights-2').disabled = true;
             document.getElementById('load-weights-3').disabled = true;
+            document.getElementById('single-mode').click();
             document.getElementById('audio-upload').disabled = false;
-            document.getElementById('batch-upload').disabled = false;
-            document.getElementById('load-waveform').disabled = false;
-            document.getElementById('load-batch').disabled = false;
+            document.getElementById('batch-upload').disabled = true;
+            document.getElementById('load-and-demix').disabled = false;
         })
         .catch(error => {
             writeJsLog(`Error in fetching model files: ${error}`);
@@ -397,12 +393,11 @@ function processBatchSegments(leftChannel, rightChannel, numSegments, filename, 
     });
 }
 
-document.getElementById('load-waveform').addEventListener('click', () => {
+document.getElementById('load-and-demix').addEventListener('click', () => {
     // disable all buttons at the start of a new job
     document.getElementById('batch-upload').disabled = true;
-    document.getElementById('load-batch').disabled = true;
+    document.getElementById('load-and-demix').disabled = true;
     document.getElementById('audio-upload').disabled = true;
-    document.getElementById('load-waveform').disabled = true;
 
     // parse memory selector here
     const memorySelector = document.getElementById('memory-select');
@@ -414,56 +409,91 @@ document.getElementById('load-waveform').addEventListener('click', () => {
     // reset some globals e.g. progress
     processedSegments = new Array(NUM_WORKERS).fill(undefined);
 
+    // SECTION FOR FILE
     const fileInput = document.getElementById('audio-upload');
+    const inputDir = document.getElementById("batch-upload");
+
     const file = fileInput.files[0];
-    if (!file) {
-        writeJsLog('No file selected.');
-        document.getElementById('batch-upload').disabled = false;
-        document.getElementById('load-batch').disabled = false;
-        document.getElementById('audio-upload').disabled = false;
-        document.getElementById('load-waveform').disabled = false;
-        return;
-    }
 
-    // write log of how many workers are being used
-    writeJsLog(`Initializing ${numWorkers} workers!`)
-    initWorkers();
+    const isSingleMode = document.getElementById('single-mode').checked;
 
-    const reader = new FileReader();
+    if (isSingleMode) {
+        if (!file) {
+            writeJsLog('No file selected.');
+            document.getElementById('load-and-demix').disabled = false;
+            document.getElementById('audio-upload').disabled = false;
+            return;
+        }
 
-    reader.onload = function(event) {
-        // reset the progress bar
+        // write log of how many workers are being used
+        writeJsLog(`Initializing ${numWorkers} workers!`)
+        initWorkers();
+
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+            // reset the progress bar
+            document.getElementById('inference-progress-bar').style.width = '0%';
+            // delete the previous download links
+            let downloadLinksDiv = document.getElementById('output-links');
+            while (downloadLinksDiv.firstChild) {
+                downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
+            }
+
+            const arrayBuffer = event.target.result;
+
+            audioContext.decodeAudioData(arrayBuffer, function(decodedData) {
+                let leftChannel, rightChannel;
+                // decodedData is an AudioBuffer
+                if (decodedData.numberOfChannels == 1) {
+                    // Mono case
+                    leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
+                    rightChannel = decodedData.getChannelData(0); // Float32Array representing right channel data
+                } else {
+                    // Stereo case
+                    leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
+                    rightChannel = decodedData.getChannelData(1); // Float32Array representing right channel data
+                }
+
+                // set original length of track
+                let originalLength = leftChannel.length;
+
+                writeJsLog("Beginning demix job")
+                processAudioSegments(leftChannel, rightChannel, NUM_WORKERS, originalLength);
+            });
+        };
+
+        reader.readAsArrayBuffer(file);
+    } else {
+        if (!inputDir) {
+            writeJsLog('No folder selected.');
+            document.getElementById('batch-upload').disabled = false;
+            document.getElementById('load-and-demix').disabled = false;
+            return;
+        }
+
+        const files = inputDir.files;
+        if (!files) {
+            writeJsLog('No files in input folder.');
+            document.getElementById('batch-upload').disabled = false;
+            document.getElementById('load-and-demix').disabled = false;
+            return;
+        }
+
+        // write log of how many workers are being used
+        writeJsLog(`Initializing ${numWorkers} workers!`)
+        initWorkers();
+
         document.getElementById('inference-progress-bar').style.width = '0%';
+
         // delete the previous download links
         let downloadLinksDiv = document.getElementById('output-links');
         while (downloadLinksDiv.firstChild) {
             downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
         }
 
-        const arrayBuffer = event.target.result;
-
-        audioContext.decodeAudioData(arrayBuffer, function(decodedData) {
-            let leftChannel, rightChannel;
-            // decodedData is an AudioBuffer
-            if (decodedData.numberOfChannels == 1) {
-                // Mono case
-                leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
-                rightChannel = decodedData.getChannelData(0); // Float32Array representing right channel data
-            } else {
-                // Stereo case
-                leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
-                rightChannel = decodedData.getChannelData(1); // Float32Array representing right channel data
-            }
-
-            // set original length of track
-            let originalLength = leftChannel.length;
-
-            writeJsLog("Beginning demix job")
-            processAudioSegments(leftChannel, rightChannel, NUM_WORKERS, originalLength);
-        });
-    };
-
-    reader.readAsArrayBuffer(file);
+        processFiles(files);
+    }
 });
 
 function packageAndDownload(targetWaveforms) {
@@ -609,7 +639,7 @@ function packageAndDownload(targetWaveforms) {
     }
 
     document.getElementById('audio-upload').disabled = false;
-    document.getElementById('load-waveform').disabled = false;
+    document.getElementById('load-and-demix').disabled = false;
 }
 
 let tracks;
@@ -700,29 +730,19 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    var memorySelect1 = document.getElementById("memory-select");
-    var memorySelect2 = document.getElementById("memory-select-2");
-    var workerCountDisplay1 = document.getElementById("worker-count");
-    var workerCountDisplay2 = document.getElementById("worker-count-2");
+    var memorySelect = document.getElementById("memory-select");
+    var workerCountDisplay = document.getElementById("worker-count");
 
-    function updateWorkerCount1() {
-        var memoryValue1 = parseInt(memorySelect1.value, 10);
-        var workerCount = memoryValue1 / 4;
-        workerCountDisplay1.textContent = ` (${workerCount} workers)`;
+    function updateWorkerCount() {
+        var memoryValue = parseInt(memorySelect.value, 10);
+        var workerCount = memoryValue / 4;
+        workerCountDisplay.textContent = ` (${workerCount} workers)`;
     }
 
-    function updateWorkerCount2() {
-        var memoryValue2 = parseInt(memorySelect2.value, 10);
-        var workerCount = memoryValue2 / 4;
-        workerCountDisplay2.textContent = ` (${workerCount} workers)`;
-    }
-
-    memorySelect1.addEventListener("change", updateWorkerCount1);
-    memorySelect2.addEventListener("change", updateWorkerCount2);
+    memorySelect.addEventListener("change", updateWorkerCount);
 
     // Initial update on page load
-    updateWorkerCount1();
-    updateWorkerCount2();
+    updateWorkerCount();
 });
 
 function clearLogs() {
@@ -751,55 +771,6 @@ function writeWasmLog(str) {
     wasmTerminal.textContent += formattedStr + "\n";
     wasmTerminal.scrollTop = wasmTerminal.scrollHeight;
 }
-
-document.getElementById('load-batch').addEventListener('click', async () => {
-    // disable all buttons at the start of a new job
-    document.getElementById('batch-upload').disabled = true;
-    document.getElementById('load-batch').disabled = true;
-    document.getElementById('audio-upload').disabled = true;
-    document.getElementById('load-waveform').disabled = true;
-
-    // parse memory selector here
-    const memorySelector = document.getElementById('memory-select-2');
-    // get its value, divide by 4 to get num_workers
-    const numWorkers = parseInt(memorySelector.options[memorySelector.selectedIndex].value) / 4;
-    // set global NUM_WORKERS to numWorkers
-    NUM_WORKERS = numWorkers;
-
-    // reset some globals e.g. progress
-    processedSegments = new Array(NUM_WORKERS).fill(undefined);
-
-    // Check if a folder is selected
-    const inputDir = document.getElementById("batch-upload");
-    if (!inputDir) {
-        writeJsLog('No input folder selected.');
-        return;
-    }
-
-    // write log of how many workers are being used
-    writeJsLog(`Initializing ${numWorkers} workers!`)
-    initWorkers();
-
-    const files = inputDir.files;
-    if (!files) {
-        writeJsLog('No files in input folder.');
-        document.getElementById('batch-upload').disabled = false;
-        document.getElementById('load-batch').disabled = false;
-        document.getElementById('audio-upload').disabled = false;
-        document.getElementById('load-waveform').disabled = false;
-        return;
-    }
-
-    document.getElementById('inference-progress-bar-batch').style.width = '0%';
-
-    // delete the previous download links
-    let downloadLinksDiv = document.getElementById('output-links-batch');
-    while (downloadLinksDiv.firstChild) {
-        downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
-    }
-
-    processFiles(files);
-});
 
 async function processFiles(files) {
     if (!files || files.length === 0) {
@@ -939,5 +910,17 @@ function packageAndZip(targetWaveforms, filename) {
     zipLink.href = zipUrl;
     zipLink.textContent = `${filename}_stems.zip`;
     zipLink.download = `${filename}_stems.zip`;
-    document.getElementById('output-links-batch').appendChild(zipLink);
+    document.getElementById('output-links').appendChild(zipLink);
 }
+
+document.getElementById('single-mode').addEventListener('change', function() {
+    document.getElementById('audio-upload').disabled = false;
+    document.getElementById('batch-upload').disabled = true;
+    // Additional logic for single track mode
+});
+
+document.getElementById('batch-mode').addEventListener('change', function() {
+    document.getElementById('audio-upload').disabled = true;
+    document.getElementById('batch-upload').disabled = false;
+    // Additional logic for batch upload mode
+});

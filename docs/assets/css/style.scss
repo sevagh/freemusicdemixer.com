@@ -119,29 +119,19 @@ header h1:before {
 }
 
 .btn-github {
-  color: #94ffff; /* Light Cyan */
-  background: #c71585; /* Medium Violet Red */
-}
-
-.btn-github .icon {
-  color: #94ffff; /* Light Cyan */
-  opacity: 1.0;
-  background: url("../images/cyantocat.webp") 0 0 no-repeat;
+  color: #ceeeee; /* Changed to white for better contrast */
+  background: #961996; /* Softer shade of magenta */
+  //text-shadow: none; /* Removed text shadow for clarity */
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px 1px 0 #000,
+     1px 1px 0 #000;
 }
 
 .btn-github:hover {
-  background: #8b008b; /* Dark Magenta */
-}
-
-.btn-github:disabled {
-  color: #cccccc;  /* A lighter grey for the text */
-  background: #a9a9a9;  /* A light grey for the background */
-  cursor: not-allowed;  /* Shows a 'no-entry' sign when hovered */
-}
-
-.btn-github:disabled .icon {
-  color: #cccccc; /* A lighter grey for the icon */
-  opacity: 0.6;   /* Reduced opacity for the icon */
+  color: #ceeeee; /* Changed to white for better contrast */
+  background: #6f006f; /* A darker shade for hover */
 }
 
 // demix webapp stuff
@@ -196,32 +186,16 @@ div.mdx-container {
   padding: 2%;
   overflow: auto; /* Will add a scrollbar if the content overflows */
   z-index: 1;
-  background: url('../images/mixer.webp') no-repeat center center/cover;
-}
-
-div.mdx-container-batch {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 80%; /* Adjust width as per your requirement */
-  height: auto; /* Adjust height as per your requirement */
-  margin: 2vh auto; /* Auto horizontal margins for centering and 2vh vertical margin */
-  border-radius: 10px; /* Rounded corners */
-  color: #e0ffff; /* Text color - Light Cyan */
-  padding: 2%;
-  overflow: auto; /* Will add a scrollbar if the content overflows */
-  z-index: 1;
-  background: url('../images/mixer_batch.webp') no-repeat center center/cover;
+  //background: navy;
+  background-color: rgba(0, 64, 128, 1.0); /* Light cyan background color with 50% opacity */
 }
 
 .bottom-right {
-  position: absolute;
-  bottom: 5%;
-  right: 5%;
+  margin-left: auto;
+  align-self: flex-end;
 }
 
-#mdx-app a {
+#mdx-unified-app a {
   color: #70DB93;
 }
 
@@ -230,10 +204,10 @@ div.mdx-container-batch {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 80%; /* Adjust width as per your requirement */
+  //width: 80%; /* Adjust width as per your requirement */
   margin: 2vh auto; /* Auto horizontal margins for centering and 2vh vertical margin */
   padding: 2%;
-  background-color: rgba(0, 64, 128, 1.0); /* Light cyan background color with 50% opacity */
+  //background-color: rgba(0, 64, 128, 1.0); /* Light cyan background color with 50% opacity */
   border-radius: 10px; /* Rounded corners */
   color: #e0ffff; /* Text color - Light Cyan */
   overflow: auto; /* Will add a scrollbar if the content overflows */
@@ -591,7 +565,7 @@ blockquote {
 }
 
 #sign-up {
-    top: 20%;
+    top: 40%;
 }
 
 #sign-up:hover {
@@ -616,9 +590,11 @@ blockquote {
 
 .sign-up-text {
   font-size: 20px;
+  color: black;
 }
 
 .sign-up-details {
+  color: black;
   font-size: 16px;
   line-height: -1; /* Reduces the space between lines, adjust the value as needed */
 }
@@ -688,11 +664,14 @@ blockquote {
   .post1-header {
     width: calc(100vw + 40px);
   }
-  #load-weights {
+  #load-weights-2 {
     top: 15%;
   }
-  #load-weights-2 {
+  #load-weights-3 {
     top: 25%;
+  }
+  #sign-up {
+    top: 35%;
   }
 }
 
@@ -716,12 +695,27 @@ blockquote {
   .terminal {
     width: 90px;
   }
-  #load-weights {
+  #load-weights-2 {
     top: 5%;
   }
-  #load-weights-2 {
+  #load-weights-3 {
     top: 10%;
   }
+  #sign-up {
+    top: 15%;
+  }
+}
+
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.radio-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .memory-selection {
@@ -744,10 +738,14 @@ blockquote {
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #88ab75; /* Green background */
+    background-color: #68caca; /* Green background */
     color: black; /* White text */
     z-index: 5; /* Higher than other content */
     box-shadow: 0 -2px 5px rgba(0,0,0,0.2); /* Optional shadow for depth */
+    font-family: 'Courier New', 'Courier', monospace;
+    //text-transform: uppercase;
+    font-weight: bold;
+    font-size: 20px;
 }
 
 .banner-content {
@@ -765,87 +763,52 @@ blockquote {
     margin: 0 10px; /* Adjust space between elements */
 }
 
-/* Additional styling for your image, text, and buttons */
-.banner-button-signup {
-  display: inline-flex; /* Use flexbox for inline layout */
-  flex-direction: column; /* Stack children vertically */
-  align-items: flex-start; /* Align text to the left */
-  justify-content: center; /* Center vertically */
-  text-align: left; /* Left-align text within flex items */
-  display: inline-block; /* Allows padding and width/height if needed */
-  text-decoration: none; /* Removes underline from links */
-  background-color: #f5f5dc; /* Bootstrap primary blue */
-  color: black;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0 4px #d2d2a4;
-  transition: background-color 0.3s, transform 0.3s;
-  cursor: pointer; /* Cursor indicates it's clickable */
+#banner-dismiss-button {
+    cursor: pointer; /* Shows a pointer cursor on hover */
+    transition: transform 0.3s ease; /* Smooth transition for any transforms */
 }
 
-.banner-button-signup:hover {
-  background-color: #ebe8d4; /* Slightly darker blue on hover */
-  transform: translateY(-2px);
-}
-.banner-button-signup:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px #d2d2a4;
-}
-
-.banner-dismiss-button {
-  display: inline-flex; /* Use flexbox for inline layout */
-  flex-direction: column; /* Stack children vertically */
-  align-items: flex-start; /* Align text to the left */
-  justify-content: center; /* Center vertically */
-  text-align: left; /* Left-align text within flex items */
-  display: inline-block; /* Allows padding and width/height if needed */
-  background-color: #c0c0c0; /* Soft red color */
-  text-decoration: none;
-  color: black;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0 4px #a8a8a8;
-  transition: background-color 0.3s, transform 0.3s;
-  cursor: pointer;
-}
-
-.banner-dismiss-button:hover {
-    background-color: #b0b0b0; /* Lighter red on hover */
-    transform: translateY(-2px);
-}
-
-.banner-dismiss-button:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px #a8a8a8;
+#banner-dismiss-button:hover {
+    transform: scale(1.1); /* Slightly increase size on hover for visual feedback */
 }
 
 .btn-gold-github {
-  color: #122620; /* Light Cyan */
-  background: #d4af37;
+  color: #000000; /* Changed to black for better contrast */
+  background: #fdd835; /* A bright yellow instead of gold */
   animation: goldpulse 2s infinite;
+  box-shadow: none; /* Optional: remove shadow for a flatter appearance */
+  text-shadow: none; /* Optional: remove shadow for a flatter appearance */
 }
 
 .btn-gold-github:hover {
-  color: #122620; /* Light Cyan */
-  background: #d4af37;
-  animation: none; /* Stop the pulse animation on hover */
+  background: #fbc02d; /* A slightly darker shade for hover */
+  color: black;
+  animation: none;
 }
 
 @keyframes goldpulse {
   0% {
     box-shadow: 0 0 5px #d1b000;
     transform: scale(1);
-    background-color: #d4af37;
+    background-color: #fbc02d;
   }
   50% {
     box-shadow: 0 0 15px #d1b000; /* Increase the glow size and change color */
     transform: scale(1.05); /* Slightly increase the scale for emphasis */
-    background-color: #d4af37;
+    background-color: #fbc02d;
   }
   100% {
     box-shadow: 0 0 5px #d1b000;
     transform: scale(1);
-    background-color: #d4af37;
+    background-color: #fbc02d;
   }
 }
 
+input[type="file"]:disabled, label:disabled {
+    opacity: 0.5; /* Lower opacity for a "disabled" look */
+    cursor: not-allowed; /* Change cursor to indicate non-interactive */
+}
+
+.btn-github, .btn-gold-github {
+  font-size: 15px;
+}

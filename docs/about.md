@@ -5,39 +5,34 @@ header_class: about
 
 # About
 
-<img src="/assets/images/ig_banner.webp" height="50"/>
-
 ## What is music demixing used for?
 
-Music demixing allows stems for isolated components (vocals, drums, bass, other) to be extracted from a mixed song. Oftentimes, songs are available without the original stems, and you may wish to only use an isolated section of it in your own music project.
+Music demixing allows stems for isolated components (vocals, drums, bass, melody) to be extracted from a mixed song. Oftentimes, songs are available without the original stems, and you may wish to only use an isolated stem in your own music project.
 
-Demixed stems can be used for:
-- Remixing
-- Karaoke
-- Instrumental versions
-- Music education
-- Music analysis
-- Music transcription
-- Music generation
-- ... and much more
+Demixed stems can be used for remixing, karaoke, instrumental extraction, backing tracks, music education, music analysis, music transcription, and more! The possibilities are endless.
 
 ## Freemusicdemixer.com
 
-Most demixing applications are complex Artificial Intelligence (AI) models that require a lot of computational power to run. Similar websites will have a job queue, where you submit your track and hope it gets processed in the backend on a heavyweight machine that's possibly running an expensive GPU.
+Most demixers consist of one or many complex Artificial Intelligence (AI) models that require a lot of computational power or GPUs to run (deep learning). Some websites will have a job queue where you submit your track and hope it gets processed in the backend on an expensive server with a GPU.
 
-This website is a simple, easy-to-use interface for the AI model [Demucs v4](https://arxiv.org/abs/2211.08553) and its different weights.
+This website is an easy-to-use interface for the AI model [Demucs v4](https://arxiv.org/abs/2211.08553) that runs fast and lean **directly in your web browser** using only the CPU and with much lower memory usage, because we care about speed and efficency! Anybody with a regular computer can run this website.
 
-The code has been rewritten from Python and PyTorch to pure C++ so that it runs fast and lean in your web browser. You can simply upload the track you want demixed and watch while it gets processed immediately on your own computer. **Your privacy is 100% respected** since your files are never uploaded to a server or job queue.
+You can simply choose the track you want demixed and watch as it gets processed immediately on your own computer. **Your privacy is 100% respected** since your files are never uploaded to a server or job queue.
 
-When the demixing is complete, you can download the following stems in wav files (stereo, 44100 Hz):
-- Bass
-- Drums
-- Melody (catchall for non-bass/drums/vocals - also called 'other' in music demixing research)
-- Vocals
-- Instrumental (bass + drums + melody)
+## Open-source code
 
-## Technical implementation
+The custom inference code of Demucs, designed to run with low memory using the CPU, has been rewritten in C++ and compiled to WebAssembly. All of the code is open-source and available on GitHub:
+* [demucs.cpp](https://github.com/sevagh/demucs.cpp): the pure C++ code for the Demucs model
+* [free-music-demixer](https://github.com/sevagh/free-music-demixer): the entire code for this website (including the C++ code above, JavaScript, HTML, CSS, etc.)
 
-Free-music-demixer started as a web adaptation of [umx.cpp](https://github.com/sevagh/umx.cpp). This project was inspired by the "AI at the edge" [GGML project](https://ggml.ai/) and [llama.cpp](https://github.com/ggerganov/llama.cpp), and WebAssembly is a great demo of client-side AI. It has since replaced its core model with [demucs.cpp](https://github.com/sevagh/demucs.cpp) for much better demixing quality.
+Be sure to check the [Blog](/blog) for technical articles and deep dives.
 
-The inference code is written in C++, using [the excellent Eigen3 library](https://eigen.tuxfamily.org/index.php?title=Main_Page) for numerical operations. Emscripten is used to compile it to WebAssembly. Be sure to check the [Blog](/blog) for technical articles and deep dives.
+## Contact us!
+
+This website is created and maintained by Sevag H ([GitHub portfolio](https://github.com/sevagh), [website](https://sevag.xyz)).
+
+If you want to reach out about this website (or any other topic, including brand sponsorships, collaborations, etc.) contact us by [e-mail](mailto:contact@freemusicdemixer.com) or through our [Instagram account](https://www.instagram.com/freemusicdemixer/).
+
+If you're a customer, sign up to the [mailing list](https://docs.google.com/forms/d/e/1FAIpQLSek_QU_BGd7CL2BLVOLDs7JmTZzcLKJiK5k4ysxoCEMjEGrtA/viewform?usp=sf_link) to receive product updates, promos, free trials, and more!
+
+<img src="/assets/images/ig_banner.webp" height="50"/>

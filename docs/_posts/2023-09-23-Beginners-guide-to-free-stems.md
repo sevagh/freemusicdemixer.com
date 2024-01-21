@@ -138,4 +138,4 @@ At any point if you want to cancel the current run, just reload the website. You
 
 ## Reporting bugs
 
-If any of the above steps don't work or result in strange outputs, I invite you to open a bug report on the project's [GitHub Issues](https://github.com/sevagh/free-music-demixer/issues) or e-mail me directly (sevagh+freemdx at protonmail dot com).
+If any of the above steps don't work or result in strange outputs, I invite you to open a bug report on the project's [GitHub Issues](https://github.com/sevagh/free-music-demixer/issues) or e-mail me directly (contact at freemusicdemixer dot com).

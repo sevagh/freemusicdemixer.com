@@ -13,9 +13,9 @@
 <script src="/banner.js"></script>
 <div id="sticky-banner" class="sticky-banner" style="display: none;">
     <div class="banner-content">
-        Get news and sneak previews of upcoming features!
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSek_QU_BGd7CL2BLVOLDs7JmTZzcLKJiK5k4ysxoCEMjEGrtA/viewform?usp=sf_link" class="banner-button-signup" target="_blank">Sign up</a>
-         <button class="banner-dismiss-button" id="banner-dismiss-button">Dismiss</button>
+    <img src="./assets/images/logo.webp" alt="freemusicdemixer-logo" height="40px"/>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSek_QU_BGd7CL2BLVOLDs7JmTZzcLKJiK5k4ysxoCEMjEGrtA/viewform?usp=sf_link" target="_blank">Sign up to the mailing list!</a>
+    <img src="./assets/images/dismiss.webp" alt="banner-dismiss" height="30px" id="banner-dismiss-button" target="_blank"/>
     </div>
 </div>
 
@@ -27,16 +27,10 @@
         </a>
         <h2>{{ site.human_description | default: site.github.project_tagline }}</h2>
         <section id="downloads">
-          {% if site.show_downloads %}
-            <a href="{{ site.github.zip_url }}" class="btn">Download as .zip</a>
-            <a href="{{ site.github.tar_url }}" class="btn">Download as .tar.gz</a>
-          {% endif %}
           <a href="{{ '/' | relative_url }}" class="btn btn-github">Home</a>
           <a href="{{ '/pro' | relative_url }}" class="btn btn-gold-github">PRO</a>
           <a href="{{ '/about' | relative_url }}" class="btn btn-github">About</a>
           <a href="{{ '/blog' | relative_url }}" class="btn btn-github">Blog</a>
-          <a href="{{ '/sponsors' | relative_url }}" class="btn btn-github">Sponsors</a>
-          <a href="{{ site.github.repository_url }}" class="btn btn-github"><span class="icon"></span>Source code</a>
         </section>
       </div>
     </header>

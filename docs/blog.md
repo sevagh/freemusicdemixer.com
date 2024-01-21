@@ -15,13 +15,6 @@ keywords: music demixing, stem separation, song splitting, AI model, Demucs, Tra
 
 This is the blog of the freemusicdemixer site. The aim is to provide content related to music demixing, to help users figure out this website, and the overall landscape of stem separation.
 
-The categories are:
-* <u>Getting started</u>: beginner's guides and tutorials
-* <u>Under the hood</u>: tech details (C++, neural networks, spectrograms, etc.)
-* <u>Producer's corner</u>: tips from musicians on how they use stems in their projects
-* <u>Innovation spotlight</u>: cool things in the world of music demixing
-* <u>Announcements</u>: any big announcements for this website
-
 ## Filter posts
 
 <div class="clouds">
