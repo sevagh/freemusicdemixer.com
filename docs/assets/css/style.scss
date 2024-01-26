@@ -734,18 +734,19 @@ blockquote {
 }
 
 .sticky-banner {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: #68caca; /* Green background */
-    color: black; /* White text */
-    z-index: 5; /* Higher than other content */
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.2); /* Optional shadow for depth */
-    font-family: 'Courier New', 'Courier', monospace;
-    //text-transform: uppercase;
-    font-weight: bold;
-    font-size: 20px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 165, 0, 0.7), /* Softened orange */
+    rgba(255, 140, 0, 0.8) 50%,
+    rgba(255, 165, 0, 0.7)
+  );
+  background-size: 56.57px 56.57px; /* Adjust size to control stripe width */
+  color: black; /* For text */
+  z-index: 5; /* Higher than other content */
 }
 
 .banner-content {
@@ -763,13 +764,68 @@ blockquote {
     margin: 0 10px; /* Adjust space between elements */
 }
 
-#banner-dismiss-button {
-    cursor: pointer; /* Shows a pointer cursor on hover */
-    transition: transform 0.3s ease; /* Smooth transition for any transforms */
+/* Additional styling for your image, text, and buttons */
+.banner-button-signup {
+  text-align: left; /* Left-align text within flex items */
+  display: block; /* Allows padding and width/height if needed */
+  text-align: center;
+  text-decoration: none; /* Removes underline from links */
+  font-size: 18px;
+  padding: 6px 16px;
+  border-radius: 5px;
+  background-color: #961996; /* Replace with your chosen brand color */
+  color: #ffffff; /* White text for better contrast */
+  transition: background-color 0.3s, transform 0.3s;
+  cursor: pointer; /* Cursor indicates it's clickable */
 }
 
-#banner-dismiss-button:hover {
-    transform: scale(1.1); /* Slightly increase size on hover for visual feedback */
+.banner-button-signup:hover {
+  background-color: #a800a8; /* A slightly lighter shade for hover */
+  color: #ffffff; /* Optional: Change text color to increase contrast */
+  transform: translateY(-2px);
+  box-shadow: 2px 4px #650065; /* Slightly darker shade for depth */
+}
+
+.banner-button-signup:active {
+  background-color: #7d007d; /* An even darker shade for active state */
+  transform: translateY(1px);
+  box-shadow: 0 2px #520052; /* Shadow for a "pressed" effect */
+}
+
+.banner-dismiss-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #ceeeee; /* A softer color from your palette */
+  color: #000000; /* White text for contrast */
+  padding: 6px 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+
+.banner-dismiss-button:hover {
+  background-color: #e0ffff; /* A slightly darker shade for hover, close to #ceeeee */
+  transform: translateY(-1px);
+  box-shadow: 2px 2px #a4bebe; /* A softer shadow for depth */
+}
+
+.banner-dismiss-button:active {
+  background-color: #afcfcf; /* A shade darker than hover color for active state */
+  transform: translateY(1px);
+  box-shadow: 0 1px #9fbfbf; /* Shadow for a "pressed" effect */
+}
+
+.banner-dismiss-button .close-text {
+  display: inline; /* Inline with the icon */
+}
+/* Adding an 'X' icon to the close button using pseudo-elements */
+.banner-dismiss-button::before {
+  content: "\00D7"; /* Unicode 'X' character */
+  font-size: 1.2em; /* Slightly larger size for the icon */
+  color: #ff0000; /* Red color for the icon to signify 'close' */
+  margin-right: 5px; /* Spacing between icon and text */
 }
 
 .btn-gold-github {
