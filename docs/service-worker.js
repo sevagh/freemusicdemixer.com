@@ -1,7 +1,5 @@
-const CACHE_NAME = "v20240115";
+const CACHE_NAME = "v20240213";
 const RESOURCES_TO_PRELOAD = [
-  "demucs.js",
-  "demucs.wasm",
   "assets/models/ggml-model-htdemucs-4s-f16.bin",
   "assets/models/ggml-model-htdemucs-6s-f16.bin"
 ];

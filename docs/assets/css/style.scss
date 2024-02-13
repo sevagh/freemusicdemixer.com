@@ -195,9 +195,9 @@ div.mdx-container {
   align-self: flex-end;
 }
 
-#mdx-unified-app a {
-  color: #70DB93;
-}
+//#mdx-unified-app a {
+//  color: #70DB93;
+//}
 
 .output-link-container {
   display: flex;
@@ -208,6 +208,7 @@ div.mdx-container {
   margin: 2vh auto; /* Auto horizontal margins for centering and 2vh vertical margin */
   padding: 2%;
   //background-color: rgba(0, 64, 128, 1.0); /* Light cyan background color with 50% opacity */
+  background-color: white;
   border-radius: 10px; /* Rounded corners */
   color: #e0ffff; /* Text color - Light Cyan */
   overflow: auto; /* Will add a scrollbar if the content overflows */
@@ -867,4 +868,23 @@ input[type="file"]:disabled, label:disabled {
 
 .btn-github, .btn-gold-github {
   font-size: 15px;
+}
+
+.styled-link {
+    display: inline-block;
+    height: 50px; /* Match the height of your images */
+    border: 1.5px solid #636363; /* Add a border for a button-like appearance */
+    color: #3b3b3b; /* Choose the color of the text */
+    // add left text border
+    padding: 12px 5px; /* Add padding to the left and right */
+    font-weight: bold; /* Make the text bold */
+    text-align: center; /* Center the text horizontally */
+    text-decoration: none; /* Remove the underline from the link */
+    box-sizing: border-box; /* Include padding and border in the width */
+    //vertical-align: middle; /* Align inline-block elements vertically */
+    vertical-align: top; /* Align inline-block elements vertically */
+}
+
+.styled-link:hover {
+    text-decoration: none; /* Ensure the underline doesn't appear on hover */
 }
