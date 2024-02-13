@@ -19,10 +19,6 @@ const registerServiceWorker = async () => {
   }
 };
 
-if ('serviceWorker' in navigator) {
-    registerServiceWorker();
-}
-
 const SAMPLE_RATE = 44100;
 const OVERLAP_S = 0.75;
 
@@ -179,6 +175,7 @@ let NUM_WORKERS = 4;
 let workers;
 let workerProgress;
 let selectedModel;
+let dlModelBuffers;
 
 let processedSegments = new Array(NUM_WORKERS); // Global accumulator for processed segments
 let completedSegments = 0; // Counter for processed segments
@@ -230,7 +227,7 @@ function initWorkers() {
             } else if (e.data.msg === 'PROCESSING_DONE') {
                 // Handle the processed segment
                 // Collect and stitch segments
-                processedSegments[i] = e.data.data;
+                processedSegments[i] = e.data.waveforms;
                 let originalLength = e.data.originalLength;
                 completedSegments +=1;
                 workers[i].terminate();
@@ -292,26 +289,30 @@ function initWorkers() {
                 }
             }
         };
-        workers[i].postMessage({msg: 'LOAD_WASM', model: selectedModel});
+        workers[i].postMessage({
+            msg: 'LOAD_WASM',
+            model: selectedModel,
+            modelBuffers: dlModelBuffers
+        });
     }
 };
 
 function fetchAndCacheFiles(model) {
-    let modelFile = "";
+    let modelFiles = [];
     if (model === 'demucs-4s') {
-        modelFile = `assets/models/ggml-model-htdemucs-4s-f16.bin`;
+        // append ggml-model-htdemucs-4s-f16.bin to modelFiles
+        modelFiles.push('ggml-model-htdemucs-4s-f16.bin');
     } else if (model === 'demucs-6s') {
-        modelFile = `assets/models/ggml-model-htdemucs-6s-f16.bin`;
+        modelFiles.push('ggml-model-htdemucs-6s-f16.bin');
     }
 
-    const filesToFetch = [
-        'demucs.wasm',
-        'demucs.js',
-        modelFile
-    ];
+    // prepend raw gh url to all modelFiles
+    modelFiles = modelFiles.map(file =>
+        `assets/models/${file}`
+    )
 
     // Map each file to a fetch request and then process the response
-    const fetchPromises = filesToFetch.map(file =>
+    const fetchPromises = modelFiles.map(file =>
         fetch(file).then(response => {
             if (!response.ok) {
                 throw new Error(`Failed to fetch ${file}`);
@@ -323,10 +324,10 @@ function fetchAndCacheFiles(model) {
 }
 
 function initModel() {
+    registerServiceWorker();
     fetchAndCacheFiles(selectedModel)
         .then(buffers => { // buffers are the downloaded file contents
-            writeJsLog("Fetched and cached model files");
-            writeJsLog(`Selected model: ${selectedModel}`);
+            writeJsLog(`Fetching and caching model files for selected model: ${selectedModel}`);
 
             // Process buffers if needed, e.g., initialize WASM module
 
@@ -338,6 +339,8 @@ function initModel() {
             document.getElementById('audio-upload').disabled = false;
             document.getElementById('batch-upload').disabled = true;
             document.getElementById('load-and-demix').disabled = false;
+
+            dlModelBuffers = buffers;
         })
         .catch(error => {
             writeJsLog(`Error in fetching model files: ${error}`);
@@ -722,11 +725,20 @@ document.addEventListener("DOMContentLoaded", function() {
     let checkbox = document.getElementById("toggleDevLogs");
     let devLogs = document.getElementById("devLogs");
 
+    // Check localStorage for the saved checkbox state
+    const isChecked = localStorage.getItem("showDevLogs") === "true";
+
+    // Apply the saved state
+    checkbox.checked = isChecked;
+    devLogs.classList.toggle("hidden", !isChecked); // Hide if not checked
+
     checkbox.addEventListener("change", function() {
         if (checkbox.checked) {
             devLogs.classList.remove("hidden");
+            localStorage.setItem("showDevLogs", "true"); // Save state as checked
         } else {
             devLogs.classList.add("hidden");
+            localStorage.setItem("showDevLogs", "false"); // Save state as unchecked
         }
     });
 

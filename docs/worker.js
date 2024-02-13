@@ -1,8 +1,9 @@
 const SAMPLE_RATE = 44100;
 
-const scriptName = 'demucs.js';
+const scriptName = 'demucs_free.js';
 let wasmModule;
 let modelName;
+let modelBuffers;
 
 let isWasmModuleInitialized = false;
 
@@ -21,81 +22,47 @@ function loadWASMModule() {
 onmessage = function(e) {
     if (e.data.msg === 'LOAD_WASM') {
         modelName = e.data.model;
+        modelBuffers = e.data.modelBuffers;
         loadWASMModule();
-    } else if (e.data.msg === 'PROCESS_AUDIO') {
+    } else if (e.data.msg === 'PROCESS_AUDIO' || e.data.msg === 'PROCESS_AUDIO_BATCH') {
         const leftChannel = e.data.leftChannel;
         const rightChannel = e.data.rightChannel;
-
-        let targetWaveforms = null;
-
-        const modelFilePath = modelName === 'demucs-4s' ?
-            '/assets/models/ggml-model-htdemucs-4s-f16.bin':
-            '/assets/models//ggml-model-htdemucs-6s-f16.bin';
 
         // If the module is not loaded yet, wait for it to load
         wasmModule.then((loaded_module) => {
             console.log(`Loading wasm module for model ${modelName}`)
 
-            // The module is initialized, and now FS should be available as a property of the Module
-            fetch(modelFilePath)
-            .then(response => response.arrayBuffer())
-            .then(data => {
-                console.log("Loaded model binary data, now mounting to WASM VFS")
-                // Write the binary data to the virtual filesystem under a consistent name
-                loaded_module.FS.writeFile('/selected-model.bin', new Uint8Array(data));
+            // modelBuffers is already an array of array buffers sent from the main thread
+            // Directly prepare data for initialization
+            const modelDataArray = modelBuffers.map(buffer => new Uint8Array(buffer));
+            const modelDataPtrs = modelDataArray.map(data => loaded_module._malloc(data.byteLength));
 
-                // Initialize the model
-                loaded_module._modelInit();
+            // Copy data into WASM memory
+            modelDataArray.forEach((data, index) => loaded_module.HEAPU8.set(data, modelDataPtrs[index]));
 
-                // Send a message to the main thread to indicate that the WASM module is ready
-                postMessage({ msg: 'WASM_READY'});
+            // Initialize the model
+            loaded_module._modelInit(modelDataPtrs[0], modelDataArray[0].byteLength);
 
+            // Free the allocated memory if it's not needed beyond this point
+            modelDataPtrs.forEach(ptr => loaded_module._free(ptr));
+
+            // Send a message to the main thread to indicate that the WASM module is ready
+            postMessage({ msg: 'WASM_READY'});
+
+            let targetWaveforms;
+            if (e.data.msg === 'PROCESS_AUDIO') {
                 targetWaveforms = processAudio(leftChannel, rightChannel, loaded_module, false);
-                const transferList = targetWaveforms.map(arr => arr.buffer);
-                // Send the processed audio data back to the main thread
-                postMessage({ msg: 'PROCESSING_DONE', data: targetWaveforms, originalLength: e.data.originalLength }, transferList);
-            });
-        });
-    } else if (e.data.msg === 'PROCESS_AUDIO_BATCH') {
-        const leftChannel = e.data.leftChannel;
-        const rightChannel = e.data.rightChannel;
-
-        let targetWaveforms = null;
-
-        const modelFilePath = modelName === 'demucs-4s' ?
-            '/assets/models/ggml-model-htdemucs-4s-f16.bin':
-            '/assets/models//ggml-model-htdemucs-6s-f16.bin';
-
-        // Process using the already loaded module if initialized
-        if (isWasmModuleInitialized) {
-            console.log(`Reusing wasm module for model ${modelName}`);
-            // still need to unwrap the promise
-            wasmModule.then((loaded_module) => {
+            } else if (e.data.msg === 'PROCESS_AUDIO_BATCH') {
                 targetWaveforms = processAudio(leftChannel, rightChannel, loaded_module, true);
-                const transferList = targetWaveforms.map(arr => arr.buffer);
-                postMessage({ msg: 'PROCESSING_DONE_BATCH', waveforms: targetWaveforms, filename: e.data.filename, originalLength: e.data.originalLength }, transferList);
-            });
-        } else {
-            // If the module is not loaded yet, wait for it to load
-            wasmModule.then((loaded_module) => {
-                console.log(`Loading wasm module for model ${modelName}`);
-
-                // Fetch and initialize the model only if it's not already done
-                fetch(modelFilePath)
-                .then(response => response.arrayBuffer())
-                .then(data => {
-                    console.log("Loaded model binary data, now mounting to WASM VFS");
-                    loaded_module.FS.writeFile('/selected-model.bin', new Uint8Array(data));
-                    loaded_module._modelInit();
-                    isWasmModuleInitialized = true; // Update the initialization flag
-                    postMessage({ msg: 'WASM_READY'});
-
-                    targetWaveforms = processAudio(leftChannel, rightChannel, loaded_module, true);
-                    const transferList = targetWaveforms.map(arr => arr.buffer);
-                    postMessage({ msg: 'PROCESSING_DONE_BATCH', waveforms: targetWaveforms, filename: e.data.filename, originalLength: e.data.originalLength }, transferList);
-                });
-            });
-        }
+            }
+            const transferList = targetWaveforms.map(arr => arr.buffer);
+            postMessage({
+                msg: e.data.msg === 'PROCESS_AUDIO' ? 'PROCESSING_DONE' : 'PROCESSING_DONE_BATCH',
+                waveforms: targetWaveforms,
+                originalLength: e.data.originalLength,
+                filename: e.data.msg === 'PROCESS_AUDIO' ? "" : e.data.filename,
+            }, transferList);
+        });
     }
 };
 
@@ -143,7 +110,7 @@ function processAudio(leftChannel, rightChannel, module, is_batch_mode) {
         arrayPointerLVocals, arrayPointerRVocals,
         arrayPointerLGuitar, arrayPointerRGuitar,
         arrayPointerLPiano, arrayPointerRPiano,
-        is_batch_mode);
+        null, null, is_batch_mode);
 
     let wasmArrayLBass = new Float32Array(module.HEAPF32.buffer, arrayPointerLBass, leftChannel.length);
     let wasmArrayLDrums = new Float32Array(module.HEAPF32.buffer, arrayPointerLDrums, leftChannel.length);

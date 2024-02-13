@@ -1,7 +1,5 @@
-const CACHE_NAME = "v20240115";
+const CACHE_NAME = "v20240213";
 const RESOURCES_TO_PRELOAD = [
-  "demucs.js",
-  "demucs.wasm",
   "assets/models/ggml-model-htdemucs-4s-f16.bin",
   "assets/models/ggml-model-htdemucs-6s-f16.bin"
 ];
@@ -36,9 +34,14 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
+  // Check if the request is for a .bin file
+  if (event.request.url.endsWith('.bin')) {
+    event.respondWith(
+      caches.match(event.request)
+        .then((response) => response || fetch(event.request))
+    );
+  } else {
+    // For non-.bin files, just fetch from the network
+    event.respondWith(fetch(event.request));
+  }
 });

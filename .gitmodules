@@ -1,16 +1,7 @@
-[submodule "vendor/libnyquist"]
-	path = vendor/libnyquist
-	url = https://github.com/ddiakopoulos/libnyquist
 [submodule "vendor/wav-file-encoder"]
 	path = vendor/wav-file-encoder
 	url = https://github.com/chdh/wav-file-encoder
-[submodule "vendor/eigen"]
-	path = vendor/eigen
-	url = https://gitlab.com/libeigen/eigen.git
 [submodule "vendor/demucs"]
 	path = vendor/demucs
 	url = https://github.com/sevagh/demucs
 	branch = release_v4
-[submodule "vendor/demucs.cpp"]
-	path = vendor/demucs.cpp
-	url = https://github.com/sevagh/demucs.cpp
