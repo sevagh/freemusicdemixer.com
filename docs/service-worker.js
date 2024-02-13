@@ -34,9 +34,14 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
+  // Check if the request is for a .bin file
+  if (event.request.url.endsWith('.bin')) {
+    event.respondWith(
+      caches.match(event.request)
+        .then((response) => response || fetch(event.request))
+    );
+  } else {
+    // For non-.bin files, just fetch from the network
+    event.respondWith(fetch(event.request));
+  }
 });

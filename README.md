@@ -14,23 +14,6 @@ A [free static website](https://freemusicdemixer.com) for client-side music demi
 
 ### Dev instructions
 
-Clone the repo with submodules:
-```
-git clone --recurse-submodules https://github.com/sevagh/free-music-demixer
-```
-
-To generate a weights file with Python, first create a Python venv, then:
-```
-python -m pip install -r ./scripts/requirements.txt
-python ./scripts/convert-demucs-pth-to-ggml.py ./models/ # htdemucs 4s
-python ./scripts/convert-demucs-pth-to-ggml.py --six-source ./models/ # htdemucs 6s
-```
-
-Build for WebAssembly with Emscripten using `emcmake`:
-```
-mkdir -p build-wasm && cd build-wasm && emcmake cmake -DCMAKE_BUILD_TYPE=Release .. && make
-```
-
 The [wav-file-encoder](https://github.com/chdh/wav-file-encoder) project has been vendored in; I manually compiled the Typescript file to Javascript with these commands:
 ```
 npm install typescript

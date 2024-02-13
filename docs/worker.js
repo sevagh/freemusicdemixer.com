@@ -110,7 +110,7 @@ function processAudio(leftChannel, rightChannel, module, is_batch_mode) {
         arrayPointerLVocals, arrayPointerRVocals,
         arrayPointerLGuitar, arrayPointerRGuitar,
         arrayPointerLPiano, arrayPointerRPiano,
-        is_batch_mode);
+        null, null, is_batch_mode);
 
     let wasmArrayLBass = new Float32Array(module.HEAPF32.buffer, arrayPointerLBass, leftChannel.length);
     let wasmArrayLDrums = new Float32Array(module.HEAPF32.buffer, arrayPointerLDrums, leftChannel.length);
