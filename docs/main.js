@@ -231,7 +231,7 @@ function initWorkers() {
             } else if (e.data.msg === 'PROCESSING_DONE') {
                 // Handle the processed segment
                 // Collect and stitch segments
-                processedSegments[i] = e.data.data;
+                processedSegments[i] = e.data.waveforms;
                 let originalLength = e.data.originalLength;
                 completedSegments +=1;
                 workers[i].terminate();

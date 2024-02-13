@@ -56,7 +56,12 @@ onmessage = function(e) {
                 targetWaveforms = processAudio(leftChannel, rightChannel, loaded_module, true);
             }
             const transferList = targetWaveforms.map(arr => arr.buffer);
-            postMessage({ msg: e.data.msg === 'PROCESS_AUDIO' ? 'PROCESSING_DONE' : 'PROCESSING_DONE_BATCH', data: targetWaveforms, originalLength: e.data.originalLength }, transferList);
+            postMessage({
+                msg: e.data.msg === 'PROCESS_AUDIO' ? 'PROCESSING_DONE' : 'PROCESSING_DONE_BATCH',
+                waveforms: targetWaveforms,
+                originalLength: e.data.originalLength,
+                filename: e.data.msg === 'PROCESS_AUDIO' ? "" : e.data.filename,
+            }, transferList);
         });
     }
 };
