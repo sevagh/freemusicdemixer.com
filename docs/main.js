@@ -19,10 +19,6 @@ const registerServiceWorker = async () => {
   }
 };
 
-if ('serviceWorker' in navigator) {
-    registerServiceWorker();
-}
-
 const SAMPLE_RATE = 44100;
 const OVERLAP_S = 0.75;
 
