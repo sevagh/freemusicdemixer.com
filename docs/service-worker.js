@@ -37,8 +37,19 @@ self.addEventListener("fetch", (event) => {
   // Check if the request is for a .bin file
   if (event.request.url.endsWith('.bin')) {
     event.respondWith(
-      caches.match(event.request)
-        .then((response) => response || fetch(event.request))
+      caches.open(CACHE_NAME).then(cache => {
+        return cache.match(event.request).then(response => {
+          if (response) {
+            // Return the cached response if found
+            return response;
+          }
+          // Otherwise fetch from the network, cache the response, and return it
+          return fetch(event.request).then(networkResponse => {
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          });
+        });
+      })
     );
   } else {
     // For non-.bin files, just fetch from the network

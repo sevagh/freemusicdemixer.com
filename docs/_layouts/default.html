@@ -10,6 +10,15 @@
     {% seo %}
   </head>
 
+<div id="popup-overlay" class="popup-overlay"></div>
+<div id="popup-banner" class="popup-banner-hidden">
+    <button class="popup-close-button" id="close-popup">✖</button>
+    <p class="pro-cta">Check out the new <a href="https://pro.freemusicdemixer.com" target="_blank">PRO site</a> for enhanced demixing!</p>
+    <p class="pro-promo">Use promo code LAUNCH10 for 100% off until March 31!</p>
+    <a href="https://pro.freemusicdemixer.com" target="_blank"><img src="/assets/images/popup_pro.webp" alt="pro-freemusicdemixer-logo" height="256px"/></a>
+    <p class="pro-signup-cta"><a href="https://docs.google.com/forms/d/e/1FAIpQLSek_QU_BGd7CL2BLVOLDs7JmTZzcLKJiK5k4ysxoCEMjEGrtA/viewform?usp=sf_link" target="_blank">Sign up to the mailing list</a> for promo codes, special offers, and more!</p>
+</div>
+
 <script src="/banner.js"></script>
 <div id="sticky-banner" class="sticky-banner" style="display: none;">
     <div class="banner-content">
@@ -30,7 +39,7 @@
         <h2>{{ site.human_description | default: site.github.project_tagline }}</h2>
         <section id="downloads">
           <a href="{{ '/' | relative_url }}" class="btn btn-github">Home</a>
-          <a href="{{ '/pro' | relative_url }}" class="btn btn-gold-github">PRO</a>
+          <a href="https://pro.freemusicdemixer.com" class="btn btn-gold-github">PRO</a>
           <a href="{{ '/about' | relative_url }}" class="btn btn-github">About</a>
           <a href="{{ '/blog' | relative_url }}" class="btn btn-github">Blog</a>
         </section>
