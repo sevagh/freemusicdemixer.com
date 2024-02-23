@@ -4,7 +4,7 @@ title: "How we run an AI model for free in your browser"
 category: under-the-hood
 tags: [web assembly, c++, free-music-demixer, ai, neural network]
 header_class: post
-description: "A deeper dive into how freemusicdemixer.com runs an AI model in your browser withwith HTML, Javascript, CSS, C++, and WebAssembly"
+description: "A deeper dive into how freemusicdemixer.com runs an AI model in your browser with HTML, Javascript, CSS, C++, and WebAssembly"
 keywords: webassembly, wasm, c++, neural network, demixing, music demixing, source separation, pytorch, inference
 intro: "An overview of how freemusicdemixer.com is built and how it lets you run an AI model for free in the privacy of your own browser."
 ---

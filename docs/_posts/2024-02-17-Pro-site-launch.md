@@ -9,11 +9,19 @@ keywords: music demixing, song splitting, song splitter, stem separation, demucs
 intro: "Creating ensemble models for better demixing 📈"
 ---
 
+<h2>Table of contents</h2>
+* Table of contents
+{:toc}
+
+{{ page.intro }}
+
+<span class="blog-highlight">**Last updated: 2024-12-22**</span>
+
 ## Announcing our new PRO site!
 
 Over the course of the last month, we have been hard at work on this project, and we're ready to show you what we came up with!
 
-<img alt="pro-model-comparison" src="/assets/blog/post6/model_comparison.webp" width="75%"/>
+<img alt="pro-model-comparison" src="/assets/blog/post6/model_comparison.png" width="75%"/>
 
 Browse and sign up for our [PRO website](https://pro.freemusicdemixer.com) today!
 
@@ -34,10 +42,15 @@ That means that you apply the demixing model to the original song and to the inv
 
 ## Our PRO models
 
-As part of the new pro release, we are launching with 3 models:
-* Karaoke/vocal-only: we apply the Demucs fine-tuned vocal model with test-time inverted waveform augmentation for an exclusive improved vocal separation at **2x inference cost** (the AI is run twice on the input song) for **maximum vocal quality**, <span class="blog-highlight">beating Demucs v4 fine-tuned vocals</span>
-* Pro custom model: we start with the Karaoke model, and then follow up with running Demucs 4-source and 6-source twice each on the instrumental output; the end result is **6x inference cost** for a well-rounded model that blends our best vocal performance with improved drums, bass, guitar, and a variety of stems
-* Pro fine-tuned model: finally, this is faithful to the original Demucs v4 Fine-tuned model, which has a **4x inference cost** and has <span class="blog-highlight">dramatically better drum and bass performance</span>
+As part of the new pro release, we are launching with 4 models:
+* Karaoke/vocal-only: we apply a custom Demucs fine-tuned vocal model with test-time inverted waveform augmentation for an exclusive improved vocal separation at **2x inference cost** (the AI is run twice on the input song) for **maximum vocal quality**, <span class="blog-highlight">beating Demucs v4 fine-tuned vocals</span>
+* Pro fine-tuned model: this is the original Demucs v4 Fine-tuned model, which has a **4x inference cost** and has particularly good drum, bass, and melody performance
+* Pro custom model: we start with the Karaoke model, and then follow up with running Demucs 4-source and 6-source twice each on the instrumental output; the end result is **6x inference cost** for a well-rounded model that outputs the <span class="blog-highlight">the most stems, including improved vocals, drums, bass, guitar, piano, melody, and other</span>
+* Pro deluxe model: this combines the best of our Karaoke model and test-time inverted waveform augmentation at **8x inference cost** for <span class="blog-highlight">world-beating drums and bass separation</span>
+
+## 🔥🔥 World-class drums and bass stems??
+
+I really believe it. I have added [audio clips](https://pro.freemusicdemixer.com/#demo-clips) to demo the Pro Deluxe model, and I'm confident that drum and bass stems extracted by my Pro Deluxe model are world-class. Try it for yourself! The results are astonishing.
 
 ## Stay up to date!
 
