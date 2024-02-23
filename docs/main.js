@@ -297,6 +297,9 @@ function initWorkers() {
     }
 };
 
+// cloudflare R2 bucket
+const dl_prefix = "https://bucket.freemusicdemixer.com";
+
 function fetchAndCacheFiles(model) {
     let modelFiles = [];
     if (model === 'demucs-4s') {
@@ -308,7 +311,7 @@ function fetchAndCacheFiles(model) {
 
     // prepend raw gh url to all modelFiles
     modelFiles = modelFiles.map(file =>
-        `assets/models/${file}`
+            `${dl_prefix}/${file}`
     )
 
     // Map each file to a fetch request and then process the response

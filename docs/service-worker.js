@@ -1,7 +1,7 @@
-const CACHE_NAME = "v20240213";
+const CACHE_NAME = "v20240223";
 const RESOURCES_TO_PRELOAD = [
-  "assets/models/ggml-model-htdemucs-4s-f16.bin",
-  "assets/models/ggml-model-htdemucs-6s-f16.bin"
+  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs-4s-f16.bin",
+  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs-6s-f16.bin",
 ];
 
 // Pre-cache resources
@@ -34,8 +34,9 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  // Check if the request is for a .bin file
-  if (event.request.url.endsWith('.bin')) {
+  // Check if the request is for a .bin file from the external resource
+  if (event.request.url.startsWith("https://bucket.freemusicdemixer.com/") &&
+      event.request.url.endsWith('.bin')) {
     event.respondWith(
       caches.open(CACHE_NAME).then(cache => {
         return cache.match(event.request).then(response => {
@@ -52,7 +53,7 @@ self.addEventListener("fetch", (event) => {
       })
     );
   } else {
-    // For non-.bin files, just fetch from the network
+    // For non-.bin files or requests not to the specific domain, just fetch from the network
     event.respondWith(fetch(event.request));
   }
 });
