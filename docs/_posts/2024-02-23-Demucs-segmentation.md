@@ -73,7 +73,7 @@ In the Stanford [CCRMA page](https://ccrma.stanford.edu/~jos/sasp/Weighted_Overl
 
 > In the weighted overlap add (WOLA) method, we apply a second window ... prior to the final overlap-add to create the output signal. Such a window can be called a "synthesis window" ... or simply "output window." Output windows are important in audio compression applications for minimizing "blocking effects." The synthesis window "fades out" any spectral coding error at the frame boundaries, <span class="blog-highlight">thereby suppressing audible discontinuities</span>. The WOLA method is most useful for nonlinear "instantaneous" FFT processors such as perceptual audio coders, time-scale modification, or pitch-shifters. In these and other <span class="blog-highlight">nonlinear signal processing operations</span>, the output window helps to suppress artifacts caused by nonlinear spectral modifications.
 
-I highlighted the "nonlinear signal processing operations" phrase to guess that Demucs can be considered a form of (very complicated) nonlinear signal processing operation, since it consists of building blocks like the STFT, convolution, and various neural network operations like activation functions (GELU, GLU), self-attention, etc..
+I highlighted the "nonlinear signal processing operations" phrase to guess that Demucs can be considered a form of (very complicated) nonlinear signal processing operation, since it consists of building blocks like the STFT, convolution, and various neural network operations like activation functions (GELU, GLU), self-attention, etc.
 
 I asked ChatGPT to help summarize these ideas:
 
@@ -89,9 +89,7 @@ Finally, it went further to explain the role of deep learning in learning audio 
 
 ### Triangular window function
 
-We can think of the no-transition case as a rectangular window. Segment 0 abruptly stops outside of the segment-sized rectangle, while Segment 1 abruptly begins.
-
-In this diagram from [Audiolabs Erlangen](https://www.audiolabs-erlangen.de/resources/MIR/FMP/C2/C2_STFT-Window.html), we can see the improved effect of the triangular window on boundary discontinuities compared to the rectangular case by examining the frequency response of the window function:
+We can think of the no-transition case as a rectangular window. Segment 0 abruptly stops outside of the segment-sized rectangle, while Segment 1 abruptly begins. In this diagram from [Audiolabs Erlangen](https://www.audiolabs-erlangen.de/resources/MIR/FMP/C2/C2_STFT-Window.html), we can see the improved effect of the triangular window on boundary discontinuities compared to the rectangular case by examining the frequency response of the window function:
 
 <img alt="rectangle-vs-triangle" src="/assets/blog/post7/triangle.webp" width="60%">
 
@@ -106,7 +104,7 @@ In the original, single-threaded version of the AI model on this site, the desig
 
 The downsides are:
 * There is an upper limit to the track size. Each WASM module is constrained to consuming **only 4 GB of memory,** so a larger song (like a 15-minute Meshuggah song) would spill over this limit with all the space it takes up to construct the huge output waveform, etc.
-* The total processing is slow, since for a given song that has M segments, we need to wait for M segment inferences done consecutive on a single thread, using only one core of your computer
+* The total processing is slow, since for a given song that has M segments, we need to wait for M segment inferences done consecutively on a single thread, using only one core of your computer
 * Why use one core or only 4 GB of memory when most typical devices have many more than that?
 
 ## Threading the C++/WASM module? Not so easy

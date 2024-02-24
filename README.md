@@ -1,16 +1,12 @@
 # free-music-demixer
 
-A [free static website](https://freemusicdemixer.com) for client-side music demixing (aka music source separation) with two AI models: Open-Unmix (with UMX-L weights) and the Demucs v4 hybrid transformer model. It runs on GitHub Pages and CloudFlare.
+A [free static website](https://freemusicdemixer.com) for client-side music demixing (aka music source separation) with the Demucs v4 hybrid transformer AI model. It runs on CloudFlare Pages.
 
-<img alt="freemusicdemixer-logo" src="./.github/logo.png" width="20%"/>
+**The paid [PRO site](https://pro.freemusicdemixer.com)** contains higher-quality custom ensemble models.
+
+<img alt="freemusicdemixer-logo" src="./.github/logo.png" width="20%"/> <a href="https://pro.freemusicdemixer.com" target="_blank"><img alt="freemusicdemixer-logo" src="./.github/logo_pro.png" width="21.5%"/></a>
 
 [demucs.cpp](https://github.com/sevagh/demucs.cpp): transliterated the original PyTorch model Python code to C++ with Eigen3, compiled to WebAssembly with Emscripten. No quantization: the weights of Demucs v4 `htdemucs` and `htdemucs_6s` are 81 MB and 53 MB respectively, stored as float16. Anything smaller affects the quality of the network, and compression only gets down to ~70 MB: not worth the extra loading time.
-
-### Roadmap
-
-- Add `htdemucs_ft` fine-tuned vocals model
-- Create a high-performing ensemble with htdemucs_ft + htdemucs + htdemucs_6s, following the example of [MVSep](https://github.com/jarredou/MVSEP-MDX23-Colab_v2/blob/v2.3/inference.py) from the recent SDX 2023 challenge)
-    - Use modern demixing datasets and evaluation methods to choose an opinionated ensemble
 
 ### Dev instructions
 
