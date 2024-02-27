@@ -14,14 +14,6 @@ layout: default
     Category: <a href="/blog?category={{ page.category }}">{{ page.category }}</a>
 </h4>
 
-{% if page.tags %}
-    <small style="display: block; margin-top: 0;">
-        <span class="tag-heading">tags:</span>
-        {% for tag in page.tags %}
-            <em><a href="/blog?tag={{ tag }}">{{ tag }}</a></em>{% unless forloop.last %} - {% endunless %}
-        {% endfor %}
-    </small>
-{% endif %}
 <div class="giscus-spacing"></div> <!-- Spacer div -->
 
 {{ content }}

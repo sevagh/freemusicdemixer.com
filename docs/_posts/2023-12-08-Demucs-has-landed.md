@@ -2,10 +2,8 @@
 layout: post
 title: "Demucs is now available on this site"
 category: announcements
-tags: [music-demixer, demucs, news]
 header_class: post
 description: "Freemusicdemixer adds the world-leading AI model Demucs, powered by the same transformer architecture as ChatGPT"
-keywords: music demixing, song splitting, song splitter, stem separation, demucs, transformer
 intro: "Demucs v4 hybrid transformer is a very powerful AI model for music demixing, and it's on this website 😎
 "
 ---

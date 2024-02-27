@@ -2,10 +2,8 @@
 layout: post
 title: "Multi-threading Demucs: overlap-adding on two levels"
 category: under-the-hood
-tags: [demucs, javascript, digital signal processing, optimization, performance]
 header_class: post
 description: "Overlapping waveform splitting in two places (C++ and Javascript) for multi-threaded Demucs in the browser"
-keywords: music demixing, song splitting, song splitter, stem separation, demucs, multi-threading, threaded, parallelism
 intro: "How we use Demucs to process overlapping segments in two places (Javascript and C++) for multi-threaded demixing in the browser"
 ---
 

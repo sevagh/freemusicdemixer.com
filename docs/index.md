@@ -18,12 +18,6 @@ Effortlessly split your songs into individual stems - **vocals, bass, drums, gui
 
 Unlike similar products, **it's free to use and doesn't store your data.** All processing is done in your browser, and your files are never uploaded anywhere to **fully respect user privacy.** It runs well on computers and **very slowly** on smartphones; user beware.
 
-## Support this site!
-
-If you love this free site and want to support it via brand sponsorship or other ideas, contact me by [e-mail](mailto:contact@freemusicdemixer.com) or through our [Instagram account](https://www.instagram.com/freemusicdemixer/)!
-
-<a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="50" src="https://media.theresanaiforthat.com/featured3.png" alt="theresanaiforthat-promo"></a> <a href="https://www.instagram.com/freemusicdemixer/" target="_blank"><img src="/assets/images/ig_banner.webp" height="50" alt="freemusicdemixer-instagram"/></a> <a href="https://arktan.com" target="_blank" class="styled-link"> <img src="/assets/images/arktan_logo.webp" height="12px"/> Featured on Arktan.com</a>
-
 ## Demo
 
 <div class="demo-container" id="demo-app">
@@ -42,6 +36,14 @@ If you love this free site and want to support it via brand sponsorship or other
         <small>Music credits: <a href="https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f">Jaxius</a></small>
     </div>
 </div>
+
+## Support this site!
+
+If you love this free site and want to support it via brand sponsorship or other ideas, contact me by [e-mail](mailto:contact@freemusicdemixer.com) or through our [Instagram account](https://www.instagram.com/freemusicdemixer/)!
+
+You can also [browse our paid PRO site](https://pro.freemusicdemixer.com) for access higher-quality AI models running privately and with no usage limits in your local browser:
+
+<a href="https://pro.freemusicdemixer.com"><img class="responsive-img" src="/assets/images/pro_tiers.webp" target="_blank"></a>
 
 ## Demixer app
 
@@ -130,3 +132,7 @@ To cancel the running job, refresh the page
 * Input files can be almost any audio format, but the outputs are always stereo wav files @ 44100 Hz
 
 Check the [GitHub releases page](https://github.com/sevagh/free-music-demixer/releases) for information on recent updates and improvements to the site!
+
+## Featured on
+
+<a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="50" src="https://media.theresanaiforthat.com/featured3.png" alt="theresanaiforthat-promo"></a> <a href="https://www.instagram.com/freemusicdemixer/" target="_blank"><img src="/assets/images/ig_banner.webp" height="50" alt="freemusicdemixer-instagram"/></a> <a href="https://arktan.com" target="_blank" class="styled-link"> <img src="/assets/images/arktan_logo.webp" height="12px"/> Featured on Arktan.com</a>
