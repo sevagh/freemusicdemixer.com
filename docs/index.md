@@ -20,32 +20,56 @@ Unlike similar products, **it's free to use and doesn't store your data.** All p
 
 ## Demo
 
-<div class="demo-container" id="demo-app">
-    <div class="content-container">
-        <button id="playButton">Play now!</button>
-        <br>
-        <label><input type="checkbox" id="button-drums" checked>Drums</label>
-        <br>
-        <label><input type="checkbox" id="button-vocals" checked>Vocals</label>
-        <br>
-        <label><input type="checkbox" id="button-bass" checked>Bass</label>
-        <br>
-        <label><input type="checkbox" id="button-melody" checked>Melody</label>
+Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f) to showcase our models:
+<div class="card-container" id="demo-app">
+  <div class="card card-blue">
+    <div class="card-content">
+      <h2 class="card-title card-blue">Free</h2>
+      <p>Vocals</p>
+      <audio controls>
+        <source src="/assets/clips/paranoid_jaxius_vocals_free.mp3" type="audio/mp3">
+      </audio>
+      <p>Drums</p>
+      <audio controls>
+        <source src="/assets/clips/paranoid_jaxius_drums_free.mp3" type="audio/mp3">
+      </audio>
+      <p>Bass</p>
+      <audio controls>
+        <source src="/assets/clips/paranoid_jaxius_bass_free.mp3" type="audio/mp3">
+      </audio>
+      <p>Melody</p>
+      <audio controls>
+        <source src="/assets/clips/paranoid_jaxius_melody_free.mp3" type="audio/mp3">
+      </audio>
     </div>
-    <div class="bottom-right">
-        <small>Music credits: <a href="https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f">Jaxius</a></small>
+  </div>
+
+  <div class="card card-gold">
+    <div class="card-content">
+      <a href="https://pro.freemusicdemixer.com"><h2 class="card-title card-gold">Pro (deluxe)</h2></a>
+      <p>Vocals</p>
+      <audio controls>
+        <source src="/assets/clips/paranoid_jaxius_vocals_pro.mp3" type="audio/mp3">
+      </audio>
+      <p>Drums</p>
+      <audio controls>
+        <source src="/assets/clips/paranoid_jaxius_drums_pro.mp3" type="audio/mp3">
+      </audio>
+      <p>Bass</p>
+      <audio controls>
+        <source src="/assets/clips/paranoid_jaxius_bass_pro.mp3" type="audio/mp3">
+      </audio>
+      <p>Melody</p>
+      <audio controls>
+        <source src="/assets/clips/paranoid_jaxius_melody_pro.mp3" type="audio/mp3">
+      </audio>
     </div>
+  </div>
 </div>
 
-## Support this site!
+[Browse our paid PRO site](https://pro.freemusicdemixer.com) for access higher-quality AI models running privately and with no usage limits in your browser.
 
-If you love this free site and want to support it via brand sponsorship or other ideas, contact me by [e-mail](mailto:contact@freemusicdemixer.com) or through our [Instagram account](https://www.instagram.com/freemusicdemixer/)!
-
-You can also [browse our paid PRO site](https://pro.freemusicdemixer.com) for access higher-quality AI models running privately and with no usage limits in your local browser:
-
-<a href="https://pro.freemusicdemixer.com"><img class="responsive-img" src="/assets/images/pro_tiers.webp" target="_blank"></a>
-
-## Demixer app
+## Free demixer app
 
 There is a **MAX MEMORY** option to speed up demixing and support longer songs!🚀🔥 We have tested up to 32 GB in Firefox and 16 GB in Chrome. [Read the beginner's tutorial](./getting-started/2023/09/23/Beginners-guide-to-free-stems.html) if you need help.
 
@@ -133,6 +157,8 @@ To cancel the running job, refresh the page
 
 Check the [GitHub releases page](https://github.com/sevagh/free-music-demixer/releases) for information on recent updates and improvements to the site!
 
-## Featured on
+## Support this site!
+
+If you love this free site and want to support it via brand sponsorship or other ideas, contact me by [e-mail](mailto:contact@freemusicdemixer.com) or through our [Instagram account](https://www.instagram.com/freemusicdemixer/)!
 
 <a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="50" src="https://media.theresanaiforthat.com/featured3.png" alt="theresanaiforthat-promo"></a> <a href="https://www.instagram.com/freemusicdemixer/" target="_blank"><img src="/assets/images/ig_banner.webp" height="50" alt="freemusicdemixer-instagram"/></a> <a href="https://arktan.com" target="_blank" class="styled-link"> <img src="/assets/images/arktan_logo.webp" height="12px"/> Featured on Arktan.com</a>

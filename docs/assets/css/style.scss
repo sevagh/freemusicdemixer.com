@@ -158,19 +158,67 @@ header h1:before {
   margin-top: 10px;
 }
 
-div.demo-container {
-  position: relative;
+.card-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 80%; /* Adjust width as per your requirement */
-  height: auto; /* Adjust height as per your requirement */
-  margin: 2vh auto; /* Auto horizontal margins for centering and 2vh vertical margin */
-  border-radius: 10px; /* Rounded corners */
-  color: #e0ffff; /* Text color - Light Cyan */
-  padding: 1%;
-  overflow: auto; /* Will add a scrollbar if the content overflows */
-  background-color: rgba(0, 64, 128, 1.0); /* Light cyan background color with 50% opacity */
+  flex-wrap: wrap;
+  gap: 20px; /* space between cards */
+  justify-content: left;
+  padding: 0px 20px 20px 0px; /* Space around the cards */
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: auto; /* Adjust as necessary */
+  margin: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.card-blue, .card-gold {
+  color: white; /* White text for both card types for better contrast */
+}
+
+.card-content {
+  padding: 16px;
+}
+
+.card-blue {
+  background-color: rgba(0, 64, 128, 1.0);
+}
+
+.card-gold {
+  background-color: #fbc02d;
+  color: black; /* Black text for better contrast */
+}
+
+.card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-content p {
+  margin: 0px 0; /* Reduced margin for less vertical space between p and audio */
+}
+
+#demo-app .card-blue h2.card-title,
+#demo-app .card-gold h2.card-title {
+  font-size: 1.25em; /* Smaller size */
+  margin: 0px 0; /* Reduced margin for less vertical space */
+}
+
+#demo-app .card-blue h2.card-title {
+  color: white;
+}
+
+#demo-app .card-gold h2.card-title {
+  color: black;
+}
+
+audio {
+  //width: 100%; /* Make audio player full width of card */
+  margin-top: 0px; /* Reduced spacing above audio player */
+  margin-bottom: 0px; /* Reduced spacing below audio player */
 }
 
 div.mdx-container {
@@ -595,112 +643,6 @@ blockquote {
   line-height: -1; /* Reduces the space between lines, adjust the value as needed */
 }
 
-/* This is for larger screens */
-/* Media query for larger screens */
-
-@media screen and (min-width: 768px) {
-  div.demo-container {
-    width: 50%; /* width for larger screens */
-  }
-}
-
-/* Media query for larger screens */
-@media screen and (min-width: 768px) {
-  img.responsive-img {
-    width: 50%; /* width for larger screens */
-  }
-}
-
-@media (min-width: 1200px) {
-  .wrapper {
-    justify-content: center;
-  }
-
-  .container {
-    max-width: 52%;  /* Adjust based on your preferred content width */
-  }
-
-  .banner-left {
-    flex-shrink: 0;  /* Prevents the banner from shrinking */
-  }
-}
-
-@media (min-width: 1025px) and (max-width: 1500px) {
-  .banner-left {
-    width: 136px; /* 85% of 160px */
-    margin-right: 10px;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .banner-left {
-    width: 120px; /* 75% of 160px */
-    margin-right: 10px;
-  }
-}
-
-@media (max-width: 768px) {
-  .banner-left {
-    width: 104px; /* 65% of 160px */
-    margin-right: 10px;
-  }
-  .post1-header {
-    width: calc(100vw + 20px);
-  }
-  .terminal {
-    width: 100px;
-  }
-}
-
-@media (max-width: 500px) {
-  .banner-left {
-    width: 88px; /* 55% of 160px */
-    margin-right: 10px;
-  }
-  .post1-header {
-    width: calc(100vw + 40px);
-  }
-  #load-weights-2 {
-    top: 15%;
-  }
-  #load-weights-3 {
-    top: 25%;
-  }
-  #sign-up {
-    top: 35%;
-  }
-}
-
-@media (max-width: 400px) {
-  .banner-left {
-    width: 88px; /* 55% of 160px */
-    margin-right: 10px;
-  }
-  .post1-header {
-    width: calc(100vw + 50px);
-  }
-}
-
-@media (max-width: 350px) {
-  .index-header {
-      width: calc(100vw + 15px);
-  }
-  .post1-header {
-    width: calc(100vw + 50px);
-  }
-  .terminal {
-    width: 90px;
-  }
-  #load-weights-2 {
-    top: 5%;
-  }
-  #load-weights-3 {
-    top: 10%;
-  }
-  #sign-up {
-    top: 15%;
-  }
-}
 
 .upload-section {
     display: flex;
@@ -949,7 +891,136 @@ input[type="file"]:disabled, label:disabled {
     font-size: large; /* or the specific size you want */
 }
 
-/* Styles for smaller screens */
+/* Media query for different screens */
+
+/* For very large screens or default styles */
+@media (min-width: 1200px) {
+  .wrapper {
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 52%; /* Adjust based on your preferred content width */
+  }
+
+  .banner-left {
+    flex-shrink: 0; /* Prevents the banner from shrinking */
+  }
+}
+
+/* For large screens, between 1025px and 1500px */
+@media (min-width: 1025px) and (max-width: 1500px) {
+  .banner-left {
+    width: 136px; /* 85% of 160px */
+    margin-right: 10px;
+  }
+}
+
+/* For medium screens, between 769px and 1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .banner-left {
+    width: 120px; /* 75% of 160px */
+    margin-right: 10px;
+  }
+}
+
+/* For small screens (tablets) and larger, starting at 768px */
+@media (min-width: 768px) {
+  div.demo-container {
+    width: 50%; /* Width for larger screens */
+  }
+
+  img.responsive-img {
+    width: 50%; /* Width for larger screens */
+  }
+}
+
+/* For devices up to 768px wide */
+@media (max-width: 768px) {
+  .banner-left {
+    width: 104px; /* 65% of 160px */
+    margin-right: 10px;
+  }
+  .post1-header {
+    width: calc(100vw + 20px);
+  }
+  .terminal {
+    width: 100px;
+  }
+  .index-header {
+    width: calc(100vw + 40px);
+  }
+}
+
+/* For larger phones, up to 568px wide */
+@media (max-width: 568px) {
+  #popup-banner {
+    width: 80%; /* Slightly larger width than for the smallest screens */
+    /* Other styles as necessary */
+  }
+}
+
+/* For medium-sized devices, up to 512px wide */
+@media (max-width: 512px) {
+  .card-container {
+    flex-direction: column;
+  }
+}
+
+/* For small devices, up to 500px wide */
+@media (max-width: 500px) {
+  .banner-left {
+    width: 88px; /* 55% of 160px */
+    margin-right: 10px;
+  }
+  .post1-header {
+    width: calc(100vw + 40px);
+  }
+  #load-weights-2 {
+    top: 15%;
+  }
+  #load-weights-3 {
+    top: 25%;
+  }
+  #sign-up {
+    top: 35%;
+  }
+}
+
+/* For even smaller devices, up to 400px wide */
+@media (max-width: 400px) {
+  .banner-left {
+    width: 88px; /* 55% of 160px */
+    margin-right: 10px;
+  }
+  .post1-header {
+    width: calc(100vw + 50px);
+  }
+}
+
+/* For the smallest screens, up to 350px wide */
+@media (max-width: 350px) {
+  .index-header {
+    width: calc(100vw + 15px);
+  }
+  .post1-header {
+    width: calc(100vw + 50px);
+  }
+  .terminal {
+    width: 90px;
+  }
+  #load-weights-2 {
+    top: 5%;
+  }
+  #load-weights-3 {
+    top: 10%;
+  }
+  #sign-up {
+    top: 15%;
+  }
+}
+
+/* For the narrowest phones, up to 320px wide */
 @media (max-width: 320px) { /* iPhone SE width */
   #popup-banner {
     width: 90%; /* Reduce width to 90% of the screen size */
@@ -968,11 +1039,7 @@ input[type="file"]:disabled, label:disabled {
       height: 128px; /* Adjust the image height */
     }
   }
-}
-
-@media (max-width: 568px) { /* Larger phones */
-  #popup-banner {
-    width: 80%; /* Slightly larger width than for the smallest screens */
-    /* Other styles as necessary */
+  .index-header {
+    width: calc(100vw + 120px);
   }
 }
