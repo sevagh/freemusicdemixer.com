@@ -20,7 +20,7 @@ Unlike similar products, **it's free to use and doesn't store your data.** All p
 
 ## Demo
 
-Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f) to showcase our models:
+Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f) to showcase our models. [Browse our paid PRO site](https://pro.freemusicdemixer.com) for access higher-quality AI models running privately and with no usage limits in your browser:
 <div class="card-container" id="demo-app">
   <div class="card card-blue">
     <div class="card-content">
@@ -66,8 +66,6 @@ Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https
     </div>
   </div>
 </div>
-
-[Browse our paid PRO site](https://pro.freemusicdemixer.com) for access higher-quality AI models running privately and with no usage limits in your browser.
 
 ## Free demixer app
 
