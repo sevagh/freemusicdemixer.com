@@ -2,10 +2,8 @@
 layout: post
 title: "PRO site has been launched!"
 category: announcements
-tags: [demucs, news, pro, ensemble]
 header_class: post
 description: "We have released 3 new PRO models!"
-keywords: music demixing, song splitting, song splitter, stem separation, demucs, pro, ensemble
 intro: "Creating ensemble models for better demixing 📈"
 ---
 

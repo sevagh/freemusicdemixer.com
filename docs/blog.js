@@ -10,8 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
         filteredPosts = [];  // clear previously filtered posts
 
         allPosts.forEach(function(post) {
-            if ((type === "tag" && post.getAttribute("data-tags").includes(value)) || 
-                (type === "category" && post.getAttribute("data-category").includes(value)) || 
+            if ((type === "category" && post.getAttribute("data-category").includes(value)) || 
                 !type) {
                 filteredPosts.push(post);
             }
@@ -77,8 +76,6 @@ document.addEventListener("DOMContentLoaded", function() {
         
         if (params.category) {
             filterPosts("category", params.category);
-        } else if (params.tag) {
-            filterPosts("tag", params.tag);
         } else {
             resetFilters();
         }
@@ -97,8 +94,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const params = getQueryParams();
     if (params.category) {
         filterPosts("category", params.category);
-    } else if (params.tag) {
-        filterPosts("tag", params.tag);
     }
     updateDisplayedPosts(); // Update the displayed posts
 });

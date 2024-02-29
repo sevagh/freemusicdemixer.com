@@ -2,10 +2,8 @@
 layout: post
 title: "Music demixing, song splitting, stem separation: what's the difference?"
 category: getting-started
-tags: [stems, music-demixer, history, literature, academic]
 header_class: post
 description: "An overview of the different synonyms and terms for music demixing such as song splitting, stem separation, etc."
-keywords: music demixing, song splitting, song splitter, stem separation
 intro: "What's in a name? An analysis of the different names used to refer to the task of separating a mixed song into its isolated stems."
 ---
 

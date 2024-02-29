@@ -2,10 +2,8 @@
 layout: post
 title: "Demucs is now 25% faster"
 category: announcements
-tags: [demucs, news, optimization]
 header_class: post
 description: "The Demucs model of freemusicdemixer.com is now 25% faster!"
-keywords: music demixing, song splitting, song splitter, stem separation, demucs, simd, cpu, webassembly
 intro: "Making the Demucs v4 hybrid transformer model 25% faster without any code changes 🚀"
 ---
 
