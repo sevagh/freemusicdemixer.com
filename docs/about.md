@@ -33,6 +33,6 @@ This website is created and maintained by Sevag H ([GitHub portfolio](https://gi
 
 If you want to reach out about this website (or any other topic, including brand sponsorships, collaborations, etc.) contact us by [e-mail](mailto:contact@freemusicdemixer.com) or through our [Instagram account](https://www.instagram.com/freemusicdemixer/).
 
-If you're a customer, sign up to the [mailing list](https://docs.google.com/forms/d/e/1FAIpQLSek_QU_BGd7CL2BLVOLDs7JmTZzcLKJiK5k4ysxoCEMjEGrtA/viewform?usp=sf_link) to receive product updates, promos, free trials, and more!
+If you're a customer, sign up to the [mailing list](http://eepurl.com/iMVAUA) to receive product updates, promos, free trials, and more!
 
 <img src="/assets/images/ig_banner.webp" height="50"/>

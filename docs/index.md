@@ -81,7 +81,7 @@ There is a **MAX MEMORY** option to speed up demixing and support longer songs!ð
         <br>
         <button id="load-weights-3">Demucs 6-source weights (53 MB)</button>
         <br>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSek_QU_BGd7CL2BLVOLDs7JmTZzcLKJiK5k4ysxoCEMjEGrtA/viewform?usp=sf_link" target="_blank" id="sign-up" class="button-sign-up">
+        <a href="http://eepurl.com/iMVAUA" target="_blank" id="sign-up" class="button-sign-up">
           <span class="sign-up-text">SIGN UP FOR UPDATES!</span>
         </a>
     </div>
