@@ -148,7 +148,7 @@ To cancel the running job, refresh the page
 
 ## Disclaimers and updates
 
-* ⚠️ We take code quality seriously! For bugs or requests, [open a GitHub issue](https://github.com/sevagh/free-music-demixer/issues), or message us [on Instagram](https://www.instagram.com/freemusicdemixer) or by [e-mail](mailto:contact@freemusicdemixer.com)
+* ⚠️ We take code quality seriously! For bugs or requests, [open a GitHub issue](https://github.com/sevagh/free-music-demixer/issues), or message us [on Instagram](https://www.instagram.com/musicdemixer) or by [e-mail](mailto:contact@freemusicdemixer.com)
 * 💻 If you experience crashes, try a different **MAX MEMORY** setting (lower or higher!)
 * ⚖️ 📄 Model weights and outputs are governed by the <a href="https://github.com/facebookresearch/demucs/issues/327#issuecomment-1134828611">Meta Research license</a>
 * Input files can be almost any audio format, but the outputs are always stereo wav files @ 44100 Hz
@@ -157,6 +157,6 @@ Check the [GitHub releases page](https://github.com/sevagh/free-music-demixer/re
 
 ## Support this site!
 
-If you love this free site and want to support it via brand sponsorship or other ideas, contact me by [e-mail](mailto:contact@freemusicdemixer.com) or through our [Instagram account](https://www.instagram.com/freemusicdemixer/)!
+If you love this free site and want to support it via brand sponsorship or other ideas, contact me by [e-mail](mailto:contact@freemusicdemixer.com) or through our [Instagram account](https://www.instagram.com/musicdemixer/)!
 
-<a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="50" src="https://media.theresanaiforthat.com/featured3.png" alt="theresanaiforthat-promo"></a> <a href="https://www.instagram.com/freemusicdemixer/" target="_blank"><img src="/assets/images/ig_banner.webp" height="50" alt="freemusicdemixer-instagram"/></a> <a href="https://arktan.com" target="_blank" class="styled-link"> <img src="/assets/images/arktan_logo.webp" height="12px"/> Featured on Arktan.com</a>
+<a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="50" src="https://media.theresanaiforthat.com/featured3.png" alt="theresanaiforthat-promo"></a> <a href="https://www.instagram.com/musicdemixer/" target="_blank"><img src="/assets/images/ig_banner.webp" height="50" alt="freemusicdemixer-instagram"/></a> <a href="https://arktan.com" target="_blank" class="styled-link"> <img src="/assets/images/arktan_logo.webp" height="12px"/> Featured on Arktan.com</a>

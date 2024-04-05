@@ -31,7 +31,7 @@ Be sure to check the [Blog](/blog) for technical articles and deep dives.
 
 This website is created and maintained by Sevag H ([GitHub portfolio](https://github.com/sevagh), [website](https://sevag.xyz)).
 
-If you want to reach out about this website (or any other topic, including brand sponsorships, collaborations, etc.) contact us by [e-mail](mailto:contact@freemusicdemixer.com) or through our [Instagram account](https://www.instagram.com/freemusicdemixer/).
+If you want to reach out about this website (or any other topic, including brand sponsorships, collaborations, etc.) contact us by [e-mail](mailto:contact@freemusicdemixer.com) or through our [Instagram account](https://www.instagram.com/musicdemixer/).
 
 If you're a customer, sign up to the [mailing list](http://eepurl.com/iMVAUA) to receive product updates, promos, free trials, and more!
 
