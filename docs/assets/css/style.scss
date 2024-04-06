@@ -965,6 +965,12 @@ input[type="file"]:disabled, label:disabled {
   .card-container {
     flex-direction: column;
   }
+  #popup-banner {
+    width: 90%;
+    img {
+      height: 206px; /* Adjust the image height */
+    }
+  }
 }
 
 /* For small devices, up to 500px wide */
@@ -985,6 +991,12 @@ input[type="file"]:disabled, label:disabled {
   #sign-up {
     top: 35%;
   }
+  #popup-banner {
+    width: 90%;
+    img {
+      height: 196px; /* Adjust the image height */
+    }
+  }
 }
 
 /* For even smaller devices, up to 400px wide */
@@ -995,6 +1007,14 @@ input[type="file"]:disabled, label:disabled {
   }
   .post1-header {
     width: calc(100vw + 50px);
+  }
+  #popup-banner {
+    width: 90%; /* Reduce width to 90% of the screen size */
+    /* Adjust the font size for all child paragraphs */
+    /* Adjust the height of the image for smaller screens */
+    img {
+      height: 186px; /* Adjust the image height */
+    }
   }
 }
 
@@ -1018,6 +1038,14 @@ input[type="file"]:disabled, label:disabled {
   #sign-up {
     top: 15%;
   }
+  #popup-banner {
+    width: 90%; /* Reduce width to 90% of the screen size */
+    /* Adjust the font size for all child paragraphs */
+    /* Adjust the height of the image for smaller screens */
+    img {
+      height: 156px; /* Adjust the image height */
+    }
+  }
 }
 
 /* For the narrowest phones, up to 320px wide */
@@ -1036,7 +1064,7 @@ input[type="file"]:disabled, label:disabled {
     }
     /* Adjust the height of the image for smaller screens */
     img {
-      height: 128px; /* Adjust the image height */
+      height: 146px; /* Adjust the image height */
     }
   }
   .index-header {

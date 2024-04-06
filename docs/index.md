@@ -20,7 +20,7 @@ Unlike similar products, **it's free to use and doesn't store your data.** All p
 
 ## Demo
 
-Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f) to showcase our models. [Browse our paid PRO site](https://pro.freemusicdemixer.com) for access higher-quality AI models running privately and with no usage limits in your browser:
+Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f) to showcase our models:
 <div class="card-container" id="demo-app">
   <div class="card card-blue">
     <div class="card-content">
@@ -65,6 +65,24 @@ Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https
       </audio>
     </div>
   </div>
+</div>
+
+## PRO subscription
+
+Subscribe on [our paid PRO site](https://pro.freemusicdemixer.com) to unlock higher-quality AI models on both the web app and the Android app!
+
+**Now available on Android!** Experience the power of Demucs in your pocket.
+
+<div style="margin: -10px 0 -15px 0;">
+<a href='https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="200"/></a>
+</div>
+
+<div style="display: flex; align-items: flex-start; justify-content: flex-start;">
+<a href="https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro"><img alt="android-app-screenshot" src="/assets/images/android.webp" width="200" style="border: 2px solid black; margin-right: 10px;"></a>
+<video width="200" controls loading="lazy" style="border: 2px solid black; margin-bottom: 20px;">
+  <source src="/assets/clips/app.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 </div>
 
 ## Free demixer app
