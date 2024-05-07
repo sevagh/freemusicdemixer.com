@@ -1,7 +1,8 @@
-const CACHE_NAME = "v20240223";
+const CACHE_NAME = "v20240507";
 const RESOURCES_TO_PRELOAD = [
   "https://bucket.freemusicdemixer.com/ggml-model-htdemucs-4s-f16.bin",
   "https://bucket.freemusicdemixer.com/ggml-model-htdemucs-6s-f16.bin",
+  "https://bucket.freemusicdemixer.com/ggml-model-hdemucs_mmi-f16.bin",
 ];
 
 // Pre-cache resources

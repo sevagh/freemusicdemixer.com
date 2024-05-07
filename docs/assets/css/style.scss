@@ -492,11 +492,11 @@ div.tag-cloud {
     100% { transform: rotate(360deg); }
 }
 
-#load-weights-2, #load-weights-3, #sign-up {
+#load-weights-2, #load-weights-3, #load-weights-4, #sign-up {
   position: relative; /* Needed to use z-index */
   z-index: 3; /* Higher than the overlay's z-index */
   font-size: 20px; /* Larger font size for better visibility */
-  padding: 16px 24px; /* Adjust padding to maintain visual balance with larger font */
+  padding: 10px 15px; /* Adjust padding to maintain visual balance with larger font */
   margin-bottom: 16px; /* Extra space below the button */
   cursor: pointer; /* Cursor indicates it's clickable */
   color: #94ffff; /* White text color for better contrast */
@@ -506,7 +506,6 @@ div.tag-cloud {
   border-radius: 5px; /* Rounded corners */
   text-transform: uppercase; /* Uppercase text for emphasis */
   font-weight: bold; /* Bold font weight */
-  //transition: background-color 0.3s; /* Smooth background color transition for hover effect */
 }
 
 #load-weights-2 {
@@ -514,7 +513,7 @@ div.tag-cloud {
   color: #ffffff; /* White color for text for better contrast */
   box-shadow: 0 0 15px #483d8b; /* Glowing effect */
   animation: pulse 2s infinite;
-  top: 20%;
+  top: 10%;
 }
 
 @keyframes pulse {
@@ -554,7 +553,7 @@ div.tag-cloud {
   padding: 10px 20px; /* Adjust padding as needed */
   border: none; /* Remove default border */
   border-radius: 4px; /* Rounded corners for the button */
-  top: 30%;
+  top: 20%;
 }
 
 #load-weights-3:hover {
@@ -563,43 +562,55 @@ div.tag-cloud {
 }
 
 #load-weights-3:active {
-  background-color: #28a745; /* A slightly lighter green for hover effect */
+  background-color: #af5975; /* A slightly lighter green for hover effect */
   transform: translateY(1px); /* Depress the button when clicked */
-  box-shadow: 0 2px #276324; /* Adjust the shadow to look like it's being pressed */
+  box-shadow: 0 2px #964a63; /* Adjust the shadow to look like it's being pressed */
 }
 
-#load-weights-3:disabled, #load-weights-2:disabled {
+#load-weights-4 {
+  background-color: #00BFFF; /* Bright electric blue */
+  color: #000080; /* White color for text for better contrast */
+  padding: 10px 20px; /* Adjust padding as needed */
+  border: none; /* Remove default border */
+  border-radius: 4px; /* Rounded corners for the button */
+  position: relative; /* Positioning context for pseudo-elements */
+  top: 30%;
+  box-shadow: 0 4px #009acd; /* Slightly darker blue for the shadow */
+  text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.5); /* Subtle white glow around text to enhance legibility */
+  transition: transform 0.1s ease-out, background-color 0.1s ease; /* Smooth transitions */
+}
+
+#load-weights-4:hover {
+  background-color: #009acd; /* A slightly darker blue for hover */
+  transform: scale(1.05); /* Slightly increase size on hover */
+  box-shadow: 0 6px #0077b3; /* Adjust the shadow to look like it's being pressed */
+}
+
+#load-weights-4:active {
+  background-color: #0077b3; /* Even darker blue when active */
+  transform: scale(0.95); /* Depress the button slightly when clicked */
+}
+
+@keyframes scan-line {
+  0%, 100% {
+    box-shadow: 0 0 10px #00BFFF, inset 0 -1px 0px rgba(255,255,255,0.4), inset 0 1px 0px rgba(0,0,0,0.4);
+  }
+  50% {
+    box-shadow: 0 0 25px #00BFFF, inset 0 -1px 0px rgba(255,255,255,0.6), inset 0 1px 0px rgba(0,0,0,0.6);
+  }
+}
+
+#load-weights-4 {
+  animation: scan-line 3s infinite; /* Apply the scan-line animation */
+}
+
+#load-weights-3:disabled, #load-weights-2:disabled, #load-weights-4:disabled {
   background-color: #cccccc; /* Greyed out background for disabled state */
   color: #b7b7b7; // darker grey for the text
   cursor: not-allowed; /* 'Not allowed' cursor for disabled button */
+  box-shadow: none;
   animation: none;
-}
-
-.centered-text {
-    text-align: center;
-    margin-bottom: 10px; /* Adjust this value as needed for spacing */
-}
-
-.centered-text p {
-    margin-top: 5px; /* Adjust top margin */
-    margin-bottom: 5px; /* Adjust bottom margin */
-    /* Other styles, if needed */
-}
-
-blockquote {
-    color: #8b008b; /* Dark Magenta */
-    border-left: 3px solid #8b008b; /* Optional: adds a left border to your blockquote */
-    margin: 10px 20px; /* Adjusts top and bottom margin */
-    padding-left: 15px; /* Adds padding to the left of the blockquote */
-    font-style: italic; /* Optional: italicizes the quote text */
-}
-
-.blog-highlight {
-    background-color: #e1f77e; /* Light yellow background */
-    color: #333; /* Darker text color for contrast */
-    padding: 2px 5px; /* Padding around the text */
-    border-radius: 3px; /* Optional: rounded corners */
-    font-size: 18px;
+  text-shadow: none;
 }
 
 #sign-up {
@@ -643,6 +654,32 @@ blockquote {
   line-height: -1; /* Reduces the space between lines, adjust the value as needed */
 }
 
+.centered-text {
+    text-align: center;
+    margin-bottom: 10px; /* Adjust this value as needed for spacing */
+}
+
+.centered-text p {
+    margin-top: 5px; /* Adjust top margin */
+    margin-bottom: 5px; /* Adjust bottom margin */
+    /* Other styles, if needed */
+}
+
+blockquote {
+    color: #8b008b; /* Dark Magenta */
+    border-left: 3px solid #8b008b; /* Optional: adds a left border to your blockquote */
+    margin: 10px 20px; /* Adjusts top and bottom margin */
+    padding-left: 15px; /* Adds padding to the left of the blockquote */
+    font-style: italic; /* Optional: italicizes the quote text */
+}
+
+.blog-highlight {
+    background-color: #e1f77e; /* Light yellow background */
+    color: #333; /* Darker text color for contrast */
+    padding: 2px 5px; /* Padding around the text */
+    border-radius: 3px; /* Optional: rounded corners */
+    font-size: 18px;
+}
 
 .upload-section {
     display: flex;
@@ -986,10 +1023,13 @@ input[type="file"]:disabled, label:disabled {
     top: 15%;
   }
   #load-weights-3 {
+    top: 20%;
+  }
+  #load-weights-4 {
     top: 25%;
   }
   #sign-up {
-    top: 35%;
+    top: 30%;
   }
   #popup-banner {
     width: 90%;
@@ -1035,8 +1075,11 @@ input[type="file"]:disabled, label:disabled {
   #load-weights-3 {
     top: 10%;
   }
-  #sign-up {
+  #load-weights-4 {
     top: 15%;
+  }
+  #sign-up {
+    top: 20%;
   }
   #popup-banner {
     width: 90%; /* Reduce width to 90% of the screen size */

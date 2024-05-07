@@ -91,6 +91,7 @@ There is a **MAX MEMORY** option to speed up demixing and support longer songs!�
 
 * Demucs 4-source stems: **vocals, drums, bass, melody**
 * Demucs 6-source stems: **vocals, drums, bass, piano, guitar, other**
+* Demucs v3 stems: **vocals, drums, bass, melody**
 
 <div class="mdx-container" id="mdx-unified-app">
     <div class="overlay" id="overlay-single">
@@ -98,6 +99,8 @@ There is a **MAX MEMORY** option to speed up demixing and support longer songs!�
         <button id="load-weights-2">Demucs 4-source weights (81 MB)</button>
         <br>
         <button id="load-weights-3">Demucs 6-source weights (53 MB)</button>
+        <br>
+        <button id="load-weights-4">🏎️💨 Demucs v3 weights 🏁 (161 MB)</button>
         <br>
         <a href="http://eepurl.com/iMVAUA" target="_blank" id="sign-up" class="button-sign-up">
           <span class="sign-up-text">SIGN UP FOR UPDATES!</span>

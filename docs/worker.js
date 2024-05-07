@@ -1,13 +1,12 @@
 const SAMPLE_RATE = 44100;
 
-const scriptName = 'demucs_free.js';
 let wasmModule;
 let modelName;
 let modelBuffers;
 
 let isWasmModuleInitialized = false;
 
-function loadWASMModule() {
+function loadWASMModule(scriptName) {
     // Load the WASM module and initialize the model
     // Determine which WASM module to load based on the message
 
@@ -23,7 +22,11 @@ onmessage = function(e) {
     if (e.data.msg === 'LOAD_WASM') {
         modelName = e.data.model;
         modelBuffers = e.data.modelBuffers;
-        loadWASMModule();
+        let scriptName = 'demucs_free.js';
+        if (modelName === 'demucs-v3') {
+            scriptName = 'demucs_free_v3.js';
+        }
+        loadWASMModule(scriptName);
     } else if (e.data.msg === 'PROCESS_AUDIO' || e.data.msg === 'PROCESS_AUDIO_BATCH') {
         const leftChannel = e.data.leftChannel;
         const rightChannel = e.data.rightChannel;
@@ -157,7 +160,7 @@ function processAudio(leftChannel, rightChannel, module, is_batch_mode) {
     //return [bassBuffer, drumsBuffer, otherBuffer, vocalsBuffer];
     // return them as javascript float buffers
 
-    if (modelName === 'demucs-4s') {
+    if ((modelName === 'demucs-4s' || modelName === 'demucs-v3')) {
         return [
             new Float32Array(wasmArrayLBass), new Float32Array(wasmArrayRBass),
             new Float32Array(wasmArrayLDrums), new Float32Array(wasmArrayRDrums),
