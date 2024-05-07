@@ -307,6 +307,8 @@ function fetchAndCacheFiles(model) {
         modelFiles.push('ggml-model-htdemucs-4s-f16.bin');
     } else if (model === 'demucs-6s') {
         modelFiles.push('ggml-model-htdemucs-6s-f16.bin');
+    } else if (model === 'demucs-v3') {
+        modelFiles.push('ggml-model-hdemucs_mmi-f16.bin');
     }
 
     // prepend raw gh url to all modelFiles
@@ -359,6 +361,7 @@ document.getElementById('load-weights-2').addEventListener('click', () => {
     showSpinner();
     document.getElementById('load-weights-2').disabled = true;
     document.getElementById('load-weights-3').disabled = true;
+    document.getElementById('load-weights-4').disabled = true;
     selectedModel = 'demucs-4s';
     initModel();
 });
@@ -367,7 +370,17 @@ document.getElementById('load-weights-3').addEventListener('click', () => {
     showSpinner();
     document.getElementById('load-weights-2').disabled = true;
     document.getElementById('load-weights-3').disabled = true;
+    document.getElementById('load-weights-4').disabled = true;
     selectedModel = 'demucs-6s';
+    initModel();
+});
+
+document.getElementById('load-weights-4').addEventListener('click', () => {
+    showSpinner();
+    document.getElementById('load-weights-2').disabled = true;
+    document.getElementById('load-weights-3').disabled = true;
+    document.getElementById('load-weights-4').disabled = true;
+    selectedModel = 'demucs-v3';
     initModel();
 });
 
