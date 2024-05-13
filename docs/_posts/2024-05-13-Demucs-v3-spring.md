@@ -33,10 +33,24 @@ The v3 model has excellent performance, slightly worse than, comparable to, and 
 
 So, if you don't need the absolute best possible separation quality (and, make no mistake - Demucs v3 still sounds amazing), you can save time and use the new v3 model!
 
-![demucs-v3-weights-button](/assets/blog/post8/v3_button.webp)
+<img src="/assets/blog/post8/v3_button.webp" width="55%" alt="demucs-v3-weights-button"/>
 
 [Try it for free today](https://freemusicdemixer.com/#free-demixer-app) in your browser! Also available on the [PRO site](https://pro.freemusicdemixer.com) and [Android app](https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro)!
 
-## Android feature: custom mix and playback
+## New Android PRO feature: custom mix and playback
 
-## Temes, iOS, etc.
+On the Android app, there's a new feature (pro subscribers only) allowing users to create a custom mix from the separated stems. It allows looping playback and exporting/saving the custom mix:
+
+<img src="/assets/blog/post8/app_custom_mix.webp" alt="app-new-feature-screenshot" width="35%"/>
+
+One idea for this being useful is for practicing music: separate a section of a song, remove the stem you want to practice, and play the mix in a loop while playing your piece over and over again. Alternatively, _only_ include the stem you want to practice and try to match it!
+
+Custom mixes should also allow for some very basic experimentation for content creators, beat makers to have some flexibility on the separated stems and the ability to combine them in a custom way.
+
+Of course, for real music creation features, I would always suggest using the stems exported by music demixer inside a real audio workstation or music making software designed for mixing and production (like Audacity, Reaper, JUCE, etc.).
+
+## Coming soon: iOS app
+
+We recently demoed Music Demixer (the app and website) at a Music Technology conference, and the #1 demand from potential clients is becoming clearer and clearer: <span class="blog-higlight">iOS app</span>. iOS devices and iPhones are used heavily by musicians and music creators.
+
+We have started the process of experimenting with iOS development, and hope to bring iOS as an additional platform for the app in the coming year.
