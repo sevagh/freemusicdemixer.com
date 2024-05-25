@@ -67,11 +67,9 @@ Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https
   </div>
 </div>
 
-## PRO subscription
+## PRO subscription and Android app
 
 Subscribe on [our paid PRO site](https://pro.freemusicdemixer.com) to unlock more instruments and stems (**piano + guitar**) and higher-quality AI models on both the web app and the Android app!
-
-**Now available on Android!** Experience the power of Demucs in your pocket.
 
 <div style="margin: -10px 0 -15px 0;">
 <a href='https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="200"/></a>
