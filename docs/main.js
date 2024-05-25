@@ -151,7 +151,6 @@ document.getElementById('overlay-single').style.display = 'block';
 function hideOverlay() {
     document.getElementById('overlay-single').style.display = 'none';
     document.getElementById('load-weights-2').style.display = 'none';
-    document.getElementById('load-weights-3').style.display = 'none';
 }
 
 function showSpinner() {
@@ -331,7 +330,6 @@ function initModel() {
             // WASM module is ready, enable the buttons
             hideOverlay();
             document.getElementById('load-weights-2').disabled = true;
-            document.getElementById('load-weights-3').disabled = true;
             document.getElementById('single-mode').click();
             document.getElementById('audio-upload').disabled = false;
             document.getElementById('batch-upload').disabled = true;
