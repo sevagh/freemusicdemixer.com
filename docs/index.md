@@ -9,7 +9,7 @@ description: "Split songs, demix music, and separate stems with our AI-based too
 
 # Free AI-powered music demixer
 
-Effortlessly split your songs into individual stems - **vocals, bass, drums, guitar, piano, and more** - using the best and latest AI models in our free web application. It runs **locally on your computer 🫵🏽**, ensuring unlimited usage without any restrictions. Powered by the [Demucs Hybrid Transformer](https://github.com/facebookresearch/demucs) AI models, created and maintained by [Sevag H](https://github.com/sevagh).
+Effortlessly split your songs into individual stems - **vocals, bass, drums, and melody** - using the best and latest AI model in our free web application. It runs **locally on your computer 🫵🏽**, ensuring unlimited usage without any restrictions. Powered by the [Demucs Hybrid Transformer](https://github.com/facebookresearch/demucs) AI model, created and maintained by [Sevag H](https://github.com/sevagh).
 <div class="image-container">
 <img class="responsive-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
 </div>
@@ -69,7 +69,7 @@ Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https
 
 ## PRO subscription
 
-Subscribe on [our paid PRO site](https://pro.freemusicdemixer.com) to unlock higher-quality AI models on both the web app and the Android app!
+Subscribe on [our paid PRO site](https://pro.freemusicdemixer.com) to unlock more instruments and stems and higher-quality AI models on both the web app and the Android app!
 
 **Now available on Android!** Experience the power of Demucs in your pocket.
 
@@ -89,18 +89,12 @@ Subscribe on [our paid PRO site](https://pro.freemusicdemixer.com) to unlock hig
 
 There is a **MAX MEMORY** option to speed up demixing and support longer songs!🚀🔥 We have tested up to 32 GB in Firefox and 16 GB in Chrome. [Read the beginner's tutorial](./getting-started/2023/09/23/Beginners-guide-to-free-stems.html) if you need help.
 
-* Demucs 4-source stems: **vocals, drums, bass, melody**
-* Demucs 6-source stems: **vocals, drums, bass, piano, guitar, other**
-* Demucs v3 stems: **vocals, drums, bass, melody**
+Demucs 4-source output stems are **vocals, drums, bass, melody**
 
 <div class="mdx-container" id="mdx-unified-app">
     <div class="overlay" id="overlay-single">
         <div class="loader"></div>
-        <button id="load-weights-2">Demucs 4-source weights (81 MB)</button>
-        <br>
-        <button id="load-weights-3">Demucs 6-source weights (53 MB)</button>
-        <br>
-        <button id="load-weights-4">🏎️💨 Demucs v3 weights 🏁 (161 MB)</button>
+        <button id="load-weights-2">Download weights (81 MB)</button>
         <br>
         <a href="http://eepurl.com/iMVAUA" target="_blank" id="sign-up" class="button-sign-up">
           <span class="sign-up-text">SIGN UP FOR UPDATES!</span>

@@ -492,11 +492,11 @@ div.tag-cloud {
     100% { transform: rotate(360deg); }
 }
 
-#load-weights-2, #load-weights-3, #load-weights-4, #sign-up {
+#load-weights-2, #sign-up {
   position: relative; /* Needed to use z-index */
   z-index: 3; /* Higher than the overlay's z-index */
   font-size: 20px; /* Larger font size for better visibility */
-  padding: 10px 15px; /* Adjust padding to maintain visual balance with larger font */
+  padding: 20px 25px; /* Adjust padding to maintain visual balance with larger font */
   margin-bottom: 16px; /* Extra space below the button */
   cursor: pointer; /* Cursor indicates it's clickable */
   color: #94ffff; /* White text color for better contrast */
@@ -513,7 +513,7 @@ div.tag-cloud {
   color: #ffffff; /* White color for text for better contrast */
   box-shadow: 0 0 15px #483d8b; /* Glowing effect */
   animation: pulse 2s infinite;
-  top: 10%;
+  top: 20%;
 }
 
 @keyframes pulse {
@@ -546,51 +546,6 @@ div.tag-cloud {
   transform: translateY(1px);
 }
 
-#load-weights-3 {
-  background-color: #c56484;
-  color: #ffffff; /* White color for text for better contrast */
-  position: relative; /* Positioning context for pseudo-elements */
-  padding: 10px 20px; /* Adjust padding as needed */
-  border: none; /* Remove default border */
-  border-radius: 4px; /* Rounded corners for the button */
-  top: 20%;
-}
-
-#load-weights-3:hover {
-  background-color: #af5975;
-  transform: translateY(-2px);
-}
-
-#load-weights-3:active {
-  background-color: #af5975; /* A slightly lighter green for hover effect */
-  transform: translateY(1px); /* Depress the button when clicked */
-  box-shadow: 0 2px #964a63; /* Adjust the shadow to look like it's being pressed */
-}
-
-#load-weights-4 {
-  background-color: #00BFFF; /* Bright electric blue */
-  color: #000080; /* White color for text for better contrast */
-  padding: 10px 20px; /* Adjust padding as needed */
-  border: none; /* Remove default border */
-  border-radius: 4px; /* Rounded corners for the button */
-  position: relative; /* Positioning context for pseudo-elements */
-  top: 30%;
-  box-shadow: 0 4px #009acd; /* Slightly darker blue for the shadow */
-  text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.5); /* Subtle white glow around text to enhance legibility */
-  transition: transform 0.1s ease-out, background-color 0.1s ease; /* Smooth transitions */
-}
-
-#load-weights-4:hover {
-  background-color: #009acd; /* A slightly darker blue for hover */
-  transform: scale(1.05); /* Slightly increase size on hover */
-  box-shadow: 0 6px #0077b3; /* Adjust the shadow to look like it's being pressed */
-}
-
-#load-weights-4:active {
-  background-color: #0077b3; /* Even darker blue when active */
-  transform: scale(0.95); /* Depress the button slightly when clicked */
-}
-
 @keyframes scan-line {
   0%, 100% {
     box-shadow: 0 0 10px #00BFFF, inset 0 -1px 0px rgba(255,255,255,0.4), inset 0 1px 0px rgba(0,0,0,0.4);
@@ -604,7 +559,7 @@ div.tag-cloud {
   animation: scan-line 3s infinite; /* Apply the scan-line animation */
 }
 
-#load-weights-3:disabled, #load-weights-2:disabled, #load-weights-4:disabled {
+#load-weights-2:disabled {
   background-color: #cccccc; /* Greyed out background for disabled state */
   color: #b7b7b7; // darker grey for the text
   cursor: not-allowed; /* 'Not allowed' cursor for disabled button */
@@ -1036,16 +991,10 @@ input[type="file"]:disabled, label:disabled {
     width: calc(100vw + 40px);
   }
   #load-weights-2 {
-    top: 15%;
-  }
-  #load-weights-3 {
     top: 20%;
   }
-  #load-weights-4 {
-    top: 25%;
-  }
   #sign-up {
-    top: 30%;
+    top: 40%;
   }
   #popup-banner {
     width: 90%;
@@ -1089,16 +1038,10 @@ input[type="file"]:disabled, label:disabled {
     width: 90px;
   }
   #load-weights-2 {
-    top: 5%;
-  }
-  #load-weights-3 {
-    top: 10%;
-  }
-  #load-weights-4 {
-    top: 15%;
+    top: 20%;
   }
   #sign-up {
-    top: 20%;
+    top: 30%;
   }
   #popup-banner {
     width: 90%; /* Reduce width to 90% of the screen size */
