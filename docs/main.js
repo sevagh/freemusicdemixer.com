@@ -174,7 +174,7 @@ document.querySelectorAll('.increment').forEach(item => {
 let NUM_WORKERS = 4;
 let workers;
 let workerProgress;
-let selectedModel;
+const selectedModel = 'demucs-4s';
 let dlModelBuffers;
 
 let processedSegments = new Array(NUM_WORKERS); // Global accumulator for processed segments
@@ -300,16 +300,8 @@ function initWorkers() {
 // cloudflare R2 bucket
 const dl_prefix = "https://bucket.freemusicdemixer.com";
 
-function fetchAndCacheFiles(model) {
-    let modelFiles = [];
-    if (model === 'demucs-4s') {
-        // append ggml-model-htdemucs-4s-f16.bin to modelFiles
-        modelFiles.push('ggml-model-htdemucs-4s-f16.bin');
-    } else if (model === 'demucs-6s') {
-        modelFiles.push('ggml-model-htdemucs-6s-f16.bin');
-    } else if (model === 'demucs-v3') {
-        modelFiles.push('ggml-model-hdemucs_mmi-f16.bin');
-    }
+function fetchAndCacheFiles() {
+    let modelFiles = ['ggml-model-htdemucs-4s-f16.bin'];
 
     // prepend raw gh url to all modelFiles
     modelFiles = modelFiles.map(file =>
@@ -330,7 +322,7 @@ function fetchAndCacheFiles(model) {
 
 function initModel() {
     registerServiceWorker();
-    fetchAndCacheFiles(selectedModel)
+    fetchAndCacheFiles()
         .then(buffers => { // buffers are the downloaded file contents
             writeJsLog(`Fetching and caching model files for selected model: ${selectedModel}`);
 
@@ -360,27 +352,6 @@ document.getElementById('log-clear').addEventListener('click', () => {
 document.getElementById('load-weights-2').addEventListener('click', () => {
     showSpinner();
     document.getElementById('load-weights-2').disabled = true;
-    document.getElementById('load-weights-3').disabled = true;
-    document.getElementById('load-weights-4').disabled = true;
-    selectedModel = 'demucs-4s';
-    initModel();
-});
-
-document.getElementById('load-weights-3').addEventListener('click', () => {
-    showSpinner();
-    document.getElementById('load-weights-2').disabled = true;
-    document.getElementById('load-weights-3').disabled = true;
-    document.getElementById('load-weights-4').disabled = true;
-    selectedModel = 'demucs-6s';
-    initModel();
-});
-
-document.getElementById('load-weights-4').addEventListener('click', () => {
-    showSpinner();
-    document.getElementById('load-weights-2').disabled = true;
-    document.getElementById('load-weights-3').disabled = true;
-    document.getElementById('load-weights-4').disabled = true;
-    selectedModel = 'demucs-v3';
     initModel();
 });
 
@@ -529,11 +500,6 @@ function packageAndDownload(targetWaveforms) {
     let guitarBuffer = null;
     let pianoBuffer = null;
 
-    if (selectedModel === 'demucs-6s') {
-        guitarBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
-        pianoBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
-    }
-
     let instrumentalBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
 
     bassBuffer.copyToChannel(targetWaveforms[0], 0);
@@ -548,26 +514,10 @@ function packageAndDownload(targetWaveforms) {
     vocalsBuffer.copyToChannel(targetWaveforms[6], 0);
     vocalsBuffer.copyToChannel(targetWaveforms[7], 1);
 
-    if (selectedModel === 'demucs-6s') {
-        guitarBuffer.copyToChannel(targetWaveforms[8], 0);
-        guitarBuffer.copyToChannel(targetWaveforms[9], 1);
-
-        pianoBuffer.copyToChannel(targetWaveforms[10], 0);
-        pianoBuffer.copyToChannel(targetWaveforms[11], 1);
-    }
-
     // store sum of bass, drums, and other in instrumentalBuffer
     for (let i = 0; i < targetWaveforms[0].length; i++) {
         instrumentalBuffer.getChannelData(0)[i] = targetWaveforms[0][i] + targetWaveforms[2][i] + targetWaveforms[4][i];
         instrumentalBuffer.getChannelData(1)[i] = targetWaveforms[1][i] + targetWaveforms[3][i] + targetWaveforms[5][i];
-    }
-
-    if (selectedModel === 'demucs-6s') {
-        // also sum guitar and piano into instrumentalBuffer
-        for (let i = 0; i < targetWaveforms[0].length; i++) {
-            instrumentalBuffer.getChannelData(0)[i] += targetWaveforms[8][i] + targetWaveforms[10][i];
-            instrumentalBuffer.getChannelData(1)[i] += targetWaveforms[9][i] + targetWaveforms[11][i];
-        }
     }
 
     // now create audio wav files
@@ -609,20 +559,16 @@ function packageAndDownload(targetWaveforms) {
     drumsLink.textContent = 'drums.wav';
     bassLink.textContent = 'bass.wav';
 
-    let otherName = 'melody';
-    if (selectedModel === 'demucs-6s') {
-        otherName = 'other';
-    }
     vocalsLink.textContent = 'vocals.wav';
     instrumentalLink.textContent = 'instrum.wav';
     // set otherLink.textContent to $otherName.wav
-    otherLink.textContent = `${otherName}.wav`;
+    otherLink.textContent = 'melody.wav';
 
     drumsLink.download = 'drums.wav';
     bassLink.download = 'bass.wav';
     vocalsLink.download = 'vocals.wav';
     instrumentalLink.download = 'instrum.wav';
-    otherLink.download = `${otherName}.wav`;
+    otherLink.download = 'melody.wav';
 
     // Append the link elements to the document body
     downloadLinksDiv.appendChild(bassLink);
@@ -630,32 +576,6 @@ function packageAndDownload(targetWaveforms) {
     downloadLinksDiv.appendChild(otherLink);
     downloadLinksDiv.appendChild(vocalsLink);
     downloadLinksDiv.appendChild(instrumentalLink);
-
-    if (selectedModel === 'demucs-6s') {
-        const guitarBuf = encodeWavFileFromAudioBuffer(guitarBuffer, 0);
-        const pianoBuf = encodeWavFileFromAudioBuffer(pianoBuffer, 0);
-
-        const guitarBlob = new Blob([guitarBuf], {type: 'audio/wav'});
-        const pianoBlob = new Blob([pianoBuf], {type: 'audio/wav'});
-
-        const guitarUrl = URL.createObjectURL(guitarBlob);
-        const pianoUrl = URL.createObjectURL(pianoBlob);
-
-        const guitarLink = document.createElement('a');
-        const pianoLink = document.createElement('a');
-
-        guitarLink.href = guitarUrl;
-        pianoLink.href = pianoUrl;
-
-        guitarLink.textContent = 'guitar.wav';
-        pianoLink.textContent = 'piano.wav';
-
-        guitarLink.download = 'guitar.wav';
-        pianoLink.download = 'piano.wav';
-
-        downloadLinksDiv.appendChild(guitarLink);
-        downloadLinksDiv.appendChild(pianoLink);
-    }
 
     document.getElementById('audio-upload').disabled = false;
     document.getElementById('load-and-demix').disabled = false;
@@ -789,12 +709,6 @@ function packageAndZip(targetWaveforms, filename) {
     let guitarBuffer = null;
     let pianoBuffer = null;
 
-    if (selectedModel === 'demucs-6s') {
-        guitarBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
-        pianoBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
-    }
-
-
     bassBuffer.copyToChannel(targetWaveforms[0], 0);
     bassBuffer.copyToChannel(targetWaveforms[1], 1);
 
@@ -807,48 +721,22 @@ function packageAndZip(targetWaveforms, filename) {
     vocalsBuffer.copyToChannel(targetWaveforms[6], 0);
     vocalsBuffer.copyToChannel(targetWaveforms[7], 1);
 
-    if (selectedModel === 'demucs-6s') {
-        guitarBuffer.copyToChannel(targetWaveforms[8], 0);
-        guitarBuffer.copyToChannel(targetWaveforms[9], 1);
-
-        pianoBuffer.copyToChannel(targetWaveforms[10], 0);
-        pianoBuffer.copyToChannel(targetWaveforms[11], 1);
-    }
-
     // store sum of bass, drums, and other in instrumentalBuffer
     for (let i = 0; i < targetWaveforms[0].length; i++) {
         instrumentalBuffer.getChannelData(0)[i] = targetWaveforms[0][i] + targetWaveforms[2][i] + targetWaveforms[4][i];
         instrumentalBuffer.getChannelData(1)[i] = targetWaveforms[1][i] + targetWaveforms[3][i] + targetWaveforms[5][i];
     }
 
-    if (selectedModel === 'demucs-6s') {
-        // also sum guitar and piano into instrumentalBuffer
-        for (let i = 0; i < targetWaveforms[0].length; i++) {
-            instrumentalBuffer.getChannelData(0)[i] += targetWaveforms[8][i] + targetWaveforms[10][i];
-            instrumentalBuffer.getChannelData(1)[i] += targetWaveforms[9][i] + targetWaveforms[11][i];
-        }
-    }
-
     const directoryName = `${filename}_stems/`; // note the trailing slash to specify a directory
-
-    let otherName = 'melody';
-    if (selectedModel === 'demucs-6s') {
-        otherName = 'other';
-    }
 
     let zipFiles = {};
 
     // Add files to the zipFiles object directly as Uint8Arrays
     zipFiles[`${directoryName}bass.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(bassBuffer, 0));
     zipFiles[`${directoryName}drums.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(drumsBuffer, 0));
-    zipFiles[`${directoryName}${otherName}.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(otherBuffer, 0));
+    zipFiles[`${directoryName}melody.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(otherBuffer, 0));
     zipFiles[`${directoryName}vocals.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(vocalsBuffer, 0));
     zipFiles[`${directoryName}instrum.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(instrumentalBuffer, 0));
-
-    if (selectedModel === 'demucs-6s') {
-        zipFiles[`${directoryName}guitar.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(guitarBuffer, 0));
-        zipFiles[`${directoryName}piano.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(pianoBuffer, 0));
-    }
 
     // Use fflate to create a zip file
     const zipData = fflate.zipSync(zipFiles, { level: 0 }); // Disables compression

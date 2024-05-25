@@ -23,9 +23,6 @@ onmessage = function(e) {
         modelName = e.data.model;
         modelBuffers = e.data.modelBuffers;
         let scriptName = 'demucs_free.js';
-        if (modelName === 'demucs-v3') {
-            scriptName = 'demucs_free_v3.js';
-        }
         loadWASMModule(scriptName);
     } else if (e.data.msg === 'PROCESS_AUDIO' || e.data.msg === 'PROCESS_AUDIO_BATCH') {
         const leftChannel = e.data.leftChannel;
@@ -97,13 +94,6 @@ function processAudio(leftChannel, rightChannel, module, is_batch_mode) {
     let arrayPointerLPiano = null;
     let arrayPointerRPiano = null;
 
-    if (modelName === 'demucs-6s') {
-        arrayPointerLGuitar = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        arrayPointerRGuitar = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        arrayPointerLPiano = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        arrayPointerRPiano = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-    }
-
     // Call the WASM function for both channels
     module._modelDemixSegment(
         arrayPointerL, arrayPointerR, leftChannel.length,
@@ -125,18 +115,6 @@ function processAudio(leftChannel, rightChannel, module, is_batch_mode) {
     let wasmArrayROther = new Float32Array(module.HEAPF32.buffer, arrayPointerROther, leftChannel.length);
     let wasmArrayRVocals = new Float32Array(module.HEAPF32.buffer, arrayPointerRVocals, leftChannel.length);
 
-    let wasmArrayLGuitar = null;
-    let wasmArrayRGuitar = null;
-    let wasmArrayLPiano = null;
-    let wasmArrayRPiano = null;
-
-    if (modelName === 'demucs-6s') {
-        wasmArrayLGuitar = new Float32Array(module.HEAPF32.buffer, arrayPointerLGuitar, leftChannel.length);
-        wasmArrayRGuitar = new Float32Array(module.HEAPF32.buffer, arrayPointerRGuitar, leftChannel.length);
-        wasmArrayLPiano = new Float32Array(module.HEAPF32.buffer, arrayPointerLPiano, leftChannel.length);
-        wasmArrayRPiano = new Float32Array(module.HEAPF32.buffer, arrayPointerRPiano, leftChannel.length);
-    }
-
     // Free the allocated memory
     module._free(arrayPointerL);
     module._free(arrayPointerR);
@@ -149,32 +127,14 @@ function processAudio(leftChannel, rightChannel, module, is_batch_mode) {
     module._free(arrayPointerLVocals);
     module._free(arrayPointerRVocals);
 
-    if (modelName === 'demucs-6s') {
-        module._free(arrayPointerLGuitar);
-        module._free(arrayPointerRGuitar);
-        module._free(arrayPointerLPiano);
-        module._free(arrayPointerRPiano);
-    }
-
     // Return the separate stereo AudioBuffers
     //return [bassBuffer, drumsBuffer, otherBuffer, vocalsBuffer];
     // return them as javascript float buffers
 
-    if ((modelName === 'demucs-4s' || modelName === 'demucs-v3')) {
-        return [
-            new Float32Array(wasmArrayLBass), new Float32Array(wasmArrayRBass),
-            new Float32Array(wasmArrayLDrums), new Float32Array(wasmArrayRDrums),
-            new Float32Array(wasmArrayLOther), new Float32Array(wasmArrayROther),
-            new Float32Array(wasmArrayLVocals), new Float32Array(wasmArrayRVocals),
-        ];
-    } else {
-        return [
-            new Float32Array(wasmArrayLBass), new Float32Array(wasmArrayRBass),
-            new Float32Array(wasmArrayLDrums), new Float32Array(wasmArrayRDrums),
-            new Float32Array(wasmArrayLOther), new Float32Array(wasmArrayROther),
-            new Float32Array(wasmArrayLVocals), new Float32Array(wasmArrayRVocals),
-            new Float32Array(wasmArrayLGuitar), new Float32Array(wasmArrayRGuitar),
-            new Float32Array(wasmArrayLPiano), new Float32Array(wasmArrayRPiano),
-        ];
-    }
+    return [
+        new Float32Array(wasmArrayLBass), new Float32Array(wasmArrayRBass),
+        new Float32Array(wasmArrayLDrums), new Float32Array(wasmArrayRDrums),
+        new Float32Array(wasmArrayLOther), new Float32Array(wasmArrayROther),
+        new Float32Array(wasmArrayLVocals), new Float32Array(wasmArrayRVocals),
+    ];
 }
