@@ -2,6 +2,7 @@
 title: Karaoke any song for free!
 description: Use Free Music Demixer to create karaoke tracks. Remove vocals from any song with our website and Android app for high-quality karaoke experiences.
 keywords: free music demixer, karaoke, create karaoke tracks, remove vocals, vocal remover, karaoke tracks, karaoke app, AI music demixing, two-source karaoke
+header_class: karaoke
 ---
 
 # Need Karaoke for a party? Start here!

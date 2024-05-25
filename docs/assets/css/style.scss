@@ -1000,6 +1000,9 @@ input[type="file"]:disabled, label:disabled {
   .index-header {
     width: calc(100vw + 40px);
   }
+  .karaoke-header {
+    width: calc(100vw + 20px);
+  }
 }
 
 /* For larger phones, up to 568px wide */
@@ -1076,6 +1079,9 @@ input[type="file"]:disabled, label:disabled {
   .index-header {
     width: calc(100vw + 15px);
   }
+  .karaoke-header {
+    width: calc(100vw + 10px);
+  }
   .post1-header {
     width: calc(100vw + 50px);
   }
@@ -1125,5 +1131,8 @@ input[type="file"]:disabled, label:disabled {
   }
   .index-header {
     width: calc(100vw + 120px);
+  }
+  .karaoke-header {
+    width: calc(100vw + 80px);
   }
 }
