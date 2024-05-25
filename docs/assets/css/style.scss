@@ -835,12 +835,25 @@ blockquote {
   }
 }
 
+.btn-karaoke-github {
+  color: #ffffff; /* White text for strong contrast */
+  background: #4b0082; /* Indigo color */
+  box-shadow: none; /* Optional: remove shadow for a flatter appearance */
+  text-shadow: none; /* Optional: remove shadow for a flatter appearance */
+}
+
+.btn-karaoke-github:hover {
+  background: #3a006d; /* A slightly darker shade for hover */
+  color: #ffffff; /* Maintain white text on hover */
+  animation: none;
+}
+
 input[type="file"]:disabled, label:disabled {
     opacity: 0.5; /* Lower opacity for a "disabled" look */
     cursor: not-allowed; /* Change cursor to indicate non-interactive */
 }
 
-.btn-github, .btn-gold-github {
+.btn-github, .btn-gold-github, .btn-karaoke-github {
   font-size: 15px;
 }
 
