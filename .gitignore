@@ -7,9 +7,9 @@
 !/test/data/*.wav
 !/test/*.wav
 *.json
-!/docs/assets/models/*.bin
-docs/_site
+!/web/assets/models/*.bin
+web/_site
 .sass-cache/
-!/docs/assets/clips/*.wav
+!/web/assets/clips/*.wav
 *.pyc
 __pycache__
