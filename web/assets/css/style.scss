@@ -877,6 +877,32 @@ input[type="file"]:disabled, label:disabled {
     font-size: 24px;
 }
 
+.popup-title {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.stars {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.star {
+    font-size: 2em;
+    color: gold;
+    margin: 0 5px;
+    text-shadow: 
+        -0.5px -0.5px 0 #000, 
+         0.5px -0.5px 0 #000, 
+        -0.5px  0.5px 0 #000, 
+         0.5px  0.5px 0 #000,
+        -0.5px -0.5px 0 #000, 
+         0.5px -0.5px 0 #000, 
+        -0.5px  0.5px 0 #000, 
+         0.5px  0.5px 0 #000;
+}
+
 .pro-cta {
     font-size: larger; /* or you could use a specific font size like 1.5em */
     margin-bottom: 5px;
