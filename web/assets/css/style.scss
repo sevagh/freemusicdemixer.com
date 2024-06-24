@@ -556,96 +556,6 @@ blockquote {
     font-style: italic; /* Optional: italicizes the quote text */
 }
 
-
-/* This is for larger screens */
-/* Media query for larger screens */
-
-@media screen and (min-width: 768px) {
-  div.demo-container {
-    width: 50%; /* width for larger screens */
-  }
-}
-
-/* Media query for larger screens */
-@media screen and (min-width: 768px) {
-  img.responsive-img {
-    width: 50%; /* width for larger screens */
-  }
-}
-
-@media (min-width: 1200px) {
-  .wrapper {
-    justify-content: center;
-  }
-
-  .container {
-    max-width: 52%;  /* Adjust based on your preferred content width */
-  }
-
-  .banner-left {
-    flex-shrink: 0;  /* Prevents the banner from shrinking */
-  }
-}
-
-@media (min-width: 1025px) and (max-width: 1500px) {
-  .banner-left {
-    width: 136px; /* 85% of 160px */
-    margin-right: 10px;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .banner-left {
-    width: 120px; /* 75% of 160px */
-    margin-right: 10px;
-  }
-}
-
-@media (max-width: 768px) {
-  .banner-left {
-    width: 104px; /* 65% of 160px */
-    margin-right: 10px;
-  }
-  .post1-header {
-    width: calc(100vw + 20px);
-  }
-  .terminal {
-    width: 100px;
-  }
-}
-
-@media (max-width: 500px) {
-  .banner-left {
-    width: 88px; /* 55% of 160px */
-    margin-right: 10px;
-  }
-  .post1-header {
-    width: calc(100vw + 40px);
-  }
-}
-
-@media (max-width: 400px) {
-  .banner-left {
-    width: 88px; /* 55% of 160px */
-    margin-right: 10px;
-  }
-  .post1-header {
-    width: calc(100vw + 50px);
-  }
-}
-
-@media (max-width: 350px) {
-  .index-header {
-      width: calc(100vw + 60px);
-  }
-  .post1-header {
-    width: calc(100vw + 50px);
-  }
-  .terminal {
-    width: 90px;
-  }
-}
-
 .upload-section {
     display: flex;
     flex-direction: column;
@@ -854,14 +764,6 @@ input[type="file"]:disabled, label:disabled {
     margin-bottom: 10px; /* Increased space below the output box */
 }
 
-/* You can add responsive behavior as needed */
-@media (max-width: 512px) {
-  .card-container {
-    flex-direction: column;
-    //align-items: center;
-  }
-}
-
 .card-info-row {
   display: flex;
   justify-content: space-between;
@@ -1042,5 +944,188 @@ audio {
   }
   100% {
     transform: scale(1);
+  }
+}
+
+/* Media query for very large screens or default styles */
+@media (min-width: 1200px) {
+  .wrapper {
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 52%; /* Adjust based on your preferred content width */
+  }
+
+  .banner-left {
+    flex-shrink: 0; /* Prevents the banner from shrinking */
+  }
+}
+
+/* Media query for large screens, between 1025px and 1500px */
+@media (min-width: 1025px) and (max-width: 1500px) {
+  .banner-left {
+    width: 136px; /* 85% of 160px */
+    margin-right: 10px;
+  }
+}
+
+/* Media query for medium screens, between 769px and 1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .banner-left {
+    width: 120px; /* 75% of 160px */
+    margin-right: 10px;
+  }
+}
+
+/* Media query for larger screens, starting at 768px */
+@media (min-width: 768px) {
+  div.demo-container {
+    width: 50%; /* Width for larger screens */
+  }
+
+  img.responsive-img {
+    width: 50%; /* Width for larger screens */
+  }
+}
+
+/* Media query for small screens, up to 768px */
+@media (max-width: 768px) {
+  .banner-left {
+    width: 104px; /* 65% of 160px */
+    margin-right: 10px;
+  }
+
+  .post1-header {
+    width: calc(100vw + 20px);
+  }
+
+  .terminal {
+    width: 100px;
+  }
+
+  .index-header {
+    width: calc(100vw + 40px);
+  }
+
+  .karaoke-header {
+    width: calc(100vw + 20px);
+  }
+}
+
+/* Media query for larger phones, up to 568px */
+@media (max-width: 568px) {
+  #popup-banner {
+    width: 80%; /* Slightly larger width than for the smallest screens */
+    /* Other styles as necessary */
+  }
+}
+
+/* Media query for medium-sized devices, up to 512px */
+@media (max-width: 512px) {
+  .card-container {
+    flex-direction: column;
+  }
+
+  #popup-banner {
+    width: 90%;
+
+    img {
+      height: 206px; /* Adjust the image height */
+    }
+  }
+}
+
+/* Media query for small devices, up to 500px */
+@media (max-width: 500px) {
+  .banner-left {
+    width: 88px; /* 55% of 160px */
+    margin-right: 10px;
+  }
+
+  .post1-header {
+    width: calc(100vw + 40px);
+  }
+
+  #popup-banner {
+    width: 90%;
+
+    img {
+      height: 196px; /* Adjust the image height */
+    }
+  }
+}
+
+/* Media query for smaller devices, up to 400px */
+@media (max-width: 400px) {
+  .banner-left {
+    width: 88px; /* 55% of 160px */
+    margin-right: 10px;
+  }
+
+  .post1-header {
+    width: calc(100vw + 50px);
+  }
+
+  #popup-banner {
+    width: 90%;
+
+    img {
+      height: 186px; /* Adjust the image height */
+    }
+  }
+}
+
+/* Media query for the smallest screens, up to 350px */
+@media (max-width: 350px) {
+  .index-header {
+    width: calc(100vw + 60px);
+  }
+
+  .post1-header {
+    width: calc(100vw + 50px);
+  }
+
+  .terminal {
+    width: 90px;
+  }
+
+  #popup-banner {
+    width: 90%;
+
+    img {
+      height: 156px; /* Adjust the image height */
+    }
+  }
+}
+
+/* Media query for the narrowest phones, up to 320px (iPhone SE width) */
+@media (max-width: 320px) {
+  #popup-banner {
+    width: 90%;
+
+    .pro-cta {
+      font-size: 18px;
+    }
+
+    .pro-promo {
+      font-size: 14px;
+    }
+
+    .pro-signup-cta {
+      font-size: 12px;
+    }
+
+    img {
+      height: 146px; /* Adjust the image height */
+    }
+  }
+
+  .index-header {
+    width: calc(100vw + 120px);
+  }
+
+  .karaoke-header {
+    width: calc(100vw + 80px);
   }
 }
