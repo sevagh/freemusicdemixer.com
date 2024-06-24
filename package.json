@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "wrangler": "^3.60.0"
+  },
+  "dependencies": {
+    "stripe": "^14.14.0"
+  }
+}
