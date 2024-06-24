@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log("Setting bannerDismissed to true");
             sessionStorage.setItem('bannerDismissed', 'true');
             document.getElementById('sticky-banner').style.display = 'none';
+            console.log(sessionStorage.getItem('bannerDismissed'));
         });
     } else {
         console.error('Dismiss button not found');

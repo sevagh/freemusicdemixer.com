@@ -134,6 +134,19 @@ header h1:before {
   background: #6f006f; /* A darker shade for hover */
 }
 
+.btn-karaoke-github {
+  color: #ffffff; /* White text for strong contrast */
+  background: #4b0082; /* Indigo color */
+  box-shadow: none; /* Optional: remove shadow for a flatter appearance */
+  text-shadow: none; /* Optional: remove shadow for a flatter appearance */
+}
+
+.btn-karaoke-github:hover {
+  background: #3a006d; /* A slightly darker shade for hover */
+  color: #ffffff; /* Maintain white text on hover */
+  animation: none;
+}
+
 // demix webapp stuff
 
 .progress-container {
@@ -176,21 +189,8 @@ header h1:before {
   transition: box-shadow 0.3s ease-in-out;
 }
 
-.card-blue, .card-gold {
-  color: white; /* White text for both card types for better contrast */
-}
-
 .card-content {
   padding: 16px;
-}
-
-.card-blue {
-  background-color: rgba(0, 64, 128, 1.0);
-}
-
-.card-gold {
-  background-color: #fbc02d;
-  color: black; /* Black text for better contrast */
 }
 
 .card:hover {
@@ -201,17 +201,17 @@ header h1:before {
   margin: 0px 0; /* Reduced margin for less vertical space between p and audio */
 }
 
-#demo-app .card-blue h2.card-title,
-#demo-app .card-gold h2.card-title {
+#demo-app h2.card-title,
+#demo-app h2.card-title {
   font-size: 1.25em; /* Smaller size */
   margin: 0px 0; /* Reduced margin for less vertical space */
 }
 
-#demo-app .card-blue h2.card-title {
+#demo-app h2.card-title {
   color: white;
 }
 
-#demo-app .card-gold h2.card-title {
+#demo-app h2.card-title {
   color: black;
 }
 
@@ -242,10 +242,6 @@ div.mdx-container {
   margin-left: auto;
   align-self: flex-end;
 }
-
-//#mdx-unified-app a {
-//  color: #70DB93;
-//}
 
 .output-link-container {
   display: flex;
@@ -492,117 +488,53 @@ div.tag-cloud {
     100% { transform: rotate(360deg); }
 }
 
-#load-weights-2, #sign-up {
+.tier-button {
   position: relative; /* Needed to use z-index */
   z-index: 3; /* Higher than the overlay's z-index */
   font-size: 20px; /* Larger font size for better visibility */
-  padding: 20px 25px; /* Adjust padding to maintain visual balance with larger font */
+  padding: 8px 12px; /* Adjust padding to maintain visual balance with larger font */
   margin-bottom: 16px; /* Extra space below the button */
   cursor: pointer; /* Cursor indicates it's clickable */
-  color: #94ffff; /* White text color for better contrast */
-  background-color: #c71585; /* Add a background color to make it stand out (Tomato color for example) */
   font-family: "Courier New", monospace;
   border: none; /* Remove border for a modern look */
   border-radius: 5px; /* Rounded corners */
   text-transform: uppercase; /* Uppercase text for emphasis */
   font-weight: bold; /* Bold font weight */
+  //transition: background-color 0.3s; /* Smooth background color transition for hover effect */
 }
 
-#load-weights-2 {
-  background-color: #483d8b; /* Dark Slate Blue: represents premium quality */
-  color: #ffffff; /* White color for text for better contrast */
-  box-shadow: 0 0 15px #483d8b; /* Glowing effect */
-  animation: pulse 2s infinite;
-  top: 20%;
+#load-weights-free-1 {
+  margin-top: 2.5%;
 }
 
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 15px #483d8b;
-    transform: scale(1);
-    background-color: #483d8b;
-  }
-  50% {
-    box-shadow: 0 0 35px #6a5acd; /* Increase the glow size and change color */
-    transform: scale(1.05); /* Slightly increase the scale for emphasis */
-    background-color: #6a5acd;
-  }
-  100% {
-    box-shadow: 0 0 15px #483d8b;
-    transform: scale(1);
-    background-color: #483d8b;
-  }
+.tier-0 {
+  background-color: white; /* White text color for better contrast */
+  color: black; /* Add a background color to make it stand out (Tomato color for example) */
+}
+
+.tier-2 {
+  color: #000000; /* Changed to black for better contrast */
+  background: #fdd835; /* A bright yellow instead of gold */
+}
+
+.tier-button:active {
+  transform: translateY(1px);
 }
 
 /* Hover styles with higher specificity */
-#load-weights-2:hover {
-  animation: none; /* Stop the pulse animation on hover */
-  background-color: #3c2f80; /* Darker shade for hover */
-  box-shadow: 0 0 15px #3c2f80; /* Adjust shadow color to match */
+.tier-button:hover {
+  box-shadow: 0 0 15px white; /* Adjust shadow color to match */
   transform: translateY(-2px); /* Lift the button up slightly on hover */
 }
 
-#load-weights-2:active {
-  transform: translateY(1px);
-}
-
-@keyframes scan-line {
-  0%, 100% {
-    box-shadow: 0 0 10px #00BFFF, inset 0 -1px 0px rgba(255,255,255,0.4), inset 0 1px 0px rgba(0,0,0,0.4);
-  }
-  50% {
-    box-shadow: 0 0 25px #00BFFF, inset 0 -1px 0px rgba(255,255,255,0.6), inset 0 1px 0px rgba(0,0,0,0.6);
-  }
-}
-
-#load-weights-2:disabled {
-  background-color: #cccccc; /* Greyed out background for disabled state */
-  color: #b7b7b7; // darker grey for the text
-  cursor: not-allowed; /* 'Not allowed' cursor for disabled button */
-  box-shadow: none;
-  animation: none;
-  text-shadow: none;
-}
-
-#sign-up {
-  color: black;
-  background-color: #3cb371;
-  box-shadow: 0 4px #276324;
-}
-
-#sign-up {
-    top: 40%;
-}
-
-#sign-up:hover {
-  background-color: #369457;
-  transform: translateY(-2px);
-}
-
-#sign-up:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px #276324;
-}
-
-.button-sign-up {
-  display: inline-flex; /* Use flexbox for inline layout */
-  flex-direction: column; /* Stack children vertically */
-  align-items: flex-start; /* Align text to the left */
-  justify-content: center; /* Center vertically */
-  text-align: left; /* Left-align text within flex items */
-  display: inline-block; /* Allows padding and width/height if needed */
-  text-decoration: none; /* Removes underline from links */
-}
-
-.sign-up-text {
-  font-size: 20px;
-  color: black;
-}
-
-.sign-up-details {
-  color: black;
-  font-size: 16px;
-  line-height: -1; /* Reduces the space between lines, adjust the value as needed */
+.tier-button:disabled {
+  //opacity: 0.5; /* Lower opacity for a "disabled" look */
+  cursor: not-allowed; /* Change cursor to indicate non-interactive */
+  // make gray
+  background-color: darkgrey;
+  color: #666666;
+  // add a padlock emoji
+  content: "\1F512";
 }
 
 .centered-text {
@@ -624,12 +556,94 @@ blockquote {
     font-style: italic; /* Optional: italicizes the quote text */
 }
 
-.blog-highlight {
-    background-color: #e1f77e; /* Light yellow background */
-    color: #333; /* Darker text color for contrast */
-    padding: 2px 5px; /* Padding around the text */
-    border-radius: 3px; /* Optional: rounded corners */
-    font-size: 18px;
+
+/* This is for larger screens */
+/* Media query for larger screens */
+
+@media screen and (min-width: 768px) {
+  div.demo-container {
+    width: 50%; /* width for larger screens */
+  }
+}
+
+/* Media query for larger screens */
+@media screen and (min-width: 768px) {
+  img.responsive-img {
+    width: 50%; /* width for larger screens */
+  }
+}
+
+@media (min-width: 1200px) {
+  .wrapper {
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 52%;  /* Adjust based on your preferred content width */
+  }
+
+  .banner-left {
+    flex-shrink: 0;  /* Prevents the banner from shrinking */
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1500px) {
+  .banner-left {
+    width: 136px; /* 85% of 160px */
+    margin-right: 10px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .banner-left {
+    width: 120px; /* 75% of 160px */
+    margin-right: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .banner-left {
+    width: 104px; /* 65% of 160px */
+    margin-right: 10px;
+  }
+  .post1-header {
+    width: calc(100vw + 20px);
+  }
+  .terminal {
+    width: 100px;
+  }
+}
+
+@media (max-width: 500px) {
+  .banner-left {
+    width: 88px; /* 55% of 160px */
+    margin-right: 10px;
+  }
+  .post1-header {
+    width: calc(100vw + 40px);
+  }
+}
+
+@media (max-width: 400px) {
+  .banner-left {
+    width: 88px; /* 55% of 160px */
+    margin-right: 10px;
+  }
+  .post1-header {
+    width: calc(100vw + 50px);
+  }
+}
+
+@media (max-width: 350px) {
+  .index-header {
+      width: calc(100vw + 60px);
+  }
+  .post1-header {
+    width: calc(100vw + 50px);
+  }
+  .terminal {
+    width: 90px;
+  }
 }
 
 .upload-section {
@@ -754,57 +768,12 @@ blockquote {
   margin-right: 5px; /* Spacing between icon and text */
 }
 
-.btn-gold-github {
-  color: #000000; /* Changed to black for better contrast */
-  background: #fdd835; /* A bright yellow instead of gold */
-  animation: goldpulse 2s infinite;
-  box-shadow: none; /* Optional: remove shadow for a flatter appearance */
-  text-shadow: none; /* Optional: remove shadow for a flatter appearance */
-}
-
-.btn-gold-github:hover {
-  background: #fbc02d; /* A slightly darker shade for hover */
-  color: black;
-  animation: none;
-}
-
-@keyframes goldpulse {
-  0% {
-    box-shadow: 0 0 5px #d1b000;
-    transform: scale(1);
-    background-color: #fbc02d;
-  }
-  50% {
-    box-shadow: 0 0 15px #d1b000; /* Increase the glow size and change color */
-    transform: scale(1.05); /* Slightly increase the scale for emphasis */
-    background-color: #fbc02d;
-  }
-  100% {
-    box-shadow: 0 0 5px #d1b000;
-    transform: scale(1);
-    background-color: #fbc02d;
-  }
-}
-
-.btn-karaoke-github {
-  color: #ffffff; /* White text for strong contrast */
-  background: #4b0082; /* Indigo color */
-  box-shadow: none; /* Optional: remove shadow for a flatter appearance */
-  text-shadow: none; /* Optional: remove shadow for a flatter appearance */
-}
-
-.btn-karaoke-github:hover {
-  background: #3a006d; /* A slightly darker shade for hover */
-  color: #ffffff; /* Maintain white text on hover */
-  animation: none;
-}
-
 input[type="file"]:disabled, label:disabled {
     opacity: 0.5; /* Lower opacity for a "disabled" look */
     cursor: not-allowed; /* Change cursor to indicate non-interactive */
 }
 
-.btn-github, .btn-gold-github, .btn-karaoke-github {
+.btn-github, .btn-karaoke-github {
   font-size: 15px;
 }
 
@@ -827,59 +796,167 @@ input[type="file"]:disabled, label:disabled {
     text-decoration: none; /* Ensure the underline doesn't appear on hover */
 }
 
+#response-message {
+  // make bold text
+  font-weight: bold;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* space between cards */
+  justify-content: left;
+  padding: 0px 20px 20px 0px; /* Space around the cards */
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  //width: 380px; /* or any fixed width */
+  width: auto;
+  margin: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-content {
+  padding: 16px;
+}
+
+.card-title {
+  color: #9c27b0; /* Same purple as the header for the card title */
+  margin: 0;
+  padding: 0;
+  font-size: 1.2em;
+}
+
+.card-info {
+  color: #666; /* Dark grey text for the card info */
+  margin: 10px 0;
+  font-size: 1em;
+}
+
+.card form {
+    margin-bottom: 20px; /* Added margin to separate form from output */
+}
+
+#suggestionOutput {
+    background-color: black;
+    color: white;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px; /* Increased space below the output box */
+}
+
+/* You can add responsive behavior as needed */
+@media (max-width: 512px) {
+  .card-container {
+    flex-direction: column;
+    //align-items: center;
+  }
+}
+
+.card-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.card-model-name {
+  flex-grow: 1; /* Allows this part to grow and push other elements to the edges */
+}
+
+.card-execution-time {
+  margin: 0 8px; /* Add some horizontal space around the time */
+  text-align: right; /* Align the text to the right for consistency */
+  min-width: 60px; /* Ensure enough space for alignment, adjust as needed */
+}
+
+audio {
+  //width: 100%; /* Make audio player take full width of the card */
+  margin-top: 0px; /* Reduced spacing above audio player */
+  margin-bottom: 0px; /* Reduced spacing below audio player */
+}
+
+/* Optional: Remove <p> margins for audio labels */
+.card-content p {
+  margin: 0px 0; /* Tighten up space around <p> elements */
+}
+
 .popup-banner-hidden {
-    display: none;
+  display: none;
 }
 
 .popup-banner-shown {
-    display: flex;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: auto; /* adjust width as necessary */
-    max-width: 500px; /* max-width for responsiveness */
-    background: #ffffff;
-    color: black;
-    font-size: 24px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    z-index: 1001;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 10px;
-    // center justify text
-    text-align: center;
+  display: flex;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto; /* adjust width as necessary */
+  max-width: 500px; /* max-width for responsiveness */
+  background: #ffffff;
+  color: black;
+  font-size: 24px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 10px;
+  text-align: center;
 }
 
 .popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.75);
-    z-index: 1000;
-    display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: none;
 }
 
 .popup-overlay-shown {
-    display: block;
+  display: block;
 }
 
 .popup-close-button {
-    background: none;
-    border: none;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 24px;
+  background: none;
+  border: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 24px;
 }
 
 .popup-title {
   font-size: 32px;
   margin-bottom: 20px;
+}
+
+.popup-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.popup-btn:hover {
+  background-color: #0056b3;
 }
 
 .stars {
@@ -918,186 +995,52 @@ input[type="file"]:disabled, label:disabled {
     font-size: large; /* or the specific size you want */
 }
 
-/* Media query for different screens */
-
-/* For very large screens or default styles */
-@media (min-width: 1200px) {
-  .wrapper {
-    justify-content: center;
-  }
-
-  .container {
-    max-width: 52%; /* Adjust based on your preferred content width */
-  }
-
-  .banner-left {
-    flex-shrink: 0; /* Prevents the banner from shrinking */
-  }
+.cta-container {
+  text-align: left; /* Align text to the left */
+  margin: 20px 20px 40px 20px;
 }
 
-/* For large screens, between 1025px and 1500px */
-@media (min-width: 1025px) and (max-width: 1500px) {
-  .banner-left {
-    width: 136px; /* 85% of 160px */
-    margin-right: 10px;
-  }
+.cta-link {
+  display: inline-block;
+  background-color: #ff6600; /* Bright orange to grab attention */
+  color: #1a1a1a; /* Dark gray text for better readability */
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  animation: pulse 2s infinite; /* Add pulsing animation */
 }
 
-/* For medium screens, between 769px and 1024px */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .banner-left {
-    width: 120px; /* 75% of 160px */
-    margin-right: 10px;
-  }
+.cta-link:hover {
+  background-color: #e65c00; /* Slightly darker orange for hover effect */
+  transform: translateY(-2px); /* Slight lift on hover */
 }
 
-/* For small screens (tablets) and larger, starting at 768px */
-@media (min-width: 768px) {
-  div.demo-container {
-    width: 50%; /* Width for larger screens */
-  }
-
-  img.responsive-img {
-    width: 50%; /* Width for larger screens */
-  }
+.cta-arrows {
+  font-size: 1.5em;
+  vertical-align: middle;
 }
 
-/* For devices up to 768px wide */
-@media (max-width: 768px) {
-  .banner-left {
-    width: 104px; /* 65% of 160px */
-    margin-right: 10px;
-  }
-  .post1-header {
-    width: calc(100vw + 20px);
-  }
-  .terminal {
-    width: 100px;
-  }
-  .index-header {
-    width: calc(100vw + 40px);
-  }
-  .karaoke-header {
-    width: calc(100vw + 20px);
-  }
+.cta-arrows.left {
+  margin-right: 10px;
 }
 
-/* For larger phones, up to 568px wide */
-@media (max-width: 568px) {
-  #popup-banner {
-    width: 80%; /* Slightly larger width than for the smallest screens */
-    /* Other styles as necessary */
-  }
+.cta-arrows.right {
+  margin-left: 10px;
 }
 
-/* For medium-sized devices, up to 512px wide */
-@media (max-width: 512px) {
-  .card-container {
-    flex-direction: column;
+/* Define the pulsing animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
   }
-  #popup-banner {
-    width: 90%;
-    img {
-      height: 206px; /* Adjust the image height */
-    }
+  50% {
+    transform: scale(1.05);
   }
-}
-
-/* For small devices, up to 500px wide */
-@media (max-width: 500px) {
-  .banner-left {
-    width: 88px; /* 55% of 160px */
-    margin-right: 10px;
-  }
-  .post1-header {
-    width: calc(100vw + 40px);
-  }
-  #load-weights-2 {
-    top: 20%;
-  }
-  #sign-up {
-    top: 40%;
-  }
-  #popup-banner {
-    width: 90%;
-    img {
-      height: 196px; /* Adjust the image height */
-    }
-  }
-}
-
-/* For even smaller devices, up to 400px wide */
-@media (max-width: 400px) {
-  .banner-left {
-    width: 88px; /* 55% of 160px */
-    margin-right: 10px;
-  }
-  .post1-header {
-    width: calc(100vw + 50px);
-  }
-  #popup-banner {
-    width: 90%; /* Reduce width to 90% of the screen size */
-    /* Adjust the font size for all child paragraphs */
-    /* Adjust the height of the image for smaller screens */
-    img {
-      height: 186px; /* Adjust the image height */
-    }
-  }
-}
-
-/* For the smallest screens, up to 350px wide */
-@media (max-width: 350px) {
-  .index-header {
-    width: calc(100vw + 15px);
-  }
-  .karaoke-header {
-    width: calc(100vw + 10px);
-  }
-  .post1-header {
-    width: calc(100vw + 50px);
-  }
-  .terminal {
-    width: 90px;
-  }
-  #load-weights-2 {
-    top: 20%;
-  }
-  #sign-up {
-    top: 30%;
-  }
-  #popup-banner {
-    width: 90%; /* Reduce width to 90% of the screen size */
-    /* Adjust the font size for all child paragraphs */
-    /* Adjust the height of the image for smaller screens */
-    img {
-      height: 156px; /* Adjust the image height */
-    }
-  }
-}
-
-/* For the narrowest phones, up to 320px wide */
-@media (max-width: 320px) { /* iPhone SE width */
-  #popup-banner {
-    width: 90%; /* Reduce width to 90% of the screen size */
-    /* Adjust the font size for all child paragraphs */
-    .pro-cta {
-      font-size: 18px;
-    }
-    .pro-promo {
-      font-size: 14px;
-    }
-    .pro-signup-cta {
-      font-size: 12px;
-    }
-    /* Adjust the height of the image for smaller screens */
-    img {
-      height: 146px; /* Adjust the image height */
-    }
-  }
-  .index-header {
-    width: calc(100vw + 120px);
-  }
-  .karaoke-header {
-    width: calc(100vw + 80px);
+  100% {
+    transform: scale(1);
   }
 }

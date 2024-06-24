@@ -21,12 +21,12 @@ Creating a karaoke track is easy with Free Music Demixer:
 
 ## Features
 
-- **Free:** use our [free site](https://freemusicdemixer.com) or the free tier of our [PRO site](https://pro.freemusicdemixer.com) and [Android app](https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro)
+- **Free:** use the free tier [of our site](https://freemusicdemixer.com) or [Android app](https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro)
 - **Totally private:** your files stay on your device (browser or Android phone) and are never uploaded to any server
 - **Easy to use:** Our user-friendly interfaces makes creating karaoke tracks simple and quick; visit our [beginner's guide](https://freemusicdemixer.com/getting-started/2023/09/23/Beginners-guide-to-free-stems) for additional help
 - **High quality:** Get professional-grade instrumental tracks with clear, crisp sound
 - **Multiple formats:** Export your tracks in various formats suitable for any device
-- **Two-source karaoke model (Pro):** For the ultimate karaoke experience, upgrade to our [PRO subscription](https://pro.freemusicdemixer.com) for the two-source karaoke model with exceptional vocal/instrumental separation
+- **Two-source karaoke model (Pro):** For the ultimate karaoke experience, upgrade to our [PRO subscription](https://freemusicdemixer.com) for the two-source karaoke model with exceptional vocal/instrumental separation
 
 ### Which AI model to use?
 
@@ -45,8 +45,7 @@ For the best experience, use Free Music Demixer on your computer. Whether you're
 - **Advanced demixing:** Use powerful AI to remove vocals from any song with precision
 - **High-Performance:** Leverage the power of your computer to process tracks quickly and efficiently. Choose up to 32 GB of memory to use multithreading and get your tracks faster!
 - **Free and pro options:** Enjoy basic features for free, or upgrade to our PRO subscription for even more advanced capabilities
-    - Free site: <https://freemusicdemixer.com>
-    - PRO site: <https://pro.freemusicdemixer.com>
+    - Free and PRO web site: <https://freemusicdemixer.com>
 
 ## Android app
 

@@ -1,4 +1,13 @@
 import { encodeWavFileFromAudioBuffer } from './WavFileEncoder.js';
+import { dummyLogin } from './login.js';
+
+// start by disabling the buttons globally
+document.getElementById('load-weights-free-2').disabled = true;
+document.getElementById('load-weights-free-3').disabled = true;
+document.getElementById('load-weights-karaoke').disabled = true;
+document.getElementById('load-weights-pro-ft').disabled = true;
+document.getElementById('load-weights-pro-cust').disabled = true;
+document.getElementById('load-weights-pro-deluxe').disabled = true;
 
 const registerServiceWorker = async () => {
   if ("serviceWorker" in navigator) {
@@ -145,16 +154,22 @@ document.getElementById('load-and-demix').disabled = true;
 
 // enable the overlay to indicate the apps are not ready to process tracks yet
 // until user presses download-weights
-document.getElementById('overlay-single').style.display = 'block';
+document.getElementById('overlay-unified').style.display = 'block';
 
 // When the download is complete, hide the overlay and spinner
 function hideOverlay() {
-    document.getElementById('overlay-single').style.display = 'none';
-    document.getElementById('load-weights-2').style.display = 'none';
+    document.getElementById('overlay-unified').style.display = 'none';
+    document.getElementById('load-weights-free-1').style.display = 'none';
+    document.getElementById('load-weights-free-2').style.display = 'none';
+    document.getElementById('load-weights-free-3').style.display = 'none';
+    document.getElementById('load-weights-karaoke').style.display = 'none';
+    document.getElementById('load-weights-pro-ft').style.display = 'none';
+    document.getElementById('load-weights-pro-cust').style.display = 'none';
+    document.getElementById('load-weights-pro-deluxe').style.display = 'none';
 }
 
 function showSpinner() {
-    document.getElementById('overlay-single').querySelector('.loader').style.display = 'block';
+    document.getElementById('overlay-unified').querySelector('.loader').style.display = 'block';
 }
 
 document.querySelectorAll('.increment').forEach(item => {
@@ -173,7 +188,7 @@ document.querySelectorAll('.increment').forEach(item => {
 let NUM_WORKERS = 4;
 let workers;
 let workerProgress;
-const selectedModel = 'demucs-4s';
+let selectedModel;
 let dlModelBuffers;
 
 let processedSegments = new Array(NUM_WORKERS); // Global accumulator for processed segments
@@ -181,6 +196,16 @@ let completedSegments = 0; // Counter for processed segments
 let completedSongsBatch = 0; // Counter for processed songs in batch mode
 let batchNextFileResolveCallback = null; // Callback for resolving the next file in batch mode
 let globalProgressIncrement = 0; // Global progress increment for batch mode
+let unzippedWasmFiles = {};
+
+// premium content gets loaded here
+window.addEventListener('unzippedFilesReady', (e) => {
+  console.log('Unzipped files ready:', e.detail.files);
+  unzippedWasmFiles = e.detail.files; // Store the unzipped files in memory
+
+  // register the service worker to start downloading weights files
+  registerServiceWorker();
+});
 
 function initWorkers() {
    // replace empty global workers with NUM_WORKERS new workers
@@ -288,8 +313,38 @@ function initWorkers() {
                 }
             }
         };
+
+        // Assuming 'selectedModel' is a global variable that is set to the model name prefix
+        // such as 'demucs_free', 'demucs_karaoke', or 'demucs_pro'
+        console.log(`Selected model: ${selectedModel}`);
+
+        // assign wasm module name based on selected model, which is not
+        // an exact mapping
+        let wasmModuleName = "";
+
+        if (selectedModel === 'demucs-free-4s' || selectedModel === 'demucs-free-6s') {
+            wasmModuleName = 'demucs_free';
+        } else if (selectedModel === 'demucs-free-v3') {
+            wasmModuleName = 'demucs_free_v3';
+        } else if (selectedModel === 'demucs-karaoke') {
+            wasmModuleName = 'demucs_karaoke';
+        } else if (selectedModel === 'demucs-pro-ft' || selectedModel === 'demucs-pro-cust') {
+            wasmModuleName = 'demucs_pro';
+        } else if (selectedModel === 'demucs-pro-deluxe') {
+            wasmModuleName = 'demucs_deluxe';
+        }
+
+        console.log(`Looking for wasm module: ${wasmModuleName} in unzippedWasmFiles: ${unzippedWasmFiles}`)
+
+        const jsBlob = unzippedWasmFiles[`${wasmModuleName}.js`];
+
+        // Create blob URLs for the worker script and WASM file
+        const jsBlobURL = URL.createObjectURL(jsBlob);
+
+        // Post the blob URLs to the worker
         workers[i].postMessage({
             msg: 'LOAD_WASM',
+            scriptUrl: jsBlobURL,
             model: selectedModel,
             modelBuffers: dlModelBuffers
         });
@@ -299,8 +354,32 @@ function initWorkers() {
 // cloudflare R2 bucket
 const dl_prefix = "https://bucket.freemusicdemixer.com";
 
-function fetchAndCacheFiles() {
-    let modelFiles = ['ggml-model-htdemucs-4s-f16.bin'];
+function fetchAndCacheFiles(model) {
+    let modelFiles = [];
+    if (model === 'demucs-free-4s') {
+        // append ggml-model-htdemucs-4s-f16.bin to modelFiles
+        modelFiles.push('ggml-model-htdemucs-4s-f16.bin');
+    } else if (model === 'demucs-free-6s') {
+        modelFiles.push('ggml-model-htdemucs-6s-f16.bin');
+    } else if (model === 'demucs-karaoke') {
+        modelFiles.push('ggml-model-custom-2s-f32.bin');
+    } else if (model === 'demucs-pro-ft') {
+        modelFiles.push('ggml-model-htdemucs_ft_bass-4s-f16.bin');
+        modelFiles.push('ggml-model-htdemucs_ft_drums-4s-f16.bin');
+        modelFiles.push('ggml-model-htdemucs_ft_other-4s-f16.bin');
+        modelFiles.push('ggml-model-htdemucs_ft_vocals-4s-f16.bin');
+    } else if (model === 'demucs-pro-cust') {
+        modelFiles.push('ggml-model-htdemucs_ft_vocals-4s-f16.bin');
+        modelFiles.push('ggml-model-htdemucs-4s-f16.bin');
+        modelFiles.push('ggml-model-htdemucs-6s-f16.bin');
+    } else if (model === 'demucs-pro-deluxe') {
+        modelFiles.push('ggml-model-htdemucs_ft_bass-4s-f16.bin');
+        modelFiles.push('ggml-model-htdemucs_ft_drums-4s-f16.bin');
+        modelFiles.push('ggml-model-htdemucs_ft_other-4s-f16.bin');
+        modelFiles.push('ggml-model-custom-2s-f32.bin');
+    } else if (model === 'demucs-free-v3') {
+        modelFiles.push('ggml-model-hdemucs_mmi-f16.bin');
+    }
 
     // prepend raw gh url to all modelFiles
     modelFiles = modelFiles.map(file =>
@@ -320,16 +399,12 @@ function fetchAndCacheFiles() {
 }
 
 function initModel() {
-    registerServiceWorker();
-    fetchAndCacheFiles()
+    fetchAndCacheFiles(selectedModel)
         .then(buffers => { // buffers are the downloaded file contents
             writeJsLog(`Fetching and caching model files for selected model: ${selectedModel}`);
 
-            // Process buffers if needed, e.g., initialize WASM module
-
             // WASM module is ready, enable the buttons
             hideOverlay();
-            document.getElementById('load-weights-2').disabled = true;
             document.getElementById('single-mode').click();
             document.getElementById('audio-upload').disabled = false;
             document.getElementById('batch-upload').disabled = true;
@@ -347,9 +422,110 @@ document.getElementById('log-clear').addEventListener('click', () => {
     clearLogs();
 });
 
-document.getElementById('load-weights-2').addEventListener('click', () => {
+document.getElementById('load-weights-free-1').addEventListener('click', () => {
+    dummyLogin();
+
     showSpinner();
-    document.getElementById('load-weights-2').disabled = true;
+    document.getElementById('load-weights-free-1').disabled = true;
+    document.getElementById('load-weights-free-2').disabled = true;
+    document.getElementById('load-weights-free-3').disabled = true;
+    document.getElementById('load-weights-karaoke').disabled = true;
+    document.getElementById('load-weights-pro-ft').disabled = true;
+    document.getElementById('load-weights-pro-cust').disabled = true;
+    document.getElementById('load-weights-pro-deluxe').disabled = true;
+    selectedModel = 'demucs-free-4s';
+
+    trackProductEvent('Chose Model', { model: 'demucs-free-4s'});
+    initModel();
+});
+
+document.getElementById('load-weights-free-2').addEventListener('click', () => {
+    showSpinner();
+    document.getElementById('load-weights-free-1').disabled = true;
+    document.getElementById('load-weights-free-2').disabled = true;
+    document.getElementById('load-weights-free-3').disabled = true;
+    document.getElementById('load-weights-karaoke').disabled = true;
+    document.getElementById('load-weights-pro-ft').disabled = true;
+    document.getElementById('load-weights-pro-cust').disabled = true;
+    document.getElementById('load-weights-pro-deluxe').disabled = true;
+    selectedModel = 'demucs-free-6s';
+
+    trackProductEvent('Chose Model', { model: 'demucs-free-6s'});
+    initModel();
+});
+
+document.getElementById('load-weights-free-3').addEventListener('click', () => {
+    showSpinner();
+    document.getElementById('load-weights-free-1').disabled = true;
+    document.getElementById('load-weights-free-2').disabled = true;
+    document.getElementById('load-weights-free-3').disabled = true;
+    document.getElementById('load-weights-karaoke').disabled = true;
+    document.getElementById('load-weights-pro-ft').disabled = true;
+    document.getElementById('load-weights-pro-cust').disabled = true;
+    document.getElementById('load-weights-pro-deluxe').disabled = true;
+    selectedModel = 'demucs-free-v3';
+
+    trackProductEvent('Chose Model', { model: 'demucs-free-v3'});
+    initModel();
+});
+
+document.getElementById('load-weights-karaoke').addEventListener('click', () => {
+    showSpinner();
+    document.getElementById('load-weights-free-1').disabled = true;
+    document.getElementById('load-weights-free-2').disabled = true;
+    document.getElementById('load-weights-free-3').disabled = true;
+    document.getElementById('load-weights-karaoke').disabled = true;
+    document.getElementById('load-weights-pro-ft').disabled = true;
+    document.getElementById('load-weights-pro-cust').disabled = true;
+    document.getElementById('load-weights-pro-deluxe').disabled = true;
+    selectedModel = 'demucs-karaoke';
+
+    trackProductEvent('Chose Model', { model: 'demucs-karaoke'});
+    initModel();
+});
+
+document.getElementById('load-weights-pro-ft').addEventListener('click', () => {
+    showSpinner();
+    document.getElementById('load-weights-free-1').disabled = true;
+    document.getElementById('load-weights-free-2').disabled = true;
+    document.getElementById('load-weights-free-3').disabled = true;
+    document.getElementById('load-weights-karaoke').disabled = true;
+    document.getElementById('load-weights-pro-ft').disabled = true;
+    document.getElementById('load-weights-pro-cust').disabled = true;
+    document.getElementById('load-weights-pro-deluxe').disabled = true;
+    selectedModel = 'demucs-pro-ft';
+
+    trackProductEvent('Chose Model', { model: 'demucs-pro-ft'});
+    initModel();
+});
+
+document.getElementById('load-weights-pro-cust').addEventListener('click', () => {
+    showSpinner();
+    document.getElementById('load-weights-free-1').disabled = true;
+    document.getElementById('load-weights-free-2').disabled = true;
+    document.getElementById('load-weights-free-3').disabled = true;
+    document.getElementById('load-weights-karaoke').disabled = true;
+    document.getElementById('load-weights-pro-ft').disabled = true;
+    document.getElementById('load-weights-pro-cust').disabled = true;
+    document.getElementById('load-weights-pro-deluxe').disabled = true;
+    selectedModel = 'demucs-pro-cust';
+
+    trackProductEvent('Chose Model', { model: 'demucs-pro-cust'});
+    initModel();
+});
+
+document.getElementById('load-weights-pro-deluxe').addEventListener('click', () => {
+    showSpinner();
+    document.getElementById('load-weights-free-1').disabled = true;
+    document.getElementById('load-weights-free-2').disabled = true;
+    document.getElementById('load-weights-free-3').disabled = true;
+    document.getElementById('load-weights-karaoke').disabled = true;
+    document.getElementById('load-weights-pro-ft').disabled = true;
+    document.getElementById('load-weights-pro-cust').disabled = true;
+    document.getElementById('load-weights-pro-deluxe').disabled = true;
+    selectedModel = 'demucs-pro-deluxe';
+
+    trackProductEvent('Chose Model', { model: 'demucs-pro-deluxe'});
     initModel();
 });
 
@@ -413,6 +589,9 @@ document.getElementById('load-and-demix').addEventListener('click', () => {
             return;
         }
 
+        // track the start of the job
+        trackProductEvent('Start Job', { mode: 'single', numWorkers: numWorkers });
+
         // write log of how many workers are being used
         writeJsLog(`Initializing ${numWorkers} workers!`)
         initWorkers();
@@ -468,6 +647,9 @@ document.getElementById('load-and-demix').addEventListener('click', () => {
             return;
         }
 
+        // track the start of the job
+        trackProductEvent('Start Job', { mode: 'batch', numWorkers: numWorkers });
+
         // write log of how many workers are being used
         writeJsLog(`Initializing ${numWorkers} workers!`)
         initWorkers();
@@ -484,102 +666,109 @@ document.getElementById('load-and-demix').addEventListener('click', () => {
     }
 });
 
-function packageAndDownload(targetWaveforms) {
-    writeJsLog("Preparing stems for download")
+const modelStemMapping = {
+    'demucs-free-4s': ['bass', 'drums', 'melody', 'vocals'],
+    'demucs-free-6s': ['bass', 'drums', 'other_melody', 'vocals', 'guitar', 'piano'],
+    'demucs-free-v3': ['bass', 'drums', 'melody', 'vocals'],
+    'demucs-karaoke': ['vocals', 'instrum'],
+    'demucs-pro-ft': ['bass', 'drums', 'melody', 'vocals'],
+    'demucs-pro-cust': ['bass', 'drums', 'other_melody', 'vocals', 'guitar', 'piano', 'melody'],
+    'demucs-pro-deluxe': ['bass', 'drums', 'melody', 'vocals']
+};
 
+function packageAndDownload(targetWaveforms) {
+    writeJsLog("Preparing stems for download");
     console.log(targetWaveforms)
 
-    // Create separate stereo AudioBuffers for vocals, bass, drums, and other
-    let vocalsBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
-    let bassBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
-    let drumsBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
-    let otherBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+    const stemNames = modelStemMapping[selectedModel] || [];
+    const buffers = {};
 
-    let guitarBuffer = null;
-    let pianoBuffer = null;
+    stemNames.forEach((name, index) => {
+        const buffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+        buffer.copyToChannel(targetWaveforms[index * 2], 0); // Left channel
+        buffer.copyToChannel(targetWaveforms[index * 2 + 1], 1); // Right channel
+        buffers[name] = buffer;
+    });
 
-    let instrumentalBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+     // Handle instrumental mix based on model specifics
+    if (selectedModel !== 'demucs-karaoke') {
+        // Define stems to include in the instrumental mix
+        let instrumentalStems = stemNames.filter(name => name !== 'vocals');
+        if (selectedModel === 'demucs-pro-cust') {
+            // For demucs-pro-cust, use only specified stems for instrumental
+            instrumentalStems = ['drums', 'bass', 'melody']; // Omitting 'guitar', 'piano', 'other_melody'
+        }
 
-    bassBuffer.copyToChannel(targetWaveforms[0], 0);
-    bassBuffer.copyToChannel(targetWaveforms[1], 1);
-
-    drumsBuffer.copyToChannel(targetWaveforms[2], 0);
-    drumsBuffer.copyToChannel(targetWaveforms[3], 1);
-
-    otherBuffer.copyToChannel(targetWaveforms[4], 0);
-    otherBuffer.copyToChannel(targetWaveforms[5], 1);
-
-    vocalsBuffer.copyToChannel(targetWaveforms[6], 0);
-    vocalsBuffer.copyToChannel(targetWaveforms[7], 1);
-
-    // store sum of bass, drums, and other in instrumentalBuffer
-    for (let i = 0; i < targetWaveforms[0].length; i++) {
-        instrumentalBuffer.getChannelData(0)[i] = targetWaveforms[0][i] + targetWaveforms[2][i] + targetWaveforms[4][i];
-        instrumentalBuffer.getChannelData(1)[i] = targetWaveforms[1][i] + targetWaveforms[3][i] + targetWaveforms[5][i];
+        // Sum specified stems for instrumental
+        const instrumentalBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+        instrumentalStems.forEach(name => {
+            for (let i = 0; i < targetWaveforms[0].length; i++) {
+                instrumentalBuffer.getChannelData(0)[i] += buffers[name].getChannelData(0)[i] || 0;
+                instrumentalBuffer.getChannelData(1)[i] += buffers[name].getChannelData(1)[i] || 0;
+            }
+        });
+        buffers['instrum'] = instrumentalBuffer; // Add instrumental buffer
     }
 
-    // now create audio wav files
-    // and create downloadable links for them
-    // from the 4 returned targetWaveforms
-    // 0 = bass, 1 = drums, 2 = other, 3 = vocals
-    const bassBuf = encodeWavFileFromAudioBuffer(bassBuffer, 0);
-    const drumsBuf = encodeWavFileFromAudioBuffer(drumsBuffer, 0);
-    const otherBuf = encodeWavFileFromAudioBuffer(otherBuffer, 0);
-    const vocalsBuf = encodeWavFileFromAudioBuffer(vocalsBuffer, 0);
-    const instrumentalBuf = encodeWavFileFromAudioBuffer(instrumentalBuffer, 0);
+    createDownloadLinks(buffers);
+}
 
-    const bassBlob = new Blob([bassBuf], {type: 'audio/wav'});
-    const drumsBlob = new Blob([drumsBuf], {type: 'audio/wav'});
-    const otherBlob = new Blob([otherBuf], {type: 'audio/wav'});
-    const vocalsBlob = new Blob([vocalsBuf], {type: 'audio/wav'});
-    const instrumentalBlob = new Blob([instrumentalBuf], {type: 'audio/wav'});
-
-    const bassUrl = URL.createObjectURL(bassBlob);
-    const drumsUrl = URL.createObjectURL(drumsBlob);
-    const otherUrl = URL.createObjectURL(otherBlob);
-    const vocalsUrl = URL.createObjectURL(vocalsBlob);
-    const instrumentalUrl = URL.createObjectURL(instrumentalBlob);
-
+function createDownloadLinks(buffers) {
     let downloadLinksDiv = document.getElementById('output-links');
+    downloadLinksDiv.innerHTML = ''; // Clear existing links
 
-    const bassLink = document.createElement('a');
-    const drumsLink = document.createElement('a');
-    const otherLink = document.createElement('a');
-    const vocalsLink = document.createElement('a');
-    const instrumentalLink = document.createElement('a');
-
-    bassLink.href = bassUrl;
-    drumsLink.href = drumsUrl;
-    otherLink.href = otherUrl;
-    vocalsLink.href = vocalsUrl;
-    instrumentalLink.href = instrumentalUrl;
-
-    drumsLink.textContent = 'drums.wav';
-    bassLink.textContent = 'bass.wav';
-
-    vocalsLink.textContent = 'vocals.wav';
-    instrumentalLink.textContent = 'instrum.wav';
-    // set otherLink.textContent to $otherName.wav
-    otherLink.textContent = 'melody.wav';
-
-    drumsLink.download = 'drums.wav';
-    bassLink.download = 'bass.wav';
-    vocalsLink.download = 'vocals.wav';
-    instrumentalLink.download = 'instrum.wav';
-    otherLink.download = 'melody.wav';
-
-    // Append the link elements to the document body
-    downloadLinksDiv.appendChild(bassLink);
-    downloadLinksDiv.appendChild(drumsLink);
-    downloadLinksDiv.appendChild(otherLink);
-    downloadLinksDiv.appendChild(vocalsLink);
-    downloadLinksDiv.appendChild(instrumentalLink);
+    Object.keys(buffers).forEach(stemName => {
+        const blob = new Blob([encodeWavFileFromAudioBuffer(buffers[stemName], 0)], {type: 'audio/wav'});
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.textContent = `${stemName}.wav`;
+        link.download = `${stemName}.wav`;
+        downloadLinksDiv.appendChild(link);
+    });
 
     document.getElementById('audio-upload').disabled = false;
     document.getElementById('load-and-demix').disabled = false;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+    const modelCheckboxes = document.querySelectorAll('input[type="checkbox"][name="feature"]');
+    const outputDiv = document.getElementById('suggestionOutput');
+
+    // Ensure all checkboxes are unchecked on page load
+    modelCheckboxes.forEach(modelCheckbox => {
+        modelCheckbox.checked = false;
+    });
+
+    // Add change event listeners to checkboxes
+    modelCheckboxes.forEach(modelCheckbox => {
+        modelCheckbox.addEventListener('change', function() {
+            updateSuggestion();
+        });
+    });
+
+    function updateSuggestion() {
+        const selectedFeatures = Array.from(modelCheckboxes)
+            .filter(modelCheckbox => modelCheckbox.checked)
+            .map(modelCheckbox => modelCheckbox.value);
+
+        let suggestion = "";
+        if (selectedFeatures.includes("vocals") || selectedFeatures.includes("instrumental (no vocals)")) {
+            if (selectedFeatures.every(item => ["vocals", "instrumental (no vocals)"].includes(item))) {
+                suggestion = "Default quality, fast: 4-SOURCE (FREE)<br>Lower quality, fastest: V3 (PRO)<br>High quality, 2x slower: KARAOKE (PRO)";
+            }
+        }
+        if (selectedFeatures.some(item => ["guitar", "piano", "other melody (e.g. violin)"].includes(item))) {
+            suggestion = "High quality, fast: 6-SOURCE (PRO)<br>High quality, 6x slower: CUSTOM (PRO)";
+        }
+        if (selectedFeatures.some(item => ["drums", "bass", "melody"].includes(item)) &&
+            selectedFeatures.every(item => !["guitar", "piano", "other melody (e.g. violin)"].includes(item))) {
+            suggestion = "Default quality, fast: 4-SOURCE (FREE)<br>Lower quality, fastest: V3 (PRO)<br>Medium quality, 4x slower: FINE-TUNED (PRO)<br>High quality, 8x slower: DELUXE (PRO)";
+        }
+
+        outputDiv.innerHTML = suggestion || "Please select at least one option to see suggestions.";
+    }
+
     let checkbox = document.getElementById("toggleDevLogs");
     let devLogs = document.getElementById("devLogs");
 
@@ -690,59 +879,44 @@ async function processFiles(files) {
 }
 
 function packageAndZip(targetWaveforms, filename) {
-    writeJsLog(`Packaging and zipping waveforms for ${filename}`)
+    writeJsLog(`Packaging and zipping waveforms for ${filename}`);
 
-    console.log(targetWaveforms)
-
-    // Create a new fflate Zip object with global compression options
-    const zip = new fflate.Zip({ level: 0 }); // Disables compression globally
-
-    // Create separate stereo AudioBuffers for vocals, bass, drums, and other
-    let vocalsBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
-    let bassBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
-    let drumsBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
-    let otherBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
-    let instrumentalBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
-
-    let guitarBuffer = null;
-    let pianoBuffer = null;
-
-    bassBuffer.copyToChannel(targetWaveforms[0], 0);
-    bassBuffer.copyToChannel(targetWaveforms[1], 1);
-
-    drumsBuffer.copyToChannel(targetWaveforms[2], 0);
-    drumsBuffer.copyToChannel(targetWaveforms[3], 1);
-
-    otherBuffer.copyToChannel(targetWaveforms[4], 0);
-    otherBuffer.copyToChannel(targetWaveforms[5], 1);
-
-    vocalsBuffer.copyToChannel(targetWaveforms[6], 0);
-    vocalsBuffer.copyToChannel(targetWaveforms[7], 1);
-
-    // store sum of bass, drums, and other in instrumentalBuffer
-    for (let i = 0; i < targetWaveforms[0].length; i++) {
-        instrumentalBuffer.getChannelData(0)[i] = targetWaveforms[0][i] + targetWaveforms[2][i] + targetWaveforms[4][i];
-        instrumentalBuffer.getChannelData(1)[i] = targetWaveforms[1][i] + targetWaveforms[3][i] + targetWaveforms[5][i];
-    }
-
-    const directoryName = `${filename}_stems/`; // note the trailing slash to specify a directory
-
+    const stemNames = modelStemMapping[selectedModel] || [];
+    const directoryName = `${filename}_stems/`; // Directory for storing stems
     let zipFiles = {};
 
-    // Add files to the zipFiles object directly as Uint8Arrays
-    zipFiles[`${directoryName}bass.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(bassBuffer, 0));
-    zipFiles[`${directoryName}drums.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(drumsBuffer, 0));
-    zipFiles[`${directoryName}melody.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(otherBuffer, 0));
-    zipFiles[`${directoryName}vocals.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(vocalsBuffer, 0));
-    zipFiles[`${directoryName}instrum.wav`] = new Uint8Array(encodeWavFileFromAudioBuffer(instrumentalBuffer, 0));
+    // Iterate over each stem name to process and package waveforms
+    stemNames.forEach((stemName, index) => {
+        const buffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+        buffer.copyToChannel(targetWaveforms[index * 2], 0); // Left channel
+        buffer.copyToChannel(targetWaveforms[index * 2 + 1], 1); // Right channel
+        const wavData = encodeWavFileFromAudioBuffer(buffer, 0); // Convert buffer to WAV
+        zipFiles[`${directoryName}${stemName}.wav`] = new Uint8Array(wavData); // Add WAV data to zip
+    });
+
+    // Handle instrumental mix based on model specifics, excluding karaoke
+    if (selectedModel !== 'demucs-karaoke') {
+        const instrumentalStems = stemNames.filter(name => name !== 'vocals');
+        const instrumentalBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+
+        // Sum specified stems for instrumental, exclude 'guitar', 'piano', 'other' for 'demucs-pro-cust'
+        instrumentalStems.forEach(stemName => {
+            if (!(selectedModel === 'demucs-pro-cust' && ['guitar', 'piano', 'other_melody'].includes(stemName))) {
+                for (let i = 0; i < targetWaveforms[0].length; i++) {
+                    instrumentalBuffer.getChannelData(0)[i] += targetWaveforms[stemNames.indexOf(stemName) * 2][i];
+                    instrumentalBuffer.getChannelData(1)[i] += targetWaveforms[stemNames.indexOf(stemName) * 2 + 1][i];
+                }
+            }
+        });
+        const instrumentalWavData = encodeWavFileFromAudioBuffer(instrumentalBuffer, 0);
+        zipFiles[`${directoryName}instrum.wav`] = new Uint8Array(instrumentalWavData); // Add instrumental WAV data to zip
+    }
 
     // Use fflate to create a zip file
-    const zipData = fflate.zipSync(zipFiles, { level: 0 }); // Disables compression
+    const zipData = fflate.zipSync(zipFiles, { level: 0 }); // Disables compression for speed
 
-    // Create a Blob from the zipped data
+    // Create a Blob from the zipped data and generate a download link
     const zipBlob = new Blob([zipData.buffer], { type: 'application/zip' });
-
-    // Create a download link for the zipped Blob
     const zipUrl = URL.createObjectURL(zipBlob);
     const zipLink = document.createElement('a');
     zipLink.href = zipUrl;

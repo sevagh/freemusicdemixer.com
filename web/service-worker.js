@@ -1,6 +1,14 @@
-const CACHE_NAME = "v20240507";
+const CACHE_NAME = "PRO_v20240622";
+
 const RESOURCES_TO_PRELOAD = [
   "https://bucket.freemusicdemixer.com/ggml-model-htdemucs-4s-f16.bin",
+  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs-6s-f16.bin",
+  "https://bucket.freemusicdemixer.com/ggml-model-hdemucs_mmi-f16.bin",
+  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs_ft_bass-4s-f16.bin",
+  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs_ft_drums-4s-f16.bin",
+  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs_ft_other-4s-f16.bin",
+  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs_ft_vocals-4s-f16.bin",
+  "https://bucket.freemusicdemixer.com/ggml-model-custom-2s-f32.bin"
 ];
 
 // Pre-cache resources
