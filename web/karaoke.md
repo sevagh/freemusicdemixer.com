@@ -21,7 +21,7 @@ Creating a karaoke track is easy with Free Music Demixer:
 
 ## Features
 
-- **Free:** use the free tier [of our site](https://freemusicdemixer.com) or [Android app](https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro)
+- **Free:** use the free tier [of our site](/) or [Android app](/android)
 - **Totally private:** your files stay on your device (browser or Android phone) and are never uploaded to any server
 - **Easy to use:** Our user-friendly interfaces makes creating karaoke tracks simple and quick; visit our [beginner's guide](https://freemusicdemixer.com/getting-started/2023/09/23/Beginners-guide-to-free-stems) for additional help
 - **High quality:** Get professional-grade instrumental tracks with clear, crisp sound
@@ -61,7 +61,7 @@ Take your karaoke experience on the go with our Android app. Perfect for spontan
 - **Free and pro options:** Access basic features for free, or upgrade for advanced functionalities and unlimited use
     - The same PRO subscription as the website with the custom two-source karaoke model is available on the Android app with the same subscription!
 
-[Get the Android App here!](https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro)
+[Get the Android App here!](/android)
 
 ## Why choose Free Music Demixer for karaoke?
 

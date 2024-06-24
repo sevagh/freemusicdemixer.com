@@ -113,7 +113,7 @@ Segments extracted from the song [Periphery - Icarus Lives](https://www.youtube.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/2R7wNj1VzxA?si=ErT8Rl-O9hqKBvbw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 <div style="display: flex; align-items: flex-start; justify-content: flex-start;">
-<a href="https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro"><img alt="android-app-screenshot" src="/assets/images/android.webp" width="200" style="border: 2px solid black; margin-right: 10px;"></a>
+<a href="/android"><img alt="android-app-screenshot" src="/assets/images/android.webp" width="200" style="border: 2px solid black; margin-right: 10px;"></a>
 <video width="200" controls loading="lazy" style="border: 2px solid black; margin-bottom: 20px; margin-right: 10px;">
   <source src="/assets/clips/app.mp4" type="video/mp4">
   Your browser does not support the video tag.

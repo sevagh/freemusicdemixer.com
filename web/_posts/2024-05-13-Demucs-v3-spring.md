@@ -11,6 +11,8 @@ intro: "Adding our new and fastest AI model Demucs v3, and more Spring features!
 * Table of contents
 {:toc}
 
+<span class="blog-highlight">**Last updated: 2024-06-24**</span>
+
 {{ page.intro }}
 
 ## Demucs v3
@@ -21,7 +23,7 @@ So far, two models have been available:
 * `hdemucs`, the default 4-source v4 model
 * `hdemucs_6s`, the 6-source v4 model (adding piano and guitar)
 
-On the [PRO site](https://pro.freemusicdemixer.com) and [Android app](https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro), we also have:
+On the [PRO site](/) and [Android app](/android), we also have:
 * `hdemucs_ft`, the fine-tuned v4 model
 * Various custom ensemble models world-leading performance in drums and bass, and significantly improved vocal stems
 
@@ -35,7 +37,7 @@ So, if you don't need the absolute best possible separation quality (and, make n
 
 <img src="/assets/blog/post8/v3_button.webp" width="55%" alt="demucs-v3-weights-button"/>
 
-[Try it for free today](https://freemusicdemixer.com/#free-demixer-app) in your browser! Also available on the [PRO site](https://pro.freemusicdemixer.com) and [Android app](https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro)!
+[Try it for free today](https://freemusicdemixer.com/#free-demixer-app) in your browser! Also available on the [PRO site](/) and [Android app](/android)!
 
 ## New Android PRO feature: custom mix and playback
 

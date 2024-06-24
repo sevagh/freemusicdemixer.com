@@ -10,11 +10,15 @@ description: "Split songs, demix music, and separate stems with our AI-based too
 
 # AI music demixer powered by Demucs
 
-<div style="margin: -20px 0 0px 0;">
-<a href='https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="200"/></a>
+<div class="cta-container-android">
+  <a href="/android" class="cta-link-android">
+    <span class="cta-arrows-android left">&#9664;&#9664;&#9664;</span>
+    DOWNLOAD ANDROID APP!
+    <span class="cta-arrows-android right">&#9654;&#9654;&#9654;</span>
+  </a>
 </div>
 
-Effortlessly split your songs into individual stems - **vocals, bass, drums, and melody** - using the best and latest AI model in our free web application. It runs **locally on your device 🫵🏽**, ensuring unlimited usage without any restrictions. Powered by the [Demucs Hybrid Transformer](https://github.com/facebookresearch/demucs) AI model, created and maintained by [Sevag H](https://github.com/sevagh). If you want the power of Demucs **in your pocket**, download our app from the [Play Store](https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro).
+Effortlessly split your songs into individual stems - **vocals, bass, drums, and melody** - using the best and latest AI model in our free web application. It runs **locally on your device 🫵🏽**, ensuring unlimited usage without any restrictions. Powered by the [Demucs Hybrid Transformer](https://github.com/facebookresearch/demucs) AI model, created and maintained by [Sevag H](https://github.com/sevagh). If you want the power of Demucs **in your pocket**, download our app [directly from our site](/android).
 <div class="image-container">
 <img class="responsive-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
 </div>
@@ -137,7 +141,7 @@ For customer support, privacy policy, refund policy, or to manage or cancel your
 
 ## Demixer app
 
-**Reminder: your subscription can be used on [the Android app](https://play.google.com/store/apps/details?id=com.freemusicdemixer.pro)**
+**Reminder: your subscription can be used on [the Android app](/android)**
 
 There is a **MAX MEMORY** option to speed up demixing and support longer songs!🚀🔥 We have tested up to 32 GB in Firefox and 16 GB in Chrome. [Read the beginner's tutorial](./getting-started/2023/09/23/Beginners-guide-to-free-stems.html) if you need help.
 

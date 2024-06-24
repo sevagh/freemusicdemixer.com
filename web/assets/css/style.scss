@@ -147,6 +147,20 @@ header h1:before {
   animation: none;
 }
 
+/* Android Version of the Karaoke Button */
+.btn-android-github {
+  color: #000000; /* White text for strong contrast */
+  background: #3ddc84; /* Android-like green */
+  box-shadow: none; /* Optional: remove shadow for a flatter appearance */
+  text-shadow: none; /* Optional: remove shadow for a flatter appearance */
+}
+
+.btn-android-github:hover {
+  background: #2e7d32; /* A slightly darker green shade for hover */
+  color: #ffffff; /* Maintain white text on hover */
+  animation: none;
+}
+
 // demix webapp stuff
 
 .progress-container {
@@ -683,7 +697,7 @@ input[type="file"]:disabled, label:disabled {
     cursor: not-allowed; /* Change cursor to indicate non-interactive */
 }
 
-.btn-github, .btn-karaoke-github {
+.btn-github, .btn-karaoke-github, .btn-android-github {
   font-size: 15px;
 }
 
@@ -947,6 +961,57 @@ audio {
   }
 }
 
+/* Android variant CTA container */
+.cta-container-android {
+  text-align: left; /* Align text to the left */
+  margin: 15px 15px 30px 15px; /* Slightly smaller margins */
+}
+
+.cta-link-android {
+  display: inline-block;
+  background-color: #3ddc84; /* Android-like green */
+  color: #000000; /* White text for better readability on dark background */
+  font-size: 1em; /* Slightly smaller font size */
+  font-weight: bold;
+  padding: 8px 18px; /* Slightly smaller padding */
+  text-decoration: none;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  animation: pulse-android 2s infinite; /* Add pulsing animation */
+}
+
+.cta-link-android:hover {
+  background-color: #2e7d32; /* Darker green for hover effect */
+  transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.cta-arrows-android {
+  font-size: 1.2em; /* Slightly smaller font size */
+  vertical-align: middle;
+}
+
+.cta-arrows-android.left {
+  margin-right: 8px;
+}
+
+.cta-arrows-android.right {
+  margin-left: 8px;
+}
+
+/* Define the pulsing animation for Android variant */
+@keyframes pulse-android {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+ 
 /* Media query for very large screens or default styles */
 @media (min-width: 1200px) {
   .wrapper {
