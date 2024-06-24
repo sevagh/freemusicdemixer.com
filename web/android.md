@@ -20,10 +20,18 @@ description: "Split songs, demix music, and separate stems with our AI-based too
 
 This is a Signed APK, which is perfectly safe. It's a process known as [side loading](https://en.wikipedia.org/wiki/Sideloading), which needs to be enabled in the Android settings for "Install unknown apps":
 
-<img alt="unknown-apps-setting" src="/assets/images/sideload.webp" width="25%"/>
+<img class="responsive-img-android" alt="unknown-apps-setting" src="/assets/images/sideload.webp" width="25%"/>
 
 In fact, it gives me as the developer more control over shipping you the exact software I wrote without Google acting as an intermediary, ensuring my guarantees of privacy.
 
 ## Refunds for Play Store customers
 
 As a courtesy, and if this solution doesn't work for you, I am offering refunds for customers who wish to keep using the Play Store. Please send an e-mail to [android@freemusicdemixer.com](mailto:android@freemusicdemixer.com) with your customer details and we will help you out 🙏
+
+## App screenshots
+
+<img class="responsive-img-android" alt="android-screenshot-1" src="/assets/images/android_screenie_1.webp" width="15%"/>
+<img class="responsive-img-android" alt="android-screenshot-2" src="/assets/images/android_screenie_2.webp" width="15%"/>
+<img class="responsive-img-android" alt="android-screenshot-3" src="/assets/images/android_screenie_3.webp" width="15%"/>
+<img class="responsive-img-android" alt="android-screenshot-4" src="/assets/images/android_screenie_4.webp" width="15%"/>
+<img class="responsive-img-android" alt="android-screenshot-5" src="/assets/images/android_screenie_5.webp" width="15%"/>

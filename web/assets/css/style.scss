@@ -278,6 +278,10 @@ img.responsive-img {
   width: 100%; /* default width for mobile devices */
 }
 
+img.responsive-img-android {
+  width: 75%; /* default width for mobile devices */
+}
+
 div.image-container {
   text-align: center;
 }
@@ -1051,6 +1055,10 @@ audio {
 
   img.responsive-img {
     width: 50%; /* Width for larger screens */
+  }
+
+  img.responsive-img-android {
+    width: 25%; /* Width for larger screens */
   }
 }
 
