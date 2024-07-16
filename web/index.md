@@ -23,6 +23,10 @@ Effortlessly split your songs into individual stems - **vocals, bass, drums, and
 <img class="responsive-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
 </div>
 
+<div class="video-container">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/O1vbXB8K_DI?si=kux30l8qWeF8QFi4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
 ## Demo clips and product info
 
 Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f) to showcase our models:
