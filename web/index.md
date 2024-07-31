@@ -18,6 +18,8 @@ description: "Split songs, demix music, and separate stems with our AI-based too
   </a>
 </div>
 
+<a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="50" src="https://media.theresanaiforthat.com/featured3.png" alt="theresanaiforthat-promo"></a> <a href="https://www.instagram.com/musicdemixer/" target="_blank"><img src="/assets/images/ig_banner.webp" height="50" alt="freemusicdemixer-instagram"/></a> <a href="https://arktan.com" target="_blank" class="styled-link"> <img src="/assets/images/arktan_logo.webp" height="12px"/> Featured on Arktan.com</a> <a title="ai tools code.market" href="https://code.market?code.market=verified"><img alt="ai tools code.market" title="ai tools code.market" src="https://code.market/assets/manage-product/featured-logo-dark.svg" target="_blank" height="50"/></a>
+
 Effortlessly split your songs into individual stems - **vocals, bass, drums, and melody** - using the best and latest AI model in our free web application. It runs **locally on your device 🫵🏽**, ensuring unlimited usage without any restrictions. Powered by the [Demucs Hybrid Transformer](https://github.com/facebookresearch/demucs) AI model, created and maintained by [Sevag H](https://github.com/sevagh). If you want the power of Demucs **in your pocket**, download our app [directly from our site](/android).
 <div class="image-container">
 <img class="responsive-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
@@ -241,8 +243,3 @@ To cancel the running job, refresh the page
 * ⚖️ 📄 Model weights and outputs are governed by the <a href="https://github.com/facebookresearch/demucs/issues/327#issuecomment-1134828611">Meta Research license</a>
 * Input files can be almost any audio format, but the outputs are always stereo wav files @ 44100 Hz
 
-## Support this site!
-
-If you love this free site and want to support it via brand sponsorship or other ideas, contact me by [e-mail](mailto:contact@freemusicdemixer.com) or through our [Instagram account](https://www.instagram.com/musicdemixer/)!
-
-<a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="50" src="https://media.theresanaiforthat.com/featured3.png" alt="theresanaiforthat-promo"></a> <a href="https://www.instagram.com/musicdemixer/" target="_blank"><img src="/assets/images/ig_banner.webp" height="50" alt="freemusicdemixer-instagram"/></a> <a href="https://arktan.com" target="_blank" class="styled-link"> <img src="/assets/images/arktan_logo.webp" height="12px"/> Featured on Arktan.com</a>
