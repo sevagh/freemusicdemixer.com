@@ -978,10 +978,10 @@ function canPerformAction() {
 
     const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
 
-    if (usageData.count < 5) {  // Assuming 5 is the weekly limit
+    if (usageData.count < 3) {
         return true;
     } else {
-        alert('You have reached your weekly limit.');
+        alert('You have reached your weekly limit of 3 demixes. Upgrade to the PRO membership or wait 1 week!');
         return false;
     }
 }

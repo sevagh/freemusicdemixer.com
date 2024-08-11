@@ -88,7 +88,7 @@ Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https
 
 ## Subscribe!
 
-Subscribing to our PRO tier unlocks more instruments and stems (**piano + guitar**) and higher-quality AI models on both the web app and the Android app, and access to microphone, app capture, and custom mix features on the app! **The same subscription gets you access to pro content on both the web app and Android app!**
+Subscribing to our PRO tier unlocks unlimited usage, more instruments and stems (**piano + guitar**), and higher-quality AI models on both the web app and the Android app. On the Android app, it also gives access to microphone, app capture, and custom mix features on the app! **The same subscription gets you access to pro content on both the web app and Android app!**
 
 <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
 <stripe-pricing-table id="pricing-table" pricing-table-id="prctbl_1OcXFtAmT5bJ3vuw0JDQk6A5"
