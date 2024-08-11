@@ -246,7 +246,6 @@ function initWorkers() {
                 // writeJsLog but prepend worker index
                 writeJsLog(`(WORKER ${i}) ${e.data.data}`)
             } else if (e.data.msg === 'PROCESSING_DONE') {
-                incrementUsage();
                 // Handle the processed segment
                 // Collect and stitch segments
                 processedSegments[i] = e.data.waveforms;
@@ -255,6 +254,7 @@ function initWorkers() {
                 workers[i].terminate();
                 // if all segments are complete, stitch them together
                 if (completedSegments === NUM_WORKERS) {
+                    incrementUsage();
                     const retSummed = sumSegments(processedSegments, originalLength);
                     packageAndDownload(retSummed);
                     // reset globals etc.
@@ -268,7 +268,6 @@ function initWorkers() {
                     document.getElementById('batch-upload').disabled = true;
                 }
             } else if (e.data.msg === 'PROCESSING_DONE_BATCH') {
-                incrementUsage();
                 // similar global bs here
                 const filename = e.data.filename;
                 writeJsLog(`Batch job finished for ${filename}`)
@@ -276,6 +275,7 @@ function initWorkers() {
                 completedSegments += 1;
                 let originalLength = e.data.originalLength;
                 if (completedSegments === NUM_WORKERS) {
+                    incrementUsage();
                     const retSummed = sumSegments(processedSegments, originalLength);
                     packageAndZip(retSummed, filename);
                     // reset globals per-song in the batch process
@@ -558,7 +558,10 @@ function processBatchSegments(leftChannel, rightChannel, numSegments, filename, 
 
 document.getElementById('load-and-demix').addEventListener('click', () => {
     // check if we can
-    canPerformAction();
+    if (!canPerformAction()) {
+        // return early since we're not doing any demixing
+        return;
+    }
 
     // disable all buttons at the start of a new job
     document.getElementById('batch-upload').disabled = true;

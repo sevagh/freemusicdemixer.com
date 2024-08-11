@@ -147,7 +147,7 @@ For customer support, privacy policy, refund policy, or to manage or cancel your
 
 ## Demixer app
 
-**Reminder: your subscription can be used on [the Android app](/android)**
+Free users are limited to only the base 4-source model and **max 3 demixes per week.** Subscribe to PRO now! **Reminder: your subscription can be used on [the Android app](/android)**
 
 There is a **MAX MEMORY** option to speed up demixing and support longer songs!🚀🔥 We have tested up to 32 GB in Firefox and 16 GB in Chrome. [Read the beginner's tutorial](./getting-started/2023/09/23/Beginners-guide-to-free-stems.html) if you need help.
 
