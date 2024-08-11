@@ -799,7 +799,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function updateWorkerCount() {
         var memoryValue = parseInt(memorySelect.value, 10);
         var workerCount = memoryValue / 4;
-        workerCountDisplay.textContent = ` (${workerCount} workers)`;
+        workerCountDisplay.textContent = ` (${workerCount}x speed)`;
     }
 
     memorySelect.addEventListener("change", updateWorkerCount);

@@ -200,7 +200,7 @@ There is a **MAX MEMORY** option to speed up demixing and support longer songs!ð
             <option value="16" selected>16 GB</option>
             <option value="32">32 GB</option>
         </select>
-        <span id="worker-count"> (4 workers)</span>
+        <span id="worker-count"> (4x speed)</span>
     </div>
     <br>
     <button id="load-and-demix" class="button">Load audio and demix</button>
