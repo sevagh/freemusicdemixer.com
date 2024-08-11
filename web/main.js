@@ -179,9 +179,6 @@ document.querySelectorAll('.increment').forEach(item => {
 
         // Add 'active' class to clicked increment
         this.classList.add('active');
-
-        // Get the value from the clicked increment
-        const numWorkers = this.getAttribute('data-value');
     });
 });
 
@@ -249,6 +246,7 @@ function initWorkers() {
                 // writeJsLog but prepend worker index
                 writeJsLog(`(WORKER ${i}) ${e.data.data}`)
             } else if (e.data.msg === 'PROCESSING_DONE') {
+                incrementUsage();
                 // Handle the processed segment
                 // Collect and stitch segments
                 processedSegments[i] = e.data.waveforms;
@@ -270,6 +268,7 @@ function initWorkers() {
                     document.getElementById('batch-upload').disabled = true;
                 }
             } else if (e.data.msg === 'PROCESSING_DONE_BATCH') {
+                incrementUsage();
                 // similar global bs here
                 const filename = e.data.filename;
                 writeJsLog(`Batch job finished for ${filename}`)
@@ -558,6 +557,9 @@ function processBatchSegments(leftChannel, rightChannel, numSegments, filename, 
 }
 
 document.getElementById('load-and-demix').addEventListener('click', () => {
+    // check if we can
+    canPerformAction();
+
     // disable all buttons at the start of a new job
     document.getElementById('batch-upload').disabled = true;
     document.getElementById('load-and-demix').disabled = true;
@@ -732,6 +734,8 @@ function createDownloadLinks(buffers) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+    initializeLocalStorage();
+
     const modelCheckboxes = document.querySelectorAll('input[type="checkbox"][name="feature"]');
     const outputDiv = document.getElementById('suggestionOutput');
 
@@ -936,3 +940,54 @@ document.getElementById('batch-mode').addEventListener('change', function() {
     document.getElementById('batch-upload').disabled = false;
     // Additional logic for batch upload mode
 });
+
+function initializeLocalStorage() {
+    if (!localStorage.getItem('weeklyUsage')) {
+        localStorage.setItem('weeklyUsage', JSON.stringify({
+            count: 0,
+            weekStart: new Date().toISOString()
+        }));
+    }
+}
+
+function checkAndResetWeeklyLimit() {
+    const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
+    const weekStart = new Date(usageData.weekStart);
+    const now = new Date();
+
+    // Check if the current date is more than 7 days from the start of the week
+    if ((now - weekStart) > 7 * 24 * 60 * 60 * 1000) {
+        // Reset the count and update the start of the week
+        usageData.count = 0;
+        usageData.weekStart = now.toISOString();
+        localStorage.setItem('weeklyUsage', JSON.stringify(usageData));
+    }
+}
+
+function canPerformAction() {
+    // Check the user's tier from localStorage
+    const userTier = localStorage.getItem('userTier');
+    const userTierValue = userTier ? parseInt(userTier, 10) : 0;
+
+    // If the user is PRO (assuming tier 2 or higher), allow the action
+    if (userTierValue >= 2) {
+        return true;
+    }
+
+    checkAndResetWeeklyLimit();
+
+    const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
+
+    if (usageData.count < 5) {  // Assuming 5 is the weekly limit
+        return true;
+    } else {
+        alert('You have reached your weekly limit.');
+        return false;
+    }
+}
+
+function incrementUsage() {
+    const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
+    usageData.count += 1;
+    localStorage.setItem('weeklyUsage', JSON.stringify(usageData));
+}

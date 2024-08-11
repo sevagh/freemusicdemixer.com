@@ -14,3 +14,6 @@ web/_site
 !/web/assets/clips/*.wav
 *.pyc
 __pycache__
+wrangler.toml
+node_modules
+.wrangler
