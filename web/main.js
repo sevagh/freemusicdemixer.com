@@ -972,6 +972,9 @@ function canPerformAction() {
     const userTier = sessionStorage.getItem('userTier');
     const userTierValue = userTier ? parseInt(userTier, 10) : 0;
 
+    // log the user tier
+    console.log(`User tier: ${userTierValue}`);
+
     // If the user is PRO (assuming tier 2 or higher), allow the action
     if (userTierValue >= 2) {
         return true;
@@ -980,6 +983,9 @@ function canPerformAction() {
     checkAndResetWeeklyLimit();
 
     const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
+
+    // log the usage data
+    console.log(`Weekly usage data: ${usageData}`);
 
     if (usageData.count < 3) {
         return true;
