@@ -110,7 +110,7 @@ function activateTierUI(userTier) {
   console.log('Enabling UI for user tier:', userTier); // Debugging
   // Enable buttons based on user tier
 
-  localStorage.setItem('userTier', userTier); // Store the user tier in local storage
+  sessionStorage.setItem('userTier', userTier); // Store the user tier in local storage
 
   if (userTier >= 2) {
     const tier2Button00 = document.getElementById('load-weights-free-2');

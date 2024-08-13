@@ -737,7 +737,7 @@ function createDownloadLinks(buffers) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    initializeLocalStorage();
+    initializeLimitStorage();
 
     const modelCheckboxes = document.querySelectorAll('input[type="checkbox"][name="feature"]');
     const outputDiv = document.getElementById('suggestionOutput');
@@ -944,7 +944,7 @@ document.getElementById('batch-mode').addEventListener('change', function() {
     // Additional logic for batch upload mode
 });
 
-function initializeLocalStorage() {
+function initializeLimitStorage() {
     if (!localStorage.getItem('weeklyUsage')) {
         localStorage.setItem('weeklyUsage', JSON.stringify({
             count: 0,
@@ -969,7 +969,7 @@ function checkAndResetWeeklyLimit() {
 
 function canPerformAction() {
     // Check the user's tier from localStorage
-    const userTier = localStorage.getItem('userTier');
+    const userTier = sessionStorage.getItem('userTier');
     const userTierValue = userTier ? parseInt(userTier, 10) : 0;
 
     // If the user is PRO (assuming tier 2 or higher), allow the action
