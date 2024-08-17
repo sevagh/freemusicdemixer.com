@@ -40,6 +40,8 @@
 
 {% if page.keywords %}
 <meta name="keywords" content="{{ page.keywords }}">
+{% else if site.keywords %}
+<meta name="keywords" content="{{ site.keywords | join: ', ' }}">
 {% endif %}
 
 <!-- You can set your favicon here -->

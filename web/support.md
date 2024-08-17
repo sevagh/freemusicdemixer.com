@@ -1,3 +1,7 @@
+---
+description: "Get help and support for using our music demixing tools, whether you're on the web or Android."
+---
+
 # Customer support and refunds
 
 We offer a full refund for up to 7 days after purchase if you're not happy with the product. You should be able to initiate a refund from your Stripe billing page. Access your Stripe billing page [through this link](https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww).

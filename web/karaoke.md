@@ -1,8 +1,7 @@
 ---
 title: Karaoke any song for free!
-description: Use Free Music Demixer to create karaoke tracks. Remove vocals from any song with our website and Android app for high-quality karaoke experiences.
-keywords: free music demixer, karaoke, create karaoke tracks, remove vocals, vocal remover, karaoke tracks, karaoke app, AI music demixing, two-source karaoke
 header_class: karaoke
+description: "Create karaoke tracks by removing vocals with our advanced AI-powered music demixer."
 ---
 
 # Need Karaoke for a party? Start here!
@@ -74,16 +73,16 @@ Take your karaoke experience on the go with our Android app. Perfect for spontan
 
 ## FAQ
 
-**Q: How do I remove vocals from a song?**  
+**Q: How do I remove vocals from a song?**
 A: Simply upload your song to our platform, and our AI will remove the vocals for you.
 
-**Q: Is Free Music Demixer really free?**  
+**Q: Is Free Music Demixer really free?**
 A: Yes, you can create and download karaoke tracks for free. We also offer a PRO subscription with additional features.
 
-**Q: Can I use Free Music Demixer on my phone?**  
+**Q: Can I use Free Music Demixer on my phone?**
 A: Yes! Download our Android app to create karaoke tracks on the go.
 
-**Q: What formats can I download my karaoke tracks in?**  
+**Q: What formats can I download my karaoke tracks in?**
 A: You can save your karaoke tracks in the wav format, compatible with any device.
 
 ## Contact us

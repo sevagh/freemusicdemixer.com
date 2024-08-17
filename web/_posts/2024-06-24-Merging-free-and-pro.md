@@ -7,10 +7,6 @@ description: "Announcing the merging of our free and PRO websites in one conveni
 intro: "Announcing the merging of our free and PRO websites in one convenient UI!"
 ---
 
-<h2>Table of contents</h2>
-* Table of contents
-{:toc}
-
 {{ page.intro }}
 
 ## Our Free site

@@ -1,7 +1,6 @@
 ---
 header_class: blog
-description: Freemusicdemixer's blog, with content on music demixing, stem separation, source separation, neural networks, C++, webassembly, and more
-keywords: music demixing, stem separation, song splitting, AI model, Demucs, Transformer, free music demixer, isolate stems, private, unlimited use
+description: "Explore our blog for expert tips, in-depth guides, and the latest insights on using AI-powered music demixing tools. Learn how to extract vocals, separate instruments, and get the most out of our cutting-edge technology for creating custom mixes, karaoke tracks, and more."
 ---
 
 # Blog

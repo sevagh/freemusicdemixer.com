@@ -37,7 +37,7 @@
         <a id="a-title" href="{{ '/' | relative_url }}">
           <h1>{{ site.title | default: site.github.repository_name }}</h1>
         </a>
-        <h2>{{ site.human_description | default: site.github.project_tagline }}</h2>
+        <h2>{{ site.description | default: site.github.project_tagline }}</h2>
         <section id="downloads">
           <a href="{{ '/' | relative_url }}" class="btn btn-github">Home</a>
           <a href="{{ '/about' | relative_url }}" class="btn btn-github">About</a>
@@ -100,7 +100,7 @@
       'debugMode': 0,        // Prints all requests to console.
       'trackScroll': [25, 50, 75, 100], // Tracks scroll depth.
       'trackMedia': ['html5', 'vimeo', 'youtube'], // Tracks HTML5 video, audio, Vimeo and YouTube players events.
-      'nonInteraction': ['adblock', 'audio', 'color-scheme', 'form', 'heartbeat', 
+      'nonInteraction': ['adblock', 'audio', 'color-scheme', 'form', 'heartbeat',
                          'orientation', 'print', 'scroll', 'video'] // List of non interaction events.
     };
     </script>

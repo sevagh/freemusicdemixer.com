@@ -1,7 +1,6 @@
 ---
 header_class: index
-keywords: music demixing, stem separation, song splitting, AI model, Demucs, Transformer, free music demixer, private, unlimited use, browser, Android
-description: "Split songs, demix music, and separate stems with our AI-based tool: private and unlimited use directly in your browser or on your Android phone"
+description: "Download our Android app and experience music demixing on the go with our powerful AI tools."
 ---
 
 # Android app download
