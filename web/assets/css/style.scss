@@ -235,43 +235,69 @@ audio {
   margin-bottom: 0px; /* Reduced spacing below audio player */
 }
 
-div.mdx-container {
-  position: relative;
+.special-text {
+  font-size: 18px; /* Moderate font size */
+  font-family: "Courier New", monospace;
+  text-transform: uppercase; /* Uppercase text for emphasis */
+  font-weight: bold; /* Normal font weight for less emphasis */
+  text-align: left;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  width: 80%; /* Adjust width as per your requirement */
-  height: auto; /* Adjust height as per your requirement */
-  margin: 2vh auto; /* Auto horizontal margins for centering and 2vh vertical margin */
-  border-radius: 10px; /* Rounded corners */
-  color: #e0ffff; /* Text color - Light Cyan */
-  padding: 2%;
-  overflow: auto; /* Will add a scrollbar if the content overflows */
-  z-index: 1;
-  //background: navy;
-  background-color: rgba(0, 64, 128, 1.0); /* Light cyan background color with 50% opacity */
+}
+
+.upload-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Align items vertically centered */
+  gap: 10px; /* Small and consistent gap between elements */
+}
+
+.upload-section label {
+  font-size: 16px; /* Consistent font size */
+  font-weight: normal;
+  margin-right: 5px; /* Small margin to keep spacing consistent */
+}
+
+.upload-section input[type="file"] {
+  //display: inline-block;
+  width: auto;
+  font-size: 14px; /* Match input size with labels */
+  margin-right: 5px; /* Keep small margin between input elements */
+}
+
+.upload-section span {
+  margin: 0 5px; /* Small margin around "or" */
+  font-weight: normal;
+}
+
+.radio-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.memory-selection {
+    display: flex;
+    align-items: center;
+    margin-top: 20px; /* Adds spacing above */
+    margin-bottom: 20px; /* Adds spacing below */
+}
+
+.memory-selection label {
+    margin-right: 10px;
+}
+
+.memory-selection select {
+    margin-right: 10px;
 }
 
 .bottom-right {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
   margin-left: auto;
   align-self: flex-end;
 }
-
-.output-link-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  //width: 80%; /* Adjust width as per your requirement */
-  margin: 2vh auto; /* Auto horizontal margins for centering and 2vh vertical margin */
-  padding: 2%;
-  //background-color: rgba(0, 64, 128, 1.0); /* Light cyan background color with 50% opacity */
-  background-color: white;
-  border-radius: 10px; /* Rounded corners */
-  color: #e0ffff; /* Text color - Light Cyan */
-  overflow: auto; /* Will add a scrollbar if the content overflows */
-}
-
 
 /* Base styles for the image */
 img.responsive-img {
@@ -479,13 +505,11 @@ div.tag-cloud {
     z-index: 2;
     cursor: pointer;
     text-align: center;
+    flex-direction: column;
 }
 
 .loader {
     display: none;
-    position: absolute;
-    top: 50%;
-    left: 46.5%;
     border: 5px solid #f3f3f3;
     border-radius: 50%;
     border-top: 5px solid #3498db;
@@ -493,6 +517,7 @@ div.tag-cloud {
     height: 50px;
     -webkit-animation: spin 2s linear infinite; /* Safari */
     animation: spin 2s linear infinite;
+    margin-bottom: 20px;
 }
 
 /* Safari */
@@ -504,55 +529,6 @@ div.tag-cloud {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-.tier-button {
-  position: relative; /* Needed to use z-index */
-  z-index: 3; /* Higher than the overlay's z-index */
-  font-size: 20px; /* Larger font size for better visibility */
-  padding: 8px 12px; /* Adjust padding to maintain visual balance with larger font */
-  margin-bottom: 16px; /* Extra space below the button */
-  cursor: pointer; /* Cursor indicates it's clickable */
-  font-family: "Courier New", monospace;
-  border: none; /* Remove border for a modern look */
-  border-radius: 5px; /* Rounded corners */
-  text-transform: uppercase; /* Uppercase text for emphasis */
-  font-weight: bold; /* Bold font weight */
-  //transition: background-color 0.3s; /* Smooth background color transition for hover effect */
-}
-
-#load-weights-free-1 {
-  margin-top: 2.5%;
-}
-
-.tier-0 {
-  background-color: white; /* White text color for better contrast */
-  color: black; /* Add a background color to make it stand out (Tomato color for example) */
-}
-
-.tier-2 {
-  color: #000000; /* Changed to black for better contrast */
-  background: #fdd835; /* A bright yellow instead of gold */
-}
-
-.tier-button:active {
-  transform: translateY(1px);
-}
-
-/* Hover styles with higher specificity */
-.tier-button:hover {
-  box-shadow: 0 0 15px white; /* Adjust shadow color to match */
-  transform: translateY(-2px); /* Lift the button up slightly on hover */
-}
-
-.tier-button:disabled {
-  //opacity: 0.5; /* Lower opacity for a "disabled" look */
-  cursor: not-allowed; /* Change cursor to indicate non-interactive */
-  // make gray
-  background-color: darkgrey;
-  color: #666666;
-  // add a padlock emoji
-  content: "\1F512";
 }
 
 .centered-text {
@@ -572,33 +548,6 @@ blockquote {
     margin: 10px 20px; /* Adjusts top and bottom margin */
     padding-left: 15px; /* Adds padding to the left of the blockquote */
     font-style: italic; /* Optional: italicizes the quote text */
-}
-
-.upload-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.radio-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.memory-selection {
-    display: flex;
-    align-items: center;
-    margin-top: 20px; /* Adds spacing above */
-    margin-bottom: 20px; /* Adds spacing below */
-}
-
-.memory-selection label {
-    margin-right: 10px;
-}
-
-.memory-selection select {
-    margin-right: 10px;
 }
 
 .sticky-banner {
@@ -824,107 +773,6 @@ audio {
     font-size: large; /* or the specific size you want */
 }
 
-.cta-container {
-  text-align: left; /* Align text to the left */
-  margin: 20px 20px 40px 20px;
-}
-
-.cta-link {
-  display: inline-block;
-  background-color: #ff6600; /* Bright orange to grab attention */
-  color: #1a1a1a; /* Dark gray text for better readability */
-  font-size: 1.2em;
-  font-weight: bold;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  animation: pulse 2s infinite; /* Add pulsing animation */
-}
-
-.cta-link:hover {
-  background-color: #e65c00; /* Slightly darker orange for hover effect */
-  transform: translateY(-2px); /* Slight lift on hover */
-}
-
-.cta-arrows {
-  font-size: 1.5em;
-  vertical-align: middle;
-}
-
-.cta-arrows.left {
-  margin-right: 10px;
-}
-
-.cta-arrows.right {
-  margin-left: 10px;
-}
-
-/* Define the pulsing animation */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Android variant CTA container */
-.cta-container-android {
-  text-align: left; /* Align text to the left */
-  margin: 15px 15px 30px 15px; /* Slightly smaller margins */
-}
-
-.cta-link-android {
-  display: inline-block;
-  background-color: #3ddc84; /* Android-like green */
-  color: #000000; /* White text for better readability on dark background */
-  font-size: 1em; /* Slightly smaller font size */
-  font-weight: bold;
-  padding: 8px 18px; /* Slightly smaller padding */
-  text-decoration: none;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  animation: pulse-android 2s infinite; /* Add pulsing animation */
-}
-
-.cta-link-android:hover {
-  background-color: #2e7d32; /* Darker green for hover effect */
-  transform: translateY(-2px); /* Slight lift on hover */
-}
-
-.cta-arrows-android {
-  font-size: 1.2em; /* Slightly smaller font size */
-  vertical-align: middle;
-}
-
-.cta-arrows-android.left {
-  margin-right: 8px;
-}
-
-.cta-arrows-android.right {
-  margin-left: 8px;
-}
-
-/* Define the pulsing animation for Android variant */
-@keyframes pulse-android {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
 /* Container to maintain aspect ratio */
 .video-container {
   position: relative;
@@ -943,7 +791,259 @@ audio {
   width: 100%;
   height: 100%;
 }
- 
+
+.popup-banner-hidden {
+  display: none;
+}
+
+.popup-banner-shown {
+  display: flex;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto; /* adjust width as necessary */
+  max-width: 500px; /* max-width for responsiveness */
+  background: #ffffff;
+  color: black;
+  font-size: 24px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: none;
+}
+
+.popup-overlay-shown {
+  display: block;
+}
+
+.popup-close-button {
+  background: none;
+  border: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.popup-title {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.popup-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.popup-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Output links container */
+.output-link-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align items to the top-left */
+  justify-content: flex-start; /* Start content from the top */
+  padding: 5px 10px; /* Add a little padding for the content */
+  margin: 0 auto; /* Auto horizontal margins for centering */
+  background-color: #e0ffff; /* Match the site's light cyan background */
+  border-radius: 10px; /* Rounded corners */
+  color: #8b008b; /* Dark Magenta text */
+  max-height: 130px; /* Set a max height to prevent overflow */
+  overflow-y: scroll; /* Always show the vertical scrollbar */
+  scrollbar-width: thin; /* For Firefox */
+  width: calc(100% - 25px); /* Ensure the container takes the full width minus space for the scrollbar */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.output-link-container::-webkit-scrollbar {
+  width: 10px; /* Width of the scrollbar for WebKit browsers */
+}
+
+.output-link-container::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Background of the scrollbar track */
+}
+
+.output-link-container::-webkit-scrollbar-thumb {
+  background: #8b008b; /* Dark Magenta for the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for the scrollbar thumb */
+}
+
+.output-link-container::-webkit-scrollbar-thumb:hover {
+  background: #c71585; /* Medium Violet Red on hover */
+}
+
+/* Adjust the spacing between the links */
+.output-link-container a {
+  color: #8b008b; /* Dark Magenta links */
+  text-decoration: underline;
+  white-space: nowrap; /* Prevent links from wrapping onto a new line */
+}
+
+/* Hover effect for output links */
+.output-link-container a:hover {
+  color: #c71585; /* Medium Violet Red on hover */
+}
+
+/* Adjusted Wizard Container */
+.wizard-container {
+  width: 400px;
+  height: 400px; /* or use a percentage-based height, e.g., height: 80%; */
+  background-color: #e0ffff; /* Light Cyan to match the site background */
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distribute space between elements */
+  color: #8b008b; /* Dark Magenta for text */
+  font-family: Arial, sans-serif; /* Match the site's font */
+  position: relative; /* Allows positioning of buttons inside */
+  padding: 20px 20px 20px 0; /* Remove left padding: top right bottom left */
+  box-sizing: border-box; /* Ensures padding is included in width and height */
+  overflow: hidden; /* Prevents overflow from disrupting the layout */
+}
+
+/* Wizard footer */
+.wizard-footer {
+  display: flex;
+  justify-content: flex-start; /* Align buttons to the left */
+  align-items: center;
+  gap: 10px; /* Space between prev and next buttons */
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: calc(100% - 40px); /* Full width with padding accounted for */
+}
+
+/* Previous button styling */
+.wizard-prev-btn {
+  padding: 12px 20px;
+  background-color: #8b008b; /* Dark Magenta */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Next button styling */
+.wizard-next-btn {
+  padding: 12px 20px;
+  background-color: #8b008b; /* Dark Magenta */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effects for both buttons */
+.wizard-prev-btn:hover,
+.wizard-next-btn:hover {
+  background-color: #c71585; /* Medium Violet Red on hover */
+}
+
+/* Disabled state for the Next button */
+.wizard-prev-btn:disabled,
+.wizard-next-btn:disabled {
+  background-color: #cccccc; /* Lighter grey to indicate disabled state */
+  color: #666666; /* Darker grey text to show it's disabled */
+  cursor: not-allowed; /* Change cursor to indicate the button is not clickable */
+}
+
+/* Step heading */
+.wizard-step h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  text-align: left; /* Align to the left */
+  color: #8b008b; /* Dark Magenta for headings */
+}
+
+.wizard-step h3 {
+  color: #8b008b; /* Dark Magenta */
+  margin-bottom: 0px;
+}
+
+/* Instruction text */
+.wizard-step p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  text-align: left; /* Align to the left */
+  color: #c71585; /* Medium Violet Red for instructions */
+}
+
+/* Input group styling */
+.input-group {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+/* File input styling */
+input[type="file"] {
+  width: auto;
+  padding: 0px;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: #333333;
+  border: 2px solid #555555;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+  background: #8b008b; /* Dark Magenta button color */
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Ensure the cursor shows as not-allowed for disabled checkboxes and radio buttons */
+input[type="checkbox"][disabled] + label,
+input[type="radio"][disabled] + label {
+  cursor: not-allowed;
+  color: grey; /* Lighter grey text for disabled options */
+  opacity: 0.6; /* Slightly faded to match the disabled state */
+}
+
+/* Container for the two columns */
+.columns-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0px;
+}
+
+/* Each column should take up approximately half the available space */
+.column {
+  width: 48%;
+}
+
 /* Media query for very large screens or default styles */
 @media (min-width: 1200px) {
   .wrapper {
@@ -1129,74 +1229,4 @@ audio {
   .karaoke-header {
     width: calc(100vw + 80px);
   }
-}
-
-.popup-banner-hidden {
-  display: none;
-}
-
-.popup-banner-shown {
-  display: flex;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: auto; /* adjust width as necessary */
-  max-width: 500px; /* max-width for responsiveness */
-  background: #ffffff;
-  color: black;
-  font-size: 24px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1001;
-  flex-direction: column;
-  align-items: center;
-  border-radius: 10px;
-  text-align: center;
-}
-
-.popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  z-index: 1000;
-  display: none;
-}
-
-.popup-overlay-shown {
-  display: block;
-}
-
-.popup-close-button {
-  background: none;
-  border: none;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-  font-size: 24px;
-}
-
-.popup-title {
-  font-size: 32px;
-  margin-bottom: 20px;
-}
-
-.popup-btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 24px;
-}
-
-.popup-btn:hover {
-  background-color: #0056b3;
 }

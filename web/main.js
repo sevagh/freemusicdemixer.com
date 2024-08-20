@@ -1,13 +1,99 @@
 import { encodeWavFileFromAudioBuffer } from './WavFileEncoder.js';
-import { dummyLogin } from './login.js';
 
-// start by disabling the buttons globally
-document.getElementById('load-weights-free-2').disabled = true;
-document.getElementById('load-weights-free-3').disabled = true;
-document.getElementById('load-weights-karaoke').disabled = true;
-document.getElementById('load-weights-pro-ft').disabled = true;
-document.getElementById('load-weights-pro-cust').disabled = true;
-document.getElementById('load-weights-pro-deluxe').disabled = true;
+const modelCheckboxes = document.querySelectorAll('input[type="checkbox"][name="feature"]');
+const qualityRadios = document.querySelectorAll('input[type="radio"][name="quality"]');
+const selectedModelMessage = document.getElementById('selectedModelMessage');
+modelCheckboxes.forEach(checkbox => checkbox.addEventListener('change', updateModelBasedOnSelection));
+qualityRadios.forEach(radio => radio.addEventListener('change', updateModelBasedOnSelection));
+let selectedModel;
+
+let NUM_WORKERS = 4;
+let workers;
+let workerProgress;
+let dlModelBuffers;
+
+let processedSegments = new Array(NUM_WORKERS); // Global accumulator for processed segments
+let completedSegments = 0; // Counter for processed segments
+let completedSongsBatch = 0; // Counter for processed songs in batch mode
+let batchNextFileResolveCallback = null; // Callback for resolving the next file in batch mode
+let globalProgressIncrement = 0; // Global progress increment for batch mode
+let unzippedWasmFiles = {};
+
+const SAMPLE_RATE = 44100;
+const OVERLAP_S = 0.75;
+const OVERLAP_SAMPLES = Math.floor(SAMPLE_RATE * OVERLAP_S);
+
+const tierNames = {2: 'Pro'};
+const tierLogos = {2: '/assets/images/logo_pro.webp'};
+
+const dl_prefix = "https://bucket.freemusicdemixer.com";
+
+const modelStemMapping = {
+    'demucs-free-4s': ['bass', 'drums', 'melody', 'vocals'],
+    'demucs-free-6s': ['bass', 'drums', 'other_melody', 'vocals', 'guitar', 'piano'],
+    'demucs-free-v3': ['bass', 'drums', 'melody', 'vocals'],
+    'demucs-karaoke': ['vocals', 'instrum'],
+    'demucs-pro-ft': ['bass', 'drums', 'melody', 'vocals'],
+    'demucs-pro-cust': ['bass', 'drums', 'other_melody', 'vocals', 'guitar', 'piano', 'melody'],
+    'demucs-pro-deluxe': ['bass', 'drums', 'melody', 'vocals']
+};
+
+let audioContext;
+
+const fileInput = document.getElementById('audio-upload');
+const folderInput = document.getElementById('batch-upload');
+const selectedInputMessage = document.getElementById('selectedInputMessage');
+let isSingleMode = true;
+let selectedInput = null;
+
+const step1 = document.getElementById('wizard-step-1');
+const step2 = document.getElementById('wizard-step-2');
+const step3 = document.getElementById('wizard-step-3');
+const step4 = document.getElementById('wizard-step-4');
+const step5 = document.getElementById('wizard-step-5');
+
+const nextStep1Btn = document.getElementById('next-step-1');
+const nextStep2Btn = document.getElementById('next-step-2');
+const nextStep3Btn = document.getElementById('next-step-3');
+const nextStep4Btn = document.getElementById('next-step-4');
+const nextStep5Btn = document.getElementById('next-step-5');
+
+const prevStep2Btn = document.getElementById('prev-step-2');
+const prevStep3Btn = document.getElementById('prev-step-3');
+const prevStep4Btn = document.getElementById('prev-step-4');
+const prevStep5Btn = document.getElementById('prev-step-5');
+
+const usageLimits = document.getElementById('usage-limits');
+const emailInput = document.getElementById('billing-email');
+const responseMessage = document.getElementById('response-message');
+
+function getAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)({sampleRate: SAMPLE_RATE});
+    }
+    return audioContext;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    resetUIElements();
+
+    const storedEmail = localStorage.getItem('billingEmail');
+    const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+
+    if (isLoggedIn && storedEmail) {
+        // User is already logged in, activate the content
+        activateProContent(storedEmail);
+    }
+});
+
+// premium content gets loaded here
+window.addEventListener('unzippedFilesReady', (e) => {
+  console.log('Unzipped files ready:', e.detail.files);
+  unzippedWasmFiles = e.detail.files; // Store the unzipped files in memory
+
+  // register the service worker to start downloading weights files
+  registerServiceWorker();
+});
 
 const registerServiceWorker = async () => {
   if ("serviceWorker" in navigator) {
@@ -28,10 +114,149 @@ const registerServiceWorker = async () => {
   }
 };
 
-const SAMPLE_RATE = 44100;
-const OVERLAP_S = 0.75;
+function dummyLogin() {
+  // Fetch the wasm_tier_0.zip file
+  fetch('/wasm_tier_0.zip')
+    .then(response => {
+      if (!response.ok) throw new Error('Failed to fetch content');
+      return response.blob();
+    })
+    .then(blob => {
+      return blob.arrayBuffer();
+    })
+    .then(arrayBuffer => {
+      const zipData = new Uint8Array(arrayBuffer);
+      const unzipped = fflate.unzipSync(zipData);
+      return unzipped;
+    })
+    .then(unzipped => {
+      // Process and store unzipped files
+      const files = Object.keys(unzipped).reduce((fileObjects, fileName) => {
+        // Create blobs from the unzipped files
+        fileObjects[fileName] = new Blob([unzipped[fileName]], { type: 'text/javascript' });
+        return fileObjects;
+      }, {});
 
-const OVERLAP_SAMPLES = Math.floor(SAMPLE_RATE * OVERLAP_S);
+      // Dispatch a custom event with the unzipped files
+      const event = new CustomEvent('unzippedFilesReady', { detail: { files } });
+      window.dispatchEvent(event);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
+
+function resetUIElements() {
+    // Disable PRO-tier checkboxes (piano, guitar) and add lock symbol
+    document.getElementById('piano').disabled = true;
+    document.querySelector('label[for="piano"]').textContent = 'Piano 🔒';
+
+    document.getElementById('guitar').disabled = true;
+    document.querySelector('label[for="guitar"]').textContent = 'Guitar 🔒';
+
+    // Disable PRO-tier radio buttons (medium, high quality) and add lock symbol
+    document.getElementById('low-quality').disabled = true;
+    document.querySelector('label[for="low-quality"]').textContent = 'Low (fast!) 🔒';
+
+    document.getElementById('medium-quality').disabled = true;
+    document.querySelector('label[for="medium-quality"]').textContent = 'Medium 🔒';
+
+    document.getElementById('high-quality').disabled = true;
+    document.querySelector('label[for="high-quality"]').textContent = 'High 🔒';
+
+    // Reset checkboxes
+    modelCheckboxes.forEach(checkbox => checkbox.checked = false);
+    document.getElementById('vocals').checked = true;
+    document.getElementById('drums').checked = true;
+    document.getElementById('bass').checked = true;
+    document.getElementById('instrumental').checked = true;
+
+    // Reset quality radio buttons
+    qualityRadios.forEach(radio => radio.checked = false);
+    document.getElementById('default-quality').checked = true;
+
+    // Reset dropdown
+    selectedModelMessage.innerHTML = "Selected model: <b>4-SOURCE (FREE)</b>";
+
+    // reset all disabled buttons to disabled
+    nextStep1Btn.disabled = true;
+    nextStep4Btn.disabled = true;
+    prevStep5Btn.disabled = true;
+    nextStep5Btn.disabled = true;
+
+    initializeInputState();
+
+    // if the user is logged in, activate tier UIs
+    const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
+    if (loggedIn) {
+        const userTier = parseInt(sessionStorage.getItem('userTier'));
+        activateTierUI(userTier);
+    }
+}
+
+function updateModelBasedOnSelection() {
+    console.log('Updating model based on selection');
+
+    const selectedFeatures = Array.from(modelCheckboxes)
+    .filter(checkbox => checkbox.checked)
+    .map(checkbox => checkbox.value);
+
+    const selectedQuality = document.querySelector('input[type="radio"][name="quality"]:checked').value;
+
+    let selectedModelLocal = "4-SOURCE (FREE)"; // Default model
+
+    // Rule 1: If the sources contain piano and/or guitar
+    if (selectedFeatures.includes("piano") || selectedFeatures.includes("guitar")) {
+        if (selectedQuality === "low" || selectedQuality === "default") {
+            selectedModelLocal = "6-SOURCE (PRO)";
+        } else if (selectedQuality === "medium" || selectedQuality === "high") {
+            selectedModelLocal = "CUSTOM (PRO)";
+        }
+    }
+    // Rule 2: If the sources contain only vocals and/or instrumental (with no other stems)
+    else if (selectedFeatures.every(item => ["vocals", "instrumental"].includes(item))) {
+        if (selectedQuality === "low") {
+            selectedModelLocal = "V3 (PRO)";
+        } else if (selectedQuality === "default") {
+            selectedModelLocal = "4-SOURCE (FREE)";
+        } else if (selectedQuality === "medium") {
+            selectedModelLocal = "FINE-TUNED (PRO)";
+        } else if (selectedQuality === "high") {
+            selectedModelLocal = "KARAOKE (PRO)";
+        }
+    }
+    // Rule 3: Normal case (any of vocals, drums, bass, but no piano/guitar)
+    else if (selectedFeatures.some(item => ["vocals", "drums", "bass"].includes(item))) {
+        if (selectedQuality === "low") {
+            selectedModelLocal = "V3 (PRO)";
+        } else if (selectedQuality === "default") {
+            selectedModelLocal = "4-SOURCE (FREE)";
+        } else if (selectedQuality === "medium") {
+            selectedModelLocal = "FINE-TUNED (PRO)";
+        } else if (selectedQuality === "high") {
+            selectedModelLocal = "DELUXE (PRO)";
+        }
+    }
+
+    // Update the displayed model
+    selectedModelMessage.innerHTML = `Selected model: <b>${selectedModelLocal}</b>`;
+
+    if (selectedModelLocal === "4-SOURCE (FREE)") {
+        selectedModel = 'demucs-free-4s';
+    } else if (selectedModelLocal === "6-SOURCE (PRO)") {
+        selectedModel = 'demucs-free-6s';
+    } else if (selectedModelLocal === "FINE-TUNED (PRO)") {
+        selectedModel = 'demucs-pro-ft';
+    } else if (selectedModelLocal === "KARAOKE (PRO)") {
+        selectedModel = 'demucs-karaoke';
+    } else if (selectedModelLocal === "CUSTOM (PRO)") {
+        selectedModel = 'demucs-pro-cust';
+    } else if (selectedModelLocal === "DELUXE (PRO)") {
+        selectedModel = 'demucs-pro-deluxe';
+    } else if (selectedModelLocal === "V3 (PRO)") {
+        selectedModel = 'demucs-free-v3';
+    }
+}
 
 function segmentWaveform(left, right, n_segments) {
     const totalLength = left.length;
@@ -75,8 +300,6 @@ function segmentWaveform(left, right, n_segments) {
 }
 
 function sumSegments(segments, desiredLength) {
-    writeJsLog("Summing segments")
-
     const totalLength = desiredLength;
     const segmentLengthWithPadding = segments[0][0].length;
     const actualSegmentLength = segmentLengthWithPadding - 2 * OVERLAP_SAMPLES;
@@ -113,7 +336,6 @@ function sumSegments(segments, desiredLength) {
         }
     });
 
-    writeJsLog("Normalizing output")
     // Normalize the output by the sum of weights
     for (let target = 0; target < output.length; target++) {
         for (let i = 0; i < totalLength; i++) {
@@ -127,81 +349,12 @@ function sumSegments(segments, desiredLength) {
     return output;
 }
 
-//let audioContext = new window.AudioContext({sampleRate: SAMPLE_RATE});
-// Lazy initialization of AudioContext
-let audioContext;
-
-// Function to get or create the audioContext
-function getAudioContext() {
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)({sampleRate: SAMPLE_RATE});
-    }
-    return audioContext;
-}
-
 // Event listener for user interaction
 document.addEventListener('click', function() {
     let context = getAudioContext();
     if (context.state === 'suspended') {
         context.resume();
     }
-});
-
-// disable the input file upload and the waveform upload button
-document.getElementById('audio-upload').disabled = true;
-document.getElementById('batch-upload').disabled = true;
-document.getElementById('load-and-demix').disabled = true;
-
-// enable the overlay to indicate the apps are not ready to process tracks yet
-// until user presses download-weights
-document.getElementById('overlay-unified').style.display = 'block';
-
-// When the download is complete, hide the overlay and spinner
-function hideOverlay() {
-    document.getElementById('overlay-unified').style.display = 'none';
-    document.getElementById('load-weights-free-1').style.display = 'none';
-    document.getElementById('load-weights-free-2').style.display = 'none';
-    document.getElementById('load-weights-free-3').style.display = 'none';
-    document.getElementById('load-weights-karaoke').style.display = 'none';
-    document.getElementById('load-weights-pro-ft').style.display = 'none';
-    document.getElementById('load-weights-pro-cust').style.display = 'none';
-    document.getElementById('load-weights-pro-deluxe').style.display = 'none';
-}
-
-function showSpinner() {
-    document.getElementById('overlay-unified').querySelector('.loader').style.display = 'block';
-}
-
-document.querySelectorAll('.increment').forEach(item => {
-    item.addEventListener('click', function() {
-        // Remove 'active' class from all increments
-        document.querySelectorAll('.increment').forEach(i => i.classList.remove('active'));
-
-        // Add 'active' class to clicked increment
-        this.classList.add('active');
-    });
-});
-
-let NUM_WORKERS = 4;
-let workers;
-let workerProgress;
-let selectedModel;
-let dlModelBuffers;
-
-let processedSegments = new Array(NUM_WORKERS); // Global accumulator for processed segments
-let completedSegments = 0; // Counter for processed segments
-let completedSongsBatch = 0; // Counter for processed songs in batch mode
-let batchNextFileResolveCallback = null; // Callback for resolving the next file in batch mode
-let globalProgressIncrement = 0; // Global progress increment for batch mode
-let unzippedWasmFiles = {};
-
-// premium content gets loaded here
-window.addEventListener('unzippedFilesReady', (e) => {
-  console.log('Unzipped files ready:', e.detail.files);
-  unzippedWasmFiles = e.detail.files; // Store the unzipped files in memory
-
-  // register the service worker to start downloading weights files
-  registerServiceWorker();
 });
 
 function initWorkers() {
@@ -224,7 +377,6 @@ function initWorkers() {
 
         workers[i].onmessage = function(e) {
             if (e.data.msg == 'WASM_READY') {
-                writeJsLog(`Worker ${i} is ready!`);
             } else if (e.data.msg === 'PROGRESS_UPDATE') {
                 // Update the progress bar
                 // adjust for total number of workers
@@ -239,12 +391,6 @@ function initWorkers() {
                 const startingPointForCurrentSong = (completedSongsBatch * globalProgressIncrement);
                 const newBatchWidth = startingPointForCurrentSong + totalProgressForCurrentSong;
                 document.getElementById('inference-progress-bar').style.width = `${newBatchWidth}%`;
-            } else if (e.data.msg === 'WASM_LOG') {
-                // writeWasmLog but prepend worker index
-                writeWasmLog(`(WORKER ${i}) ${e.data.data}`)
-            } else if (e.data.msg === 'WORKER_JS_LOG') {
-                // writeJsLog but prepend worker index
-                writeJsLog(`(WORKER ${i}) ${e.data.data}`)
             } else if (e.data.msg === 'PROCESSING_DONE') {
                 // Handle the processed segment
                 // Collect and stitch segments
@@ -261,16 +407,13 @@ function initWorkers() {
                     processedSegments = null; // this one will be recreated with appropriate num_workers next time
                     completedSegments = 0;
 
-                    // re-enable the buttons
-                    document.getElementById('single-mode').click();
-                    document.getElementById('load-and-demix').disabled = false;
-                    document.getElementById('audio-upload').disabled = false;
-                    document.getElementById('batch-upload').disabled = true;
+                    // enable the buttons to leave the final wizard step
+                    prevStep5Btn.disabled = false;
+                    nextStep5Btn.disabled = false;
                 }
             } else if (e.data.msg === 'PROCESSING_DONE_BATCH') {
                 // similar global bs here
                 const filename = e.data.filename;
-                writeJsLog(`Batch job finished for ${filename}`)
                 processedSegments[i] = e.data.waveforms;
                 completedSegments += 1;
                 let originalLength = e.data.originalLength;
@@ -297,10 +440,9 @@ function initWorkers() {
                     if (completedSongsBatch === document.getElementById('batch-upload').files.length) {
                         completedSongsBatch = 0;
                         // re-enable the buttons
-                        document.getElementById('batch-mode').click();
-                        document.getElementById('load-and-demix').disabled = false;
-                        document.getElementById('audio-upload').disabled = true;
-                        document.getElementById('batch-upload').disabled = false;
+                        // enable the buttons to leave the final wizard step
+                        prevStep5Btn.disabled = false;
+                        nextStep5Btn.disabled = false;
 
                         // terminate the workers
                         workers.forEach(worker => {
@@ -350,9 +492,6 @@ function initWorkers() {
     }
 };
 
-// cloudflare R2 bucket
-const dl_prefix = "https://bucket.freemusicdemixer.com";
-
 function fetchAndCacheFiles(model) {
     let modelFiles = [];
     if (model === 'demucs-free-4s') {
@@ -398,135 +537,25 @@ function fetchAndCacheFiles(model) {
 }
 
 function initModel() {
-    fetchAndCacheFiles(selectedModel)
-        .then(buffers => { // buffers are the downloaded file contents
-            writeJsLog(`Fetching and caching model files for selected model: ${selectedModel}`);
+    displayStep3Spinner();
 
+    return fetchAndCacheFiles(selectedModel)
+        .then(buffers => { // buffers are the downloaded file contents
             // WASM module is ready, enable the buttons
-            hideOverlay();
-            document.getElementById('single-mode').click();
-            document.getElementById('audio-upload').disabled = false;
-            document.getElementById('batch-upload').disabled = true;
-            document.getElementById('load-and-demix').disabled = false;
+            nextStep4Btn.disabled = false;
 
             dlModelBuffers = buffers;
+            console.log('Model files downloaded:', buffers);
         })
         .catch(error => {
-            writeJsLog(`Error in fetching model files: ${error}`);
             // Handle errors, maybe keep the overlay visible or show an error message
+            console.log('Failed to fetch model files:', error);
+        })
+        .finally(() => {
+            // Remove the spinner and re-enable the buttons
+            removeStep3Spinner();
         });
 }
-
-document.getElementById('log-clear').addEventListener('click', () => {
-    clearLogs();
-});
-
-document.getElementById('load-weights-free-1').addEventListener('click', () => {
-    dummyLogin();
-
-    showSpinner();
-    document.getElementById('load-weights-free-1').disabled = true;
-    document.getElementById('load-weights-free-2').disabled = true;
-    document.getElementById('load-weights-free-3').disabled = true;
-    document.getElementById('load-weights-karaoke').disabled = true;
-    document.getElementById('load-weights-pro-ft').disabled = true;
-    document.getElementById('load-weights-pro-cust').disabled = true;
-    document.getElementById('load-weights-pro-deluxe').disabled = true;
-    selectedModel = 'demucs-free-4s';
-
-    trackProductEvent('Chose Model', { model: 'demucs-free-4s'});
-    initModel();
-});
-
-document.getElementById('load-weights-free-2').addEventListener('click', () => {
-    showSpinner();
-    document.getElementById('load-weights-free-1').disabled = true;
-    document.getElementById('load-weights-free-2').disabled = true;
-    document.getElementById('load-weights-free-3').disabled = true;
-    document.getElementById('load-weights-karaoke').disabled = true;
-    document.getElementById('load-weights-pro-ft').disabled = true;
-    document.getElementById('load-weights-pro-cust').disabled = true;
-    document.getElementById('load-weights-pro-deluxe').disabled = true;
-    selectedModel = 'demucs-free-6s';
-
-    trackProductEvent('Chose Model', { model: 'demucs-free-6s'});
-    initModel();
-});
-
-document.getElementById('load-weights-free-3').addEventListener('click', () => {
-    showSpinner();
-    document.getElementById('load-weights-free-1').disabled = true;
-    document.getElementById('load-weights-free-2').disabled = true;
-    document.getElementById('load-weights-free-3').disabled = true;
-    document.getElementById('load-weights-karaoke').disabled = true;
-    document.getElementById('load-weights-pro-ft').disabled = true;
-    document.getElementById('load-weights-pro-cust').disabled = true;
-    document.getElementById('load-weights-pro-deluxe').disabled = true;
-    selectedModel = 'demucs-free-v3';
-
-    trackProductEvent('Chose Model', { model: 'demucs-free-v3'});
-    initModel();
-});
-
-document.getElementById('load-weights-karaoke').addEventListener('click', () => {
-    showSpinner();
-    document.getElementById('load-weights-free-1').disabled = true;
-    document.getElementById('load-weights-free-2').disabled = true;
-    document.getElementById('load-weights-free-3').disabled = true;
-    document.getElementById('load-weights-karaoke').disabled = true;
-    document.getElementById('load-weights-pro-ft').disabled = true;
-    document.getElementById('load-weights-pro-cust').disabled = true;
-    document.getElementById('load-weights-pro-deluxe').disabled = true;
-    selectedModel = 'demucs-karaoke';
-
-    trackProductEvent('Chose Model', { model: 'demucs-karaoke'});
-    initModel();
-});
-
-document.getElementById('load-weights-pro-ft').addEventListener('click', () => {
-    showSpinner();
-    document.getElementById('load-weights-free-1').disabled = true;
-    document.getElementById('load-weights-free-2').disabled = true;
-    document.getElementById('load-weights-free-3').disabled = true;
-    document.getElementById('load-weights-karaoke').disabled = true;
-    document.getElementById('load-weights-pro-ft').disabled = true;
-    document.getElementById('load-weights-pro-cust').disabled = true;
-    document.getElementById('load-weights-pro-deluxe').disabled = true;
-    selectedModel = 'demucs-pro-ft';
-
-    trackProductEvent('Chose Model', { model: 'demucs-pro-ft'});
-    initModel();
-});
-
-document.getElementById('load-weights-pro-cust').addEventListener('click', () => {
-    showSpinner();
-    document.getElementById('load-weights-free-1').disabled = true;
-    document.getElementById('load-weights-free-2').disabled = true;
-    document.getElementById('load-weights-free-3').disabled = true;
-    document.getElementById('load-weights-karaoke').disabled = true;
-    document.getElementById('load-weights-pro-ft').disabled = true;
-    document.getElementById('load-weights-pro-cust').disabled = true;
-    document.getElementById('load-weights-pro-deluxe').disabled = true;
-    selectedModel = 'demucs-pro-cust';
-
-    trackProductEvent('Chose Model', { model: 'demucs-pro-cust'});
-    initModel();
-});
-
-document.getElementById('load-weights-pro-deluxe').addEventListener('click', () => {
-    showSpinner();
-    document.getElementById('load-weights-free-1').disabled = true;
-    document.getElementById('load-weights-free-2').disabled = true;
-    document.getElementById('load-weights-free-3').disabled = true;
-    document.getElementById('load-weights-karaoke').disabled = true;
-    document.getElementById('load-weights-pro-ft').disabled = true;
-    document.getElementById('load-weights-pro-cust').disabled = true;
-    document.getElementById('load-weights-pro-deluxe').disabled = true;
-    selectedModel = 'demucs-pro-deluxe';
-
-    trackProductEvent('Chose Model', { model: 'demucs-pro-deluxe'});
-    initModel();
-});
 
 // Function to handle the segmented audio processing
 function processAudioSegments(leftChannel, rightChannel, numSegments, originalLength) {
@@ -556,49 +585,347 @@ function processBatchSegments(leftChannel, rightChannel, numSegments, filename, 
     });
 }
 
-document.getElementById('load-and-demix').addEventListener('click', () => {
-    // check if we can
-    if (!canPerformAction()) {
-        // return early since we're not doing any demixing
-        return;
+function initializeInputState() {
+    if (fileInput.files.length > 0) {
+        isSingleMode = true;
+        selectedInput = fileInput.files[0];
+        updateSelectedInputMessage();
+    } else if (folderInput.files.length > 0) {
+        isSingleMode = false;
+        selectedInput = folderInput.files;
+        updateSelectedInputMessage();
+    }
+    toggleNextButton();
+}
+
+// Event listener for file input
+fileInput.addEventListener('change', function() {
+    if (fileInput.files.length > 0) {
+        // If a file is selected, clear the folder input
+        folderInput.value = '';
+        isSingleMode = true;
+        selectedInput = fileInput.files[0];
+        updateSelectedInputMessage();
+    }
+    toggleNextButton();
+});
+
+// Event listener for folder input
+folderInput.addEventListener('change', function() {
+    if (folderInput.files.length > 0) {
+        // If a folder is selected, clear the file input
+        fileInput.value = '';
+        isSingleMode = false;
+        selectedInput = folderInput.files;
+        updateSelectedInputMessage();
+    }
+    toggleNextButton();
+});
+
+// Function to toggle the Next button's disabled state
+function toggleNextButton() {
+    if (selectedInput) {
+        nextStep1Btn.disabled = false;
+    } else {
+        nextStep1Btn.disabled = true;
+    }
+}
+
+// Function to update the selected input message
+function updateSelectedInputMessage() {
+    if (isSingleMode && selectedInput) {
+        selectedInputMessage.textContent = `Selected input: ${selectedInput.name}`;
+    } else if (!isSingleMode && selectedInput) {
+        selectedInputMessage.textContent = `Selected input: folder with ${selectedInput.length} files`;
+    } else {
+        selectedInputMessage.textContent = 'Selected input:';
+    }
+}
+
+function checkAndResetWeeklyLimit() {
+    let usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
+
+    if (!usageData) {
+        usageData = {
+            count: 0,
+            weekStart: new Date().toISOString()
+        };
+        localStorage.setItem('weeklyUsage', JSON.stringify(usageData));
     }
 
-    // disable all buttons at the start of a new job
-    document.getElementById('batch-upload').disabled = true;
-    document.getElementById('load-and-demix').disabled = true;
-    document.getElementById('audio-upload').disabled = true;
+    const weekStart = new Date(usageData.weekStart);
+    const now = new Date();
 
-    // parse memory selector here
-    const memorySelector = document.getElementById('memory-select');
-    // get its value, divide by 4 to get num_workers
-    const numWorkers = parseInt(memorySelector.options[memorySelector.selectedIndex].value) / 4;
-    // set global NUM_WORKERS to numWorkers
+    if ((now - weekStart) > 7 * 24 * 60 * 60 * 1000) {
+        usageData.count = 0;
+        usageData.weekStart = now.toISOString();
+        localStorage.setItem('weeklyUsage', JSON.stringify(usageData));
+    }
+
+    const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
+    if (!loggedIn) {
+        const remaining = 3 - usageData.count;
+        usageLimits.textContent = `You have ${remaining} free demixes remaining this week. Your limit will reset on ${new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}.`;
+
+        if (remaining <= 0) {
+            nextStep2Btn.disabled = true;
+            nextStep2Btn.textContent = 'Limit reached';
+        }
+    } else {
+        usageLimits.textContent = 'You have unlimited demixes.';
+
+        const userTier = parseInt(sessionStorage.getItem('userTier'));
+        document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
+
+        nextStep2Btn.disabled = false;
+        nextStep2Btn.textContent = 'Next';
+    }
+}
+
+function activateProContent(email) {
+    // Display the spinner and disable the buttons
+    displayStep2Spinner();
+
+    // Store the email in localStorage
+    localStorage.setItem('billingEmail', email);
+
+    // Track the content activation event
+    trackProductEvent('Content Activated', { email });
+
+    // Fetch the zip file based on the user's email
+    fetch(`https://freemusicdemixer.com/getprocontent?email=${encodeURIComponent(email)}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch content');
+
+            const contentDisposition = response.headers.get("Content-Disposition");
+            let zipFileName = "unknown.zip"; // Default filename if not found in header
+
+            if (contentDisposition) {
+                const matches = contentDisposition.match(/filename="?([^"]+)"?/);
+                if (matches && matches.length > 1) {
+                    zipFileName = matches[1];
+                }
+            }
+            return response.blob().then(blob => {
+                return { blob, zipFileName }; // Return both blob and filename here
+            });
+        })
+        .then(({ blob, zipFileName }) => {
+            console.log('Received zip file name:', zipFileName); // Debugging
+
+            // Infer the user tier from the zip file name
+            const userTier = inferTierFromFileName(zipFileName);
+            console.log('User tier:', userTier); // Debugging
+
+            // Track the content activation event
+            trackProductEvent('Tier Activated', { email, userTier });
+
+            // Mark the user as logged in
+            sessionStorage.setItem('loggedIn', 'true');
+
+            // Update the UI based on the tier
+            activateTierUI(userTier);
+
+            // Unzip the blob using fflate
+            return blob.arrayBuffer();
+        })
+        .then(arrayBuffer => {
+            const zipData = new Uint8Array(arrayBuffer);
+            const unzipped = fflate.unzipSync(zipData);
+            return unzipped;
+        })
+        .then(unzipped => {
+            // Process and store unzipped files
+            const files = Object.keys(unzipped).reduce((fileObjects, fileName) => {
+                // Create blobs from the unzipped files
+                fileObjects[fileName] = new Blob([unzipped[fileName]], { type: 'text/javascript' });
+                return fileObjects;
+            }, {});
+
+            // Dispatch a custom event with the unzipped files
+            const event = new CustomEvent('unzippedFilesReady', { detail: { files } });
+            window.dispatchEvent(event);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('response-message').textContent = 'Failed to activate content. Please try again.';
+        })
+        .finally(() => {
+            // Remove the spinner and re-enable the buttons
+            removeStep2Spinner();
+        });
+}
+
+document.getElementById('activation-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const email = emailInput.value;
+    activateProContent(email);
+});
+
+// Function to display the spinner and overlay
+function displayStep2Spinner() {
+    console.log("Displaying spinner");
+    document.getElementById('step2-overlay').style.display = 'flex';
+    document.getElementById('step2-spinner').style.display = 'flex';
+    prevStep2Btn.disabled = true;
+    nextStep2Btn.disabled = true;
+}
+
+// Function to remove the spinner and overlay
+function removeStep2Spinner() {
+    document.getElementById('step2-overlay').style.display = 'none';
+    document.getElementById('step2-spinner').style.display = 'none';
+    prevStep2Btn.disabled = false;
+    nextStep2Btn.disabled = false;
+}
+
+// Function to display the spinner and overlay
+function displayStep3Spinner() {
+    console.log("Displaying spinner");
+    document.getElementById('step3-overlay').style.display = 'flex';
+    document.getElementById('step3-spinner').style.display = 'flex';
+    prevStep3Btn.disabled = true;
+    nextStep3Btn.disabled = true;
+}
+
+// Function to remove the spinner and overlay
+function removeStep3Spinner() {
+    document.getElementById('step3-overlay').style.display = 'none';
+    document.getElementById('step3-spinner').style.display = 'none';
+    prevStep3Btn.disabled = false;
+    nextStep3Btn.disabled = false;
+}
+
+function activateTierUI(userTier) {
+  console.log('Enabling UI for user tier:', userTier); // Debugging
+  // Enable buttons based on user tier
+
+  sessionStorage.setItem('userTier', userTier); // Store the user tier in local storage
+
+  if (userTier === 2) {
+    // Enable PRO-tier checkboxes (piano, guitar)
+    document.getElementById('piano').disabled = false;
+    document.getElementById('guitar').disabled = false;
+
+    // Enable PRO-tier radio buttons (medium, high quality)
+    document.getElementById('low-quality').disabled = false;
+    document.getElementById('medium-quality').disabled = false;
+    document.getElementById('high-quality').disabled = false;
+
+    // Remove lock symbol (🔒) from the labels
+    document.querySelector('label[for="piano"]').textContent = 'Piano';
+    document.querySelector('label[for="guitar"]').textContent = 'Guitar';
+    document.querySelector('label[for="low-quality"]').textContent = 'Low (fast!)';
+    document.querySelector('label[for="medium-quality"]').textContent = 'Medium';
+    document.querySelector('label[for="high-quality"]').textContent = 'High';
+
+    console.log('PRO-tier UI elements enabled.');
+  }
+
+  // Find the logo image element and the container for the tier text
+  const logoImage = document.querySelector('#logo-display img');
+  const tierText = document.querySelector('#logo-display small');
+
+  // Update the logo source and tier text based on the userTier
+  if (logoImage && tierText) {
+    logoImage.src = tierLogos[userTier];
+    logoImage.alt = `freemusicdemixer-${tierNames[userTier].toLowerCase()}-logo`;
+    tierText.textContent = `${tierNames[userTier]} tier `;
+    tierText.appendChild(logoImage); // Ensure the image stays within the <small> tag
+  }
+
+  document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
+
+  checkAndResetWeeklyLimit();
+}
+
+// Utility function to determine the user's tier based on the zip file name
+function inferTierFromFileName(fileName) {
+  if (fileName.includes('wasm_tier_2')) return 2;
+  return -1; // Unknown tier
+}
+
+nextStep1Btn.addEventListener('click', function() {
+    console.log('Is single mode:', isSingleMode);
+    console.log('Selected input on next step:', selectedInput);
+
+    step1.style.display = 'none';
+    step2.style.display = 'block';
+
+    const storedEmail = localStorage.getItem('billingEmail');
+    if (storedEmail) {
+        emailInput.value = storedEmail;
+        responseMessage.textContent = '';
+    }
+
+    checkAndResetWeeklyLimit();
+});
+
+prevStep2Btn.addEventListener('click', function() {
+    step2.style.display = 'none';
+    step1.style.display = 'block';
+});
+
+document.getElementById('activation-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+});
+
+nextStep2Btn.addEventListener('click', function() {
+    if (!nextStep2Btn.disabled) {
+        const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
+        if (!loggedIn) {
+            dummyLogin();
+        }
+        step2.style.display = 'none';
+        step3.style.display = 'block';
+    }
+});
+
+prevStep3Btn.addEventListener('click', function() {
+    step3.style.display = 'none';
+    step2.style.display = 'block';
+});
+
+nextStep3Btn.addEventListener('click', function() {
+    updateModelBasedOnSelection();
+
+    trackProductEvent('Chose Model', { model: selectedModel });
+
+    initModel().then(() => {
+        step4.style.display = 'block';
+        step3.style.display = 'none';
+    }).catch((error) => {
+        console.error("Model initialization failed:", error);
+        document.getElementById('step3-error').textContent = "Failed to initialize model. Please try again.";
+    });
+});
+
+nextStep4Btn.addEventListener('click', function() {
+    console.log("Starting demix job");
+
+    step5.style.display = 'block';
+    step4.style.display = 'none';
+
+    prevStep5Btn.disabled = true;
+    nextStep5Btn.disabled = true;
+
+    // Parse the selected memory option from the radio buttons
+    const selectedMemory = document.querySelector('input[name="memory"]:checked').value;
+    const numWorkers = parseInt(selectedMemory) / 4;
+
+    // Set the global NUM_WORKERS variable directly
     NUM_WORKERS = numWorkers;
+
+    // we only enable the next/back buttons after the job returns
 
     // reset some globals e.g. progress
     processedSegments = new Array(NUM_WORKERS).fill(undefined);
-
-    // SECTION FOR FILE
-    const fileInput = document.getElementById('audio-upload');
-    const inputDir = document.getElementById("batch-upload");
-
-    const file = fileInput.files[0];
-
-    const isSingleMode = document.getElementById('single-mode').checked;
-
     if (isSingleMode) {
-        if (!file) {
-            writeJsLog('No file selected.');
-            document.getElementById('load-and-demix').disabled = false;
-            document.getElementById('audio-upload').disabled = false;
-            return;
-        }
-
         // track the start of the job
         trackProductEvent('Start Job', { mode: 'single', numWorkers: numWorkers });
 
         // write log of how many workers are being used
-        writeJsLog(`Initializing ${numWorkers} workers!`)
         initWorkers();
 
         const reader = new FileReader();
@@ -630,33 +957,18 @@ document.getElementById('load-and-demix').addEventListener('click', () => {
                 // set original length of track
                 let originalLength = leftChannel.length;
 
-                writeJsLog("Beginning demix job")
                 processAudioSegments(leftChannel, rightChannel, NUM_WORKERS, originalLength);
             });
         };
 
-        reader.readAsArrayBuffer(file);
+        reader.readAsArrayBuffer(fileInput.files[0]);
     } else {
-        if (!inputDir) {
-            writeJsLog('No folder selected.');
-            document.getElementById('batch-upload').disabled = false;
-            document.getElementById('load-and-demix').disabled = false;
-            return;
-        }
-
-        const files = inputDir.files;
-        if (!files) {
-            writeJsLog('No files in input folder.');
-            document.getElementById('batch-upload').disabled = false;
-            document.getElementById('load-and-demix').disabled = false;
-            return;
-        }
+        const files = folderInput.files;
 
         // track the start of the job
         trackProductEvent('Start Job', { mode: 'batch', numWorkers: numWorkers });
 
         // write log of how many workers are being used
-        writeJsLog(`Initializing ${numWorkers} workers!`)
         initWorkers();
 
         document.getElementById('inference-progress-bar').style.width = '0%';
@@ -671,18 +983,26 @@ document.getElementById('load-and-demix').addEventListener('click', () => {
     }
 });
 
-const modelStemMapping = {
-    'demucs-free-4s': ['bass', 'drums', 'melody', 'vocals'],
-    'demucs-free-6s': ['bass', 'drums', 'other_melody', 'vocals', 'guitar', 'piano'],
-    'demucs-free-v3': ['bass', 'drums', 'melody', 'vocals'],
-    'demucs-karaoke': ['vocals', 'instrum'],
-    'demucs-pro-ft': ['bass', 'drums', 'melody', 'vocals'],
-    'demucs-pro-cust': ['bass', 'drums', 'other_melody', 'vocals', 'guitar', 'piano', 'melody'],
-    'demucs-pro-deluxe': ['bass', 'drums', 'melody', 'vocals']
-};
+prevStep4Btn.addEventListener('click', function() {
+    step4.style.display = 'none';
+    step3.style.display = 'block';
+});
+
+nextStep5Btn.addEventListener('click', function() {
+    // reset all buttons etc.
+    resetUIElements();
+
+    // restart the wizard from step 1
+    step5.style.display = 'none';
+    step1.style.display = 'block';
+});
+
+prevStep5Btn.addEventListener('click', function() {
+    step5.style.display = 'none';
+    step4.style.display = 'block';
+});
 
 function packageAndDownload(targetWaveforms) {
-    writeJsLog("Preparing stems for download");
     console.log(targetWaveforms)
 
     const stemNames = modelStemMapping[selectedModel] || [];
@@ -732,115 +1052,12 @@ function createDownloadLinks(buffers) {
         downloadLinksDiv.appendChild(link);
     });
 
-    document.getElementById('audio-upload').disabled = false;
-    document.getElementById('load-and-demix').disabled = false;
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    initializeLimitStorage();
-
-    const modelCheckboxes = document.querySelectorAll('input[type="checkbox"][name="feature"]');
-    const outputDiv = document.getElementById('suggestionOutput');
-
-    // Ensure all checkboxes are unchecked on page load
-    modelCheckboxes.forEach(modelCheckbox => {
-        modelCheckbox.checked = false;
-    });
-
-    // Add change event listeners to checkboxes
-    modelCheckboxes.forEach(modelCheckbox => {
-        modelCheckbox.addEventListener('change', function() {
-            updateSuggestion();
-        });
-    });
-
-    function updateSuggestion() {
-        const selectedFeatures = Array.from(modelCheckboxes)
-            .filter(modelCheckbox => modelCheckbox.checked)
-            .map(modelCheckbox => modelCheckbox.value);
-
-        let suggestion = "";
-        if (selectedFeatures.includes("vocals") || selectedFeatures.includes("instrumental (no vocals)")) {
-            if (selectedFeatures.every(item => ["vocals", "instrumental (no vocals)"].includes(item))) {
-                suggestion = "Default quality, fast: 4-SOURCE (FREE)<br>Lower quality, fastest: V3 (PRO)<br>High quality, 2x slower: KARAOKE (PRO)";
-            }
-        }
-        if (selectedFeatures.some(item => ["guitar", "piano", "other melody (e.g. violin)"].includes(item))) {
-            suggestion = "High quality, fast: 6-SOURCE (PRO)<br>High quality, 6x slower: CUSTOM (PRO)";
-        }
-        if (selectedFeatures.some(item => ["drums", "bass", "melody"].includes(item)) &&
-            selectedFeatures.every(item => !["guitar", "piano", "other melody (e.g. violin)"].includes(item))) {
-            suggestion = "Default quality, fast: 4-SOURCE (FREE)<br>Lower quality, fastest: V3 (PRO)<br>Medium quality, 4x slower: FINE-TUNED (PRO)<br>High quality, 8x slower: DELUXE (PRO)";
-        }
-
-        outputDiv.innerHTML = suggestion || "Please select at least one option to see suggestions.";
-    }
-
-    let checkbox = document.getElementById("toggleDevLogs");
-    let devLogs = document.getElementById("devLogs");
-
-    // Check localStorage for the saved checkbox state
-    const isChecked = localStorage.getItem("showDevLogs") === "true";
-
-    // Apply the saved state
-    checkbox.checked = isChecked;
-    devLogs.classList.toggle("hidden", !isChecked); // Hide if not checked
-
-    checkbox.addEventListener("change", function() {
-        if (checkbox.checked) {
-            devLogs.classList.remove("hidden");
-            localStorage.setItem("showDevLogs", "true"); // Save state as checked
-        } else {
-            devLogs.classList.add("hidden");
-            localStorage.setItem("showDevLogs", "false"); // Save state as unchecked
-        }
-    });
-
-    var memorySelect = document.getElementById("memory-select");
-    var workerCountDisplay = document.getElementById("worker-count");
-
-    function updateWorkerCount() {
-        var memoryValue = parseInt(memorySelect.value, 10);
-        var workerCount = memoryValue / 4;
-        workerCountDisplay.textContent = ` (${workerCount}x speed)`;
-    }
-
-    memorySelect.addEventListener("change", updateWorkerCount);
-
-    // Initial update on page load
-    updateWorkerCount();
-});
-
-function clearLogs() {
-    let jsTerminal = document.getElementById("jsTerminal");
-    let wasmTerminal = document.getElementById("wasmTerminal");
-    jsTerminal.textContent = "";
-    wasmTerminal.textContent = "";
-}
-
-function writeJsLog(str) {
-    const currentTime = new Date();
-    const timeString = currentTime.toTimeString().split(" ")[0];
-    const formattedStr = `[Javascript ${timeString}] ${str}`;
-
-    let jsTerminal = document.getElementById("jsTerminal");
-    jsTerminal.textContent += formattedStr + "\n";
-    jsTerminal.scrollTop = jsTerminal.scrollHeight;
-}
-
-function writeWasmLog(str) {
-    const currentTime = new Date();
-    const timeString = currentTime.toTimeString().split(" ")[0];
-    const formattedStr = `[WASM/C++ ${timeString}] ${str}`;
-
-    let wasmTerminal = document.getElementById("wasmTerminal");
-    wasmTerminal.textContent += formattedStr + "\n";
-    wasmTerminal.scrollTop = wasmTerminal.scrollHeight;
+    prevStep5Btn.disabled = false;
+    nextStep5Btn.disabled = false;
 }
 
 async function processFiles(files) {
     if (!files || files.length === 0) {
-        writeJsLog('Folder has no files.');
         return;
     }
 
@@ -868,13 +1085,11 @@ async function processFiles(files) {
                         // set original length of track
                         let originalLength = leftChannel.length;
 
-                        writeJsLog(`Beginning batch job for ${file.name}`)
                         processBatchSegments(leftChannel, rightChannel, NUM_WORKERS, filenameWithoutExt, originalLength);
                         //resolve();
                         batchNextFileResolveCallback = resolve;
                     },
                     function(err) {
-                        writeJsLog(`Skipping ${file.name} due to decoding error.`);
                         resolve(); // resolve the Promise to continue with the next file
                     }
                 );
@@ -886,8 +1101,6 @@ async function processFiles(files) {
 }
 
 function packageAndZip(targetWaveforms, filename) {
-    writeJsLog(`Packaging and zipping waveforms for ${filename}`);
-
     const stemNames = modelStemMapping[selectedModel] || [];
     const directoryName = `${filename}_stems/`; // Directory for storing stems
     let zipFiles = {};
@@ -932,70 +1145,12 @@ function packageAndZip(targetWaveforms, filename) {
     document.getElementById('output-links').appendChild(zipLink);
 }
 
-document.getElementById('single-mode').addEventListener('change', function() {
-    document.getElementById('audio-upload').disabled = false;
-    document.getElementById('batch-upload').disabled = true;
-    // Additional logic for single track mode
-});
-
-document.getElementById('batch-mode').addEventListener('change', function() {
-    document.getElementById('audio-upload').disabled = true;
-    document.getElementById('batch-upload').disabled = false;
-    // Additional logic for batch upload mode
-});
-
-function initializeLimitStorage() {
-    if (!localStorage.getItem('weeklyUsage')) {
-        localStorage.setItem('weeklyUsage', JSON.stringify({
-            count: 0,
-            weekStart: new Date().toISOString()
-        }));
-    }
-}
-
-function checkAndResetWeeklyLimit() {
-    const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
-    const weekStart = new Date(usageData.weekStart);
-    const now = new Date();
-
-    // Check if the current date is more than 7 days from the start of the week
-    if ((now - weekStart) > 7 * 24 * 60 * 60 * 1000) {
-        // Reset the count and update the start of the week
-        usageData.count = 0;
-        usageData.weekStart = now.toISOString();
-        localStorage.setItem('weeklyUsage', JSON.stringify(usageData));
-    }
-}
-
-function canPerformAction() {
-    // Check the user's tier from localStorage
-    const userTier = sessionStorage.getItem('userTier');
-    const userTierValue = userTier ? parseInt(userTier, 10) : 0;
-
-    // log the user tier
-    console.log(`User tier: ${userTierValue}`);
-
-    // If the user is PRO (assuming tier 2 or higher), allow the action
-    if (userTierValue >= 2) {
-        return true;
-    }
-
-    checkAndResetWeeklyLimit();
-
-    const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
-
-    // log the usage data
-    console.log(`Weekly usage data: ${usageData}`);
-
-    if (usageData.count < 3) {
-        return true;
-    } else {
-        alert('You have reached your weekly limit of 3 demixes. Upgrade to the PRO membership or wait 1 week!');
-        return false;
-    }
-}
-
 function incrementUsage() {
+    const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
+    if (loggedIn) {
+        // dont increment for logged in users
+        return;
+    }
     const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
     usageData.count += 1;
     localStorage.setItem('weeklyUsage', JSON.stringify(usageData));
