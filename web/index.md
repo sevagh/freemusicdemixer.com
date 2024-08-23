@@ -3,18 +3,9 @@ header_class: index
 ---
 <script src="WavFileEncoder.js" type="module"></script>
 <script src="main.js" type="module"></script>
-<script src="login.js" type="module"></script>
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
 # AI music demixer powered by Demucs
-
-<div class="cta-container-android">
-  <a href="/android" class="cta-link-android">
-    <span class="cta-arrows-android left">&#9664;&#9664;&#9664;</span>
-    ANDROID APP!
-    <span class="cta-arrows-android right">&#9654;&#9654;&#9654;</span>
-  </a>
-</div>
 
 <a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="50" src="https://media.theresanaiforthat.com/featured5.png" alt="theresanaiforthat-promo"></a> <a title="ai tools code.market" href="https://code.market?code.market=verified"><img alt="ai tools code.market" title="ai tools code.market" src="https://code.market/assets/manage-product/featured-logo-dark.svg" target="_blank" height="50"/></a> <a href="https://toolnest.ai/project/free-music-demixer/" target="_blank" style="cursor: pointer" id="tr_dark"><img loading="lazy" src="https://toolnest.ai/wp-content/uploads/2024/05/badge_toolnest_dark.svg" height="50" alt="Free Music Demixer" data-eio="p"></a> <a href="https://aizones.io/tool/free-music-demixer"> <img height="50" src="https://aizones.io/static/media/Embed DARK.99f25d736afbf408832f.png"/></a>
 <br>
@@ -32,8 +23,6 @@ Effortlessly split your songs into individual stems - **vocals, bass, drums, and
 <div class="video-container">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/O1vbXB8K_DI?si=kux30l8qWeF8QFi4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 </div>
-
-## Demo clips and product info
 
 Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f) to showcase our models:
 <div class="card-container" id="demo-app">
@@ -82,167 +71,189 @@ Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https
   </div>
 </div>
 
-<div class="cta-container">
-  <a href="/about/#pro-subscription" class="cta-link">
-    <span class="cta-arrows left">&#9664;&#9664;&#9664;</span>
-    LISTEN TO MORE SAMPLE AUDIO & LEARN MORE ABOUT OUR PRODUCT
-    <span class="cta-arrows right">&#9654;&#9654;&#9654;</span>
-  </a>
+## Try it directly in the browser!
+
+<div class="wizard-container">
+  <div id="wizard-step-1" class="wizard-step">
+    <h3>Music input</h3>
+    <p>Choose either a file or a folder as your input:</p>
+    <div class="input-group">
+        <input type="file" id="audio-upload" aria-label="Choose a file">
+    </div>
+    <div class="input-group">
+        <input type="file" id="batch-upload" webkitdirectory directory multiple aria-label="Choose a folder">
+    </div>
+    <br>
+    <div id="selectedInputMessage">Selected input:</div>
+    <br>
+    <div class="wizard-footer">
+      <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>
+      <button id="next-step-1" class="wizard-next-btn" disabled>Next</button>
+    </div>
+  </div>
+
+  <div id="wizard-step-2" class="wizard-step" style="display: none;">
+    <h3>Activate pro content</h3>
+    <p id="usage-limits"></p>
+    <form id="activation-form">
+      New customer? Buy our <a  href="https://buy.stripe.com/aEU29ZgF48Z13qEeUV">$9.99 monthly</a> or <a  href="https://buy.stripe.com/dR67ujdsSejl3qE3ce">$49.99 yearly</a> subscription!
+      <br>
+      <br>
+      Existing customer?
+      <label for="billing-email">Activate your PRO content with your billing email:</label>
+      <input type="email" id="billing-email" name="billing-email" required>
+      <button type="submit">Activate</button>
+    </form>
+    <div id="response-message"></div>
+    <br>
+    <div>
+    Free user? Click next to continue
+    </div>
+    <div class="wizard-footer">
+      <button id="prev-step-2" class="wizard-prev-btn">Back</button>
+      <button id="next-step-2" class="wizard-next-btn">Next</button>
+    </div>
+    <!-- Overlay and Spinner -->
+    <div id="step2-overlay" class="overlay" style="display: none;">
+        <h3 style="color: #ffffff; margin-top: 20px;">Activating your content...</h3>
+        <div class="loader" id="step2-spinner"></div>
+    </div>
+  </div>
+
+  <div id="wizard-step-3" class="wizard-step" style="display: none;">
+    <h3>Choose your AI model</h3>
+    <br>
+    <div class="columns-container">
+      <!-- Stems Column -->
+      <div class="column">
+        <b>Components:</b>
+        <form id="modelPickerForm">
+          <div>
+            <input type="checkbox" id="vocals" name="feature" value="vocals" checked>
+            <label for="vocals">Vocals</label>
+          </div>
+          <div>
+            <input type="checkbox" id="drums" name="feature" value="drums" checked>
+            <label for="drums">Drums</label>
+          </div>
+          <div>
+            <input type="checkbox" id="bass" name="feature" value="bass" checked>
+            <label for="bass">Bass</label>
+          </div>
+          <div>
+            <input type="checkbox" id="instrumental" name="feature" value="instrumental" checked>
+            <label for="instrumental">Instrumental</label>
+          </div>
+          <div>
+            <input type="checkbox" id="piano" name="feature" value="piano" disabled>
+            <label for="piano">Piano 🔒</label>
+          </div>
+          <div>
+            <input type="checkbox" id="guitar" name="feature" value="guitar" disabled>
+            <label for="guitar">Guitar 🔒</label>
+          </div>
+        </form>
+      </div>
+      <div class="column">
+          <b>Quality:</b>
+          <form id="qualityPickerForm">
+            <div>
+              <input type="radio" id="low-quality" name="quality" value="low" disabled>
+              <label for="low-quality">Low (fast!) 🔒</label>
+            </div>
+            <div>
+              <input type="radio" id="default-quality" name="quality" value="default" checked>
+              <label for="default-quality">Default</label>
+            </div>
+            <div>
+              <input type="radio" id="medium-quality" name="quality" value="medium" disabled>
+              <label for="medium-quality">Medium 🔒</label>
+            </div>
+            <div>
+              <input type="radio" id="high-quality" name="quality" value="high" disabled>
+              <label for="high-quality">High 🔒</label>
+            </div>
+          </form>
+      </div>
+    </div>
+    <br>
+    <div id="selectedModelMessage">Selected model: <b>4-SOURCE (FREE)</b></div>
+    <p>⚠️ Higher qualities are slower!</p>
+    <br>
+    <div class="wizard-footer">
+      <button id="prev-step-3" class="wizard-prev-btn">Back</button>
+      <button id="next-step-3" class="wizard-next-btn">Next</button>
+    </div>
+    <!-- Overlay and Spinner -->
+    <div id="step3-overlay" class="overlay" style="display: none;">
+        <h3 style="color: #ffffff; margin-top: 20px;">Downloading model files...</h3>
+        <div class="loader" id="step3-spinner"></div>
+    </div>
+  </div>
+
+  <div id="wizard-step-4" class="wizard-step" style="display: none;">
+    <h3>Select max memory and start job</h3>
+    <br>
+    <form id="memorySelectorForm">
+        <div>
+            <input type="radio" id="4gb" name="memory" value="4gb">
+            <label for="4gb">4 GB (default speed)</label>
+        </div>
+        <div>
+            <input type="radio" id="8gb" name="memory" value="8gb">
+            <label for="8gb">8 GB (2x faster)</label>
+        </div>
+        <div>
+            <input type="radio" id="16gb" name="memory" value="16gb" checked>
+            <label for="16gb">16 GB (4x faster)</label>
+        </div>
+        <div>
+            <input type="radio" id="32gb" name="memory" value="32gb">
+            <label for="32gb">32 GB (8x faster)</label>
+        </div>
+    </form>
+    <p>⚠️ Always choose a memory setting less than your computer's total memory. We have tested 32 GB in Firefox and 16 GB in Chrome.</p>
+    <br>
+    <div class="wizard-footer">
+      <button id="prev-step-4" class="wizard-prev-btn">Back</button>
+      <button id="next-step-4" class="wizard-next-btn" disabled>Start demix job</button>
+    </div>
+  </div>
+
+  <div id="wizard-step-5" class="wizard-step" style="display: none;">
+  <h3>Demix progress and outputs</h3>
+    To cancel the running job, refresh the page
+    <div class="progress-container">
+      <div class="progress-text" id="inference-progress-text">Progress...</div>
+      <div class="progress-bar">
+          <div class="progress-bar-inner" id="inference-progress-bar" style="width: 0%"></div>
+      </div>
+      This may take a while, go grab a coffee! ☕️
+    </div>
+    <div class="output-container">
+      <div class="output-text" id="output-progress-text">Outputs...</div>
+      <div class="output-link-container" id="output-links">
+      </div>
+    </div>
+    <br>
+    <div class="wizard-footer">
+      <button id="prev-step-5" class="wizard-prev-btn" disabled>Back</button>
+      <button id="next-step-5" class="wizard-next-btn" disabled>New job</button>
+    </div>
+  </div>
+  <div class="bottom-right" id="logo-display">
+    <small>Free tier
+    <img src="/assets/images/logo_free.webp" alt="freemusicdemixer-free-logo" height="30px" style="background-color:white;"/></small>
+  </div>
 </div>
 
-## Subscribe!
+🚨 Issues? Please send us an e-mail at <a href="mailto:support@freemusicdemixer.com">support@freemusicdemixer.com</a>
 
-Subscribing to our PRO tier unlocks unlimited usage, more instruments and stems (**piano + guitar**), and higher-quality AI models on both the web app and the Android app. On the Android app, it also gives access to microphone, app capture, and custom mix features on the app! **The same subscription gets you access to pro content on both the web app and Android app!**
+Subscribing to our PRO tier unlocks unlimited usage, more instruments and stems (**piano + guitar**), and higher-quality AI models on both the web app and the Android app. On the Android app, it also gives access to microphone, app capture, and custom mix features on the app! **The same subscription gets you access to pro content on both the web app and Android app.**
+
+For customer support, privacy policy, refund policy, or to manage or cancel your subscription, see the [support page](/support).
 
 <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
 <stripe-pricing-table id="pricing-table" pricing-table-id="prctbl_1OcXFtAmT5bJ3vuw0JDQk6A5"
 publishable-key="pk_live_51ObLZ9AmT5bJ3vuwDIgzrNEljt7oK42MqgmnEKZbANz0PDtlzkD3Oc6R2JopYNJnpsteV8or0hY2s1l2bmrM1hED00nMDhvPqg">
 </stripe-pricing-table>
-
-For customer support, privacy policy, refund policy, or to manage or cancel your subscription, see the [support page](/support).
-
-## Model picker
-
-<div class="card-container">
-<div class="card">
-<div class="card-content">
-<h3 class="card-title">I want...</h3>
-<hr>
-<form id="modelPickerForm">
-    <div>
-        <input type="checkbox" id="vocals" name="feature" value="vocals">
-        <label for="vocals">Vocals</label>
-    </div>
-    <div>
-        <input type="checkbox" id="instrumental" name="feature" value="instrumental (no vocals)">
-        <label for="instrumental">Instrumental (no vocals)</label>
-    </div>
-    <div>
-        <input type="checkbox" id="drums" name="feature" value="drums">
-        <label for="drums">Drums</label>
-    </div>
-    <div>
-        <input type="checkbox" id="bass" name="feature" value="bass">
-        <label for="bass">Bass</label>
-    </div>
-    <div>
-        <input type="checkbox" id="melody" name="feature" value="melody">
-        <label for="melody">Melody</label>
-    </div>
-    <div>
-        <input type="checkbox" id="piano" name="feature" value="piano">
-        <label for="piano">Piano</label>
-    </div>
-    <div>
-        <input type="checkbox" id="guitar" name="feature" value="guitar">
-        <label for="guitar">Guitar</label>
-    </div>
-    <div>
-        <input type="checkbox" id="other_melody" name="feature" value="other melody (e.g. violin)">
-        <label for="other_melody">Other Melody (e.g. violin)</label>
-    </div>
-</form>
-<hr>
-<h3 class="card-title" style="margin-top: 20px;">I should use:</h3>
-<div id="suggestionOutput" class="card-info" style="background-color: black; color: white; padding: 10px; margin-top: 10px; border-radius: 5px;">Suggested model will appear here.</div>
-</div>
-</div>
-</div>
-
-## Demixer app
-
-Free users are limited to only the base 4-source model and **max 3 demixes per week.** Subscribe to PRO now! **Reminder: your subscription can be used on [the Android app](/android)**
-
-There is a **MAX MEMORY** option to speed up demixing and support longer songs!🚀🔥 We have tested up to 32 GB in Firefox and 16 GB in Chrome. [Read the beginner's tutorial](./getting-started/2023/09/23/Beginners-guide-to-free-stems.html) if you need help.
-
-<form id="activation-form">
-  <label for="billing-email">Enter your Stripe billing email to activate your PRO content:</label>
-  <input type="email" id="billing-email" name="billing-email" required>
-  <button type="submit">Activate</button>
-</form>
-<div id="response-message"></div>
-
-<div class="mdx-container" id="mdx-unified">
-    <div class="overlay" id="overlay-unified">
-        <div class="loader"></div>
-        <button class="tier-button tier-0" id="load-weights-free-1">(Free) 4-source weights (81 MB)</button>
-        <br>
-        <button disabled class="tier-button tier-2" id="load-weights-free-2">🔒 LOCKED (PRO TIER)</button>
-        <br>
-        <button disabled class="tier-button tier-2" id="load-weights-free-3">🔒 LOCKED (PRO TIER)</button>
-        <br>
-        <button disabled class="tier-button tier-2" id="load-weights-karaoke">🔒LOCKED (PRO TIER)</button>
-        <br>
-        <button disabled class="tier-button tier-2" id="load-weights-pro-ft">🔒LOCKED (PRO TIER)</button>
-        <br>
-        <button disabled class="tier-button tier-2" id="load-weights-pro-cust">🔒LOCKED (PRO TIER)</button>
-        <br>
-        <button disabled class="tier-button tier-2" id="load-weights-pro-deluxe">🔒LOCKED (PRO TIER)</button>
-    </div>
-    <div class="centered-text">
-        <p><b>DEMIX SONGS INTO STEMS</b></p>
-    </div>
-    <div class="upload-section">
-        <div class="radio-container">
-            <input type="radio" id="single-mode" name="upload-mode" value="single" checked>
-            <label for="single-mode" id="label-single">Single track:</label>
-        </div>
-        <input type="file" id="audio-upload" aria-label="File:">
-        <br>
-        <div class="radio-container">
-            <input type="radio" id="batch-mode" name="upload-mode" value="batch">
-            <label for="batch-mode" id="label-batch">Batch upload:</label>
-        </div>
-        <input type="file" id="batch-upload" webkitdirectory directory multiple aria-label="Folder:" disabled>
-    </div>
-    <br>
-    <div class="memory-selection">
-        <label for="memory-select">MAX MEMORY:</label>
-        <select id="memory-select">
-            <option value="4">4 GB</option>
-            <option value="8">8 GB</option>
-            <option value="16" selected>16 GB</option>
-            <option value="32">32 GB</option>
-        </select>
-        <span id="worker-count"> (4x speed)</span>
-    </div>
-    <br>
-    <button id="load-and-demix" class="button">Load audio and demix</button>
-    <br>
-    <div class="progress-container">
-        <div class="progress-text" id="inference-progress-text">Demixing progress...</div>
-        <div class="progress-bar">
-            <div class="progress-bar-inner" id="inference-progress-bar" style="width: 0%"></div>
-        </div>
-    </div>
-To cancel the running job, refresh the page
-<br>
-    <div class="output-container">
-        <div class="output-text" id="output-progress-text">Demixing outputs...</div>
-        <div class="output-link-container" id="output-links">
-        </div>
-    </div>
-<div class="bottom-right" id="logo-display">
-<small>Free tier
- <img src="/assets/images/logo_free.webp" alt="freemusicdemixer-free-logo" height="30px" style="background-color:white;"/></small>
-    </div>
-</div>
-
-<div id="checkbox">
-    <label><input type="checkbox" id="toggleDevLogs"> Show dev logs</label>
-    <div id="devLogs" class="hidden">
-        <button id="log-clear">Clear</button>
-        <div id="terminalContainer">
-            <div id="jsTerminal" class="terminal"></div>
-            <div id="wasmTerminal" class="terminal"></div>
-        </div>
-    </div>
-</div>
-<p/>
-
-## Disclaimers and updates
-
-* ⚠️ We take code quality seriously! For bugs or requests, [open a GitHub issue](https://github.com/sevagh/free-music-demixer/issues), or message us [on Instagram](https://www.instagram.com/musicdemixer) or by [e-mail](mailto:contact@freemusicdemixer.com)
-* 💻 If you experience crashes, try a different **MAX MEMORY** setting (lower or higher!)
-* ⚖️ 📄 Model weights and outputs are governed by the <a href="https://github.com/facebookresearch/demucs/issues/327#issuecomment-1134828611">Meta Research license</a>
-* Input files can be almost any audio format, but the outputs are always stereo wav files @ 44100 Hz
