@@ -228,6 +228,7 @@ Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https
       <div class="progress-bar">
           <div class="progress-bar-inner" id="inference-progress-bar" style="width: 0%"></div>
       </div>
+      This may take a while, take a coffee break! ☕️
     </div>
     <div class="output-container">
       <div class="output-text" id="output-progress-text">Outputs...</div>
