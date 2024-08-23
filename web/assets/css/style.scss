@@ -1135,6 +1135,10 @@ input[type="radio"][disabled] + label {
       height: 206px; /* Adjust the image height */
     }
   }
+  .wizard-container {
+    width: 300px; /* Reduce width for larger phones */
+    height: 400px; /* Reduce height for larger phones */
+  }
 }
 
 /* Media query for small devices, up to 500px */
@@ -1170,6 +1174,8 @@ input[type="radio"][disabled] + label {
 
   #popup-banner {
     width: 90%;
+    font-size: 22px;
+    padding: 16px;
 
     img {
       height: 186px; /* Adjust the image height */
@@ -1204,6 +1210,8 @@ input[type="radio"][disabled] + label {
 @media (max-width: 320px) {
   #popup-banner {
     width: 90%;
+    font-size: 20px;
+    padding: 10px;
 
     .pro-cta {
       font-size: 18px;
