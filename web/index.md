@@ -193,7 +193,8 @@ Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https
 
   <div id="wizard-step-4" class="wizard-step" style="display: none;">
     <h3>Select max memory and start job</h3>
-    <br>
+    <p><b>You can now start your demixing job by pressing the 'Start job' button!</b></p>
+    <p>Advanced users: increase max memory for faster demixing. ⚠️ Always choose a memory setting less than your computer's total memory.</p>
     <form id="memorySelectorForm">
         <div>
             <input type="radio" id="4gb" name="memory" value="4gb">
@@ -212,11 +213,10 @@ Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https
             <label for="32gb">32 GB (8x faster)</label>
         </div>
     </form>
-    <p>⚠️ Always choose a memory setting less than your computer's total memory. We have tested 32 GB in Firefox and 16 GB in Chrome.</p>
     <br>
     <div class="wizard-footer">
       <button id="prev-step-4" class="wizard-prev-btn">Back</button>
-      <button id="next-step-4" class="wizard-next-btn" disabled>Start demix job</button>
+      <button id="next-step-4" class="wizard-next-btn" disabled>Start job</button>
     </div>
   </div>
 
