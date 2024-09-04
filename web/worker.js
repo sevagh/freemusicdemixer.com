@@ -4,10 +4,10 @@ let wasmModule;
 let modelName;
 let modelBuffers;
 
-function loadWASMModule(scriptUrl) {
+function loadWASMModule(scriptName) {
     // Assuming the demucs.js script automatically initializes the WASM module
     try {
-        importScripts(scriptUrl);
+        importScripts(scriptName);
 
         wasmModule = libdemucs();
     } catch (error) {
@@ -19,9 +19,9 @@ function loadWASMModule(scriptUrl) {
 onmessage = function(e) {
     if (e.data.msg === 'LOAD_WASM') {
         modelName = e.data.model;
-        scriptUrl = e.data.scriptUrl;
+        scriptName = e.data.scriptName;
         modelBuffers = e.data.modelBuffers;
-        loadWASMModule(scriptUrl);
+        loadWASMModule(scriptName);
     } else if (e.data.msg === 'PROCESS_AUDIO' || e.data.msg === 'PROCESS_AUDIO_BATCH') {
         const leftChannel = e.data.leftChannel;
         const rightChannel = e.data.rightChannel;

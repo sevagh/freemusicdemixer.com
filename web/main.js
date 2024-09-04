@@ -17,14 +17,13 @@ let completedSegments = 0; // Counter for processed segments
 let completedSongsBatch = 0; // Counter for processed songs in batch mode
 let batchNextFileResolveCallback = null; // Callback for resolving the next file in batch mode
 let globalProgressIncrement = 0; // Global progress increment for batch mode
-let unzippedWasmFiles = {};
 
 const SAMPLE_RATE = 44100;
 const OVERLAP_S = 0.75;
 const OVERLAP_SAMPLES = Math.floor(SAMPLE_RATE * OVERLAP_S);
 
-const tierNames = {2: 'Pro'};
-const tierLogos = {2: '/assets/images/logo_pro.webp'};
+const tierNames = {0: 'Free', 2: 'Pro'};
+const tierLogos = {0: '/assets/images/logo_free.webp', 2: '/assets/images/logo_pro.webp'};
 
 const dl_prefix = "https://bucket.freemusicdemixer.com";
 
@@ -86,15 +85,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// premium content gets loaded here
-window.addEventListener('unzippedFilesReady', (e) => {
-  console.log('Unzipped files ready:', e.detail.files);
-  unzippedWasmFiles = e.detail.files; // Store the unzipped files in memory
-
-  // register the service worker to start downloading weights files
-  registerServiceWorker();
-});
-
 const registerServiceWorker = async () => {
   if ("serviceWorker" in navigator) {
     try {
@@ -113,38 +103,6 @@ const registerServiceWorker = async () => {
     }
   }
 };
-
-function dummyLogin() {
-  // Fetch the wasm_tier_0.zip file
-  fetch('/wasm_tier_0.zip')
-    .then(response => {
-      if (!response.ok) throw new Error('Failed to fetch content');
-      return response.blob();
-    })
-    .then(blob => {
-      return blob.arrayBuffer();
-    })
-    .then(arrayBuffer => {
-      const zipData = new Uint8Array(arrayBuffer);
-      const unzipped = fflate.unzipSync(zipData);
-      return unzipped;
-    })
-    .then(unzipped => {
-      // Process and store unzipped files
-      const files = Object.keys(unzipped).reduce((fileObjects, fileName) => {
-        // Create blobs from the unzipped files
-        fileObjects[fileName] = new Blob([unzipped[fileName]], { type: 'text/javascript' });
-        return fileObjects;
-      }, {});
-
-      // Dispatch a custom event with the unzipped files
-      const event = new CustomEvent('unzippedFilesReady', { detail: { files } });
-      window.dispatchEvent(event);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-}
 
 function resetUIElements() {
     // Disable PRO-tier checkboxes (piano, guitar) and add lock symbol
@@ -189,7 +147,10 @@ function resetUIElements() {
     // if the user is logged in, activate tier UIs
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
     if (loggedIn) {
-        const userTier = parseInt(sessionStorage.getItem('userTier'));
+        let userTier = parseInt(sessionStorage.getItem('userTier'));
+        if (userTier === -1) {
+            userTier = 0;
+        }
         activateTierUI(userTier);
     }
 }
@@ -475,17 +436,12 @@ function initWorkers() {
             wasmModuleName = 'demucs_deluxe';
         }
 
-        console.log(`Looking for wasm module: ${wasmModuleName} in unzippedWasmFiles: ${unzippedWasmFiles}`)
-
-        const jsBlob = unzippedWasmFiles[`${wasmModuleName}.js`];
-
-        // Create blob URLs for the worker script and WASM file
-        const jsBlobURL = URL.createObjectURL(jsBlob);
+        let jsBlobName = `${wasmModuleName}.js`;
 
         // Post the blob URLs to the worker
         workers[i].postMessage({
             msg: 'LOAD_WASM',
-            scriptUrl: jsBlobURL,
+            scriptName: jsBlobName,
             model: selectedModel,
             modelBuffers: dlModelBuffers
         });
@@ -674,7 +630,10 @@ function checkAndResetWeeklyLimit() {
     } else {
         usageLimits.textContent = 'You have unlimited demixes.';
 
-        const userTier = parseInt(sessionStorage.getItem('userTier'));
+        let userTier = parseInt(sessionStorage.getItem('userTier'));
+        if (userTier === -1) {
+            userTier = 0;
+        }
         document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
 
         nextStep2Btn.disabled = false;
@@ -692,68 +651,29 @@ function activateProContent(email) {
     // Track the content activation event
     trackProductEvent('Content Activated', { email });
 
-    // Fetch the zip file based on the user's email
+    // Fetch the user tier based on the email
     fetch(`https://freemusicdemixer.com/getprocontent?email=${encodeURIComponent(email)}`)
         .then(response => {
             if (!response.ok) throw new Error('Failed to fetch content');
-
-            const contentDisposition = response.headers.get("Content-Disposition");
-            let zipFileName = "unknown.zip"; // Default filename if not found in header
-
-            if (contentDisposition) {
-                const matches = contentDisposition.match(/filename="?([^"]+)"?/);
-                if (matches && matches.length > 1) {
-                    zipFileName = matches[1];
-                }
-            }
-            return response.blob().then(blob => {
-                return { blob, zipFileName }; // Return both blob and filename here
-            });
+            return response.json();
         })
-        .then(({ blob, zipFileName }) => {
-            console.log('Received zip file name:', zipFileName); // Debugging
+        .then(data => {
+            const userTier = data.tier;
+            console.log(`User Tier: ${userTier}`);
 
-            // Infer the user tier from the zip file name
-            const userTier = inferTierFromFileName(zipFileName);
-            console.log('User tier:', userTier); // Debugging
-
-            // Track the content activation event
             trackProductEvent('Tier Activated', { email, userTier });
 
-            // Mark the user as logged in
             sessionStorage.setItem('loggedIn', 'true');
+            sessionStorage.setItem('userTier', userTier);
 
-            // Update the UI based on the tier
             activateTierUI(userTier);
 
-            // Unzip the blob using fflate
-            return blob.arrayBuffer();
-        })
-        .then(arrayBuffer => {
-            const zipData = new Uint8Array(arrayBuffer);
-            const unzipped = fflate.unzipSync(zipData);
-            return unzipped;
-        })
-        .then(unzipped => {
-            // Process and store unzipped files
-            const files = Object.keys(unzipped).reduce((fileObjects, fileName) => {
-                // Create blobs from the unzipped files
-                fileObjects[fileName] = new Blob([unzipped[fileName]], { type: 'text/javascript' });
-                return fileObjects;
-            }, {});
+            registerServiceWorker(userTier);
 
-            // Dispatch a custom event with the unzipped files
-            const event = new CustomEvent('unzippedFilesReady', { detail: { files } });
-            window.dispatchEvent(event);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('response-message').textContent = 'Failed to activate content. Please try again.';
-        })
-        .finally(() => {
             // Remove the spinner and re-enable the buttons
             removeStep2Spinner();
-        });
+        })
+        .catch(error => console.error('Error fetching user tier:', error));
 }
 
 document.getElementById('activation-form').addEventListener('submit', function(event) {
@@ -838,12 +758,6 @@ function activateTierUI(userTier) {
   document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
 
   checkAndResetWeeklyLimit();
-}
-
-// Utility function to determine the user's tier based on the zip file name
-function inferTierFromFileName(fileName) {
-  if (fileName.includes('wasm_tier_2')) return 2;
-  return -1; // Unknown tier
 }
 
 nextStep1Btn.addEventListener('click', function() {

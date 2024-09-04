@@ -46,24 +46,12 @@ export async function onRequest(context) {
       }
     }
 
-    // Construct the file name based on user tier
-    const tierFileName = `wasm_tier_${userTier}.zip`;
-
-    const fileResponse = await context.env.WASM_MODULES_BUCKET.get(tierFileName, { type: 'arrayBuffer' });
-    if (fileResponse === null) {
-      console.error(`File not found in R2 bucket: ${tierFileName}`);
-      return new Response('Requested content not found', { status: 404, headers });
-    }
-
-    const arrayBuffer = await fileResponse.arrayBuffer();
-
-    // Serve the zip file
-    return new Response(arrayBuffer, {
+    // Return the user's tier as a JSON response
+    return new Response(JSON.stringify({ tier: userTier }), {
       status: 200,
       headers: {
         ...headers,
-        'Content-Type': 'application/zip',
-        'Content-Disposition': `attachment; filename="${tierFileName}"`
+        'Content-Type': 'application/json'
       }
     });
   } catch (error) {
