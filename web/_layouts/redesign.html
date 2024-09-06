@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Demixer | AI-powered Music Demixing</title>
+  <style>
+    /* Resetting defaults and applying base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif; /* Clean, modern font */
+      background-color: #f5f5f5;
+      color: #333;
+      overflow-x: hidden;
+    }
+    section {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+      scroll-snap-align: start;
+    }
+    h1, h2 {
+      font-size: 2.5em;
+      font-weight: 600;
+    }
+    h1 {
+      color: #111;
+      margin-bottom: 15px;
+    }
+    p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+    input[type="file"], button {
+      padding: 15px 30px;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 5px;
+      background-color: #0077cc;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover, input[type="file"]:hover {
+      background-color: #005fa3;
+    }
+
+    /* Bottom Nav Bar */
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      padding: 15px;
+      background-color: #111;
+      color: #fff;
+      text-align: center;
+    }
+    footer nav a {
+      margin: 0 15px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 1em;
+    }
+    footer nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* Smooth scrolling for the scroll-based experience */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Scroll snapping for smooth section transitions */
+    body {
+      scroll-snap-type: y mandatory;
+    }
+
+    /* Transitions and animations */
+    .hidden {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+    .show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Step 1: File Upload Section -->
+<section id="step1" class="show">
+  <h1>Music Demixer, powered by AI</h1>
+  <p>Effortlessly split your tracks into instrument stems</p>
+  <input type="file" id="fileInput" />
+</section>
+
+<!-- Step 2: AI Model Selection -->
+<section id="step2" class="hidden">
+  <h2>Select AI Model</h2>
+  <p>Choose the model that best suits your needs.</p>
+  <button id="modelSelection">Select Model</button>
+</section>
+
+<!-- Step 3: Memory & Start Job -->
+<section id="step3" class="hidden">
+  <h2>Memory Selection & Start Job</h2>
+  <button id="startJob">Start Demixing</button>
+</section>
+
+<!-- Bottom Nav Bar -->
+<footer>
+  <nav>
+    <a href="/blog">Blog</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/about">About Us</a>
+  </nav>
+</footer>
+
+<script>
+  // Reveal sections as the user interacts
+  document.getElementById('fileInput').addEventListener('change', function() {
+    document.getElementById('step2').classList.remove('hidden');
+    document.getElementById('step2').classList.add('show');
+  });
+
+  document.getElementById('modelSelection').addEventListener('click', function() {
+    document.getElementById('step3').classList.remove('hidden');
+    document.getElementById('step3').classList.add('show');
+  });
+</script>
+
+</body>
+</html>

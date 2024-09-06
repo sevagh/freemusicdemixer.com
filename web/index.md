@@ -1,5 +1,6 @@
 ---
 header_class: index
+layout: redesign
 ---
 <script src="WavFileEncoder.js" type="module"></script>
 <script src="main.js" type="module"></script>
