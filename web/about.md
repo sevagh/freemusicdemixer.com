@@ -3,12 +3,6 @@ header_class: index
 description: "Learn more about our mission and the cutting-edge AI technology powering our music demixing tools."
 ---
 
-# About this website
-
-## Contact information
-
-This website is created and maintained by Sevag H ([GitHub portfolio](https://github.com/sevagh), [website](https://sevag.xyz)). If you want to reach out about this website (or any other topic, including brand sponsorships, collaborations, etc.) contact us by [e-mail](mailto:contact@freemusicdemixer.com) or through our [Instagram account](https://www.instagram.com/musicdemixer/). Don't forget to sign up to the [mailing list](http://eepurl.com/iMVAUA) to receive product updates, promos, free trials, and more!
-
 ## What is this tool useful for?
 
 Effortlessly split your songs into individual stems - **vocals, bass, drums, and melody** - using the best and latest AI model in our free web application. It runs **locally on your device 🫵🏽**, ensuring full privacy. Powered by the [Demucs Hybrid Transformer](https://github.com/facebookresearch/demucs) AI model, created and maintained by [Sevag H](https://github.com/sevagh). If you want the power of Demucs **in your pocket**, download our Android app [directly from our site](/android).
