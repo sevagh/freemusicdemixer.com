@@ -1,0 +1,163 @@
+---
+---
+* {
+    margin: 0;
+}
+
+// Import fonts from local assets
+@font-face {
+  font-family: 'Poppins';
+  src: url('/assets/fonts/Poppins-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/assets/fonts/Poppins-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/assets/fonts/Poppins-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/assets/fonts/Poppins-BoldItalic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+}
+
+// General body styles
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  overflow-x: hidden;
+}
+
+section {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  text-align: left;
+  scroll-snap-align: start;
+  flex-direction: column;
+}
+
+h1 {
+  font-size: 3.5em;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 5px;
+}
+
+h2 {
+  font-size: 2.5em;
+  font-weight: 600;
+}
+
+p {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+input[type="file"], button {
+  padding: 15px 30px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 5px;
+  background-color: #0077cc;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover, input[type="file"]:hover {
+  background-color: #005fa3;
+}
+
+// Footer Styles
+footer {
+  background-color: #111;
+  padding: 20px;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  width: 100vw; /* Full viewport width */
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.footer-left {
+  text-align: left;
+}
+
+.contact a {
+  color: #00acee;
+  text-decoration: none;
+}
+
+.contact a:hover {
+  text-decoration: underline;
+}
+
+.social-media a {
+  margin: 0 10px;
+  color: #fff;
+  font-size: 24px;
+}
+
+.footer-right {
+  text-align: right;
+}
+
+.footer-right nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-right nav a {
+  margin-bottom: 10px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer-right nav a:hover {
+  text-decoration: underline;
+}
+
+.small-text {
+  font-size: 0.9em;
+  color: #888;
+}
+
+.footer-bottom {
+  font-size: 0.9em;
+  color: #888;
+  text-align: center;
+  margin-top: 20px;
+}
+
+// Smooth scrolling
+html {
+  scroll-behavior: smooth;
+}
+
+// Scroll snapping
+body {
+  scroll-snap-type: y mandatory;
+}

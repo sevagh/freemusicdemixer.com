@@ -8,69 +8,6 @@ layout: redesign
 
 # AI music demixer powered by Demucs
 
-<a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="50" src="https://media.theresanaiforthat.com/featured5.png" alt="theresanaiforthat-promo"></a> <a title="ai tools code.market" href="https://code.market?code.market=verified"><img alt="ai tools code.market" title="ai tools code.market" src="https://code.market/assets/manage-product/featured-logo-dark.svg" target="_blank" height="50"/></a> <a href="https://toolnest.ai/project/free-music-demixer/" target="_blank" style="cursor: pointer" id="tr_dark"><img loading="lazy" src="https://toolnest.ai/wp-content/uploads/2024/05/badge_toolnest_dark.svg" height="50" alt="Free Music Demixer" data-eio="p"></a> <a href="https://aizones.io/tool/free-music-demixer"> <img height="50" src="https://aizones.io/static/media/Embed DARK.99f25d736afbf408832f.png"/></a>
-<br>
-<a href="https://www.aitechsuite.com/tools/6053?ref=featured&v=129" target="_blank" rel="nofollow"><img height="50" src="https://aitsmarketing.s3.amazonaws.com/aits-verified-tool.svg?height=50"/></a> <a href="https://arktan.com" target="_blank" class="styled-link"> <img src="/assets/images/arktan_logo.webp" height="12px"/> Featured on Arktan.com</a> <a href="https://www.instagram.com/musicdemixer/" target="_blank"><img src="/assets/images/ig_banner.webp" height="50" alt="freemusicdemixer-instagram"/></a>
-
-Effortlessly split your songs into individual stems - **vocals, bass, drums, and melody** - using the best and latest AI model in our free web application. It runs **locally on your device 🫵🏽**, ensuring full privacy. Powered by the [Demucs Hybrid Transformer](https://github.com/facebookresearch/demucs) AI model, created and maintained by [Sevag H](https://github.com/sevagh). If you want the power of Demucs **in your pocket**, download our Android app [directly from our site](/android).
-- **Vocal Remover**: Instantly remove vocals from any song to create karaoke tracks
-- **Extract Vocals**: Isolate vocals with precision for remixing or sampling
-- **Separate Music**: Break down songs into individual instruments using cutting-edge AI technology
-- **Instrumental Breakdown**: Analyze and edit your tracks with our advanced AI-driven software
-<div class="image-container">
-<img class="responsive-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
-</div>
-
-<div class="video-container">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/O1vbXB8K_DI?si=kux30l8qWeF8QFi4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-</div>
-
-Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f) to showcase our models:
-<div class="card-container" id="demo-app">
-  <div class="card">
-    <div class="card-content">
-      <h2 class="card-title">Free</h2>
-      <p>Vocals</p>
-      <audio controls>
-        <source src="/assets/clips/paranoid_jaxius_vocals_free.mp3" type="audio/mp3">
-      </audio>
-      <p>Drums</p>
-      <audio controls>
-        <source src="/assets/clips/paranoid_jaxius_drums_free.mp3" type="audio/mp3">
-      </audio>
-      <p>Bass</p>
-      <audio controls>
-        <source src="/assets/clips/paranoid_jaxius_bass_free.mp3" type="audio/mp3">
-      </audio>
-      <p>Melody</p>
-      <audio controls>
-        <source src="/assets/clips/paranoid_jaxius_melody_free.mp3" type="audio/mp3">
-      </audio>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-content">
-      <h2 class="card-title">Pro (deluxe)</h2>
-      <p>Vocals</p>
-      <audio controls>
-        <source src="/assets/clips/paranoid_jaxius_vocals_pro.mp3" type="audio/mp3">
-      </audio>
-      <p>Drums</p>
-      <audio controls>
-        <source src="/assets/clips/paranoid_jaxius_drums_pro.mp3" type="audio/mp3">
-      </audio>
-      <p>Bass</p>
-      <audio controls>
-        <source src="/assets/clips/paranoid_jaxius_bass_pro.mp3" type="audio/mp3">
-      </audio>
-      <p>Melody</p>
-      <audio controls>
-        <source src="/assets/clips/paranoid_jaxius_melody_pro.mp3" type="audio/mp3">
-      </audio>
-    </div>
-  </div>
-</div>
 
 ## Try it directly in the browser!
 
