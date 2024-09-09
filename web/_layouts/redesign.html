@@ -13,27 +13,40 @@
 
 <body>
 
+<!-- Login Form Modal -->
+<div id="login-modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <form id="activation-form">
+      <label for="billing-email">Enter your billing email to log in:</label>
+      <input type="email" id="billing-email" name="billing-email" required>
+      <button type="submit">Log in</button>
+    </form>
+    <div id="response-message"></div>
+  </div>
+</div>
+
 <div class="main-container">
+<!-- Top-Right Login/Signup Button -->
+<div class="top-right-container">
+  <button id="login-btn">Log in</button>
+  <a href="/signup" id="signup-btn">Sign up</a>
+  <span id="membership-status">Not logged in</span>
+</div>
+
 <section class="title-section">
   <h1>music demixer</h1>
   <h2>powered by AI</h2>
-<img class="responsive-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
+  <h4>Vocal remover and extractor. Music separator and stem splitter. Instrumental breakdowns. We got you covered.</h4>
+<img class="title-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
 </section>
 
 <section class="info-section">
-  <h3>Created by musicians, for musicians.</h3>
+  <h3>Created by musicians, for musicians, and powered by the same revolutionary AI technology as ChatGPT.</h3>
 </section>
 
 <section class="info-section">
-  <h3>Powered by Demucs, an Artificial Intelligence model powered by the revolutionary Transformer technology used in ChatGPT.</h3>
-</section>
-
-<section class="info-section">
-  <h3>Vocal remover and extractor. Music separator and stem splitter. Instrumental breakdowns. We got you covered.</h3>
-</section>
-
-<section class="info-section">
-  <h3>No cloud. No bullshit. 100% privacy. Get started today directly in your browser.</h3>
+  <h3>No cloud. No bullshit. 100% privacy on your own devices. Get started today directly in the browser, or <a href="/android">download the Android app.</a></h3>
 </section>
 
 <!-- Wizard sections here... -->
@@ -243,16 +256,30 @@
         <a href="https://www.reddit.com/user/musicdemixer" target="_blank">
           <i class="fab fa-reddit"></i>
         </a>
+        <a href="https://github.com/sevagh/freemusicdemixer.com" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
       </div>
+    </div>
+
+    <!-- Middle Column: Products -->
+    <div class="footer-middle">
+      <p>Products</p>
+      <nav>
+        <a href="/">Music Demixer web</a>
+        <a href="/android">Music Demixer for Android</a>
+        <a href="/karaoke">Karaoke</a>
+      </nav>
     </div>
 
     <!-- Right Column: Company and Navigation Links -->
     <div class="footer-right">
       <p>Company</p>
       <nav>
-        <a href="/blog">Blog</a>
+        <a href="/about">About</a>
         <a href="/pricing">Pricing</a>
-        <a href="/about">About Us</a>
+        <a href="/support">Support & legal</a>
+        <a href="/blog">Blog</a>
       </nav>
     </div>
   </div>

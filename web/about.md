@@ -10,9 +10,6 @@ Effortlessly split your songs into individual stems - **vocals, bass, drums, and
 - **Extract Vocals**: Isolate vocals with precision for remixing or sampling
 - **Separate Music**: Break down songs into individual instruments using cutting-edge AI technology
 - **Instrumental Breakdown**: Analyze and edit your tracks with our advanced AI-driven software
-<div class="image-container">
-<img class="responsive-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
-</div>
 
 <div class="video-container">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/O1vbXB8K_DI?si=kux30l8qWeF8QFi4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
@@ -64,25 +61,3 @@ Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https
     </div>
   </div>
 </div>
-
-## What do you get with the PRO subscription?
-
-I bring powerful AI models to your devices, running offline, privately, and with a low memory footprint. This website and the Android app are the easiest way to run the best and latest Demucs-based music demixing models and ensembles available today, **all running privately, directly on your device, with unlimited usage!**
-
-### PRO models
-
-We provide additional models as part of the PRO subscription:
-* 6-source: a 6-stem model with vocals, drums, bass, **piano, guitar,** and other melody
-* v3: **a super-fast** 4-stem model with vocals, drums, bass, and melody
-* Karaoke: 2-stem model with **specialized high-performance vocals separation**
-* Fine-tuned: a middle-ground 4-stem model with improved vocals, drums, bass, and melody
-* Custom: higher-quality 6-stem model with **better piano and guitar** separation
-* Deluxe: our highest quality model with **among the best drums and bass separation available today**
-
-### Android special features
-
-The Android app has some special features under the PRO subscription:
-
-* **Record from the microphone directly in the Music Demixer app**
-* **Capture audio from other apps**
-* **Export a custom mix from the output stems**
