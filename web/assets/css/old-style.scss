@@ -1,0 +1,1248 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+pre, code {
+    max-width: 90%;
+    box-sizing: border-box;
+}
+
+#markdown-toc {
+    border: 1px solid #8b008b; /* Dark Magenta border */
+    padding: 10px 15px;
+    background-color: #85d4d4; /* Muted greyish cyan */
+    border-radius: 5px; /* Rounded corners */
+    margin-bottom: 60px; /* Space between ToC and subsequent content */
+    max-width: 80%;
+}
+
+#markdown-toc li {
+    list-style-image: none !important;
+    list-style-type: decimal;
+    color: #8b008b; /* Dark Magenta for list item numbers */
+    margin-bottom: 5px; /* Spacing between list items */
+    margin-left: 10px; /* Spacing from the left edge, making room for numbers */
+}
+
+#markdown-toc a {
+    color: #8b008b; /* Dark Magenta for links */
+    text-decoration: none; /* No underline */
+    font-weight: bold; /* Bold links */
+}
+
+#markdown-toc a:hover {
+    color: #c71585; /* Medium Violet Red for hover state */
+    text-decoration: underline; /* Underline on hover */
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Merge borders */
+    margin-bottom: 1em; /* Space below the table */
+}
+
+/* Table Header */
+table th {
+    background-color: #8b008b; /* Dark Magenta for header background */
+    color: #e0ffff; /* Light Cyan for header text */
+    padding: 8px 12px; /* Some padding to make it look nice */
+    border: 1px solid #c71585; /* Medium Violet Red border around cells */
+    text-align: left; /* Left-align text */
+}
+
+/* Table Body */
+table td {
+    background-color: #f7f7f7; /* A light gray for contrast */
+    color: #c71585; /* Medium Violet Red for the text */
+    padding: 8px 12px; /* Consistent padding with the header */
+    border: 1px solid #c71585; /* Medium Violet Red border around cells */
+}
+
+/* Hover over table rows */
+table tr:hover {
+    background-color: #ffe5e5; /* A soft pink for row hovering */
+}
+
+/* Links inside table */
+table a {
+    color: #8b008b; /* Dark Magenta for links in table */
+}
+
+table a:hover {
+    color: #c71585; /* Medium Violet Red for hover on links in table */
+}
+
+header {
+  box-sizing: border-box;
+  /*width: max-content;*/
+  width: 100%;
+}
+
+body {
+    background: #e0ffff; /* Light Cyan */
+    color: #c71585; /* Medium Violet Red (a more readable variant of Magenta) */
+    font-family: Arial, sans-serif;
+}
+
+header h1 {
+    color: #8b008b; /* Dark Magenta, to give headings a bit more contrast */
+}
+
+header h2 {
+    color: #8b008b; /* Dark Magenta, to give headings a bit more contrast */
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #8b008b; /* Dark Magenta, to give headings a bit more contrast */
+}
+
+.tag-heading {
+  color: #8b008b; /* Dark Magenta, same as your other headings */
+  //font-weight: bold; /* for a bold appearance like headings */
+  //font-size: 1.2em; /* adjust the size if needed */
+}
+
+a {
+    color: #8b008b; /* Dark Magenta */
+}
+
+a:hover {
+    color: #c71585; /* Medium Violet Red */
+}
+
+header h1:before {
+  content: "";
+  font-size: 24px;
+  color: #8b008b;
+}
+
+.btn-github {
+  color: #ceeeee; /* Changed to white for better contrast */
+  background: #961996; /* Softer shade of magenta */
+  //text-shadow: none; /* Removed text shadow for clarity */
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px 1px 0 #000,
+     1px 1px 0 #000;
+}
+
+.btn-github:hover {
+  color: #ceeeee; /* Changed to white for better contrast */
+  background: #6f006f; /* A darker shade for hover */
+}
+
+.btn-karaoke-github {
+  color: #ffffff; /* White text for strong contrast */
+  background: #4b0082; /* Indigo color */
+  box-shadow: none; /* Optional: remove shadow for a flatter appearance */
+  text-shadow: none; /* Optional: remove shadow for a flatter appearance */
+}
+
+.btn-karaoke-github:hover {
+  background: #3a006d; /* A slightly darker shade for hover */
+  color: #ffffff; /* Maintain white text on hover */
+  animation: none;
+}
+
+/* Android Version of the Karaoke Button */
+.btn-android-github {
+  color: #000000; /* White text for strong contrast */
+  background: #3ddc84; /* Android-like green */
+  box-shadow: none; /* Optional: remove shadow for a flatter appearance */
+  text-shadow: none; /* Optional: remove shadow for a flatter appearance */
+}
+
+.btn-android-github:hover {
+  background: #2e7d32; /* A slightly darker green shade for hover */
+  color: #ffffff; /* Maintain white text on hover */
+  animation: none;
+}
+
+// demix webapp stuff
+
+.progress-container {
+  //text-align: center;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  border: 1.5px solid #4b0082;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  background-color: #4CAF50;
+}
+
+.progress-text {
+  margin-top: 10px;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* space between cards */
+  justify-content: left;
+  padding: 0px 20px 20px 0px; /* Space around the cards */
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: auto; /* Adjust as necessary */
+  margin: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.card-content {
+  padding: 16px;
+}
+
+.card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-content p {
+  margin: 0px 0; /* Reduced margin for less vertical space between p and audio */
+}
+
+#demo-app h2.card-title,
+#demo-app h2.card-title {
+  font-size: 1.25em; /* Smaller size */
+  margin: 0px 0; /* Reduced margin for less vertical space */
+}
+
+#demo-app h2.card-title {
+  color: white;
+}
+
+#demo-app h2.card-title {
+  color: black;
+}
+
+audio {
+  //width: 100%; /* Make audio player full width of card */
+  margin-top: 0px; /* Reduced spacing above audio player */
+  margin-bottom: 0px; /* Reduced spacing below audio player */
+}
+
+.special-text {
+  font-size: 18px; /* Moderate font size */
+  font-family: "Courier New", monospace;
+  text-transform: uppercase; /* Uppercase text for emphasis */
+  font-weight: bold; /* Normal font weight for less emphasis */
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.upload-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Align items vertically centered */
+  gap: 10px; /* Small and consistent gap between elements */
+}
+
+.upload-section label {
+  font-size: 16px; /* Consistent font size */
+  font-weight: normal;
+  margin-right: 5px; /* Small margin to keep spacing consistent */
+}
+
+.upload-section input[type="file"] {
+  //display: inline-block;
+  width: auto;
+  font-size: 14px; /* Match input size with labels */
+  margin-right: 5px; /* Keep small margin between input elements */
+}
+
+.upload-section span {
+  margin: 0 5px; /* Small margin around "or" */
+  font-weight: normal;
+}
+
+.radio-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.memory-selection {
+    display: flex;
+    align-items: center;
+    margin-top: 20px; /* Adds spacing above */
+    margin-bottom: 20px; /* Adds spacing below */
+}
+
+.memory-selection label {
+    margin-right: 10px;
+}
+
+.memory-selection select {
+    margin-right: 10px;
+}
+
+.bottom-right {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  margin-left: auto;
+  align-self: flex-end;
+}
+
+/* Base styles for the image */
+img.responsive-img {
+  width: 100%; /* default width for mobile devices */
+}
+
+img.responsive-img-android {
+  width: 75%; /* default width for mobile devices */
+}
+
+div.image-container {
+  text-align: center;
+}
+
+/* debug terminal */
+/* To center the outer "checkbox" div */
+#checkbox {
+  text-align: center;
+}
+
+/* To ensure the hidden "devLogs" div also appears centered when visible */
+#devLogs {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* To center the terminals next to each other */
+#terminalContainer {
+  display: flex;
+  justify-content: center;
+}
+
+/* Style for terminal if you have any, just added for demonstration */
+.terminal {
+  border: 1px solid black;
+  padding: 10px;
+  margin: 5px;
+  text-align: left;
+}
+
+.hidden {
+    display: none;
+}
+
+#terminalContainer {
+    display: flex;
+}
+
+.terminal {
+    background-color: black;
+    color: lime;
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    font-family: "Courier New", monospace;
+    border: 1px solid lime;
+    flex: 1;
+}
+
+#jsTerminal {
+    border-right: 1px solid lime;
+    color: cyan;
+}
+
+.terminal-container {
+    margin-bottom: 20px;
+}
+
+/* ad sponsorships */
+
+.wrapper {
+  display: flex;
+}
+
+.banner-left {
+  box-sizing: border-box;
+  width: 160px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.banner-left img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Adding vertical spacing between the banners */
+.banner-left a {
+  display: block;
+  margin-bottom: 15px; /* Adjust this value as per your needs */
+}
+
+/* Removing the margin from the last banner to avoid extra space at the bottom */
+.banner-left a:last-child {
+  margin-bottom: 5px;
+}
+
+//.container {
+//  flex: 1;
+//  padding: 20px;
+//  margin-left: 5px;
+//  margin-right: 5px;
+//}
+
+/* blog section */
+
+.tag-size-5 {
+    font-size: 1.25rem;
+}
+
+.tag-size-4 {
+    font-size: 1.10rem;
+}
+
+.tag-size-3 {
+    font-size: 0.95rem;
+}
+
+.tag-size-2 {
+    font-size: 0.80rem;
+}
+
+.tag-size-1 {
+    font-size: 0.65rem;
+}
+
+.post-item {
+  display: none;
+}
+
+div.category-cloud {
+  padding-bottom: 30px;
+}
+
+div.tag-cloud {
+  padding-bottom: 30px;
+}
+
+
+.blog-post {
+    margin-bottom: 40px;
+}
+
+.blog-post h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.blog-post .meta {
+    font-size: 0.9em;
+    //color: #777;
+    margin-bottom: 10px;
+}
+
+.blog-post .summary {
+    font-size: 1em;
+    //color: #555;
+}
+
+.blog-highlight {
+    background-color: #e1f77e; /* Light yellow background */
+    color: #333; /* Darker text color for contrast */
+    padding: 2px 5px; /* Padding around the text */
+    border-radius: 3px; /* Optional: rounded corners */
+    font-size: 18px;
+}
+
+.giscus-spacing {
+    height: 50px; /* Adjust the value to your preference */
+    display: block;
+}
+
+/* social bar */
+.social-share-bar {
+    text-align: left; /* Center the content */
+    margin-top: 20px; /* Add some space at the top */
+    margin-bottom: 20px; /* Add some space at the bottom */
+}
+
+.social-share-bar .share-text {
+    vertical-align: middle; /* Align middle to make sure it aligns well with the icons */
+    margin-right: 10px; /* Add some spacing between the text and icons */
+}
+
+.social-share-bar a img {
+    width: 24px; /* Set width for icons */
+    height: 24px; /* Set height for icons */
+    margin: 0 10px; /* Add some horizontal margin between icons */
+    vertical-align: middle; /* Align middle to make sure it aligns well with the text */
+}
+
+.share-text {
+  color: #8b008b; /* Dark Magenta, same as your other headings */
+  //font-weight: bold; /* for a bold appearance like headings */
+  //font-size: 1.2em; /* adjust the size if needed */
+}
+
+// spinner for loading weights
+
+.overlay {
+    position: absolute; /* Changed to absolute within the container */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.9); /* semi-transparent overlay */
+    z-index: 2;
+    cursor: pointer;
+    text-align: center;
+    flex-direction: column;
+}
+
+.loader {
+    display: none;
+    border: 5px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 5px solid #3498db;
+    width: 50px;
+    height: 50px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+    margin-bottom: 20px;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.centered-text {
+    text-align: center;
+    margin-bottom: 10px; /* Adjust this value as needed for spacing */
+}
+
+.centered-text p {
+    margin-top: 5px; /* Adjust top margin */
+    margin-bottom: 5px; /* Adjust bottom margin */
+    /* Other styles, if needed */
+}
+
+blockquote {
+    color: #8b008b; /* Dark Magenta */
+    border-left: 3px solid #8b008b; /* Optional: adds a left border to your blockquote */
+    margin: 10px 20px; /* Adjusts top and bottom margin */
+    padding-left: 15px; /* Adds padding to the left of the blockquote */
+    font-style: italic; /* Optional: italicizes the quote text */
+}
+
+.sticky-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 165, 0, 0.7), /* Softened orange */
+    rgba(255, 140, 0, 0.8) 50%,
+    rgba(255, 165, 0, 0.7)
+  );
+  background-size: 56.57px 56.57px; /* Adjust size to control stripe width */
+  color: black; /* For text */
+  z-index: 5; /* Higher than other content */
+}
+
+.banner-content {
+    display: flex;
+    //justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    max-width: 1000px; /* Adjust as needed */
+    margin: 0 auto; /* Center content if banner is not full width */
+    justify-content: center;
+    padding: 5px; /* Reduced padding */
+}
+
+.banner-content > * {
+    margin: 0 10px; /* Adjust space between elements */
+}
+
+/* Additional styling for your image, text, and buttons */
+.banner-button-signup {
+  text-align: left; /* Left-align text within flex items */
+  display: block; /* Allows padding and width/height if needed */
+  text-align: center;
+  text-decoration: none; /* Removes underline from links */
+  font-size: 18px;
+  padding: 6px 16px;
+  border-radius: 5px;
+  background-color: #961996; /* Replace with your chosen brand color */
+  color: #ffffff; /* White text for better contrast */
+  transition: background-color 0.3s, transform 0.3s;
+  cursor: pointer; /* Cursor indicates it's clickable */
+}
+
+.banner-button-signup:hover {
+  background-color: #a800a8; /* A slightly lighter shade for hover */
+  color: #ffffff; /* Optional: Change text color to increase contrast */
+  transform: translateY(-2px);
+  box-shadow: 2px 4px #650065; /* Slightly darker shade for depth */
+}
+
+.banner-button-signup:active {
+  background-color: #7d007d; /* An even darker shade for active state */
+  transform: translateY(1px);
+  box-shadow: 0 2px #520052; /* Shadow for a "pressed" effect */
+}
+
+.banner-dismiss-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #ceeeee; /* A softer color from your palette */
+  color: #000000; /* White text for contrast */
+  padding: 6px 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+
+.banner-dismiss-button:hover {
+  background-color: #e0ffff; /* A slightly darker shade for hover, close to #ceeeee */
+  transform: translateY(-1px);
+  box-shadow: 2px 2px #a4bebe; /* A softer shadow for depth */
+}
+
+.banner-dismiss-button:active {
+  background-color: #afcfcf; /* A shade darker than hover color for active state */
+  transform: translateY(1px);
+  box-shadow: 0 1px #9fbfbf; /* Shadow for a "pressed" effect */
+}
+
+.banner-dismiss-button .close-text {
+  display: inline; /* Inline with the icon */
+}
+/* Adding an 'X' icon to the close button using pseudo-elements */
+.banner-dismiss-button::before {
+  content: "\00D7"; /* Unicode 'X' character */
+  font-size: 1.2em; /* Slightly larger size for the icon */
+  color: #ff0000; /* Red color for the icon to signify 'close' */
+  margin-right: 5px; /* Spacing between icon and text */
+}
+
+input[type="file"]:disabled, label:disabled {
+    opacity: 0.5; /* Lower opacity for a "disabled" look */
+    cursor: not-allowed; /* Change cursor to indicate non-interactive */
+}
+
+.btn-github, .btn-karaoke-github, .btn-android-github {
+  font-size: 15px;
+}
+
+.styled-link {
+    display: inline-block;
+    height: 50px; /* Match the height of your images */
+    border: 1.5px solid #636363; /* Add a border for a button-like appearance */
+    color: #3b3b3b; /* Choose the color of the text */
+    // add left text border
+    padding: 12px 5px; /* Add padding to the left and right */
+    font-weight: bold; /* Make the text bold */
+    text-align: center; /* Center the text horizontally */
+    text-decoration: none; /* Remove the underline from the link */
+    box-sizing: border-box; /* Include padding and border in the width */
+    //vertical-align: middle; /* Align inline-block elements vertically */
+    vertical-align: top; /* Align inline-block elements vertically */
+}
+
+.styled-link:hover {
+    text-decoration: none; /* Ensure the underline doesn't appear on hover */
+}
+
+#response-message {
+  // make bold text
+  font-weight: bold;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* space between cards */
+  justify-content: left;
+  padding: 0px 20px 20px 0px; /* Space around the cards */
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  //width: 380px; /* or any fixed width */
+  width: auto;
+  margin: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-content {
+  padding: 16px;
+}
+
+.card-title {
+  color: #9c27b0; /* Same purple as the header for the card title */
+  margin: 0;
+  padding: 0;
+  font-size: 1.2em;
+}
+
+.card-info {
+  color: #666; /* Dark grey text for the card info */
+  margin: 10px 0;
+  font-size: 1em;
+}
+
+.card form {
+    margin-bottom: 20px; /* Added margin to separate form from output */
+}
+
+#suggestionOutput {
+    background-color: black;
+    color: white;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px; /* Increased space below the output box */
+}
+
+.card-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.card-model-name {
+  flex-grow: 1; /* Allows this part to grow and push other elements to the edges */
+}
+
+.card-execution-time {
+  margin: 0 8px; /* Add some horizontal space around the time */
+  text-align: right; /* Align the text to the right for consistency */
+  min-width: 60px; /* Ensure enough space for alignment, adjust as needed */
+}
+
+audio {
+  //width: 100%; /* Make audio player take full width of the card */
+  margin-top: 0px; /* Reduced spacing above audio player */
+  margin-bottom: 0px; /* Reduced spacing below audio player */
+}
+
+/* Optional: Remove <p> margins for audio labels */
+.card-content p {
+  margin: 0px 0; /* Tighten up space around <p> elements */
+}
+
+.pro-cta {
+    font-size: larger; /* or you could use a specific font size like 1.5em */
+    margin-bottom: 5px;
+}
+
+.pro-promo {
+    margin-top: 5px;
+    color: green;
+    font-weight: bold; /* Bold links */
+}
+
+.pro-signup-cta {
+    font-size: large; /* or the specific size you want */
+}
+
+/* Container to maintain aspect ratio */
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  width: 100%;
+  margin: 0 auto 20px; /* Center the video if you want */
+}
+
+/* Responsive iframe */
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.popup-banner-hidden {
+  display: none;
+}
+
+.popup-banner-shown {
+  display: flex;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto; /* adjust width as necessary */
+  max-width: 500px; /* max-width for responsiveness */
+  background: #ffffff;
+  color: black;
+  font-size: 24px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: none;
+}
+
+.popup-overlay-shown {
+  display: block;
+}
+
+.popup-close-button {
+  background: none;
+  border: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.popup-title {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.popup-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.popup-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Output links container */
+.output-link-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align items to the top-left */
+  justify-content: flex-start; /* Start content from the top */
+  padding: 5px 10px; /* Add a little padding for the content */
+  margin: 0 auto; /* Auto horizontal margins for centering */
+  background-color: #e0ffff; /* Match the site's light cyan background */
+  border-radius: 10px; /* Rounded corners */
+  color: #8b008b; /* Dark Magenta text */
+  max-height: 130px; /* Set a max height to prevent overflow */
+  overflow-y: scroll; /* Always show the vertical scrollbar */
+  scrollbar-width: thin; /* For Firefox */
+  width: calc(100% - 25px); /* Ensure the container takes the full width minus space for the scrollbar */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.output-link-container::-webkit-scrollbar {
+  width: 10px; /* Width of the scrollbar for WebKit browsers */
+}
+
+.output-link-container::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Background of the scrollbar track */
+}
+
+.output-link-container::-webkit-scrollbar-thumb {
+  background: #8b008b; /* Dark Magenta for the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for the scrollbar thumb */
+}
+
+.output-link-container::-webkit-scrollbar-thumb:hover {
+  background: #c71585; /* Medium Violet Red on hover */
+}
+
+/* Adjust the spacing between the links */
+.output-link-container a {
+  color: #8b008b; /* Dark Magenta links */
+  text-decoration: underline;
+  white-space: nowrap; /* Prevent links from wrapping onto a new line */
+}
+
+/* Hover effect for output links */
+.output-link-container a:hover {
+  color: #c71585; /* Medium Violet Red on hover */
+}
+
+/* Adjusted Wizard Container */
+.wizard-container {
+  width: 400px;
+  height: 400px; /* or use a percentage-based height, e.g., height: 80%; */
+  background-color: #e0ffff; /* Light Cyan to match the site background */
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distribute space between elements */
+  color: #8b008b; /* Dark Magenta for text */
+  font-family: Arial, sans-serif; /* Match the site's font */
+  position: relative; /* Allows positioning of buttons inside */
+  padding: 20px 20px 20px 0; /* Remove left padding: top right bottom left */
+  box-sizing: border-box; /* Ensures padding is included in width and height */
+  overflow: hidden; /* Prevents overflow from disrupting the layout */
+}
+
+/* Wizard footer */
+.wizard-footer {
+  display: flex;
+  justify-content: flex-start; /* Align buttons to the left */
+  align-items: center;
+  gap: 10px; /* Space between prev and next buttons */
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: calc(100% - 40px); /* Full width with padding accounted for */
+}
+
+/* Previous button styling */
+.wizard-prev-btn {
+  padding: 12px 20px;
+  background-color: #8b008b; /* Dark Magenta */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Next button styling */
+.wizard-next-btn {
+  padding: 12px 20px;
+  background-color: #8b008b; /* Dark Magenta */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effects for both buttons */
+.wizard-prev-btn:hover,
+.wizard-next-btn:hover {
+  background-color: #c71585; /* Medium Violet Red on hover */
+}
+
+/* Disabled state for the Next button */
+.wizard-prev-btn:disabled,
+.wizard-next-btn:disabled {
+  background-color: #cccccc; /* Lighter grey to indicate disabled state */
+  color: #666666; /* Darker grey text to show it's disabled */
+  cursor: not-allowed; /* Change cursor to indicate the button is not clickable */
+}
+
+/* Step heading */
+.wizard-step h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  text-align: left; /* Align to the left */
+  color: #8b008b; /* Dark Magenta for headings */
+}
+
+.wizard-step h3 {
+  color: #8b008b; /* Dark Magenta */
+  margin-bottom: 0px;
+}
+
+/* Instruction text */
+.wizard-step p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  text-align: left; /* Align to the left */
+  color: #c71585; /* Medium Violet Red for instructions */
+}
+
+/* Input group styling */
+.input-group {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+/* File input styling */
+input[type="file"] {
+  width: auto;
+  padding: 0px;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: #333333;
+  border: 2px solid #555555;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+  background: #8b008b; /* Dark Magenta button color */
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Ensure the cursor shows as not-allowed for disabled checkboxes and radio buttons */
+input[type="checkbox"][disabled] + label,
+input[type="radio"][disabled] + label {
+  cursor: not-allowed;
+  color: grey; /* Lighter grey text for disabled options */
+  opacity: 0.6; /* Slightly faded to match the disabled state */
+}
+
+/* Container for the two columns */
+.columns-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0px;
+}
+
+/* Each column should take up approximately half the available space */
+.column {
+  width: 48%;
+}
+
+/* Media query for very large screens or default styles */
+@media (min-width: 1200px) {
+  .wrapper {
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 52%; /* Adjust based on your preferred content width */
+  }
+
+  .banner-left {
+    flex-shrink: 0; /* Prevents the banner from shrinking */
+  }
+}
+
+/* Media query for large screens, between 1025px and 1500px */
+@media (min-width: 1025px) and (max-width: 1500px) {
+  .banner-left {
+    width: 136px; /* 85% of 160px */
+    margin-right: 10px;
+  }
+}
+
+/* Media query for medium screens, between 769px and 1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .banner-left {
+    width: 120px; /* 75% of 160px */
+    margin-right: 10px;
+  }
+}
+
+/* Media query for larger screens, starting at 768px */
+@media (min-width: 768px) {
+  div.demo-container {
+    width: 50%; /* Width for larger screens */
+  }
+
+  img.responsive-img {
+    width: 50%; /* Width for larger screens */
+  }
+
+  img.responsive-img-android {
+    width: 25%; /* Width for larger screens */
+  }
+}
+
+/* Media query for small screens, up to 768px */
+@media (max-width: 768px) {
+  .banner-left {
+    width: 104px; /* 65% of 160px */
+    margin-right: 10px;
+  }
+
+  .post1-header {
+    width: calc(100vw + 20px);
+  }
+
+  .terminal {
+    width: 100px;
+  }
+
+  .index-header {
+    width: calc(100vw + 40px);
+  }
+
+  .karaoke-header {
+    width: calc(100vw + 20px);
+  }
+}
+
+/* Media query for larger phones, up to 568px */
+@media (max-width: 568px) {
+  #popup-banner {
+    width: 80%; /* Slightly larger width than for the smallest screens */
+    /* Other styles as necessary */
+  }
+}
+
+/* Media query for medium-sized devices, up to 512px */
+@media (max-width: 512px) {
+  .card-container {
+    flex-direction: column;
+  }
+
+  #popup-banner {
+    width: 90%;
+
+    img {
+      height: 206px; /* Adjust the image height */
+    }
+  }
+  .wizard-container {
+    width: 300px; /* Reduce width for larger phones */
+    height: 400px; /* Reduce height for larger phones */
+  }
+}
+
+/* Media query for small devices, up to 500px */
+@media (max-width: 500px) {
+  .banner-left {
+    width: 88px; /* 55% of 160px */
+    margin-right: 10px;
+  }
+
+  .post1-header {
+    width: calc(100vw + 40px);
+  }
+
+  #popup-banner {
+    width: 90%;
+
+    img {
+      height: 196px; /* Adjust the image height */
+    }
+  }
+}
+
+/* Media query for smaller devices, up to 400px */
+@media (max-width: 400px) {
+  .banner-left {
+    width: 88px; /* 55% of 160px */
+    margin-right: 10px;
+  }
+
+  .post1-header {
+    width: calc(100vw + 50px);
+  }
+
+  #popup-banner {
+    width: 90%;
+    font-size: 22px;
+    padding: 16px;
+
+    img {
+      height: 186px; /* Adjust the image height */
+    }
+  }
+}
+
+/* Media query for the smallest screens, up to 350px */
+@media (max-width: 350px) {
+  .index-header {
+    width: calc(100vw + 60px);
+  }
+
+  .post1-header {
+    width: calc(100vw + 50px);
+  }
+
+  .terminal {
+    width: 90px;
+  }
+
+  #popup-banner {
+    width: 90%;
+
+    img {
+      height: 156px; /* Adjust the image height */
+    }
+  }
+}
+
+/* Media query for the narrowest phones, up to 320px (iPhone SE width) */
+@media (max-width: 320px) {
+  #popup-banner {
+    width: 90%;
+    font-size: 20px;
+    padding: 10px;
+
+    .pro-cta {
+      font-size: 18px;
+    }
+
+    .pro-promo {
+      font-size: 14px;
+    }
+
+    .pro-signup-cta {
+      font-size: 12px;
+    }
+
+    img {
+      height: 146px; /* Adjust the image height */
+    }
+  }
+
+  .index-header {
+    width: calc(100vw + 120px);
+  }
+
+  .karaoke-header {
+    width: calc(100vw + 80px);
+  }
+}

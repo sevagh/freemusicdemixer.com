@@ -1,101 +1,136 @@
 <!DOCTYPE html>
 <html lang="{{ site.lang | default: "en-US" }}">
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    {% include head-custom.html %}
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    {% seo %}
-  </head>
+  <!-- Include the site styles and FontAwesome -->
+  <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<div id="popup-overlay" class="popup-overlay"></div>
-<div id="popup-banner" class="popup-banner-hidden">
-    <button class="popup-close-button" id="close-popup">✖</button>
-    <h3 class="popup-title">Huge Savings!</h3>
-    <p>💵💰📣 Save <b>60% (value of $70)</b> by choosing the yearly membership! 📢💰💵</p>
-    <p>Pay <s>$120 CAD</s> <b>just $49.99 CAD</b> for yearly access!</p>
-    <p>Existing customer? Read <a href="/getting-started/2024/08/17/Switching-to-yearly-billing">how to switch to yearly here!</a></p>
+  <!-- Custom Head Section -->
+  {% include head-custom.html %}
+
+  <!-- SEO Plugin -->
+  {% seo %}
+</head>
+
+<body>
+
+<!-- Login Form Modal -->
+<div id="login-modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <form id="activation-form">
+      <label for="billing-email">Enter your billing email to log in:</label>
+      <input type="email" id="billing-email" name="billing-email" required>
+      <button type="submit">Log in</button>
+    </form>
+    <div id="response-message"></div>
+  </div>
 </div>
 
-<script src="/banner.js"></script>
-<div id="sticky-banner" class="sticky-banner" style="display: none;">
-    <div class="banner-content">
-      <img src="/assets/images/logo_whitebg.webp" alt="freemusicdemixer-logo" height="65px"/>
-        <a href="http://eepurl.com/iMVAUA" class="banner-button-signup" target="_blank">Sign up to the mailing list!</a>
-        <div class="banner-dismiss-button" id="banner-dismiss-button">
-          <span class="close-text">Close</span>
+<div class="main-container">
+  <!-- Top-Right Login/Signup Button -->
+  <div class="top-right-container">
+    <button id="login-btn">Log in</button>
+    <a href="/signup" id="signup-btn">Sign up</a>
+    <span id="membership-status">Not logged in</span>
+  </div>
+
+  <!-- Title Section -->
+  <section class="title-section">
+    <h1>{{ site.title | default: "music demixer" }}</h1>
+    <h2>powered by AI</h2>
+    <h4>Vocal remover and extractor. Music separator and stem splitter. Instrumental breakdowns. We got you covered.</h4>
+    <img class="title-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
+  </section>
+
+  <div class="container">
+    <section id="main_content">
+      {{ content }}
+    </section>
+  </div>
+</div>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-container">
+      <!-- Left Column: Contact and Social Media -->
+      <div class="footer-left">
+        <div class="contact">
+          <p>Contact</p>
+          <p class="small-text"><a href="mailto:contact@freemusicdemixer.com">contact@freemusicdemixer.com</a></p>
+          <a href="https://www.instagram.com/musicdemixer" target="_blank">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="https://www.tiktok.com/@musicdemixer" target="_blank">
+            <i class="fab fa-tiktok"></i>
+          </a>
+          <a href="https://x.com/musicdemixer" target="_blank">
+            <i class="fab fa-x-twitter"></i>
+          </a>
+          <a href="https://www.youtube.com/@musicdemixer" target="_blank">
+            <i class="fab fa-youtube"></i>
+          </a>
+          <a href="https://www.reddit.com/user/musicdemixer" target="_blank">
+            <i class="fab fa-reddit"></i>
+          </a>
+          <a href="https://github.com/sevagh/freemusicdemixer.com" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
         </div>
-    </div>
-</div>
-
-  <body>
-    <header class="{{ page.header_class }}-header">
-      <div class="container">
-        <a id="a-title" href="{{ '/' | relative_url }}">
-          <h1>{{ site.title | default: site.github.repository_name }}</h1>
-        </a>
-        <h2>{{ site.description | default: site.github.project_tagline }}</h2>
-        <section id="downloads">
-          <a href="{{ '/' | relative_url }}" class="btn btn-github">Home</a>
-          <a href="{{ '/about' | relative_url }}" class="btn btn-github">About</a>
-          <a href="{{ '/android' | relative_url }}" class="btn btn-android-github">Android</a>
-          <a href="{{ '/blog' | relative_url }}" class="btn btn-github">Blog</a>
-          <a href="{{ '/support' | relative_url }}" class="btn btn-github">Support</a>
-          <a href="{{ '/karaoke' | relative_url }}" class="btn btn-karaoke-github">KARAOKE</a>
-        </section>
-      </div>
-      <div class="container" style="display: flex; align-items: center; justify-content: flex-start; gap: 0px;">
-
-      </div>
-    </header>
-
-    <div class="wrapper">
-      <div class="banner-left">
-        <p>Our sponsors</p>
-        <a href="https://www.youtube.com/@TheCrescent/videos">
-          <img src="/assets/sponsors/left_banner_crescent.webp" alt="Left sponsor banner" width="160px">
-        </a>
-        <a href="https://pyrae.com/?utm_source=fmd">
-            <img src="//pyrae.com/img/ext/banner-fmd.png" alt="Pyrae Sponsor Banner" width="160px" height="600px"/>
-        </a>
-        <a href="https://open.spotify.com/artist/7IYLENV1pGGPvL6wkyl7t5">
-          <img src="/assets/sponsors/right_banner_onair.webp" alt="Right sponsor banner" width="160px" height="600px">
-        </a>
       </div>
 
-      <div class="container">
-        <section id="main_content">
-          {{ content }}
-        </section>
+      <!-- Middle Column: Products -->
+      <div class="footer-middle">
+        <p>Products</p>
+        <nav>
+          <a href="/">Music Demixer web</a>
+          <a href="/android">Music Demixer for Android</a>
+          <a href="/karaoke">Karaoke</a>
+        </nav>
+      </div>
+
+      <!-- Right Column: Company and Navigation Links -->
+      <div class="footer-right">
+        <p>Company</p>
+        <nav>
+          <a href="/">Home</a>
+          <a href="/about">About</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/support">Support & legal</a>
+          <a href="/blog">Blog</a>
+        </nav>
       </div>
     </div>
-    <script src="https://komito.net/komito.js" async></script>
-    <script>
-    // The default configuration can be omitted and only changed properties can be included.
-    var _komito = _komito || {
-      'trackTwitter': 1,     // Tracks Twitter events if widget is presented on page.
-      'trackFacebook': 1,    // Tracks Facebook events if widget is presented on page.
-      'trackLinkedIn': 1,    // Tracks LinkedIn events if plugin is presented on page.
-      'trackDownloads': 1,   // Tracks files download links.
-      'trackOutbound': 1,    // Tracks outbound links.
-      'trackForms': 1,       // Tracks forms submissions.
-      'trackUsers': 1,       // Tracks pageviews by users logged in to social networks.
-      'trackActions': 1,     // Tracks 'mailto', 'tel', 'sms' and 'skype' actions.
-      'trackPrint': 1,       // Tracks page print actions.
-      'trackOrientation': 1, // Tracks orientation change on mobile devices.
-      'trackColorScheme': 1, // Tracks user preferred color scheme.
-      'trackAdblock': 0,     // Tracks page views with blocked ads. (Experimental)
-      'trackErrorPages': 0,  // Tracks error pages. (Experimental)
-      'sendHeartbeat': 0,    // Sends heartbeat event. (Default interval 30 seconds)
-      'debugMode': 0,        // Prints all requests to console.
-      'trackScroll': [25, 50, 75, 100], // Tracks scroll depth.
-      'trackMedia': ['html5', 'vimeo', 'youtube'], // Tracks HTML5 video, audio, Vimeo and YouTube players events.
-      'nonInteraction': ['adblock', 'audio', 'color-scheme', 'form', 'heartbeat',
-                         'orientation', 'print', 'scroll', 'video'] // List of non interaction events.
-    };
-    </script>
-  </body>
+    <p class="footer-bottom">© 2024 Music Demixer. All Rights Reserved.</p>
+  </footer>
+
+<!-- Komito Analytics -->
+<script src="https://komito.net/komito.js" async></script>
+<script>
+  var _komito = _komito || {
+    'trackTwitter': 1,
+    'trackFacebook': 1,
+    'trackLinkedIn': 1,
+    'trackDownloads': 1,
+    'trackOutbound': 1,
+    'trackForms': 1,
+    'trackUsers': 1,
+    'trackActions': 1,
+    'trackPrint': 1,
+    'trackOrientation': 1,
+    'trackColorScheme': 1,
+    'trackAdblock': 0,
+    'trackErrorPages': 0,
+    'sendHeartbeat': 0,
+    'debugMode': 0,
+    'trackScroll': [25, 50, 75, 100],
+    'trackMedia': ['html5', 'vimeo', 'youtube'],
+    'nonInteraction': ['adblock', 'audio', 'color-scheme', 'form', 'heartbeat', 'orientation', 'print', 'scroll', 'video']
+  };
+</script>
+</body>
 </html>
