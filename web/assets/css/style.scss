@@ -407,17 +407,24 @@ section {
     text-decoration: none; /* Ensure the underline doesn't appear on hover */
   }
 
-  /* General Navbar Styles */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #111;
-  padding: 15px 20px;
-  position: relative;
-  z-index: 1000;
-  color: white;
-}
+  /* Make the navbar stretch the entire width */
+  .navbar {
+    background-color: black;
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Center the contents */
+    padding: 20px 0;
+    position: relative;
+  }
+
+  /* Constrain the navbar contents to a max width */
+  .navbar-contents {
+    max-width: 1200px; /* Same as your main-container */
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* Space between logo and menu items */
+    align-items: center;
+  }
 
 /* Logo */
 .navbar-logo img {

@@ -17,54 +17,47 @@
 </head>
 
 <body>
-
   <header>
     <nav class="navbar">
-      <div class="navbar-logo">
-        <a href="/"><img src="/assets/images/logo.png" alt="Music Demixer Logo"></a>
-      </div>
-      <ul class="navbar-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/pricing">Pricing</a></li>
-        <li><a href="/support">Support</a></li>
-        <li><a href="/blog">Blog</a></li>
-      </ul>
+      <div class="navbar-contents">
+        <div class="navbar-logo">
+          <a href="/"><img src="/assets/images/logo.webp" alt="Music Demixer Logo"></a>
+        </div>
+        <ul class="navbar-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/support">Support</a></li>
+          <li><a href="/blog">Blog</a></li>
+        </ul>
 
-      <!-- Login/Sign up buttons -->
-      <div class="navbar-login-signup">
-        <button id="login-btn">Log in</button>
-        <a href="/signup" class="signup-btn">Sign up</a>
-      </div>
+        <!-- Login/Sign up buttons -->
+        <div class="navbar-login-signup">
+          <button id="login-btn">Log in</button>
+        </div>
 
-      <!-- Hamburger Menu -->
-      <div class="hamburger-menu" id="hamburger-menu">
-        <i class="fa fa-bars"></i>
-      </div>
+        <!-- Hamburger Menu -->
+        <div class="hamburger-menu" id="hamburger-menu">
+          <i class="fa fa-bars"></i>
+        </div>
+      </div> <!-- Correct closing tag for .navbar-contents -->
     </nav>
-
-    <!-- Modal for login -->
-    <div id="login-modal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <form id="activation-form">
-          <label for="billing-email">Enter your billing email to log in:</label>
-          <input type="email" id="billing-email" name="billing-email" required>
-          <button type="submit">Log in</button>
-        </form>
-        <div id="response-message"></div>
-      </div>
-    </div>
   </header>
 
-<div class="main-container">
-  <!-- Top-Right Login/Signup Button -->
-  <div class="top-right-container">
-    <button id="login-btn">Log in</button>
-    <a href="/signup" id="signup-btn">Sign up</a>
-    <span id="membership-status">Not logged in</span>
+  <!-- Modal for login (placed outside of header for better structure) -->
+  <div id="login-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <form id="activation-form">
+        <label for="billing-email">Enter your billing email to log in:</label>
+        <input type="email" id="billing-email" name="billing-email" required>
+        <button type="submit">Log in</button>
+      </form>
+      <div id="response-message"></div>
+    </div>
   </div>
 
+<div class="main-container">
   <section class="title-section">
     <a href="/" class="title-link">
     <h1>music demixer</h1>
