@@ -23,7 +23,6 @@ const OVERLAP_S = 0.75;
 const OVERLAP_SAMPLES = Math.floor(SAMPLE_RATE * OVERLAP_S);
 
 const tierNames = {0: 'Free', 2: 'Pro'};
-const tierLogos = {0: '/assets/images/logo_free.webp', 2: '/assets/images/logo_pro.webp'};
 
 const dl_prefix = "https://bucket.freemusicdemixer.com";
 
@@ -63,8 +62,6 @@ const prevStep4Btn = document.getElementById('prev-step-4');
 const prevStep5Btn = document.getElementById('prev-step-5');
 
 const usageLimits = document.getElementById('usage-limits');
-const emailInput = document.getElementById('billing-email');
-const responseMessage = document.getElementById('response-message');
 
 function getAudioContext() {
     if (!audioContext) {
@@ -641,64 +638,6 @@ function checkAndResetWeeklyLimit() {
     }
 }
 
-function activateProContent(email) {
-    // Display the spinner and disable the buttons
-    displayStep2Spinner();
-
-    // Store the email in localStorage
-    localStorage.setItem('billingEmail', email);
-
-    // Track the content activation event
-    trackProductEvent('Content Activated', { email });
-
-    // Fetch the user tier based on the email
-    fetch(`https://freemusicdemixer.com/getprocontent?email=${encodeURIComponent(email)}`)
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch content');
-            return response.json();
-        })
-        .then(data => {
-            const userTier = data.tier;
-            console.log(`User Tier: ${userTier}`);
-
-            trackProductEvent('Tier Activated', { email, userTier });
-
-            sessionStorage.setItem('loggedIn', 'true');
-            sessionStorage.setItem('userTier', userTier);
-
-            activateTierUI(userTier);
-
-            registerServiceWorker(userTier);
-
-            // Remove the spinner and re-enable the buttons
-            removeStep2Spinner();
-        })
-        .catch(error => console.error('Error fetching user tier:', error));
-}
-
-document.getElementById('activation-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const email = emailInput.value;
-    activateProContent(email);
-});
-
-// Function to display the spinner and overlay
-function displayStep2Spinner() {
-    console.log("Displaying spinner");
-    document.getElementById('step2-overlay').style.display = 'flex';
-    document.getElementById('step2-spinner').style.display = 'flex';
-    prevStep2Btn.disabled = true;
-    nextStep2Btn.disabled = true;
-}
-
-// Function to remove the spinner and overlay
-function removeStep2Spinner() {
-    document.getElementById('step2-overlay').style.display = 'none';
-    document.getElementById('step2-spinner').style.display = 'none';
-    prevStep2Btn.disabled = false;
-    nextStep2Btn.disabled = false;
-}
 
 // Function to display the spinner and overlay
 function displayStep3Spinner() {
@@ -743,20 +682,6 @@ function activateTierUI(userTier) {
     console.log('PRO-tier UI elements enabled.');
   }
 
-  // Find the logo image element and the container for the tier text
-  const logoImage = document.querySelector('#logo-display img');
-  const tierText = document.querySelector('#logo-display small');
-
-  // Update the logo source and tier text based on the userTier
-  if (logoImage && tierText) {
-    logoImage.src = tierLogos[userTier];
-    logoImage.alt = `freemusicdemixer-${tierNames[userTier].toLowerCase()}-logo`;
-    tierText.textContent = `${tierNames[userTier]} tier `;
-    tierText.appendChild(logoImage); // Ensure the image stays within the <small> tag
-  }
-
-  document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
-
   checkAndResetWeeklyLimit();
 }
 
@@ -766,14 +691,6 @@ nextStep1Btn.addEventListener('click', function() {
 
     step1.style.display = 'none';
     step2.style.display = 'block';
-
-    const storedEmail = localStorage.getItem('billingEmail');
-    if (storedEmail) {
-        emailInput.value = storedEmail;
-        responseMessage.textContent = '';
-    }
-
-    checkAndResetWeeklyLimit();
 });
 
 prevStep2Btn.addEventListener('click', function() {
@@ -787,10 +704,16 @@ document.getElementById('activation-form').addEventListener('submit', function(e
 
 nextStep2Btn.addEventListener('click', function() {
     if (!nextStep2Btn.disabled) {
-        const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
-        if (!loggedIn) {
-            dummyLogin();
+        // get user tier from session storage
+        let userTier = parseInt(sessionStorage.getItem('userTier'));
+        // if userTier is -1 or NaN, set to 0
+        if (userTier === -1 || isNaN(userTier)) {
+            userTier = 0;
         }
+
+        activateTierUI(userTier);
+        registerServiceWorker(userTier);
+
         step2.style.display = 'none';
         step3.style.display = 'block';
     }
