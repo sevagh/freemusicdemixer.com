@@ -3,6 +3,8 @@ header_class: index
 description: "Learn more about our mission and the cutting-edge AI technology powering our music demixing tools."
 ---
 
+## Team and contact
+
 ## What is this tool useful for?
 
 Effortlessly split your songs into individual stems - **vocals, bass, drums, and melody** - using the best and latest AI model in our free web application. It runs **locally on your device 🫵🏽**, ensuring full privacy. Powered by the [Demucs Hybrid Transformer](https://github.com/facebookresearch/demucs) AI model, created and maintained by [Sevag H](https://github.com/sevagh). If you want the power of Demucs **in your pocket**, download our Android app [directly from our site](/android).

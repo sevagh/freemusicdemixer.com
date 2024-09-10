@@ -18,18 +18,44 @@
 
 <body>
 
-<!-- Login Form Modal -->
-<div id="login-modal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <form id="activation-form">
-      <label for="billing-email">Enter your billing email to log in:</label>
-      <input type="email" id="billing-email" name="billing-email" required>
-      <button type="submit">Log in</button>
-    </form>
-    <div id="response-message"></div>
-  </div>
-</div>
+  <header>
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <a href="/"><img src="/assets/images/logo.png" alt="Music Demixer Logo"></a>
+      </div>
+      <ul class="navbar-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/pricing">Pricing</a></li>
+        <li><a href="/support">Support</a></li>
+        <li><a href="/blog">Blog</a></li>
+      </ul>
+
+      <!-- Login/Sign up buttons -->
+      <div class="navbar-login-signup">
+        <button id="login-btn">Log in</button>
+        <a href="/signup" class="signup-btn">Sign up</a>
+      </div>
+
+      <!-- Hamburger Menu -->
+      <div class="hamburger-menu" id="hamburger-menu">
+        <i class="fa fa-bars"></i>
+      </div>
+    </nav>
+
+    <!-- Modal for login -->
+    <div id="login-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <form id="activation-form">
+          <label for="billing-email">Enter your billing email to log in:</label>
+          <input type="email" id="billing-email" name="billing-email" required>
+          <button type="submit">Log in</button>
+        </form>
+        <div id="response-message"></div>
+      </div>
+    </div>
+  </header>
 
 <div class="main-container">
   <!-- Top-Right Login/Signup Button -->
@@ -39,12 +65,12 @@
     <span id="membership-status">Not logged in</span>
   </div>
 
-  <!-- Title Section -->
   <section class="title-section">
-    <h1>{{ site.title | default: "music demixer" }}</h1>
+    <a href="/" class="title-link">
+    <h1>music demixer</h1>
+    </a>
     <h2>powered by AI</h2>
     <h4>Vocal remover and extractor. Music separator and stem splitter. Instrumental breakdowns. We got you covered.</h4>
-    <img class="title-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
   </section>
 
   <div class="container">
@@ -61,7 +87,7 @@
       <div class="footer-left">
         <div class="contact">
           <p>Contact</p>
-          <p class="small-text"><a href="mailto:contact@freemusicdemixer.com">contact@freemusicdemixer.com</a></p>
+          <p class="small-text"><a href="mailto:contact@freemusicdemixer.com"><i class="fa-solid fa-envelope"></i> E-mail</a></p>
           <a href="https://www.instagram.com/musicdemixer" target="_blank">
             <i class="fab fa-instagram"></i>
           </a>
@@ -87,8 +113,8 @@
       <div class="footer-middle">
         <p>Products</p>
         <nav>
-          <a href="/">Music Demixer web</a>
-          <a href="/android">Music Demixer for Android</a>
+          <a href="/">Web</a>
+          <a href="/android">Android</a>
           <a href="/karaoke">Karaoke</a>
         </nav>
       </div>
@@ -100,7 +126,7 @@
           <a href="/">Home</a>
           <a href="/about">About</a>
           <a href="/pricing">Pricing</a>
-          <a href="/support">Support & legal</a>
+          <a href="/support">Support</a>
           <a href="/blog">Blog</a>
         </nav>
       </div>
@@ -108,6 +134,7 @@
     <p class="footer-bottom">© 2024 Music Demixer. All Rights Reserved.</p>
   </footer>
 
+<script src="{{ '/main.js' | relative_url }}"></script>
 <!-- Komito Analytics -->
 <script src="https://komito.net/komito.js" async></script>
 <script>

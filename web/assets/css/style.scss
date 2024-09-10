@@ -85,6 +85,16 @@ section {
     text-align: left;
   }
 
+  /* Remove underline from title link */
+  a.title-link {
+    text-decoration: none;
+    color: inherit; /* Ensures the link has the same color as the text */
+  }
+
+  a.title-link:hover {
+    text-decoration: none; /* Ensures no underline on hover as well */
+  }
+
   img.title-img {
     display: flex;
     justify-content: flex-end;
@@ -100,16 +110,6 @@ section {
     padding-top: 5%; /* Adjusts how much higher it sits */
     min-height: 5vh; /* Maintain a large height */
     text-align: left;
-  }
-
-  /* Align SVG badges side by side using Flexbox */
-  section.featured-section {
-    display: flex;
-    flex-wrap: wrap; /* Wrap to the next line if needed */
-    justify-content: center;
-    gap: 15px; /* Space between badges */
-    align-items: flex-start;
-    min-height: 20vh; /* Reset the height */
   }
 
   /* Align SVG badges side by side using Flexbox */
@@ -406,3 +406,133 @@ section {
   .styled-link:hover {
     text-decoration: none; /* Ensure the underline doesn't appear on hover */
   }
+
+  /* General Navbar Styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #111;
+  padding: 15px 20px;
+  position: relative;
+  z-index: 1000;
+  color: white;
+}
+
+/* Logo */
+.navbar-logo img {
+  height: 50px;
+}
+
+/* Navbar Links */
+.navbar-links {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+
+.navbar-links li {
+  display: inline;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 15px;
+}
+
+.navbar-links a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+}
+
+/* Login/Sign up Buttons */
+.navbar-login-signup {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.navbar-login-signup button,
+.navbar-login-signup a {
+  background-color: #0077cc;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.navbar-login-signup button:hover,
+.navbar-login-signup a:hover {
+  background-color: #005fa3;
+}
+
+/* Hamburger Menu (hidden by default) */
+.hamburger-menu {
+  display: none;
+  cursor: pointer;
+}
+
+.hamburger-menu i {
+  color: white;
+  font-size: 24px;
+}
+
+/* Modal Styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-content .close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+/* Responsive Styling for Small Screens */
+@media (max-width: 768px) {
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: #111;
+    width: 100%;
+  }
+
+  .navbar-links.active {
+    display: flex;
+  }
+
+  .hamburger-menu {
+    display: block;
+  }
+}

@@ -2,6 +2,13 @@
 header_class: index
 title: "Music Demixer: Powered by AI"
 ---
+<script src="WavFileEncoder.js" type="module"></script>
+<script src="app.js" type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
+
+<section class="info-section">
+<img class="title-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
+</section>
 
 <section class="info-section">
   <h3>Created by musicians, for musicians, and powered by the same revolutionary AI technology as ChatGPT.</h3>
