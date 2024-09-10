@@ -415,6 +415,7 @@ section {
     justify-content: center; /* Center the contents */
     padding: 20px 0;
     position: relative;
+    height: 60px;
   }
 
   /* Constrain the navbar contents to a max width */
@@ -424,11 +425,13 @@ section {
     display: flex;
     justify-content: space-between; /* Space between logo and menu items */
     align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
 /* Logo */
 .navbar-logo img {
-  height: 50px;
+  max-height: 50px;
 }
 
 /* Navbar Links */
@@ -487,6 +490,10 @@ section {
   font-size: 24px;
 }
 
+.navbar-links li:last-child {
+  margin-bottom: 10px; /* Add extra margin for the last link */
+}
+
 /* Modal Styling */
 .modal {
   display: none;
@@ -501,12 +508,18 @@ section {
   align-items: center;
 }
 
+/* When the modal is displayed, flexbox makes it appear in the center */
+.modal.show {
+  display: flex;
+}
+
 .modal-content {
   background-color: white;
   padding: 20px;
   border-radius: 10px;
   max-width: 400px;
   width: 100%;
+  position: relative;
 }
 
 .modal-content form {

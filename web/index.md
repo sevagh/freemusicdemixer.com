@@ -42,28 +42,9 @@ title: "Music Demixer: Powered by AI"
     <div id="wizard-step-2" class="wizard-step" style="display: none;">
       <h3>Activate pro content</h3>
       <p id="usage-limits"></p>
-      <form id="activation-form">
-        New customer? Buy our <a  href="https://buy.stripe.com/aEU29ZgF48Z13qEeUV">$9.99 monthly</a> or <a  href="https://buy.stripe.com/dR67ujdsSejl3qE3ce">$49.99 yearly</a> subscription!
-        <br>
-        <br>
-        Existing customer?
-        <label for="billing-email">Activate your PRO content with your billing email:</label>
-        <input type="email" id="billing-email" name="billing-email" required>
-        <button type="submit">Activate</button>
-      </form>
-      <div id="response-message"></div>
-      <br>
-      <div>
-      Free user? Click next to continue
-      </div>
       <div class="wizard-footer">
         <button id="prev-step-2" class="wizard-prev-btn">Back</button>
         <button id="next-step-2" class="wizard-next-btn">Next</button>
-      </div>
-      <!-- Overlay and Spinner -->
-      <div id="step2-overlay" class="overlay" style="display: none;">
-          <h3 style="color: #ffffff; margin-top: 20px;">Activating your content...</h3>
-          <div class="loader" id="step2-spinner"></div>
       </div>
     </div>
 
@@ -188,10 +169,7 @@ title: "Music Demixer: Powered by AI"
         <button id="next-step-5" class="wizard-next-btn" disabled>New job</button>
       </div>
     </div>
-    <div class="bottom-right" id="logo-display">
-      <small>Free tier
-      <img src="/assets/images/logo_free.webp" alt="freemusicdemixer-free-logo" height="30px" style="background-color:white;"/></small>
-    </div>
+
   </div>
 </section>
 

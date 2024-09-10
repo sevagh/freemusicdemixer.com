@@ -49,11 +49,25 @@
     <div class="modal-content">
       <span class="close">&times;</span>
       <form id="activation-form">
-        <label for="billing-email">Enter your billing email to log in:</label>
+        New customer? Sign up for a PRO subscription today!
+        <a href="https://buy.stripe.com/aEU29ZgF48Z13qEeUV">$9.99 CAD/month</a> or <a  href="https://buy.stripe.com/dR67ujdsSejl3qE3ce">$49.99 CAD/year</a>
+        <br>
+        <br>
+        Existing customer?
+        <label for="billing-email">Enter your billing email to log in and activate your PRO content:</label>
         <input type="email" id="billing-email" name="billing-email" required>
-        <button type="submit">Log in</button>
+        <button type="submit">Login</button>
       </form>
+      <!-- Overlay and Spinner -->
+      <div id="step2-overlay" class="overlay" style="display: none;">
+          <h3 style="color: #ffffff; margin-top: 20px;">Activating your content...</h3>
+          <div class="loader" id="step2-spinner"></div>
+      </div>
       <div id="response-message"></div>
+      <div class="bottom-right" id="logo-display">
+        <small>Free tier
+        <img src="/assets/images/logo_free.webp" alt="freemusicdemixer-free-logo" height="30px" style="background-color:white;"/></small>
+      </div>
     </div>
   </div>
 
