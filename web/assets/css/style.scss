@@ -81,8 +81,23 @@ section {
     align-items: flex-start;
     padding-left: 5%; /* Adjusts how much it's pushed to the left */
     padding-top: 5%; /* Adjusts how much higher it sits */
+    padding-bottom: 5%;
     min-height: 30vh; /* Maintain a large height */
     text-align: left;
+  }
+
+  section.title-section h1 {
+    font-size: 3.5em;
+    font-weight: 600;
+    color: #111;
+  }
+
+  section.title-section h2 {
+    font-size: 2.5em;
+    font-weight: 400;
+    margin-left: 100px;
+    margin-top: -20px;
+    margin-bottom: 20px;
   }
 
   /* Remove underline from title link */
@@ -108,7 +123,7 @@ section {
     align-items: flex-start;
     padding-left: 5%; /* Adjusts how much it's pushed to the left */
     padding-top: 5%; /* Adjusts how much higher it sits */
-    min-height: 5vh; /* Maintain a large height */
+    min-height: 20vh; /* Maintain a large height */
     text-align: left;
   }
 
@@ -261,26 +276,6 @@ section {
     cursor: pointer;
   }
 
-  /* Title Section Styling */
-  section.title-section {
-    padding-top: 5%;
-    padding-bottom: 5%;
-  }
-
-  section.title-section h1 {
-    font-size: 3.5em;
-    font-weight: 600;
-    color: #111;
-  }
-
-  section.title-section h2 {
-    font-size: 2.5em;
-    font-weight: 400;
-    margin-left: 100px;
-    margin-top: -20px;
-    margin-bottom: 20px;
-  }
-
   /* Wizard Section */
   section.wizard-section {
     padding: 30px 0; /* Reduce padding for tighter spacing */
@@ -289,6 +284,7 @@ section {
   /* Featured Section */
   section.featured-section {
     padding: 20px 0;
+    min-height: 20vh; /* Maintain a large height */
   }
 
   section.featured-badges {
@@ -297,6 +293,21 @@ section {
     justify-content: flex-start; /* Align badges to the left */
     gap: 15px; /* Space between badges */
     margin-top: 20px;
+  }
+
+  .image-section {
+    display: flex; /* Use flexbox to center the image */
+    justify-content: center; /* Horizontally center the image */
+    align-items: center; /* Vertically center the image (if necessary) */
+    width: 100%; /* Ensure the section takes the full width of the parent container */
+    padding: 20px; /* Optional: Add some padding around the image */
+    min-height: 20vh;
+  }
+
+  .image-section img {
+    width: 100%; /* Make the image expand to fill the parent container */
+    height: auto; /* Maintain the aspect ratio */
+    max-width: 100%; /* Optional: Limit the maximum width to avoid stretching too much */
   }
 
   // Footer Styles
@@ -442,7 +453,10 @@ section {
 }
 
 .navbar-links li {
-  display: inline;
+  display: flex;
+  align-items: center; /* Vertically center the links within the list items */
+  margin: 0; /* Ensure no extra margins around the <li> */
+  padding: 0; /* Remove padding around the <li> */
 }
 
 .navbar-links a {
@@ -490,10 +504,6 @@ section {
   font-size: 24px;
 }
 
-.navbar-links li:last-child {
-  margin-bottom: 10px; /* Add extra margin for the last link */
-}
-
 /* Modal Styling */
 .modal {
   display: none;
@@ -536,6 +546,12 @@ section {
   cursor: pointer;
 }
 
+@media (min-width: 800px) {
+  .image-section img {
+    max-width: 65%;
+  }
+}
+
 /* Responsive Styling for Small Screens */
 @media (max-width: 768px) {
   .navbar-links {
@@ -554,5 +570,45 @@ section {
 
   .hamburger-menu {
     display: block;
+  }
+}
+
+@media (max-width: 350px) {
+  section.title-section h2 {
+    margin-left: 50px;
+  }
+}
+
+
+/* Media Query for screens at or below 512px */
+@media (max-width: 512px) {
+  .footer-container {
+    flex-direction: column; /* Stack the columns vertically */
+    padding: 0 20px; /* Reduce left/right padding for smaller screens */
+  }
+
+  .footer-left, .footer-middle, .footer-right {
+    margin-bottom: 20px; /* Add some space between stacked sections */
+  }
+
+  /* Reduce the font size slightly for smaller screens */
+  .footer-middle nav a,
+  .footer-right nav a,
+  .small-text {
+    font-size: 0.85em;
+  }
+
+  /* Center-align the text to make it more readable on small screens */
+  .footer-left, .footer-middle, .footer-right {
+    text-align: left;
+  }
+
+  .social-media a {
+    margin: 0 5px; /* Reduce space between social media icons */
+  }
+
+  /* Adjust padding for the footer */
+  footer {
+    padding: 15px;
   }
 }

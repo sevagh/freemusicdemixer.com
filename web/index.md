@@ -6,7 +6,7 @@ title: "Music Demixer: Powered by AI"
 <script src="app.js" type="module"></script>
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
-<section class="info-section">
+<section class="image-section">
 <img class="title-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
 </section>
 
