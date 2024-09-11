@@ -23,6 +23,7 @@ title: "Music Demixer: Powered by AI"
   <div class="wizard-container">
     <div id="wizard-step-1" class="wizard-step">
       <h3>Music input</h3>
+      <p id="usage-limits"></p>
       <p>Choose either a file or a folder as your input:</p>
       <div class="input-group">
           <input type="file" id="audio-upload" aria-label="Choose a file">
@@ -36,15 +37,6 @@ title: "Music Demixer: Powered by AI"
       <div class="wizard-footer">
         <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>
         <button id="next-step-1" class="wizard-next-btn" disabled>Next</button>
-      </div>
-    </div>
-
-    <div id="wizard-step-2" class="wizard-step" style="display: none;">
-      <h3>Usage limits</h3>
-      <p id="usage-limits"></p>
-      <div class="wizard-footer">
-        <button id="prev-step-2" class="wizard-prev-btn">Back</button>
-        <button id="next-step-2" class="wizard-next-btn">Next</button>
       </div>
     </div>
 
@@ -178,3 +170,5 @@ title: "Music Demixer: Powered by AI"
 <a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="40" src="https://media.theresanaiforthat.com/featured5.png" alt="theresanaiforthat-promo"></a> <a title="ai tools code.market" href="https://code.market?code.market=verified"><img alt="ai tools code.market" title="ai tools code.market" src="https://code.market/assets/manage-product/featured-logo-dark.svg" target="_blank" height="40"/></a> <a href="https://toolnest.ai/project/free-music-demixer/" target="_blank" style="cursor: pointer" id="tr_dark"><img loading="lazy" src="https://toolnest.ai/wp-content/uploads/2024/05/badge_toolnest_dark.svg" height="40" alt="Free Music Demixer" data-eio="p"></a> <a href="https://aizones.io/tool/free-music-demixer"> <img height="40" src="https://aizones.io/static/media/Embed DARK.99f25d736afbf408832f.png"/></a> <a href="https://www.aitechsuite.com/tools/6053?ref=featured&v=129" target="_blank" rel="nofollow"><img height="40" src="https://aitsmarketing.s3.amazonaws.com/aits-verified-tool.svg?height=40"/></a> <a href="https://arktan.com" target="_blank" class="styled-link"> <img src="/assets/images/arktan_logo.webp" height="12px"/> Featured on Arktan.com</a>
 </div>
 </section>
+
+<br>

@@ -45,18 +45,15 @@ let isSingleMode = true;
 let selectedInput = null;
 
 const step1 = document.getElementById('wizard-step-1');
-const step2 = document.getElementById('wizard-step-2');
 const step3 = document.getElementById('wizard-step-3');
 const step4 = document.getElementById('wizard-step-4');
 const step5 = document.getElementById('wizard-step-5');
 
 const nextStep1Btn = document.getElementById('next-step-1');
-const nextStep2Btn = document.getElementById('next-step-2');
 const nextStep3Btn = document.getElementById('next-step-3');
 const nextStep4Btn = document.getElementById('next-step-4');
 const nextStep5Btn = document.getElementById('next-step-5');
 
-const prevStep2Btn = document.getElementById('prev-step-2');
 const prevStep3Btn = document.getElementById('prev-step-3');
 const prevStep4Btn = document.getElementById('prev-step-4');
 const prevStep5Btn = document.getElementById('prev-step-5');
@@ -614,8 +611,8 @@ function checkAndResetWeeklyLimit() {
         usageLimits.textContent = `You have ${remaining} free demixes remaining this week. Your limit will reset on ${new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}.`;
 
         if (remaining <= 0) {
-            nextStep2Btn.disabled = true;
-            nextStep2Btn.textContent = 'Limit reached';
+            nextStep1Btn.disabled = true;
+            nextStep1Btn.textContent = 'Limit reached';
         }
     } else {
         usageLimits.textContent = 'You have unlimited demixes.';
@@ -626,8 +623,8 @@ function checkAndResetWeeklyLimit() {
         }
         document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
 
-        nextStep2Btn.disabled = false;
-        nextStep2Btn.textContent = 'Next';
+        nextStep1Btn.disabled = false;
+        nextStep1Btn.textContent = 'Next';
     }
 }
 
@@ -695,37 +692,18 @@ nextStep1Btn.addEventListener('click', function() {
     console.log('Selected input on next step:', selectedInput);
 
     step1.style.display = 'none';
-    step2.style.display = 'block';
+    step3.style.display = 'block';
+
+    registerServiceWorker();
 });
 
-prevStep2Btn.addEventListener('click', function() {
-    step2.style.display = 'none';
+prevStep3Btn.addEventListener('click', function() {
+    step3.style.display = 'none';
     step1.style.display = 'block';
 });
 
 document.getElementById('activation-form').addEventListener('submit', function(event) {
     event.preventDefault();
-});
-
-nextStep2Btn.addEventListener('click', function() {
-    if (!nextStep2Btn.disabled) {
-        // get user tier from session storage
-        let userTier = parseInt(sessionStorage.getItem('userTier'));
-        // if userTier is -1 or NaN, set to 0
-        if (userTier === -1 || isNaN(userTier)) {
-            userTier = 0;
-        }
-
-        registerServiceWorker(userTier);
-
-        step2.style.display = 'none';
-        step3.style.display = 'block';
-    }
-});
-
-prevStep3Btn.addEventListener('click', function() {
-    step3.style.display = 'none';
-    step2.style.display = 'block';
 });
 
 nextStep3Btn.addEventListener('click', function() {
