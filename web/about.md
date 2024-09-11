@@ -17,13 +17,13 @@ This project is run by [Sevag H](https://sevag.xyz).
 
 ## What is this tool useful for?
 
-Effortlessly split your songs into individual stems - **vocals, bass, drums, and melody** - using the best and latest AI model in our free web application. It runs **locally on your device 🫵🏽**, ensuring full privacy. Powered by the [Demucs Hybrid Transformer](https://github.com/facebookresearch/demucs) AI model.
+Effortlessly split your songs into individual stems - **vocals, bass, drums, melody, guitar, and piano** - using the best and latest AI model in our web application. It runs **locally on your device 🫵🏽**, ensuring full privacy. Powered by the [Demucs Hybrid Transformer](https://github.com/facebookresearch/demucs) AI model.
 - **Vocal Remover**: Instantly remove vocals from any song to create karaoke tracks
 - **Extract Vocals**: Isolate vocals with precision for remixing or sampling
 - **Separate Music**: Break down songs into individual instruments using cutting-edge AI technology
 - **Instrumental Breakdown**: Analyze and edit your tracks with our advanced AI-driven software
 
-If you want the power of Demucs **in your pocket**, download our Android app [directly from our site](/android).
+If you want the power of Demucs **in your pocket**, [download our Android app](/android).
 
 <br>
 
@@ -81,3 +81,5 @@ Want to know what it sounds like? Here is some sample audio extracted from the s
     </div>
   </div>
 </div>
+
+<br>
