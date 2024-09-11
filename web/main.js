@@ -40,16 +40,10 @@ document.getElementById('activation-form').addEventListener('submit', function(e
 
 document.addEventListener("DOMContentLoaded", function() {
     const storedEmail = localStorage.getItem('billingEmail');
-    const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
 
     if (storedEmail) {
         emailInput.value = storedEmail;
         responseMessage.textContent = '';
-    }
-
-    if (isLoggedIn && storedEmail) {
-        // User is already logged in, activate the content
-        activateProContent(storedEmail);
     }
 });
 

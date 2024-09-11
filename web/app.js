@@ -73,13 +73,6 @@ function getAudioContext() {
 document.addEventListener("DOMContentLoaded", function() {
     resetUIElements();
 
-    const storedEmail = localStorage.getItem('billingEmail');
-    const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
-
-    if (isLoggedIn && storedEmail) {
-        // User is already logged in, activate the content
-        activateProContent(storedEmail);
-    }
 });
 
 const registerServiceWorker = async () => {
@@ -145,7 +138,7 @@ function resetUIElements() {
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
     if (loggedIn) {
         let userTier = parseInt(sessionStorage.getItem('userTier'));
-        if (userTier === -1) {
+        if ((userTier === -1) || isNaN(userTier)) {
             userTier = 0;
         }
         activateTierUI(userTier);
@@ -489,25 +482,25 @@ function fetchAndCacheFiles(model) {
     return Promise.all(fetchPromises);
 }
 
-function initModel() {
+async function initModel() {
     displayStep3Spinner();
 
-    return fetchAndCacheFiles(selectedModel)
-        .then(buffers => { // buffers are the downloaded file contents
+    try {
+        try {
+            const buffers = await fetchAndCacheFiles(selectedModel);
             // WASM module is ready, enable the buttons
             nextStep4Btn.disabled = false;
 
             dlModelBuffers = buffers;
             console.log('Model files downloaded:', buffers);
-        })
-        .catch(error => {
+        } catch (error) {
             // Handle errors, maybe keep the overlay visible or show an error message
             console.log('Failed to fetch model files:', error);
-        })
-        .finally(() => {
-            // Remove the spinner and re-enable the buttons
-            removeStep3Spinner();
-        });
+        }
+    } finally {
+        // Remove the spinner and re-enable the buttons
+        removeStep3Spinner();
+    }
 }
 
 // Function to handle the segmented audio processing
@@ -628,7 +621,7 @@ function checkAndResetWeeklyLimit() {
         usageLimits.textContent = 'You have unlimited demixes.';
 
         let userTier = parseInt(sessionStorage.getItem('userTier'));
-        if (userTier === -1) {
+        if ((userTier === -1) || isNaN(userTier)) {
             userTier = 0;
         }
         document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
@@ -660,8 +653,6 @@ function activateTierUI(userTier) {
   console.log('Enabling UI for user tier:', userTier); // Debugging
   // Enable buttons based on user tier
 
-  sessionStorage.setItem('userTier', userTier); // Store the user tier in local storage
-
   if (userTier === 2) {
     // Enable PRO-tier checkboxes (piano, guitar)
     document.getElementById('piano').disabled = false;
@@ -681,6 +672,20 @@ function activateTierUI(userTier) {
 
     console.log('PRO-tier UI elements enabled.');
   }
+
+  // Find the logo image element and the container for the tier text
+  const logoImage = document.querySelector('#logo-display img');
+  const tierText = document.querySelector('#logo-display small');
+
+  // Update the logo source and tier text based on the userTier
+  if (logoImage && tierText) {
+      logoImage.src = tierLogos[userTier];
+      logoImage.alt = `freemusicdemixer-${tierNames[userTier].toLowerCase()}-logo`;
+      tierText.textContent = `${tierNames[userTier]} tier `;
+      tierText.appendChild(logoImage); // Ensure the image stays within the <small> tag
+  }
+
+  document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
 
   checkAndResetWeeklyLimit();
 }
@@ -711,7 +716,6 @@ nextStep2Btn.addEventListener('click', function() {
             userTier = 0;
         }
 
-        activateTierUI(userTier);
         registerServiceWorker(userTier);
 
         step2.style.display = 'none';

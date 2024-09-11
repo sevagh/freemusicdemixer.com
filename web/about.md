@@ -3,21 +3,39 @@ header_class: index
 description: "Learn more about our mission and the cutting-edge AI technology powering our music demixing tools."
 ---
 
-## Team and contact
+# About us
+
+<br>
+
+## Contact and team
+
+Contact us via e-mail at [contact@freemusicdemixer.com](mailto:contact@freemusicdemixer.com) for all inquiries.
+
+This project is run by [Sevag H](https://sevag.xyz).
+
+<br>
 
 ## What is this tool useful for?
 
-Effortlessly split your songs into individual stems - **vocals, bass, drums, and melody** - using the best and latest AI model in our free web application. It runs **locally on your device 🫵🏽**, ensuring full privacy. Powered by the [Demucs Hybrid Transformer](https://github.com/facebookresearch/demucs) AI model, created and maintained by [Sevag H](https://github.com/sevagh). If you want the power of Demucs **in your pocket**, download our Android app [directly from our site](/android).
+Effortlessly split your songs into individual stems - **vocals, bass, drums, and melody** - using the best and latest AI model in our free web application. It runs **locally on your device 🫵🏽**, ensuring full privacy. Powered by the [Demucs Hybrid Transformer](https://github.com/facebookresearch/demucs) AI model.
 - **Vocal Remover**: Instantly remove vocals from any song to create karaoke tracks
 - **Extract Vocals**: Isolate vocals with precision for remixing or sampling
 - **Separate Music**: Break down songs into individual instruments using cutting-edge AI technology
 - **Instrumental Breakdown**: Analyze and edit your tracks with our advanced AI-driven software
 
-<div class="video-container">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/O1vbXB8K_DI?si=kux30l8qWeF8QFi4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-</div>
+If you want the power of Demucs **in your pocket**, download our Android app [directly from our site](/android).
 
-Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f) to showcase our models:
+<br>
+
+## What is the paid product?
+
+See our [pricing page](/pricing) for more information on our PRO model. The PRO subscription offers **unlimited demixing** and **higher quality** stems.
+
+<br>
+
+## Demo clips
+
+Want to know what it sounds like? Here is some sample audio extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https://www.jaxiusmusic.com/file-share/4a94f6cf-a844-4d72-b849-328829fe158f) to showcase our models:
 <div class="card-container" id="demo-app">
   <div class="card">
     <div class="card-content">
@@ -43,7 +61,7 @@ Segments extracted from the song [Jaxius - Paranoid (Black Sabbath cover)](https
 
   <div class="card">
     <div class="card-content">
-      <h2 class="card-title">Pro (deluxe)</h2>
+      <h2 class="card-title">PRO (deluxe)</h2>
       <p>Vocals</p>
       <audio controls>
         <source src="/assets/clips/paranoid_jaxius_vocals_pro.mp3" type="audio/mp3">

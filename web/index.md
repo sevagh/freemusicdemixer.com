@@ -11,7 +11,7 @@ title: "Music Demixer: Powered by AI"
 </section>
 
 <section class="info-section">
-  <h3>Created by musicians, for musicians, and powered by the same revolutionary AI technology as ChatGPT.</h3>
+  <h3>Our algorithms are based on the <b>Demucs AI model</b> and winners from the Sony Music and Sound Demixing Challenges in 2021 and 2023. Powered by the same revolutionary Artificial Intelligence technology as ChatGPT.</h3>
 </section>
 
 <section class="info-section">
@@ -40,7 +40,7 @@ title: "Music Demixer: Powered by AI"
     </div>
 
     <div id="wizard-step-2" class="wizard-step" style="display: none;">
-      <h3>Activate pro content</h3>
+      <h3>Usage limits</h3>
       <p id="usage-limits"></p>
       <div class="wizard-footer">
         <button id="prev-step-2" class="wizard-prev-btn">Back</button>

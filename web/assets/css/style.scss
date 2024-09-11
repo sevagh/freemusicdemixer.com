@@ -70,7 +70,7 @@ section {
   }
 
   h4 {
-    font-size: 1.25em;
+    font-size: 1.50em;
     font-weight: 525;
   }
 
@@ -611,4 +611,255 @@ section {
   footer {
     padding: 15px;
   }
+}
+
+#main-content {
+  line-height: 1.6; /* Increase line height for better readability */
+  max-width: 1200px; /* Constrain width for better readability */
+  margin: 0 auto; /* Center the content */
+}
+
+#main-content p {
+  font-size: 1.5em;
+}
+
+#main-content ul,
+#main-content ol {
+  list-style-position: inside; /* Align bullets/numbers with the text */
+  padding-left: 20px; /* Add indentation */
+  margin-bottom: 20px; /* Add spacing below the entire list */
+  font-size: 1.5em; /* Match font size with paragraphs */
+}
+
+#main-content ul li,
+#main-content ol li {
+  margin-bottom: 10px; /* Add spacing between list items */
+  line-height: 1.2; /* Adjust line-height for better readability */
+  text-indent: -29px;
+  padding-left: 40px;
+}
+
+#main-content ul li::marker,
+#main-content ol li::marker {
+  font-size: 1.2em; /* Make the bullets/numbers a bit larger */
+  color: #333; /* Optional: change bullet/number color */
+}
+
+.progress-container {
+  //text-align: center;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  border: 1.5px solid #4b0082;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  background-color: #4CAF50;
+}
+
+.progress-text {
+  margin-top: 10px;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* space between cards */
+  justify-content: left;
+  padding: 0px 20px 20px 0px; /* Space around the cards */
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: auto; /* Adjust as necessary */
+  margin: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.card-content {
+  padding: 16px;
+}
+
+.card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-content p {
+  margin: 0px 0; /* Reduced margin for less vertical space between p and audio */
+}
+
+#demo-app h2.card-title,
+#demo-app h2.card-title {
+  font-size: 1.25em; /* Smaller size */
+  margin: 0px 0; /* Reduced margin for less vertical space */
+}
+
+#demo-app h2.card-title {
+  color: white;
+}
+
+#demo-app h2.card-title {
+  color: black;
+}
+
+audio {
+  //width: 100%; /* Make audio player full width of card */
+  margin-top: 0px; /* Reduced spacing above audio player */
+  margin-bottom: 0px; /* Reduced spacing below audio player */
+}
+
+.special-text {
+  font-size: 18px; /* Moderate font size */
+  font-family: "Courier New", monospace;
+  text-transform: uppercase; /* Uppercase text for emphasis */
+  font-weight: bold; /* Normal font weight for less emphasis */
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.upload-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Align items vertically centered */
+  gap: 10px; /* Small and consistent gap between elements */
+}
+
+.upload-section label {
+  font-size: 16px; /* Consistent font size */
+  font-weight: normal;
+  margin-right: 5px; /* Small margin to keep spacing consistent */
+}
+
+.upload-section input[type="file"] {
+  //display: inline-block;
+  width: auto;
+  font-size: 14px; /* Match input size with labels */
+  margin-right: 5px; /* Keep small margin between input elements */
+}
+
+.upload-section span {
+  margin: 0 5px; /* Small margin around "or" */
+  font-weight: normal;
+}
+
+.radio-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.memory-selection {
+    display: flex;
+    align-items: center;
+    margin-top: 20px; /* Adds spacing above */
+    margin-bottom: 20px; /* Adds spacing below */
+}
+
+.memory-selection label {
+    margin-right: 10px;
+}
+
+.memory-selection select {
+    margin-right: 10px;
+}
+
+.tag-size-5 {
+    font-size: 1.25rem;
+}
+
+.tag-size-4 {
+    font-size: 1.10rem;
+}
+
+.tag-size-3 {
+    font-size: 0.95rem;
+}
+
+.tag-size-2 {
+    font-size: 0.80rem;
+}
+
+.tag-size-1 {
+    font-size: 0.65rem;
+}
+
+.post-item {
+  display: none;
+}
+
+div.category-cloud {
+  padding-bottom: 30px;
+}
+
+div.tag-cloud {
+  padding-bottom: 30px;
+}
+
+
+.blog-post {
+    margin-bottom: 40px;
+}
+
+.blog-post h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.blog-post .meta {
+    font-size: 0.9em;
+    //color: #777;
+    margin-bottom: 10px;
+}
+
+.blog-post .summary {
+    font-size: 1em;
+    //color: #555;
+}
+
+.blog-highlight {
+    background-color: #e1f77e; /* Light yellow background */
+    color: #333; /* Darker text color for contrast */
+    padding: 2px 5px; /* Padding around the text */
+    border-radius: 3px; /* Optional: rounded corners */
+    font-size: 18px;
+}
+
+.giscus-spacing {
+    height: 50px; /* Adjust the value to your preference */
+    display: block;
+}
+
+/* social bar */
+.social-share-bar {
+    text-align: left; /* Center the content */
+    margin-top: 20px; /* Add some space at the top */
+    margin-bottom: 20px; /* Add some space at the bottom */
+}
+
+.social-share-bar .share-text {
+    vertical-align: middle; /* Align middle to make sure it aligns well with the icons */
+    margin-right: 10px; /* Add some spacing between the text and icons */
+}
+
+.social-share-bar a img {
+    width: 24px; /* Set width for icons */
+    height: 24px; /* Set height for icons */
+    margin: 0 10px; /* Add some horizontal margin between icons */
+    vertical-align: middle; /* Align middle to make sure it aligns well with the text */
+}
+
+.share-text {
+  color: #8b008b; /* Dark Magenta, same as your other headings */
+  //font-weight: bold; /* for a bold appearance like headings */
+  //font-size: 1.2em; /* adjust the size if needed */
 }
