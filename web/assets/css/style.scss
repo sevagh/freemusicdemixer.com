@@ -37,6 +37,11 @@
   box-sizing: border-box;
 }
 
+img.responsive-img-android {
+  width: 75%; /* default width for mobile devices */
+}
+
+
 // Smooth scrolling
 html {
   scroll-behavior: smooth;
@@ -546,73 +551,6 @@ section {
   cursor: pointer;
 }
 
-@media (min-width: 800px) {
-  .image-section img {
-    max-width: 65%;
-  }
-}
-
-/* Responsive Styling for Small Screens */
-@media (max-width: 768px) {
-  .navbar-links {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 60px;
-    right: 0;
-    background-color: #111;
-    width: 100%;
-  }
-
-  .navbar-links.active {
-    display: flex;
-  }
-
-  .hamburger-menu {
-    display: block;
-  }
-}
-
-@media (max-width: 350px) {
-  section.title-section h2 {
-    margin-left: 50px;
-  }
-}
-
-
-/* Media Query for screens at or below 512px */
-@media (max-width: 512px) {
-  .footer-container {
-    flex-direction: column; /* Stack the columns vertically */
-    padding: 0 20px; /* Reduce left/right padding for smaller screens */
-  }
-
-  .footer-left, .footer-middle, .footer-right {
-    margin-bottom: 20px; /* Add some space between stacked sections */
-  }
-
-  /* Reduce the font size slightly for smaller screens */
-  .footer-middle nav a,
-  .footer-right nav a,
-  .small-text {
-    font-size: 0.85em;
-  }
-
-  /* Center-align the text to make it more readable on small screens */
-  .footer-left, .footer-middle, .footer-right {
-    text-align: left;
-  }
-
-  .social-media a {
-    margin: 0 5px; /* Reduce space between social media icons */
-  }
-
-  /* Adjust padding for the footer */
-  footer {
-    padding: 15px;
-  }
-}
-
 #main-content {
   line-height: 1.6; /* Increase line height for better readability */
   max-width: 1200px; /* Constrain width for better readability */
@@ -862,4 +800,75 @@ div.tag-cloud {
   color: #8b008b; /* Dark Magenta, same as your other headings */
   //font-weight: bold; /* for a bold appearance like headings */
   //font-size: 1.2em; /* adjust the size if needed */
+}
+
+@media (min-width: 800px) {
+  .image-section img {
+    max-width: 65%;
+  }
+
+  img.responsive-img-android {
+    width: 25%; /* Width for larger screens */
+  }
+}
+
+/* Responsive Styling for Small Screens */
+@media (max-width: 768px) {
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: #111;
+    width: 100%;
+  }
+
+  .navbar-links.active {
+    display: flex;
+  }
+
+  .hamburger-menu {
+    display: block;
+  }
+}
+
+@media (max-width: 350px) {
+  section.title-section h2 {
+    margin-left: 50px;
+  }
+}
+
+
+/* Media Query for screens at or below 512px */
+@media (max-width: 512px) {
+  .footer-container {
+    flex-direction: column; /* Stack the columns vertically */
+    padding: 0 20px; /* Reduce left/right padding for smaller screens */
+  }
+
+  .footer-left, .footer-middle, .footer-right {
+    margin-bottom: 20px; /* Add some space between stacked sections */
+  }
+
+  /* Reduce the font size slightly for smaller screens */
+  .footer-middle nav a,
+  .footer-right nav a,
+  .small-text {
+    font-size: 0.85em;
+  }
+
+  /* Center-align the text to make it more readable on small screens */
+  .footer-left, .footer-middle, .footer-right {
+    text-align: left;
+  }
+
+  .social-media a {
+    margin: 0 5px; /* Reduce space between social media icons */
+  }
+
+  /* Adjust padding for the footer */
+  footer {
+    padding: 15px;
+  }
 }

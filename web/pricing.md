@@ -27,7 +27,7 @@ publishable-key="pk_live_51ObLZ9AmT5bJ3vuwDIgzrNEljt7oK42MqgmnEKZbANz0PDtlzkD3Oc
 ## Subscription features
 
 We provide additional models as part of the PRO subscription:
-* **Piano and guitar stems** with our 6-source and Custom models
+* **Piano 🎹 and guitar 🎸 stems** with our 6-source and Custom models
 * Our **blazing fast** v3 4-stem optimized model for vocals, drums, bass, and melody
 * Our vocal-optimized Karaoke 2-stem model with **specialized high-performance vocals and instrumental separation**
 * Our two highest-quality models for 4-stem (vocals, drums, bass, melody) separation: Fine-tuned and Deluxe for **the best drums and bass separation available on the market**
