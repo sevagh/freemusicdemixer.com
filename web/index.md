@@ -39,8 +39,7 @@ header_class: index
       </div>
     </div>
     <div id="wizard-step-2" class="wizard-step" style="display: none;">
-      <h3>Choose your parameters</h3>
-      <br>
+      <p>Choose your parameters</p>
       <div class="columns-container">
         <div class="column">
           <b>Components:</b>
@@ -131,7 +130,7 @@ header_class: index
       </div>
     </div>
     <div id="wizard-step-3" class="wizard-step" style="display: none;">
-    <h3>Demix progress and outputs</h3>
+    <p>Demix progress and output stems</p>
       To cancel the running job, refresh the page
       <div class="progress-container">
         <div class="progress-text" id="inference-progress-text">Progress...</div>

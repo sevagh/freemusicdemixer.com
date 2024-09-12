@@ -315,12 +315,6 @@ button:disabled:hover {
     padding: 30px 0; /* Reduce padding for tighter spacing */
   }
 
-  /* Wizard container should have position: relative */
-.wizard-step {
-  position: relative;
-  padding: 20px; /* Add padding for better spacing */
-}
-
 /* Output links container */
 .output-link-container {
   display: flex;
@@ -424,19 +418,37 @@ button:disabled:hover {
   background-color: #f5f5f5; /* Light gray background for the section */
 }
 
-/* Define a box for the wizard with fixed dimensions and background */
+/* Wizard Container */
 .wizard-container {
-  background-color: #e0e0e0; /* Gray background for the wizard */
+  width: 800px;
+  height: 500px;
+  background-color: #e0e0e0;
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  color: #333;
+  position: relative; /* To ensure the footer is positioned inside the container */
   padding: 20px;
-  max-width: 800px;  /* Maximum width of the embedded wizard */
-  width: 100%;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  box-sizing: border-box; /* Ensures padding is included in width and height */
 }
 
-/* Add padding inside wizard steps for better layout */
+/* Wizard Step */
 .wizard-step {
-  margin-bottom: 20px;
+  flex-grow: 1;
+  padding-bottom: 20px;
+  overflow: auto; /* Allow content to scroll if it overflows */
+}
+
+/* Wizard Footer positioned absolutely */
+.wizard-footer {
+  display: flex;
+  justify-content: space-between; /* Pushes buttons to extreme left and right */
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: calc(100% - 40px); /* Full width with padding */
 }
 
 /* Style the input and buttons consistently */
@@ -446,11 +458,6 @@ button:disabled:hover {
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-top: 10px;
-}
-
-.wizard-footer {
-  display: flex;
-  justify-content: space-between;
 }
 
 .wizard-footer button {
