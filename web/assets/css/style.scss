@@ -204,7 +204,21 @@ button:hover {
   background-color: #005fa3; /* Darker on hover */
 }
 
+.wizard-footer button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.wizard-footer button:hover {
+  background-color: #0056b3;
+}
+
 /* Disabled button styling */
+wizard-footer.button:disabled,
 button:disabled {
   background-color: #cccccc; /* Light grey for a more obvious disabled state */
   color: #666666; /* Darker grey text to lower contrast */
@@ -212,8 +226,10 @@ button:disabled {
   opacity: 0.5; /* Reduce opacity to make it appear faded */
 }
 
+wizard-footer.button:disabled:hover,
 button:disabled:hover {
   background-color: #cccccc; /* Keep the same color on hover */
+  color: #666666; /* Darker grey text to lower contrast */
 }
 
   /* Top-Right Button Styles */
@@ -244,6 +260,14 @@ button:disabled:hover {
   .top-right-container button:hover {
     background-color: #005fa3;
   }
+
+/* Ensure the cursor shows as not-allowed for disabled checkboxes and radio buttons */
+input[type="checkbox"][disabled] + label,
+input[type="radio"][disabled] + label {
+  cursor: not-allowed;
+  color: grey; /* Lighter grey text for disabled options */
+  opacity: 0.6; /* Slightly faded to match the disabled state */
+}
 
   #membership-status {
     color: white;
@@ -458,19 +482,6 @@ button:disabled:hover {
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-top: 10px;
-}
-
-.wizard-footer button {
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.wizard-footer button:hover {
-  background-color: #0056b3;
 }
 
   // Footer Styles
