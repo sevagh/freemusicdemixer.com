@@ -133,14 +133,23 @@ function resetUIElements() {
 
     // if the user is logged in, activate tier UIs
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
+    let userTier = 0;
     if (loggedIn) {
-        let userTier = parseInt(sessionStorage.getItem('userTier'));
+        userTier = parseInt(sessionStorage.getItem('userTier'));
         if ((userTier === -1) || isNaN(userTier)) {
             userTier = 0;
         }
-        activateTierUI(userTier);
     }
+    activateTierUI(userTier);
 }
+
+// Set up an event listener for the custom 'loginSuccess' event
+window.addEventListener('loginSuccess', (event) => {
+    console.log('Login success event detected in app.js');
+
+    // Call resetUIElements to handle UI updates after login
+    resetUIElements();
+  });
 
 function updateModelBasedOnSelection() {
     console.log('Updating model based on selection');

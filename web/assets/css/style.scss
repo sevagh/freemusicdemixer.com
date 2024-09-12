@@ -286,6 +286,11 @@ section {
     padding: 30px 0; /* Reduce padding for tighter spacing */
   }
 
+  /* Wizard container should have position: relative */
+.wizard-step {
+  position: relative;
+  padding: 20px; /* Add padding for better spacing */
+}
   /* Featured Section */
   section.featured-section {
     padding: 20px 0;
@@ -314,6 +319,57 @@ section {
     height: auto; /* Maintain the aspect ratio */
     max-width: 100%; /* Optional: Limit the maximum width to avoid stretching too much */
   }
+
+  /* Container for the wizard application */
+.demixer-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 0;
+  background-color: #f5f5f5; /* Light gray background for the section */
+}
+
+/* Define a box for the wizard with fixed dimensions and background */
+.wizard-container {
+  background-color: #e0e0e0; /* Gray background for the wizard */
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 800px;  /* Maximum width of the embedded wizard */
+  width: 100%;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Add padding inside wizard steps for better layout */
+.wizard-step {
+  margin-bottom: 20px;
+}
+
+/* Style the input and buttons consistently */
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.wizard-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.wizard-footer button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.wizard-footer button:hover {
+  background-color: #0056b3;
+}
 
   // Footer Styles
   footer {
@@ -590,26 +646,32 @@ section {
   color: #333; /* Optional: change bullet/number color */
 }
 
+/* Ensure progress container is centered and styled */
 .progress-container {
-  //text-align: center;
-  margin-bottom: 20px;
+  width: 100%;
+  background-color: #ddd;
+  border-radius: 10px;
+  margin-bottom: 20px; /* Reintroducing the margin-bottom */
 }
 
 .progress-bar {
   width: 100%;
-  height: 20px;
-  border: 1.5px solid #4b0082;
-  border-radius: 5px;
-  overflow: hidden;
+  height: 25px;
+  border-radius: 10px;
+  overflow: hidden; /* Ensure the inner bar doesn't overflow outside */
+  background-color: #ddd; /* Background color for the empty part */
 }
 
 .progress-bar-inner {
   height: 100%;
   background-color: #4CAF50;
+  width: 0; /* Set initial width to 0 */
+  transition: width 0.3s ease; /* Smooth progress bar fill animation */
 }
 
 .progress-text {
   margin-top: 10px;
+  text-align: left;
 }
 
 .card-container {
@@ -844,6 +906,46 @@ div.tag-cloud {
   font-size: 1.2em;
   color: white;
 }
+
+.overlay {
+    position: absolute; /* Changed to absolute within the container */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.9); /* semi-transparent overlay */
+    z-index: 2;
+    cursor: pointer;
+    text-align: center;
+    flex-direction: column;
+}
+
+.loader {
+    display: none;
+    border: 5px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 5px solid #3498db;
+    width: 50px;
+    height: 50px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+    margin-bottom: 20px;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 
 @media (min-width: 800px) {
   .image-section img {

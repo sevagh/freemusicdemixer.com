@@ -1,6 +1,6 @@
 ---
 header_class: index
-title: "Music Demixer: Powered by AI"
+#title: "Music Demixer: Powered by AI"
 ---
 <script src="WavFileEncoder.js" type="module"></script>
 <script src="app.js" type="module"></script>
@@ -15,14 +15,13 @@ title: "Music Demixer: Powered by AI"
 </section>
 
 <section class="info-section">
-  <h3>No cloud. No bullshit. 100% privacy on your own devices. Get started today directly in the browser, or <a href="/android">download the Android app.</a></h3>
+  <h3>No cloud. No bullshit. <b>100% privacy in your browser.</b> Upload a track and start demixing right now!</h3>
 </section>
 
 <!-- Wizard sections here... -->
-<section>
+<section class="demixer-section">
   <div class="wizard-container">
     <div id="wizard-step-1" class="wizard-step">
-      <h3>Music input</h3>
       <p id="usage-limits"></p>
       <p>Choose either a file or a folder as your input:</p>
       <div class="input-group">
@@ -39,12 +38,10 @@ title: "Music Demixer: Powered by AI"
         <button id="next-step-1" class="wizard-next-btn" disabled>Next</button>
       </div>
     </div>
-
     <div id="wizard-step-3" class="wizard-step" style="display: none;">
       <h3>Choose your AI model</h3>
       <br>
       <div class="columns-container">
-        <!-- Stems Column -->
         <div class="column">
           <b>Components:</b>
           <form id="modelPickerForm">
@@ -110,7 +107,6 @@ title: "Music Demixer: Powered by AI"
           <div class="loader" id="step3-spinner"></div>
       </div>
     </div>
-
     <div id="wizard-step-4" class="wizard-step" style="display: none;">
       <h3>Select max memory and start job</h3>
       <p><b>You can now start your demixing job by pressing the 'Start job' button!</b></p>
@@ -139,7 +135,6 @@ title: "Music Demixer: Powered by AI"
         <button id="next-step-4" class="wizard-next-btn" disabled>Start job</button>
       </div>
     </div>
-
     <div id="wizard-step-5" class="wizard-step" style="display: none;">
     <h3>Demix progress and outputs</h3>
       To cancel the running job, refresh the page
@@ -163,6 +158,10 @@ title: "Music Demixer: Powered by AI"
     </div>
 
   </div>
+</section>
+
+<section class="info-section">
+  <h3>On Android? Download and use our <a href="/android" alt="android-app-download">app from this link</a>.</h3>
 </section>
 
 <section class="featured-section">
