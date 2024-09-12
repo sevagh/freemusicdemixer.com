@@ -72,27 +72,31 @@ section {
     padding-left: 50px; /* Adjust for how far from the left it should be */
   }
 
-
   h1 {
-    font-size: 3.5em;
+    font-size: 3em;
     font-weight: 600;
     color: #111;
   }
 
   h2 {
-    font-size: 2.5em;
+    font-size: 2em;
     font-weight: 600;
     color: #444;
   }
 
   h3 {
-    font-size: 1.75em;
+    font-size: 1.4em;
     font-weight: 500;
   }
 
   h4 {
-    font-size: 1.50em;
+    font-size: 1.25em;
     font-weight: 525;
+  }
+
+  p {
+    font-size: 0.75em;
+    margin-bottom: 20px;
   }
 
   /* Title Section Styling */
@@ -107,15 +111,7 @@ section {
     text-align: left;
   }
 
-  section.title-section h1 {
-    font-size: 3.5em;
-    font-weight: 600;
-    color: #111;
-  }
-
   section.title-section h2 {
-    font-size: 2.5em;
-    font-weight: 400;
     margin-left: 100px;
     margin-top: -20px;
     margin-bottom: 20px;
@@ -158,7 +154,6 @@ section {
   }
 
   section.featured-section h3 {
-    font-size: 2em;
     margin-bottom: 20px;
     text-align: left; /* Ensure "Featured on" is left-aligned */
   }
@@ -168,11 +163,6 @@ section {
     display: inline-block;
     margin: 0px; /* Space between the badges */
     vertical-align: middle;
-  }
-
-  p {
-    font-size: 1.2em;
-    margin-bottom: 20px;
   }
 
   input[type="file"], button {
@@ -734,7 +724,7 @@ input[type="radio"][disabled] + label {
 }
 
 #main-content p {
-  font-size: 1.5em;
+  font-size: 1.25em;
 }
 
 #main-content ul,
@@ -742,7 +732,7 @@ input[type="radio"][disabled] + label {
   list-style-position: inside; /* Align bullets/numbers with the text */
   padding-left: 20px; /* Add indentation */
   margin-bottom: 20px; /* Add spacing below the entire list */
-  font-size: 1.5em; /* Match font size with paragraphs */
+  font-size: 1.25em; /* Match font size with paragraphs */
 }
 
 #main-content ul li,
