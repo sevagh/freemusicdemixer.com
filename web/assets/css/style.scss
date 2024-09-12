@@ -1,188 +1,780 @@
 ---
 ---
 
-@import "{{ site.theme }}";
-
-pre, code {
-    max-width: 90%;
-    box-sizing: border-box;
+// Import fonts from local assets
+@font-face {
+  font-family: 'Poppins';
+  src: url('/assets/fonts/Poppins-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
 }
 
-#markdown-toc {
-    border: 1px solid #8b008b; /* Dark Magenta border */
-    padding: 10px 15px;
-    background-color: #85d4d4; /* Muted greyish cyan */
-    border-radius: 5px; /* Rounded corners */
-    margin-bottom: 60px; /* Space between ToC and subsequent content */
-    max-width: 80%;
+@font-face {
+  font-family: 'Poppins';
+  src: url('/assets/fonts/Poppins-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
 }
 
-#markdown-toc li {
-    list-style-image: none !important;
-    list-style-type: decimal;
-    color: #8b008b; /* Dark Magenta for list item numbers */
-    margin-bottom: 5px; /* Spacing between list items */
-    margin-left: 10px; /* Spacing from the left edge, making room for numbers */
+@font-face {
+  font-family: 'Poppins';
+  src: url('/assets/fonts/Poppins-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
 }
 
-#markdown-toc a {
-    color: #8b008b; /* Dark Magenta for links */
-    text-decoration: none; /* No underline */
-    font-weight: bold; /* Bold links */
+@font-face {
+  font-family: 'Poppins';
+  src: url('/assets/fonts/Poppins-BoldItalic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
 }
 
-#markdown-toc a:hover {
-    color: #c71585; /* Medium Violet Red for hover state */
-    text-decoration: underline; /* Underline on hover */
-}
-
-/* Table Styling */
-table {
-    width: 100%;
-    border-collapse: collapse; /* Merge borders */
-    margin-bottom: 1em; /* Space below the table */
-}
-
-/* Table Header */
-table th {
-    background-color: #8b008b; /* Dark Magenta for header background */
-    color: #e0ffff; /* Light Cyan for header text */
-    padding: 8px 12px; /* Some padding to make it look nice */
-    border: 1px solid #c71585; /* Medium Violet Red border around cells */
-    text-align: left; /* Left-align text */
-}
-
-/* Table Body */
-table td {
-    background-color: #f7f7f7; /* A light gray for contrast */
-    color: #c71585; /* Medium Violet Red for the text */
-    padding: 8px 12px; /* Consistent padding with the header */
-    border: 1px solid #c71585; /* Medium Violet Red border around cells */
-}
-
-/* Hover over table rows */
-table tr:hover {
-    background-color: #ffe5e5; /* A soft pink for row hovering */
-}
-
-/* Links inside table */
-table a {
-    color: #8b008b; /* Dark Magenta for links in table */
-}
-
-table a:hover {
-    color: #c71585; /* Medium Violet Red for hover on links in table */
-}
-
-header {
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  /*width: max-content;*/
+}
+
+img.responsive-img-android {
+  width: 75%; /* default width for mobile devices */
+}
+
+
+// Smooth scrolling
+html {
+  scroll-behavior: smooth;
+}
+
+section {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    text-align: left;
+    scroll-snap-align: start;
+    flex-direction: column;
+    min-height: 60vh; /* Maintain a large height */
+  }
+
+  /* General body styles */
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    overflow-x: hidden;
+    scroll-snap-type: y mandatory;
+  }
+
+  .main-container {
+    max-width: 1200px; /* Content will not exceed 1200px */
+    margin: 0 auto; /* Center content horizontally */
+    padding-left: 50px; /* Adjust for how far from the left it should be */
+  }
+
+  h1 {
+    font-size: 3em;
+    font-weight: 600;
+    color: #111;
+  }
+
+  h2 {
+    font-size: 2em;
+    font-weight: 600;
+    color: #444;
+  }
+
+  h3 {
+    font-size: 1.4em;
+    font-weight: 500;
+  }
+
+  h4 {
+    font-size: 1.25em;
+    font-weight: 525;
+  }
+
+  p {
+    font-size: 0.75em;
+    margin-bottom: 20px;
+  }
+
+  /* Title Section Styling */
+  section.title-section {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-left: 5%; /* Adjusts how much it's pushed to the left */
+    padding-top: 5%; /* Adjusts how much higher it sits */
+    padding-bottom: 5%;
+    min-height: 30vh; /* Maintain a large height */
+    text-align: left;
+  }
+
+  section.title-section h2 {
+    margin-left: 100px;
+    margin-top: -20px;
+    margin-bottom: 20px;
+  }
+
+  /* Remove underline from title link */
+  a.title-link {
+    text-decoration: none;
+    color: inherit; /* Ensures the link has the same color as the text */
+  }
+
+  a.title-link:hover {
+    text-decoration: none; /* Ensures no underline on hover as well */
+  }
+
+  img.title-img {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    max-width: 50%;
+  }
+
+  section.info-section {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-left: 5%; /* Adjusts how much it's pushed to the left */
+    padding-top: 5%; /* Adjusts how much higher it sits */
+    min-height: 20vh; /* Maintain a large height */
+    text-align: left;
+  }
+
+  /* Align SVG badges side by side using Flexbox */
+  section.featured-badges {
+    display: flex;
+    flex-wrap: wrap; /* Wrap to the next line if needed */
+    justify-content: center;
+    gap: 15px; /* Space between badges */
+    align-items: center;
+  }
+
+  section.featured-section h3 {
+    margin-bottom: 20px;
+    text-align: left; /* Ensure "Featured on" is left-aligned */
+  }
+
+  /* Align SVG badges side by side */
+  section.featured-section a {
+    display: inline-block;
+    margin: 0px; /* Space between the badges */
+    vertical-align: middle;
+  }
+
+  input[type="file"], button {
+    padding: 15px 30px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 5px;
+    background-color: #0077cc;
+    color: white;
+    cursor: pointer;
+  }
+
+  button:hover, input[type="file"]:hover {
+    background-color: #005fa3;
+  }
+
+  /* Style for enabled buttons */
+button {
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #005fa3; /* Darker on hover */
+}
+
+.wizard-footer button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.wizard-footer button:hover {
+  background-color: #0056b3;
+}
+
+/* Disabled button styling */
+wizard-footer.button:disabled,
+button:disabled {
+  background-color: #cccccc; /* Light grey for a more obvious disabled state */
+  color: #666666; /* Darker grey text to lower contrast */
+  cursor: not-allowed; /* Show a 'not-allowed' cursor */
+  opacity: 0.5; /* Reduce opacity to make it appear faded */
+}
+
+wizard-footer.button:disabled:hover,
+button:disabled:hover {
+  background-color: #cccccc; /* Keep the same color on hover */
+  color: #666666; /* Darker grey text to lower contrast */
+}
+
+  /* Top-Right Button Styles */
+  .top-right-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9em; /* Make the text size smaller */
+    z-index: 100; /* Ensures it's always on top */
+  }
+
+  .top-right-container .btn-small,
+  .top-right-container button {
+    background-color: #0077cc;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9em; /* Smaller text size */
+    cursor: pointer;
+  }
+
+  .top-right-container .btn-small:hover,
+  .top-right-container button:hover {
+    background-color: #005fa3;
+  }
+
+/* Ensure the cursor shows as not-allowed for disabled checkboxes and radio buttons */
+input[type="checkbox"][disabled] + label,
+input[type="radio"][disabled] + label {
+  cursor: not-allowed;
+  color: grey; /* Lighter grey text for disabled options */
+  opacity: 0.6; /* Slightly faded to match the disabled state */
+}
+
+  #membership-status {
+    color: white;
+    font-size: 0.9em;
+  }
+
+  /* Modal Styling */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    width: 100%;
+  }
+
+  .modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modal-content label {
+    font-size: 1em;
+  }
+
+  .modal-content input[type="email"] {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  .modal-content button {
+    padding: 10px;
+    background-color: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .modal-content button:hover {
+    background-color: #005fa3;
+  }
+
+  .modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5em;
+    cursor: pointer;
+  }
+
+  /* Wizard Section */
+  section.wizard-section {
+    padding: 30px 0; /* Reduce padding for tighter spacing */
+  }
+
+/* Output links container */
+.output-link-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align items to the top-left */
+  justify-content: flex-start; /* Start content from the top */
+  padding: 5px 10px; /* Add a little padding for the content */
+  margin: 0 auto; /* Auto horizontal margins for centering */
+  background-color: #f0f0f0; /* Light gray background to match the site */
+  border-radius: 10px; /* Rounded corners */
+  color: #333; /* Darker gray text */
+  max-height: 130px; /* Set a max height to prevent overflow */
+  overflow-y: scroll; /* Always show the vertical scrollbar */
+  scrollbar-width: thin; /* For Firefox */
+  width: calc(100% - 25px); /* Ensure the container takes the full width minus space for the scrollbar */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.output-link-container::-webkit-scrollbar {
+  width: 10px; /* Width of the scrollbar for WebKit browsers */
+}
+
+.output-link-container::-webkit-scrollbar-track {
+  background: #e0e0e0; /* Lighter gray for scrollbar track */
+}
+
+.output-link-container::-webkit-scrollbar-thumb {
+  background: #888; /* Darker gray for scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for the scrollbar thumb */
+}
+
+.output-link-container::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker gray on hover */
+}
+
+/* Adjust the spacing between the links */
+.output-link-container a {
+  color: #333; /* Dark gray links */
+  text-decoration: underline;
+  white-space: nowrap; /* Prevent links from wrapping onto a new line */
+}
+
+/* Hover effect for output links */
+.output-link-container a:hover {
+  color: #555; /* Darker gray on hover */
+}
+
+/* Flexbox for columns container */
+.columns-container {
+  display: flex;
+  justify-content: space-between; /* Ensures even spacing between columns */
+  gap: 20px; /* Optional: adds space between columns */
+}
+
+/* Style for individual columns */
+.column {
+  flex: 1; /* Ensures columns take up equal width */
+  padding: 10px;
+}
+
+/* Optional: you can also add a max-width for each column if needed */
+.column {
+  max-width: 300px; /* Adjust this value as necessary */
+}
+
+  /* Featured Section */
+  section.featured-section {
+    padding: 20px 0;
+    min-height: 10vh; /* Maintain a large height */
+  }
+
+  section.featured-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* Align badges to the left */
+    gap: 15px; /* Space between badges */
+    margin-top: 20px;
+  }
+
+  .image-section {
+    display: flex; /* Use flexbox to center the image */
+    justify-content: center; /* Horizontally center the image */
+    align-items: center; /* Vertically center the image (if necessary) */
+    width: 100%; /* Ensure the section takes the full width of the parent container */
+    padding: 20px; /* Optional: Add some padding around the image */
+    min-height: 20vh;
+  }
+
+  .image-section img {
+    width: 100%; /* Make the image expand to fill the parent container */
+    height: auto; /* Maintain the aspect ratio */
+    max-width: 100%; /* Optional: Limit the maximum width to avoid stretching too much */
+  }
+
+  /* Container for the wizard application */
+.demixer-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 0;
+  background-color: #f5f5f5; /* Light gray background for the section */
+}
+
+/* Wizard Container */
+.wizard-container {
+  width: 800px;
+  height: 500px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  color: #333;
+  position: relative; /* To ensure the footer is positioned inside the container */
+  padding: 20px;
+  box-sizing: border-box; /* Ensures padding is included in width and height */
+}
+
+/* Wizard Step */
+.wizard-step {
+  flex-grow: 1;
+  padding-bottom: 20px;
+  overflow: auto; /* Allow content to scroll if it overflows */
+}
+
+/* Wizard Footer positioned absolutely */
+.wizard-footer {
+  display: flex;
+  justify-content: space-between; /* Pushes buttons to extreme left and right */
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: calc(100% - 40px); /* Full width with padding */
+}
+
+/* Style the input and buttons consistently */
+.input-group input {
   width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 10px;
 }
 
-body {
-    background: #e0ffff; /* Light Cyan */
-    color: #c71585; /* Medium Violet Red (a more readable variant of Magenta) */
-    font-family: Arial, sans-serif;
+  // Footer Styles
+  footer {
+    background-color: #111;
+    padding: 20px;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    width: 100vw; /* Full viewport width */
+  }
+
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 50px; /* Add padding to match main container */
+  }
+
+  .footer-left {
+    text-align: left;
+  }
+
+  .contact a {
+    color: #00acee;
+    text-decoration: none;
+  }
+
+  .contact a:hover {
+    text-decoration: underline;
+  }
+
+  .social-media a {
+    margin: 0 10px;
+    color: #fff;
+    font-size: 24px;
+  }
+
+/* Middle Column (Products) */
+.footer-middle {
+    text-align: left;
+  }
+
+  .footer-middle nav {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer-middle nav a {
+    margin-bottom: 10px;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .footer-middle nav a:hover {
+    text-decoration: underline;
+  }
+
+  .footer-right {
+    text-align: left;
+  }
+
+  .footer-right nav {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer-right nav a {
+    margin-bottom: 10px;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .footer-right nav a:hover {
+    text-decoration: underline;
+  }
+
+  .footer-left, .footer-middle, .footer-right {
+    flex: 1; /* Allow each column to take equal space */
+    max-width: 20%; /* Limit each column to a third of the footer */
+  }
+  .footer-middle, .footer-right {
+    padding-left: 5%;
+  }
+
+  .small-text {
+    font-size: 0.9em;
+    color: #888;
+  }
+
+  .footer-bottom {
+    font-size: 0.9em;
+    color: #888;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .styled-link {
+    display: inline-block;
+    height: 40px; /* Match the height of your images */
+    border: 1.5px solid #636363; /* Add a border for a button-like appearance */
+    color: #3b3b3b; /* Choose the color of the text */
+    // add left text border
+    padding: 12px 5px; /* Add padding to the left and right */
+    font-weight: bold; /* Make the text bold */
+    text-align: center; /* Center the text horizontally */
+    text-decoration: none; /* Remove the underline from the link */
+    box-sizing: border-box; /* Include padding and border in the width */
+    //vertical-align: middle; /* Align inline-block elements vertically */
+    vertical-align: top; /* Align inline-block elements vertically */
+  }
+
+  .styled-link:hover {
+    text-decoration: none; /* Ensure the underline doesn't appear on hover */
+  }
+
+  /* Make the navbar stretch the entire width */
+  .navbar {
+    background-color: black;
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Center the contents */
+    padding: 20px 0;
+    position: relative;
+    height: 60px;
+  }
+
+  /* Constrain the navbar contents to a max width */
+  .navbar-contents {
+    max-width: 1200px; /* Same as your main-container */
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* Space between logo and menu items */
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+/* Logo */
+.navbar-logo img {
+  max-height: 50px;
 }
 
-header h1 {
-    color: #8b008b; /* Dark Magenta, to give headings a bit more contrast */
+/* Navbar Links */
+.navbar-links {
+  display: flex;
+  list-style: none;
+  gap: 20px;
 }
 
-header h2 {
-    color: #8b008b; /* Dark Magenta, to give headings a bit more contrast */
+.navbar-links li {
+  display: flex;
+  align-items: center; /* Vertically center the links within the list items */
+  margin: 0; /* Ensure no extra margins around the <li> */
+  padding: 0; /* Remove padding around the <li> */
 }
 
-h1, h2, h3, h4, h5, h6 {
-    color: #8b008b; /* Dark Magenta, to give headings a bit more contrast */
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 15px;
 }
 
-.tag-heading {
-  color: #8b008b; /* Dark Magenta, same as your other headings */
-  //font-weight: bold; /* for a bold appearance like headings */
-  //font-size: 1.2em; /* adjust the size if needed */
+.navbar-links a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
 }
 
-a {
-    color: #8b008b; /* Dark Magenta */
+/* Login/Sign up Buttons */
+.navbar-login-signup {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-a:hover {
-    color: #c71585; /* Medium Violet Red */
+.navbar-login-signup button,
+.navbar-login-signup a {
+  background-color: #0077cc;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-header h1:before {
-  content: "";
+.navbar-login-signup button:hover,
+.navbar-login-signup a:hover {
+  background-color: #005fa3;
+}
+
+/* Hamburger Menu (hidden by default) */
+.hamburger-menu {
+  display: none;
+  cursor: pointer;
+}
+
+.hamburger-menu i {
+  color: white;
   font-size: 24px;
-  color: #8b008b;
 }
 
-.btn-github {
-  color: #ceeeee; /* Changed to white for better contrast */
-  background: #961996; /* Softer shade of magenta */
-  //text-shadow: none; /* Removed text shadow for clarity */
-  text-shadow:
-    -1px -1px 0 #000,
-     1px -1px 0 #000,
-    -1px 1px 0 #000,
-     1px 1px 0 #000;
+/* Modal Styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
 }
 
-.btn-github:hover {
-  color: #ceeeee; /* Changed to white for better contrast */
-  background: #6f006f; /* A darker shade for hover */
+/* When the modal is displayed, flexbox makes it appear in the center */
+.modal.show {
+  display: flex;
 }
 
-.btn-karaoke-github {
-  color: #ffffff; /* White text for strong contrast */
-  background: #4b0082; /* Indigo color */
-  box-shadow: none; /* Optional: remove shadow for a flatter appearance */
-  text-shadow: none; /* Optional: remove shadow for a flatter appearance */
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
+  position: relative;
 }
 
-.btn-karaoke-github:hover {
-  background: #3a006d; /* A slightly darker shade for hover */
-  color: #ffffff; /* Maintain white text on hover */
-  animation: none;
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-/* Android Version of the Karaoke Button */
-.btn-android-github {
-  color: #000000; /* White text for strong contrast */
-  background: #3ddc84; /* Android-like green */
-  box-shadow: none; /* Optional: remove shadow for a flatter appearance */
-  text-shadow: none; /* Optional: remove shadow for a flatter appearance */
+.modal-content .close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5em;
+  cursor: pointer;
 }
 
-.btn-android-github:hover {
-  background: #2e7d32; /* A slightly darker green shade for hover */
-  color: #ffffff; /* Maintain white text on hover */
-  animation: none;
+#main-content {
+  line-height: 1.6; /* Increase line height for better readability */
+  max-width: 1200px; /* Constrain width for better readability */
+  margin: 0 auto; /* Center the content */
 }
 
-// demix webapp stuff
+#main-content p {
+  font-size: 1.25em;
+}
 
+#main-content ul,
+#main-content ol {
+  list-style-position: inside; /* Align bullets/numbers with the text */
+  padding-left: 20px; /* Add indentation */
+  margin-bottom: 20px; /* Add spacing below the entire list */
+  font-size: 1.25em; /* Match font size with paragraphs */
+}
+
+#main-content ul li,
+#main-content ol li {
+  margin-bottom: 10px; /* Add spacing between list items */
+  line-height: 1.2; /* Adjust line-height for better readability */
+  text-indent: -29px;
+  padding-left: 40px;
+}
+
+#main-content ul li::marker,
+#main-content ol li::marker {
+  font-size: 1.2em; /* Make the bullets/numbers a bit larger */
+  color: #333; /* Optional: change bullet/number color */
+}
+
+/* Ensure progress container is centered and styled */
 .progress-container {
-  //text-align: center;
-  margin-bottom: 20px;
+  width: 100%;
+  background-color: #ddd;
+  border-radius: 10px;
+  margin-bottom: 20px; /* Reintroducing the margin-bottom */
 }
 
 .progress-bar {
   width: 100%;
-  height: 20px;
-  border: 1.5px solid #4b0082;
-  border-radius: 5px;
-  overflow: hidden;
+  height: 25px;
+  border-radius: 10px;
+  overflow: hidden; /* Ensure the inner bar doesn't overflow outside */
+  background-color: #ddd; /* Background color for the empty part */
 }
 
 .progress-bar-inner {
   height: 100%;
   background-color: #4CAF50;
+  width: 0; /* Set initial width to 0 */
+  transition: width 0.3s ease; /* Smooth progress bar fill animation */
 }
 
 .progress-text {
   margin-top: 10px;
+  text-align: left;
 }
 
 .card-container {
@@ -291,122 +883,6 @@ audio {
     margin-right: 10px;
 }
 
-.bottom-right {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  margin-left: auto;
-  align-self: flex-end;
-}
-
-/* Base styles for the image */
-img.responsive-img {
-  width: 100%; /* default width for mobile devices */
-}
-
-img.responsive-img-android {
-  width: 75%; /* default width for mobile devices */
-}
-
-div.image-container {
-  text-align: center;
-}
-
-/* debug terminal */
-/* To center the outer "checkbox" div */
-#checkbox {
-  text-align: center;
-}
-
-/* To ensure the hidden "devLogs" div also appears centered when visible */
-#devLogs {
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* To center the terminals next to each other */
-#terminalContainer {
-  display: flex;
-  justify-content: center;
-}
-
-/* Style for terminal if you have any, just added for demonstration */
-.terminal {
-  border: 1px solid black;
-  padding: 10px;
-  margin: 5px;
-  text-align: left;
-}
-
-.hidden {
-    display: none;
-}
-
-#terminalContainer {
-    display: flex;
-}
-
-.terminal {
-    background-color: black;
-    color: lime;
-    padding: 10px;
-    max-height: 300px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    font-family: "Courier New", monospace;
-    border: 1px solid lime;
-    flex: 1;
-}
-
-#jsTerminal {
-    border-right: 1px solid lime;
-    color: cyan;
-}
-
-.terminal-container {
-    margin-bottom: 20px;
-}
-
-/* ad sponsorships */
-
-.wrapper {
-  display: flex;
-}
-
-.banner-left {
-  box-sizing: border-box;
-  width: 160px;
-  margin-left: 5px;
-  margin-right: 5px;
-}
-
-.banner-left img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* Adding vertical spacing between the banners */
-.banner-left a {
-  display: block;
-  margin-bottom: 15px; /* Adjust this value as per your needs */
-}
-
-/* Removing the margin from the last banner to avoid extra space at the bottom */
-.banner-left a:last-child {
-  margin-bottom: 5px;
-}
-
-//.container {
-//  flex: 1;
-//  padding: 20px;
-//  margin-left: 5px;
-//  margin-right: 5px;
-//}
-
-/* blog section */
-
 .tag-size-5 {
     font-size: 1.25rem;
 }
@@ -498,7 +974,41 @@ div.tag-cloud {
   //font-size: 1.2em; /* adjust the size if needed */
 }
 
-// spinner for loading weights
+#mc_embed_signup {
+  width: 100%; /* Ensure the form takes the full width of the left column */
+  max-width: 300px; /* Limit the width to fit within the left column's layout */
+  //margin: 0 auto; /* Center the form within the column */
+}
+
+#mc_embed_signup input[type="email"] {
+  width: 100%; /* Make the email input take the full width */
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+#mc_embed_signup .button {
+  width: auto; /* Make the subscribe button take the full width */
+  padding: 10px;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#mc_embed_signup .button:hover {
+  background-color: #005fa3; /* Change button color on hover */
+}
+
+#mc_embed_signup label {
+  font-size: 0.9em;
+  color: white;
+}
+
+#mc_embed_signup p {
+  font-size: 1.2em;
+  color: white;
+}
 
 .overlay {
     position: absolute; /* Changed to absolute within the container */
@@ -539,558 +1049,23 @@ div.tag-cloud {
     100% { transform: rotate(360deg); }
 }
 
-.centered-text {
-    text-align: center;
-    margin-bottom: 10px; /* Adjust this value as needed for spacing */
-}
-
-.centered-text p {
-    margin-top: 5px; /* Adjust top margin */
-    margin-bottom: 5px; /* Adjust bottom margin */
-    /* Other styles, if needed */
-}
-
-blockquote {
-    color: #8b008b; /* Dark Magenta */
-    border-left: 3px solid #8b008b; /* Optional: adds a left border to your blockquote */
-    margin: 10px 20px; /* Adjusts top and bottom margin */
-    padding-left: 15px; /* Adds padding to the left of the blockquote */
-    font-style: italic; /* Optional: italicizes the quote text */
-}
-
-.sticky-banner {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: linear-gradient(
-    to right,
-    rgba(255, 165, 0, 0.7), /* Softened orange */
-    rgba(255, 140, 0, 0.8) 50%,
-    rgba(255, 165, 0, 0.7)
-  );
-  background-size: 56.57px 56.57px; /* Adjust size to control stripe width */
-  color: black; /* For text */
-  z-index: 5; /* Higher than other content */
-}
-
-.banner-content {
-    display: flex;
-    //justify-content: space-between;
-    align-items: center;
-    padding: 5px;
-    max-width: 1000px; /* Adjust as needed */
-    margin: 0 auto; /* Center content if banner is not full width */
-    justify-content: center;
-    padding: 5px; /* Reduced padding */
-}
-
-.banner-content > * {
-    margin: 0 10px; /* Adjust space between elements */
-}
-
-/* Additional styling for your image, text, and buttons */
-.banner-button-signup {
-  text-align: left; /* Left-align text within flex items */
-  display: block; /* Allows padding and width/height if needed */
-  text-align: center;
-  text-decoration: none; /* Removes underline from links */
-  font-size: 18px;
-  padding: 6px 16px;
-  border-radius: 5px;
-  background-color: #961996; /* Replace with your chosen brand color */
-  color: #ffffff; /* White text for better contrast */
-  transition: background-color 0.3s, transform 0.3s;
-  cursor: pointer; /* Cursor indicates it's clickable */
-}
-
-.banner-button-signup:hover {
-  background-color: #a800a8; /* A slightly lighter shade for hover */
-  color: #ffffff; /* Optional: Change text color to increase contrast */
-  transform: translateY(-2px);
-  box-shadow: 2px 4px #650065; /* Slightly darker shade for depth */
-}
-
-.banner-button-signup:active {
-  background-color: #7d007d; /* An even darker shade for active state */
-  transform: translateY(1px);
-  box-shadow: 0 2px #520052; /* Shadow for a "pressed" effect */
-}
-
-.banner-dismiss-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background-color: #ceeeee; /* A softer color from your palette */
-  color: #000000; /* White text for contrast */
-  padding: 6px 16px;
-  border-radius: 5px;
-  transition: background-color 0.3s, transform 0.3s;
-  cursor: pointer;
-}
-
-.banner-dismiss-button:hover {
-  background-color: #e0ffff; /* A slightly darker shade for hover, close to #ceeeee */
-  transform: translateY(-1px);
-  box-shadow: 2px 2px #a4bebe; /* A softer shadow for depth */
-}
-
-.banner-dismiss-button:active {
-  background-color: #afcfcf; /* A shade darker than hover color for active state */
-  transform: translateY(1px);
-  box-shadow: 0 1px #9fbfbf; /* Shadow for a "pressed" effect */
-}
-
-.banner-dismiss-button .close-text {
-  display: inline; /* Inline with the icon */
-}
-/* Adding an 'X' icon to the close button using pseudo-elements */
-.banner-dismiss-button::before {
-  content: "\00D7"; /* Unicode 'X' character */
-  font-size: 1.2em; /* Slightly larger size for the icon */
-  color: #ff0000; /* Red color for the icon to signify 'close' */
-  margin-right: 5px; /* Spacing between icon and text */
-}
-
-input[type="file"]:disabled, label:disabled {
-    opacity: 0.5; /* Lower opacity for a "disabled" look */
-    cursor: not-allowed; /* Change cursor to indicate non-interactive */
-}
-
-.btn-github, .btn-karaoke-github, .btn-android-github {
-  font-size: 15px;
-}
-
-.styled-link {
-    display: inline-block;
-    height: 50px; /* Match the height of your images */
-    border: 1.5px solid #636363; /* Add a border for a button-like appearance */
-    color: #3b3b3b; /* Choose the color of the text */
-    // add left text border
-    padding: 12px 5px; /* Add padding to the left and right */
-    font-weight: bold; /* Make the text bold */
-    text-align: center; /* Center the text horizontally */
-    text-decoration: none; /* Remove the underline from the link */
-    box-sizing: border-box; /* Include padding and border in the width */
-    //vertical-align: middle; /* Align inline-block elements vertically */
-    vertical-align: top; /* Align inline-block elements vertically */
-}
-
-.styled-link:hover {
-    text-decoration: none; /* Ensure the underline doesn't appear on hover */
-}
-
-#response-message {
-  // make bold text
-  font-weight: bold;
-}
-
-.card-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px; /* space between cards */
-  justify-content: left;
-  padding: 0px 20px 20px 0px; /* Space around the cards */
-}
-
-.card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  //width: 380px; /* or any fixed width */
-  width: auto;
-  margin: 10px;
-  overflow: hidden;
-  transition: box-shadow 0.3s ease-in-out;
-}
-
-.card:hover {
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.card-content {
-  padding: 16px;
-}
-
-.card-title {
-  color: #9c27b0; /* Same purple as the header for the card title */
-  margin: 0;
-  padding: 0;
-  font-size: 1.2em;
-}
-
-.card-info {
-  color: #666; /* Dark grey text for the card info */
-  margin: 10px 0;
-  font-size: 1em;
-}
-
-.card form {
-    margin-bottom: 20px; /* Added margin to separate form from output */
-}
-
-#suggestionOutput {
-    background-color: black;
-    color: white;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px; /* Increased space below the output box */
-}
-
-.card-info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.card-model-name {
-  flex-grow: 1; /* Allows this part to grow and push other elements to the edges */
-}
-
-.card-execution-time {
-  margin: 0 8px; /* Add some horizontal space around the time */
-  text-align: right; /* Align the text to the right for consistency */
-  min-width: 60px; /* Ensure enough space for alignment, adjust as needed */
-}
-
-audio {
-  //width: 100%; /* Make audio player take full width of the card */
-  margin-top: 0px; /* Reduced spacing above audio player */
-  margin-bottom: 0px; /* Reduced spacing below audio player */
-}
-
-/* Optional: Remove <p> margins for audio labels */
-.card-content p {
-  margin: 0px 0; /* Tighten up space around <p> elements */
-}
-
-.pro-cta {
-    font-size: larger; /* or you could use a specific font size like 1.5em */
-    margin-bottom: 5px;
-}
-
-.pro-promo {
-    margin-top: 5px;
-    color: green;
-    font-weight: bold; /* Bold links */
-}
-
-.pro-signup-cta {
-    font-size: large; /* or the specific size you want */
-}
-
-/* Container to maintain aspect ratio */
-.video-container {
-  position: relative;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
-  height: 0;
-  overflow: hidden;
-  width: 100%;
-  margin: 0 auto 20px; /* Center the video if you want */
-}
-
-/* Responsive iframe */
-.video-container iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.popup-banner-hidden {
+/* Default hide the message on larger screens */
+.disable-wizard {
   display: none;
-}
-
-.popup-banner-shown {
-  display: flex;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: auto; /* adjust width as necessary */
-  max-width: 500px; /* max-width for responsiveness */
-  background: #ffffff;
-  color: black;
-  font-size: 24px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1001;
-  flex-direction: column;
-  align-items: center;
+  max-width: 300px;
+  max-height: 500px;
+  background-color: #e0e0e0;
   border-radius: 10px;
-  text-align: center;
-}
-
-.popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  z-index: 1000;
-  display: none;
-}
-
-.popup-overlay-shown {
-  display: block;
-}
-
-.popup-close-button {
-  background: none;
-  border: none;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-  font-size: 24px;
-}
-
-.popup-title {
-  font-size: 32px;
-  margin-bottom: 20px;
-}
-
-.popup-btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 24px;
-}
-
-.popup-btn:hover {
-  background-color: #0056b3;
-}
-
-/* Output links container */
-.output-link-container {
-  display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Align items to the top-left */
-  justify-content: flex-start; /* Start content from the top */
-  padding: 5px 10px; /* Add a little padding for the content */
-  margin: 0 auto; /* Auto horizontal margins for centering */
-  background-color: #e0ffff; /* Match the site's light cyan background */
-  border-radius: 10px; /* Rounded corners */
-  color: #8b008b; /* Dark Magenta text */
-  max-height: 130px; /* Set a max height to prevent overflow */
-  overflow-y: scroll; /* Always show the vertical scrollbar */
-  scrollbar-width: thin; /* For Firefox */
-  width: calc(100% - 25px); /* Ensure the container takes the full width minus space for the scrollbar */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
-
-.output-link-container::-webkit-scrollbar {
-  width: 10px; /* Width of the scrollbar for WebKit browsers */
-}
-
-.output-link-container::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Background of the scrollbar track */
-}
-
-.output-link-container::-webkit-scrollbar-thumb {
-  background: #8b008b; /* Dark Magenta for the scrollbar thumb */
-  border-radius: 10px; /* Rounded corners for the scrollbar thumb */
-}
-
-.output-link-container::-webkit-scrollbar-thumb:hover {
-  background: #c71585; /* Medium Violet Red on hover */
-}
-
-/* Adjust the spacing between the links */
-.output-link-container a {
-  color: #8b008b; /* Dark Magenta links */
-  text-decoration: underline;
-  white-space: nowrap; /* Prevent links from wrapping onto a new line */
-}
-
-/* Hover effect for output links */
-.output-link-container a:hover {
-  color: #c71585; /* Medium Violet Red on hover */
-}
-
-/* Adjusted Wizard Container */
-.wizard-container {
-  width: 400px;
-  height: 400px; /* or use a percentage-based height, e.g., height: 80%; */
-  background-color: #e0ffff; /* Light Cyan to match the site background */
-  border-radius: 15px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* Distribute space between elements */
-  color: #8b008b; /* Dark Magenta for text */
-  font-family: Arial, sans-serif; /* Match the site's font */
-  position: relative; /* Allows positioning of buttons inside */
-  padding: 20px 20px 20px 0; /* Remove left padding: top right bottom left */
+  color: #333;
+  position: relative; /* To ensure the footer is positioned inside the container */
+  padding: 20px;
   box-sizing: border-box; /* Ensures padding is included in width and height */
-  overflow: hidden; /* Prevents overflow from disrupting the layout */
 }
 
-/* Wizard footer */
-.wizard-footer {
-  display: flex;
-  justify-content: flex-start; /* Align buttons to the left */
-  align-items: center;
-  gap: 10px; /* Space between prev and next buttons */
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  width: calc(100% - 40px); /* Full width with padding accounted for */
-}
-
-/* Previous button styling */
-.wizard-prev-btn {
-  padding: 12px 20px;
-  background-color: #8b008b; /* Dark Magenta */
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-/* Next button styling */
-.wizard-next-btn {
-  padding: 12px 20px;
-  background-color: #8b008b; /* Dark Magenta */
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-/* Hover effects for both buttons */
-.wizard-prev-btn:hover,
-.wizard-next-btn:hover {
-  background-color: #c71585; /* Medium Violet Red on hover */
-}
-
-/* Disabled state for the Next button */
-.wizard-prev-btn:disabled,
-.wizard-next-btn:disabled {
-  background-color: #cccccc; /* Lighter grey to indicate disabled state */
-  color: #666666; /* Darker grey text to show it's disabled */
-  cursor: not-allowed; /* Change cursor to indicate the button is not clickable */
-}
-
-/* Step heading */
-.wizard-step h2 {
-  font-size: 24px;
-  margin-bottom: 15px;
-  text-align: left; /* Align to the left */
-  color: #8b008b; /* Dark Magenta for headings */
-}
-
-.wizard-step h3 {
-  color: #8b008b; /* Dark Magenta */
-  margin-bottom: 0px;
-}
-
-/* Instruction text */
-.wizard-step p {
-  font-size: 16px;
-  margin-bottom: 20px;
-  text-align: left; /* Align to the left */
-  color: #c71585; /* Medium Violet Red for instructions */
-}
-
-/* Input group styling */
-.input-group {
-  margin-bottom: 15px;
-  width: 100%;
-}
-
-/* File input styling */
-input[type="file"] {
-  width: auto;
-  padding: 0px;
-  font-size: 14px;
-  color: #ffffff;
-  background-color: #333333;
-  border: 2px solid #555555;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-input[type="file"]::-webkit-file-upload-button {
-  background: #8b008b; /* Dark Magenta button color */
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-/* Ensure the cursor shows as not-allowed for disabled checkboxes and radio buttons */
-input[type="checkbox"][disabled] + label,
-input[type="radio"][disabled] + label {
-  cursor: not-allowed;
-  color: grey; /* Lighter grey text for disabled options */
-  opacity: 0.6; /* Slightly faded to match the disabled state */
-}
-
-/* Container for the two columns */
-.columns-container {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0px;
-}
-
-/* Each column should take up approximately half the available space */
-.column {
-  width: 48%;
-}
-
-/* Media query for very large screens or default styles */
-@media (min-width: 1200px) {
-  .wrapper {
-    justify-content: center;
-  }
-
-  .container {
-    max-width: 52%; /* Adjust based on your preferred content width */
-  }
-
-  .banner-left {
-    flex-shrink: 0; /* Prevents the banner from shrinking */
-  }
-}
-
-/* Media query for large screens, between 1025px and 1500px */
-@media (min-width: 1025px) and (max-width: 1500px) {
-  .banner-left {
-    width: 136px; /* 85% of 160px */
-    margin-right: 10px;
-  }
-}
-
-/* Media query for medium screens, between 769px and 1024px */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .banner-left {
-    width: 120px; /* 75% of 160px */
-    margin-right: 10px;
-  }
-}
-
-/* Media query for larger screens, starting at 768px */
-@media (min-width: 768px) {
-  div.demo-container {
-    width: 50%; /* Width for larger screens */
-  }
-
-  img.responsive-img {
-    width: 50%; /* Width for larger screens */
+@media (min-width: 800px) {
+  .image-section img {
+    max-width: 65%;
   }
 
   img.responsive-img-android {
@@ -1098,151 +1073,80 @@ input[type="radio"][disabled] + label {
   }
 }
 
-/* Media query for small screens, up to 768px */
+/* Responsive Styling for Small Screens */
 @media (max-width: 768px) {
-  .banner-left {
-    width: 104px; /* 65% of 160px */
-    margin-right: 10px;
-  }
-
-  .post1-header {
-    width: calc(100vw + 20px);
-  }
-
-  .terminal {
-    width: 100px;
-  }
-
-  .index-header {
-    width: calc(100vw + 40px);
-  }
-
-  .karaoke-header {
-    width: calc(100vw + 20px);
-  }
-}
-
-/* Media query for larger phones, up to 568px */
-@media (max-width: 568px) {
-  #popup-banner {
-    width: 80%; /* Slightly larger width than for the smallest screens */
-    /* Other styles as necessary */
-  }
-}
-
-/* Media query for medium-sized devices, up to 512px */
-@media (max-width: 512px) {
-  .card-container {
+  .navbar-links {
+    display: none;
     flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: #111;
+    width: 100%;
   }
 
-  #popup-banner {
-    width: 90%;
-
-    img {
-      height: 206px; /* Adjust the image height */
-    }
+  .navbar-links.active {
+    display: flex;
   }
+
+  .hamburger-menu {
+    display: block;
+  }
+
+  .footer-left, .footer-middle, .footer-right {
+    max-width: 25%;
+  }
+
   .wizard-container {
-    width: 300px; /* Reduce width for larger phones */
-    height: 400px; /* Reduce height for larger phones */
+    width: 600px;
   }
 }
 
-/* Media query for small devices, up to 500px */
-@media (max-width: 500px) {
-  .banner-left {
-    width: 88px; /* 55% of 160px */
-    margin-right: 10px;
+/* Media Query for screens at or below 512px */
+@media (max-width: 512px) {
+  .footer-container {
+    flex-direction: column; /* Stack the columns vertically */
+    padding: 0 20px; /* Reduce left/right padding for smaller screens */
   }
 
-  .post1-header {
-    width: calc(100vw + 40px);
+  .footer-left, .footer-middle, .footer-right {
+    margin-bottom: 20px; /* Add some space between stacked sections */
+    max-width: 80%;
+    padding-left: 0px;
   }
 
-  #popup-banner {
-    width: 90%;
+  /* Reduce the font size slightly for smaller screens */
+  .footer-middle nav a,
+  .footer-right nav a,
+  .small-text {
+    font-size: 0.85em;
+  }
 
-    img {
-      height: 196px; /* Adjust the image height */
-    }
+  /* Center-align the text to make it more readable on small screens */
+  .footer-left, .footer-middle, .footer-right {
+    text-align: left;
+  }
+
+  .social-media a {
+    margin: 0 5px; /* Reduce space between social media icons */
+  }
+
+  /* Adjust padding for the footer */
+  footer {
+    padding: 15px;
+  }
+
+  .wizard-container {
+    display: none; /* Hide the wizard */
+  }
+
+  .disable-wizard {
+    display: flex; /* Show the message */
   }
 }
 
-/* Media query for smaller devices, up to 400px */
-@media (max-width: 400px) {
-  .banner-left {
-    width: 88px; /* 55% of 160px */
-    margin-right: 10px;
-  }
-
-  .post1-header {
-    width: calc(100vw + 50px);
-  }
-
-  #popup-banner {
-    width: 90%;
-    font-size: 22px;
-    padding: 16px;
-
-    img {
-      height: 186px; /* Adjust the image height */
-    }
-  }
-}
-
-/* Media query for the smallest screens, up to 350px */
 @media (max-width: 350px) {
-  .index-header {
-    width: calc(100vw + 60px);
-  }
-
-  .post1-header {
-    width: calc(100vw + 50px);
-  }
-
-  .terminal {
-    width: 90px;
-  }
-
-  #popup-banner {
-    width: 90%;
-
-    img {
-      height: 156px; /* Adjust the image height */
-    }
-  }
-}
-
-/* Media query for the narrowest phones, up to 320px (iPhone SE width) */
-@media (max-width: 320px) {
-  #popup-banner {
-    width: 90%;
-    font-size: 20px;
-    padding: 10px;
-
-    .pro-cta {
-      font-size: 18px;
-    }
-
-    .pro-promo {
-      font-size: 14px;
-    }
-
-    .pro-signup-cta {
-      font-size: 12px;
-    }
-
-    img {
-      height: 146px; /* Adjust the image height */
-    }
-  }
-
-  .index-header {
-    width: calc(100vw + 120px);
-  }
-
-  .karaoke-header {
-    width: calc(100vw + 80px);
+  section.title-section h2 {
+    margin-left: 50px;
   }
 }

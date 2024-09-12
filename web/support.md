@@ -2,25 +2,30 @@
 description: "Get help and support for using our music demixing tools, whether you're on the web or Android."
 ---
 
-# Customer support and refunds
+# Support & legal
 
-We offer a full refund for up to 7 days after purchase if you're not happy with the product. You should be able to initiate a refund from your Stripe billing page. Access your Stripe billing page [through this link](https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww).
+<br>
 
-If you are experiencing billing or refund issues, please [contact us by e-mail](mailto:contact@freemusicdemixer.com). You can also contact us directly by [e-mail](mailto:contact@freemusicdemixer.com) or on [Instagram](https://www.instagram.com/musicdemixer).
+## Customer support
 
-# Privacy policy
+For **account management** such as refunds, cancellations, and switching between monthly and yearly billing, use [this link](https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww).
 
-All of our products run privately on your computer through the web browser or on your Android device. Your audio and music files are never uploaded to any server, and there is absolutely no tracking of your activity or usage of the app.
+For **customer service**, please [contact us by e-mail](mailto:support@freemusicdemixer.com).
+
+<br>
+
+## Privacy policy
+
+Our product runs privately on your computer or device. Your audio and music files **never leave your computer.**
 
 When you pay for a PRO model, you get private and local access to do unlimited demixing on your device!
 
-The interactions with the internet are:
-* Managing Stripe payment and billing
-* Validating your Stripe billing email to link your valid subscription to your web session
-* After successful validation, the AI model is delivered to your browser, where it runs **privately and unlimited,** never contacting our servers again
+Some anonymous website usage data is collected to improve the service. This data is not shared with third parties.
 
-For any questions or concerns about our privacy policy, please [contact us by e-mail](mailto:contact@freemusicdemixer.com).
+<br>
 
-## AI weights and license
+## Legal
 
-All of the demixing on this site is powered by the high-quality [Demucs Hybrid Transformer model](https://github.com/facebookresearch/demucs) and its pretrained academic weights. ⚠️ By using this site, you acknowledge that **your usage of the outputs of my demixer apps are governed by the Meta AI Research Academic licenses ([[1]](https://github.com/facebookresearch/demucs/issues/327#issuecomment-1134828611), [[2]](https://ai.meta.com/llama/license/))!**
+The AI on this site uses the [Demucs Hybrid Transformer model](https://github.com/facebookresearch/demucs). ⚠️ By using this site, you acknowledge that **your usage of the outputs of the Music Demixer apps are governed by the Meta AI Research Academic licenses ([[1]](https://github.com/facebookresearch/demucs/issues/327#issuecomment-1134828611), [[2]](https://ai.meta.com/llama/license/))!**
+
+<br>

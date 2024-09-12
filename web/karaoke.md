@@ -1,14 +1,15 @@
 ---
-title: Karaoke any song for free!
 header_class: karaoke
 description: "Create karaoke tracks by removing vocals with our advanced AI-powered music demixer."
 ---
 
-# Need Karaoke for a party? Start here!
+# Karaoke party? Start here!
 
 ![Karaoke Party Banner](/assets/images/karaoke-lively-banner-small.webp)
 
-Welcome to **Free Music Demixer**! Turn any song into a karaoke track in just a few clicks. Perfect for parties, events, or just singing along to your favorite tunes at home.
+Welcome to **Music Demixer**! Turn any song into a karaoke track in just a few clicks. Perfect for parties, events, or just singing along to your favorite tunes at home.
+
+<br>
 
 ## How it works
 
@@ -18,20 +19,28 @@ Creating a karaoke track is easy with Free Music Demixer:
 2. **Remove Vocals:** Our advanced AI technology will remove the vocals, leaving you with a high-quality instrumental track. We use the advanced Demucs AI from Meta Research, powered by the same Transformer technology used by ChatGPT
 3. **Download and enjoy:** Save your karaoke track and start singing!
 
+<br>
+
 ## Features
 
-- **Free:** use the free tier [of our site](/) or [Android app](/android)
+See our [pricing page](/pricing) for a comparison of the free and PRO features.
+
+- **Free:** use the free tier [of our site](/) or [Android app](/android) for up to 3 demixes per week
 - **Totally private:** your files stay on your device (browser or Android phone) and are never uploaded to any server
 - **Easy to use:** Our user-friendly interfaces makes creating karaoke tracks simple and quick; visit our [beginner's guide](https://freemusicdemixer.com/getting-started/2023/09/23/Beginners-guide-to-free-stems) for additional help
 - **High quality:** Get professional-grade instrumental tracks with clear, crisp sound
 - **Multiple formats:** Export your tracks in various formats suitable for any device
 - **Two-source karaoke model (Pro):** For the ultimate karaoke experience, upgrade to our [PRO subscription](https://freemusicdemixer.com) for the two-source karaoke model with exceptional vocal/instrumental separation
 
-### Which AI model to use?
+<br>
+
+## Which AI model to use?
 
 Any of our free models (Demucs 4-source, 6-source, and v3) can be used for vocal and instrumental separation. From the PRO/paid models, the specialized two-source vocal/karaoke model gives you extra high-quality vocal separation:
 
 <img alt="ai model comparison" src="/assets/images/model_comparison.webp" width="50%"/>
+
+<br>
 
 ## Web version
 
@@ -44,7 +53,8 @@ For the best experience, use Free Music Demixer on your computer. Whether you're
 - **Advanced demixing:** Use powerful AI to remove vocals from any song with precision
 - **High-Performance:** Leverage the power of your computer to process tracks quickly and efficiently. Choose up to 32 GB of memory to use multithreading and get your tracks faster!
 - **Free and pro options:** Enjoy basic features for free, or upgrade to our PRO subscription for even more advanced capabilities
-    - Free and PRO web site: <https://freemusicdemixer.com>
+
+<br>
 
 ## Android app
 
@@ -57,19 +67,21 @@ Take your karaoke experience on the go with our Android app. Perfect for spontan
 - **Portable and convenient:** Create karaoke tracks anywhere, anytime
 - **User-friendly:** Simple, intuitive interface designed for mobile users
 - **Live music recording and app capture:** Record live performances or capture songs from other apps for instant karaoke
-- **Free and pro options:** Access basic features for free, or upgrade for advanced functionalities and unlimited use
-    - The same PRO subscription as the website with the custom two-source karaoke model is available on the Android app with the same subscription!
+- **Free and pro options:** Access basic features for free, or upgrade for advanced functionalities and unlimited use, using the same PRO subscription as the website
 
 [Get the Android App here!](/android)
 
+<br>
+
 ## Why choose Free Music Demixer for karaoke?
 
-- **Completely free:** Create and download karaoke tracks without any cost
-    - _Optional_ PRO subscription provides higher-quality separation
+- **Completely free:** Create and download up to 3 karaoke tracks without any cost
 - **Totally private:** your files stay on your device (browser or Android phone) and are never uploaded to any server
 - **No downloads required:** Use our web app directly from your browser
 - **Professional quality:** Achieve studio-quality results with minimal effort
 - **Two-source karaoke (PRO):** For the ultimate karaoke experience, upgrade to our PRO subscription for professional two-source karaoke models with exceptional vocal/instrumental separation
+
+<br>
 
 ## FAQ
 
@@ -85,6 +97,8 @@ A: Yes! Download our Android app to create karaoke tracks on the go.
 **Q: What formats can I download my karaoke tracks in?**
 A: You can save your karaoke tracks in the wav format, compatible with any device.
 
+<br>
+
 ## Contact us
 
 Have questions or need support? [Contact us](mailto:karaoke@freemusicdemixer.com) and we'll be happy to help.
@@ -92,3 +106,5 @@ Have questions or need support? [Contact us](mailto:karaoke@freemusicdemixer.com
 ---
 
 Free Music Demixer is your one-stop solution for AI-based music demixing and stem separation. Visit [the home page](/) to learn more.
+
+<br>
