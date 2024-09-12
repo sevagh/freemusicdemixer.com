@@ -1048,6 +1048,19 @@ div.tag-cloud {
     100% { transform: rotate(360deg); }
 }
 
+/* Default hide the message on larger screens */
+.disable-wizard {
+  display: none;
+  max-width: 300px;
+  max-height: 500px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  flex-direction: column;
+  color: #333;
+  position: relative; /* To ensure the footer is positioned inside the container */
+  padding: 20px;
+  box-sizing: border-box; /* Ensures padding is included in width and height */
+}
 
 @media (min-width: 800px) {
   .image-section img {
@@ -1081,6 +1094,10 @@ div.tag-cloud {
 
   .footer-left, .footer-middle, .footer-right {
     max-width: 25%;
+  }
+
+  .wizard-container {
+    width: 600px;
   }
 }
 
@@ -1116,6 +1133,14 @@ div.tag-cloud {
   /* Adjust padding for the footer */
   footer {
     padding: 15px;
+  }
+
+  .wizard-container {
+    display: none; /* Hide the wizard */
+  }
+
+  .disable-wizard {
+    display: flex; /* Show the message */
   }
 }
 

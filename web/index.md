@@ -20,6 +20,9 @@ header_class: index
 
 <!-- Wizard sections here... -->
 <section class="demixer-section">
+  <div class="disable-wizard">
+    Best experienced on a laptop or desktop.
+  </div>
   <div class="wizard-container">
     <div id="wizard-step-1" class="wizard-step">
       <p id="usage-limits"></p>
