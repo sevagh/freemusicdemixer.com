@@ -544,6 +544,7 @@ function initializeInputState() {
         updateSelectedInputMessage();
     }
     toggleNextButton();
+    checkAndResetWeeklyLimit();
 }
 
 // Event listener for file input
@@ -556,6 +557,7 @@ fileInput.addEventListener('change', function() {
         updateSelectedInputMessage();
     }
     toggleNextButton();
+    checkAndResetWeeklyLimit();
 });
 
 // Event listener for folder input
@@ -572,10 +574,18 @@ folderInput.addEventListener('change', function() {
 
 // Function to toggle the Next button's disabled state
 function toggleNextButton() {
-    if (selectedInput) {
+    const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
+    const remaining = usageData ? 3 - usageData.count : 0;
+
+    const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
+
+    // Check if input is selected and either user is logged in or they have remaining demixes
+    if (selectedInput && (loggedIn || remaining > 0)) {
         nextStep1Btn.disabled = false;
+        nextStep1Btn.textContent = 'Next';
     } else {
         nextStep1Btn.disabled = true;
+        nextStep1Btn.textContent = remaining <= 0 && !loggedIn ? 'Limit reached' : 'Next';
     }
 }
 
@@ -614,11 +624,6 @@ function checkAndResetWeeklyLimit() {
     if (!loggedIn) {
         const remaining = 3 - usageData.count;
         usageLimits.textContent = `You have ${remaining} free demixes remaining this week. Your limit will reset on ${new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}.`;
-
-        if (remaining <= 0) {
-            nextStep1Btn.disabled = true;
-            nextStep1Btn.textContent = 'Limit reached';
-        }
     } else {
         usageLimits.textContent = 'You have unlimited demixes.';
 
@@ -626,11 +631,8 @@ function checkAndResetWeeklyLimit() {
         if ((userTier === -1) || isNaN(userTier)) {
             userTier = 0;
         }
-        document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
-
-        nextStep1Btn.disabled = false;
-        nextStep1Btn.textContent = 'Next';
     }
+    toggleNextButton(); // Re-check both input and usage limits
 }
 
 // Function to display the spinner and overlay
