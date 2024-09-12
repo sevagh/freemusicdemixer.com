@@ -76,12 +76,18 @@ section {
     font-size: 3em;
     font-weight: 600;
     color: #111;
+    display: inline-block; /* This makes the h1 behave better when it wraps */
+    line-height: 1.2em;
+    margin-bottom: 15px;
   }
 
   h2 {
     font-size: 2em;
     font-weight: 600;
     color: #444;
+    display: inline-block; /* This makes the h1 behave better when it wraps */
+    line-height: 1.2em;
+    margin-bottom: 15px;
   }
 
   h3 {
@@ -111,8 +117,12 @@ section {
     text-align: left;
   }
 
+  section.title-section h1 {
+    margin-bottom: 20px;
+  }
+
   section.title-section h2 {
-    margin-left: 100px;
+    margin-left: 80px;
     margin-top: -20px;
     margin-bottom: 20px;
   }
@@ -1143,10 +1153,14 @@ div.tag-cloud {
   .disable-wizard {
     display: flex; /* Show the message */
   }
+
+  section.title-section h2 {
+    margin-left: 30px;
+  }
 }
 
 @media (max-width: 350px) {
   section.title-section h2 {
-    margin-left: 50px;
+    margin-left: 30px;
   }
 }
