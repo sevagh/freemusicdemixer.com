@@ -93,7 +93,7 @@ header_class: index
             </form>
         </div>
         <div class="column">
-          <b>Select max memory (more = faster)</b>
+          <b>Max memory:</b>
           <form id="memorySelectorForm">
           <div>
               <input type="radio" id="4gb" name="memory" value="4gb">
@@ -114,11 +114,12 @@ header_class: index
           </form>
         </div>
       </div>
+      ⚠️ Higher qualities are slower!
+      <br>
+      ⚠️ Choose a memory setting less than your computer's total memory.
+      <br>
       <br>
       <div id="selectedModelMessage">Selected model: <b>4-SOURCE (FREE)</b></div>
-      <p>⚠️ Higher qualities are slower!</p>
-      <p>Advanced users: increase max memory for faster demixing. ⚠️ Always choose a memory setting less than your computer's total memory.</p>
-      <br>
       <div class="wizard-footer">
         <button id="prev-step-2" class="wizard-prev-btn">Back</button>
         <button id="next-step-2" class="wizard-next-btn">Start job</button>
