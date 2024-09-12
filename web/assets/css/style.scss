@@ -172,6 +172,34 @@ section {
   button:hover, input[type="file"]:hover {
     background-color: #005fa3;
   }
+
+  /* Style for enabled buttons */
+button {
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #005fa3; /* Darker on hover */
+}
+
+/* Disabled button styling */
+button:disabled {
+  background-color: #cccccc; /* Light grey for a more obvious disabled state */
+  color: #666666; /* Darker grey text to lower contrast */
+  cursor: not-allowed; /* Show a 'not-allowed' cursor */
+  opacity: 0.5; /* Reduce opacity to make it appear faded */
+}
+
+button:disabled:hover {
+  background-color: #cccccc; /* Keep the same color on hover */
+}
+
   /* General body styles */
   body {
     font-family: 'Poppins', sans-serif;

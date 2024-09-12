@@ -15,7 +15,7 @@ header_class: index
 </section>
 
 <section class="info-section">
-  <h3>No cloud. No bullshit. <b>100% privacy in your browser.</b> Upload a track and start demixing right now!</h3>
+  <h3>No cloud. No bullshit. <b>100% privacy in your browser.</b> Choose your music files and start demixing right now!</h3>
 </section>
 
 <!-- Wizard sections here... -->
@@ -38,8 +38,8 @@ header_class: index
         <button id="next-step-1" class="wizard-next-btn" disabled>Next</button>
       </div>
     </div>
-    <div id="wizard-step-3" class="wizard-step" style="display: none;">
-      <h3>Choose your AI model</h3>
+    <div id="wizard-step-2" class="wizard-step" style="display: none;">
+      <h3>Choose your parameters</h3>
       <br>
       <div class="columns-container">
         <div class="column">
@@ -76,7 +76,7 @@ header_class: index
             <form id="qualityPickerForm">
               <div>
                 <input type="radio" id="low-quality" name="quality" value="low" disabled>
-                <label for="low-quality">Low (fast!) 🔒</label>
+                <label for="low-quality">Low 🔒</label>
               </div>
               <div>
                 <input type="radio" id="default-quality" name="quality" value="default" checked>
@@ -92,26 +92,9 @@ header_class: index
               </div>
             </form>
         </div>
-      </div>
-      <br>
-      <div id="selectedModelMessage">Selected model: <b>4-SOURCE (FREE)</b></div>
-      <p>⚠️ Higher qualities are slower!</p>
-      <br>
-      <div class="wizard-footer">
-        <button id="prev-step-3" class="wizard-prev-btn">Back</button>
-        <button id="next-step-3" class="wizard-next-btn">Next</button>
-      </div>
-      <!-- Overlay and Spinner -->
-      <div id="step3-overlay" class="overlay" style="display: none;">
-          <h3 style="color: #ffffff; margin-top: 20px;">Downloading model files...</h3>
-          <div class="loader" id="step3-spinner"></div>
-      </div>
-    </div>
-    <div id="wizard-step-4" class="wizard-step" style="display: none;">
-      <h3>Select max memory and start job</h3>
-      <p><b>You can now start your demixing job by pressing the 'Start job' button!</b></p>
-      <p>Advanced users: increase max memory for faster demixing. ⚠️ Always choose a memory setting less than your computer's total memory.</p>
-      <form id="memorySelectorForm">
+        <div class="column">
+          <b>Select max memory (more = faster)</b>
+          <form id="memorySelectorForm">
           <div>
               <input type="radio" id="4gb" name="memory" value="4gb">
               <label for="4gb">4 GB (default speed)</label>
@@ -128,14 +111,25 @@ header_class: index
               <input type="radio" id="32gb" name="memory" value="32gb">
               <label for="32gb">32 GB (8x faster)</label>
           </div>
-      </form>
+          </form>
+        </div>
+      </div>
+      <br>
+      <div id="selectedModelMessage">Selected model: <b>4-SOURCE (FREE)</b></div>
+      <p>⚠️ Higher qualities are slower!</p>
+      <p>Advanced users: increase max memory for faster demixing. ⚠️ Always choose a memory setting less than your computer's total memory.</p>
       <br>
       <div class="wizard-footer">
-        <button id="prev-step-4" class="wizard-prev-btn">Back</button>
-        <button id="next-step-4" class="wizard-next-btn" disabled>Start job</button>
+        <button id="prev-step-2" class="wizard-prev-btn">Back</button>
+        <button id="next-step-2" class="wizard-next-btn">Start job</button>
+      </div>
+      <!-- Overlay and Spinner -->
+      <div id="step2-overlay" class="overlay" style="display: none;">
+          <h3 style="color: #ffffff; margin-top: 20px;">Downloading model files...</h3>
+          <div class="loader" id="step2-spinner"></div>
       </div>
     </div>
-    <div id="wizard-step-5" class="wizard-step" style="display: none;">
+    <div id="wizard-step-3" class="wizard-step" style="display: none;">
     <h3>Demix progress and outputs</h3>
       To cancel the running job, refresh the page
       <div class="progress-container">
@@ -152,8 +146,8 @@ header_class: index
       </div>
       <br>
       <div class="wizard-footer">
-        <button id="prev-step-5" class="wizard-prev-btn" disabled>Back</button>
-        <button id="next-step-5" class="wizard-next-btn" disabled>New job</button>
+        <button id="prev-step-3" class="wizard-prev-btn" disabled>Back</button>
+        <button id="next-step-3" class="wizard-next-btn" disabled>New job</button>
       </div>
     </div>
 

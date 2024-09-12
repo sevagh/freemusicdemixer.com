@@ -45,18 +45,15 @@ let isSingleMode = true;
 let selectedInput = null;
 
 const step1 = document.getElementById('wizard-step-1');
+const step2 = document.getElementById('wizard-step-2');
 const step3 = document.getElementById('wizard-step-3');
-const step4 = document.getElementById('wizard-step-4');
-const step5 = document.getElementById('wizard-step-5');
 
 const nextStep1Btn = document.getElementById('next-step-1');
+const nextStep2Btn = document.getElementById('next-step-2');
 const nextStep3Btn = document.getElementById('next-step-3');
-const nextStep4Btn = document.getElementById('next-step-4');
-const nextStep5Btn = document.getElementById('next-step-5');
 
+const prevStep2Btn = document.getElementById('prev-step-2');
 const prevStep3Btn = document.getElementById('prev-step-3');
-const prevStep4Btn = document.getElementById('prev-step-4');
-const prevStep5Btn = document.getElementById('prev-step-5');
 
 const usageLimits = document.getElementById('usage-limits');
 
@@ -125,9 +122,8 @@ function resetUIElements() {
 
     // reset all disabled buttons to disabled
     nextStep1Btn.disabled = true;
-    nextStep4Btn.disabled = true;
-    prevStep5Btn.disabled = true;
-    nextStep5Btn.disabled = true;
+    nextStep3Btn.disabled = true;
+    prevStep3Btn.disabled = true;
 
     initializeInputState();
 
@@ -365,8 +361,8 @@ function initWorkers() {
                     completedSegments = 0;
 
                     // enable the buttons to leave the final wizard step
-                    prevStep5Btn.disabled = false;
-                    nextStep5Btn.disabled = false;
+                    prevStep3Btn.disabled = false;
+                    nextStep3Btn.disabled = false;
                 }
             } else if (e.data.msg === 'PROCESSING_DONE_BATCH') {
                 // similar global bs here
@@ -398,8 +394,8 @@ function initWorkers() {
                         completedSongsBatch = 0;
                         // re-enable the buttons
                         // enable the buttons to leave the final wizard step
-                        prevStep5Btn.disabled = false;
-                        nextStep5Btn.disabled = false;
+                        prevStep3Btn.disabled = false;
+                        nextStep3Btn.disabled = false;
 
                         // terminate the workers
                         workers.forEach(worker => {
@@ -489,13 +485,13 @@ function fetchAndCacheFiles(model) {
 }
 
 async function initModel() {
-    displayStep3Spinner();
+    displayStep2Spinner();
 
     try {
         try {
             const buffers = await fetchAndCacheFiles(selectedModel);
             // WASM module is ready, enable the buttons
-            nextStep4Btn.disabled = false;
+            nextStep3Btn.disabled = false;
 
             dlModelBuffers = buffers;
             console.log('Model files downloaded:', buffers);
@@ -505,7 +501,7 @@ async function initModel() {
         }
     } finally {
         // Remove the spinner and re-enable the buttons
-        removeStep3Spinner();
+        removeStep2Spinner();
     }
 }
 
@@ -637,20 +633,19 @@ function checkAndResetWeeklyLimit() {
     }
 }
 
-
 // Function to display the spinner and overlay
-function displayStep3Spinner() {
+function displayStep2Spinner() {
     console.log("Displaying spinner");
-    document.getElementById('step3-overlay').style.display = 'flex';
-    document.getElementById('step3-spinner').style.display = 'flex';
+    document.getElementById('step2-overlay').style.display = 'flex';
+    document.getElementById('step2-spinner').style.display = 'flex';
     prevStep3Btn.disabled = true;
     nextStep3Btn.disabled = true;
 }
 
 // Function to remove the spinner and overlay
-function removeStep3Spinner() {
-    document.getElementById('step3-overlay').style.display = 'none';
-    document.getElementById('step3-spinner').style.display = 'none';
+function removeStep2Spinner() {
+    document.getElementById('step2-overlay').style.display = 'none';
+    document.getElementById('step2-spinner').style.display = 'none';
     prevStep3Btn.disabled = false;
     nextStep3Btn.disabled = false;
 }
@@ -701,133 +696,122 @@ nextStep1Btn.addEventListener('click', function() {
     console.log('Selected input on next step:', selectedInput);
 
     step1.style.display = 'none';
-    step3.style.display = 'block';
+    step2.style.display = 'block';
 
     registerServiceWorker();
-});
-
-prevStep3Btn.addEventListener('click', function() {
-    step3.style.display = 'none';
-    step1.style.display = 'block';
 });
 
 document.getElementById('activation-form').addEventListener('submit', function(event) {
     event.preventDefault();
 });
 
-nextStep3Btn.addEventListener('click', function() {
+nextStep2Btn.addEventListener('click', function() {
     updateModelBasedOnSelection();
 
     trackProductEvent('Chose Model', { model: selectedModel });
 
     initModel().then(() => {
-        step4.style.display = 'block';
-        step3.style.display = 'none';
-    }).catch((error) => {
-        console.error("Model initialization failed:", error);
-        document.getElementById('step3-error').textContent = "Failed to initialize model. Please try again.";
-    });
-});
+        console.log("Starting demix job");
 
-nextStep4Btn.addEventListener('click', function() {
-    console.log("Starting demix job");
+        step3.style.display = 'block';
+        step2.style.display = 'none';
 
-    step5.style.display = 'block';
-    step4.style.display = 'none';
+        prevStep3Btn.disabled = true;
+        nextStep3Btn.disabled = true;
 
-    prevStep5Btn.disabled = true;
-    nextStep5Btn.disabled = true;
+        // Parse the selected memory option from the radio buttons
+        const selectedMemory = document.querySelector('input[name="memory"]:checked').value;
+        const numWorkers = parseInt(selectedMemory) / 4;
 
-    // Parse the selected memory option from the radio buttons
-    const selectedMemory = document.querySelector('input[name="memory"]:checked').value;
-    const numWorkers = parseInt(selectedMemory) / 4;
+        // Set the global NUM_WORKERS variable directly
+        NUM_WORKERS = numWorkers;
 
-    // Set the global NUM_WORKERS variable directly
-    NUM_WORKERS = numWorkers;
+        // we only enable the next/back buttons after the job returns
 
-    // we only enable the next/back buttons after the job returns
+        // reset some globals e.g. progress
+        processedSegments = new Array(NUM_WORKERS).fill(undefined);
+        if (isSingleMode) {
+            // track the start of the job
+            trackProductEvent('Start Job', { mode: 'single', numWorkers: numWorkers });
 
-    // reset some globals e.g. progress
-    processedSegments = new Array(NUM_WORKERS).fill(undefined);
-    if (isSingleMode) {
-        // track the start of the job
-        trackProductEvent('Start Job', { mode: 'single', numWorkers: numWorkers });
+            // write log of how many workers are being used
+            initWorkers();
 
-        // write log of how many workers are being used
-        initWorkers();
+            const reader = new FileReader();
 
-        const reader = new FileReader();
+            reader.onload = function(event) {
+                // reset the progress bar
+                document.getElementById('inference-progress-bar').style.width = '0%';
+                // delete the previous download links
+                let downloadLinksDiv = document.getElementById('output-links');
+                while (downloadLinksDiv.firstChild) {
+                    downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
+                }
 
-        reader.onload = function(event) {
-            // reset the progress bar
+                const arrayBuffer = event.target.result;
+
+                audioContext.decodeAudioData(arrayBuffer, function(decodedData) {
+                    let leftChannel, rightChannel;
+                    // decodedData is an AudioBuffer
+                    if (decodedData.numberOfChannels == 1) {
+                        // Mono case
+                        leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
+                        rightChannel = decodedData.getChannelData(0); // Float32Array representing right channel data
+                    } else {
+                        // Stereo case
+                        leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
+                        rightChannel = decodedData.getChannelData(1); // Float32Array representing right channel data
+                    }
+
+                    // set original length of track
+                    let originalLength = leftChannel.length;
+
+                    processAudioSegments(leftChannel, rightChannel, NUM_WORKERS, originalLength);
+                });
+            };
+
+            reader.readAsArrayBuffer(fileInput.files[0]);
+        } else {
+            const files = folderInput.files;
+
+            // track the start of the job
+            trackProductEvent('Start Job', { mode: 'batch', numWorkers: numWorkers });
+
+            // write log of how many workers are being used
+            initWorkers();
+
             document.getElementById('inference-progress-bar').style.width = '0%';
+
             // delete the previous download links
             let downloadLinksDiv = document.getElementById('output-links');
             while (downloadLinksDiv.firstChild) {
                 downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
             }
 
-            const arrayBuffer = event.target.result;
-
-            audioContext.decodeAudioData(arrayBuffer, function(decodedData) {
-                let leftChannel, rightChannel;
-                // decodedData is an AudioBuffer
-                if (decodedData.numberOfChannels == 1) {
-                    // Mono case
-                    leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
-                    rightChannel = decodedData.getChannelData(0); // Float32Array representing right channel data
-                } else {
-                    // Stereo case
-                    leftChannel = decodedData.getChannelData(0); // Float32Array representing left channel data
-                    rightChannel = decodedData.getChannelData(1); // Float32Array representing right channel data
-                }
-
-                // set original length of track
-                let originalLength = leftChannel.length;
-
-                processAudioSegments(leftChannel, rightChannel, NUM_WORKERS, originalLength);
-            });
-        };
-
-        reader.readAsArrayBuffer(fileInput.files[0]);
-    } else {
-        const files = folderInput.files;
-
-        // track the start of the job
-        trackProductEvent('Start Job', { mode: 'batch', numWorkers: numWorkers });
-
-        // write log of how many workers are being used
-        initWorkers();
-
-        document.getElementById('inference-progress-bar').style.width = '0%';
-
-        // delete the previous download links
-        let downloadLinksDiv = document.getElementById('output-links');
-        while (downloadLinksDiv.firstChild) {
-            downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
+            processFiles(files);
         }
-
-        processFiles(files);
-    }
+    }).catch((error) => {
+        console.error("Model initialization failed:", error);
+    });
 });
 
-prevStep4Btn.addEventListener('click', function() {
-    step4.style.display = 'none';
-    step3.style.display = 'block';
+prevStep2Btn.addEventListener('click', function() {
+    step2.style.display = 'none';
+    step1.style.display = 'block';
 });
 
-nextStep5Btn.addEventListener('click', function() {
+prevStep3Btn.addEventListener('click', function() {
+    step3.style.display = 'none';
+    step2.style.display = 'block';
+});
+
+nextStep3Btn.addEventListener('click', function() {
     // reset all buttons etc.
     resetUIElements();
 
     // restart the wizard from step 1
-    step5.style.display = 'none';
+    step3.style.display = 'none';
     step1.style.display = 'block';
-});
-
-prevStep5Btn.addEventListener('click', function() {
-    step5.style.display = 'none';
-    step4.style.display = 'block';
 });
 
 function packageAndDownload(targetWaveforms) {
@@ -880,8 +864,8 @@ function createDownloadLinks(buffers) {
         downloadLinksDiv.appendChild(link);
     });
 
-    prevStep5Btn.disabled = false;
-    nextStep5Btn.disabled = false;
+    prevStep3Btn.disabled = false;
+    nextStep3Btn.disabled = false;
 }
 
 async function processFiles(files) {
