@@ -7,7 +7,7 @@ header_class: index
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
 <section class="info-section">
-  <h3>Unlock the <b>power of AI stem separation</b> in your browser. Our tool isolates individual stems like vocals, drums, bass, guitar, and piano effortlessly from your favorite songs with precision. Perfect for creating backing tracks and remixes, whether you're a musician, DJ, beatmaker, content creator, or karaoke enthusiast.</h3>
+  <h3>Unlock <b>AI stem separation</b> in your browser. Effortlessly isolate vocals, drums, bass, guitar, and piano from your favorite songs. Ideal for creating backing tracks, remixes, and more — perfect for musicians, DJs, beatmakers, content creators, and karaoke enthusiasts.</h3>
 </section>
 
 <section class="image-section">
