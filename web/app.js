@@ -576,10 +576,10 @@ function toggleNextButton() {
     // Check if input is selected and either user is logged in or they have remaining demixes
     if (selectedInput && (loggedIn || remaining > 0)) {
         nextStep2Btn.disabled = false;
-        nextStep2Btn.textContent = 'Next';
+        nextStep2Btn.textContent = 'Start job';
     } else {
         nextStep2Btn.disabled = true;
-        nextStep2Btn.textContent = remaining <= 0 && !loggedIn ? 'Limit reached' : 'Next';
+        nextStep2Btn.textContent = remaining <= 0 && !loggedIn ? 'Limit reached' : 'Start job';
     }
 }
 
