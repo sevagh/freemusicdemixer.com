@@ -25,23 +25,6 @@ header_class: index
   </div>
   <div class="wizard-container">
     <div id="wizard-step-1" class="wizard-step">
-      <p id="usage-limits"></p>
-      <p>Choose either a file or a folder as your input:</p>
-      <div class="input-group">
-          <input type="file" id="audio-upload" aria-label="Choose a file">
-      </div>
-      <div class="input-group">
-          <input type="file" id="batch-upload" webkitdirectory directory multiple aria-label="Choose a folder">
-      </div>
-      <br>
-      <div id="selectedInputMessage">Selected input:</div>
-      <br>
-      <div class="wizard-footer">
-        <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>
-        <button id="next-step-1" class="wizard-next-btn" disabled>Next</button>
-      </div>
-    </div>
-    <div id="wizard-step-2" class="wizard-step" style="display: none;">
       <p>Choose your parameters</p>
       <div class="columns-container">
         <div class="column">
@@ -77,12 +60,12 @@ header_class: index
             <b>Quality:</b>
             <form id="qualityPickerForm">
               <div>
-                <input type="radio" id="low-quality" name="quality" value="low" disabled>
-                <label for="low-quality">Low 🔒</label>
+                <input type="radio" id="low-quality" name="quality" value="low" checked>
+                <label for="low-quality">Low</label>
               </div>
               <div>
-                <input type="radio" id="default-quality" name="quality" value="default" checked>
-                <label for="default-quality">Default</label>
+                <input type="radio" id="default-quality" name="quality" value="default" disabled>
+                <label for="default-quality">Default 🔒</label>
               </div>
               <div>
                 <input type="radio" id="medium-quality" name="quality" value="medium" disabled>
@@ -95,36 +78,56 @@ header_class: index
             </form>
         </div>
         <div class="column">
-          <b>Max memory:</b>
-          <form id="memorySelectorForm">
-          <div>
-              <input type="radio" id="4gb" name="memory" value="4gb">
-              <label for="4gb">4 GB (default speed)</label>
-          </div>
-          <div>
-              <input type="radio" id="8gb" name="memory" value="8gb">
-              <label for="8gb">8 GB (2x faster)</label>
-          </div>
-          <div>
-              <input type="radio" id="16gb" name="memory" value="16gb" checked>
-              <label for="16gb">16 GB (4x faster)</label>
-          </div>
-          <div>
-              <input type="radio" id="32gb" name="memory" value="32gb">
-              <label for="32gb">32 GB (8x faster)</label>
-          </div>
-          </form>
+        <b><a href="javascript:void(0);" id="advancedSettingsToggle" style="text-decoration: none; cursor: pointer;">Advanced &#x25BC;</a></b>
+        <div id="advancedSettings" style="display: none;">
+            <b>Max memory:</b>
+            <form id="memorySelectorForm">
+            <div>
+                <input type="radio" id="4gb" name="memory" value="4gb" checked>
+                <label for="4gb">4 GB (default speed)</label>
+            </div>
+            <div>
+                <input type="radio" id="8gb" name="memory" value="8gb">
+                <label for="8gb">8 GB (2x faster)</label>
+            </div>
+            <div>
+                <input type="radio" id="16gb" name="memory" value="16gb">
+                <label for="16gb">16 GB (4x faster)</label>
+            </div>
+            <div>
+                <input type="radio" id="32gb" name="memory" value="32gb">
+                <label for="32gb">32 GB (8x faster)</label>
+            </div>
+            </form>
+            <br>
+            ⚠️ Powerful computers can use more memory for faster processing.
+            <br>
+            ❗If your tab crashes, lower this setting.
+        </div>
         </div>
       </div>
-      ⚠️ Higher qualities are slower!
-      <br>
-      ⚠️ Choose a memory setting less than your computer's total memory.
       <br>
       <br>
-      <div id="selectedModelMessage">Selected model: <b>4-SOURCE (FREE)</b></div>
+      <div class="wizard-footer">
+        <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>
+        <button id="next-step-1" class="wizard-next-btn">Next</button>
+      </div>
+    </div>
+    <div id="wizard-step-2" class="wizard-step" style="display: none;">
+      <p id="usage-limits"></p>
+      <p>Choose either a file or a folder as your input:</p>
+      <div class="input-group">
+          <input type="file" id="audio-upload" aria-label="Choose a file">
+      </div>
+      <div class="input-group">
+          <input type="file" id="batch-upload" webkitdirectory directory multiple aria-label="Choose a folder">
+      </div>
+      <br>
+      <div id="selectedInputMessage">Selected input:</div>
+      <br>
       <div class="wizard-footer">
         <button id="prev-step-2" class="wizard-prev-btn">Back</button>
-        <button id="next-step-2" class="wizard-next-btn">Start job</button>
+        <button id="next-step-2" class="wizard-next-btn" disabled>Start job</button>
       </div>
       <!-- Overlay and Spinner -->
       <div id="step2-overlay" class="overlay" style="display: none;">
@@ -134,13 +137,15 @@ header_class: index
     </div>
     <div id="wizard-step-3" class="wizard-step" style="display: none;">
     <p>Demix progress and output stems</p>
-      To cancel the running job, refresh the page
+      🚫 To cancel the current job, refresh the page
       <div class="progress-container">
         <div class="progress-text" id="inference-progress-text">Progress...</div>
         <div class="progress-bar">
             <div class="progress-bar-inner" id="inference-progress-bar" style="width: 0%"></div>
         </div>
         This may take a while, go grab a coffee! ☕️
+        <br>
+        <b>Too slow?</b> Start a new job and try more max memory from the 'Advanced' section! 💻
       </div>
       <div class="output-container">
         <div class="output-text" id="output-progress-text">Outputs...</div>

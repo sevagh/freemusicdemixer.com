@@ -2,7 +2,6 @@ import { encodeWavFileFromAudioBuffer } from './WavFileEncoder.js';
 
 const modelCheckboxes = document.querySelectorAll('input[type="checkbox"][name="feature"]');
 const qualityRadios = document.querySelectorAll('input[type="radio"][name="quality"]');
-const selectedModelMessage = document.getElementById('selectedModelMessage');
 modelCheckboxes.forEach(checkbox => checkbox.addEventListener('change', updateModelBasedOnSelection));
 qualityRadios.forEach(radio => radio.addEventListener('change', updateModelBasedOnSelection));
 let selectedModel;
@@ -97,8 +96,8 @@ function resetUIElements() {
     document.querySelector('label[for="guitar"]').textContent = 'Guitar 🔒';
 
     // Disable PRO-tier radio buttons (medium, high quality) and add lock symbol
-    document.getElementById('low-quality').disabled = true;
-    document.querySelector('label[for="low-quality"]').textContent = 'Low (fast!) 🔒';
+    document.getElementById('default-quality').disabled = true;
+    document.querySelector('label[for="default-quality"]').textContent = 'Default 🔒';
 
     document.getElementById('medium-quality').disabled = true;
     document.querySelector('label[for="medium-quality"]').textContent = 'Medium 🔒';
@@ -115,13 +114,10 @@ function resetUIElements() {
 
     // Reset quality radio buttons
     qualityRadios.forEach(radio => radio.checked = false);
-    document.getElementById('default-quality').checked = true;
-
-    // Reset dropdown
-    selectedModelMessage.innerHTML = "Selected model: <b>4-SOURCE (FREE)</b>";
+    document.getElementById('low-quality').checked = true;
 
     // reset all disabled buttons to disabled
-    nextStep1Btn.disabled = true;
+    nextStep2Btn.disabled = true;
     nextStep3Btn.disabled = true;
     prevStep3Btn.disabled = true;
 
@@ -156,7 +152,7 @@ function updateModelBasedOnSelection() {
 
     const selectedQuality = document.querySelector('input[type="radio"][name="quality"]:checked').value;
 
-    let selectedModelLocal = "4-SOURCE (FREE)"; // Default model
+    let selectedModelLocal = "V3 (FREE)"; // Default model
 
     // Rule 1: If the sources contain piano and/or guitar
     if (selectedFeatures.includes("piano") || selectedFeatures.includes("guitar")) {
@@ -169,9 +165,9 @@ function updateModelBasedOnSelection() {
     // Rule 2: If the sources contain only vocals and/or instrumental (with no other stems)
     else if (selectedFeatures.every(item => ["vocals", "instrumental"].includes(item))) {
         if (selectedQuality === "low") {
-            selectedModelLocal = "V3 (PRO)";
+            selectedModelLocal = "V3 (FREE)";
         } else if (selectedQuality === "default") {
-            selectedModelLocal = "4-SOURCE (FREE)";
+            selectedModelLocal = "4-SOURCE (PRO)";
         } else if (selectedQuality === "medium") {
             selectedModelLocal = "FINE-TUNED (PRO)";
         } else if (selectedQuality === "high") {
@@ -181,9 +177,9 @@ function updateModelBasedOnSelection() {
     // Rule 3: Normal case (any of vocals, drums, bass, but no piano/guitar)
     else if (selectedFeatures.some(item => ["vocals", "drums", "bass"].includes(item))) {
         if (selectedQuality === "low") {
-            selectedModelLocal = "V3 (PRO)";
+            selectedModelLocal = "V3 (FREE)";
         } else if (selectedQuality === "default") {
-            selectedModelLocal = "4-SOURCE (FREE)";
+            selectedModelLocal = "4-SOURCE (PRO)";
         } else if (selectedQuality === "medium") {
             selectedModelLocal = "FINE-TUNED (PRO)";
         } else if (selectedQuality === "high") {
@@ -191,10 +187,7 @@ function updateModelBasedOnSelection() {
         }
     }
 
-    // Update the displayed model
-    selectedModelMessage.innerHTML = `Selected model: <b>${selectedModelLocal}</b>`;
-
-    if (selectedModelLocal === "4-SOURCE (FREE)") {
+    if (selectedModelLocal === "4-SOURCE (PRO)") {
         selectedModel = 'demucs-free-4s';
     } else if (selectedModelLocal === "6-SOURCE (PRO)") {
         selectedModel = 'demucs-free-6s';
@@ -206,7 +199,7 @@ function updateModelBasedOnSelection() {
         selectedModel = 'demucs-pro-cust';
     } else if (selectedModelLocal === "DELUXE (PRO)") {
         selectedModel = 'demucs-pro-deluxe';
-    } else if (selectedModelLocal === "V3 (PRO)") {
+    } else if (selectedModelLocal === "V3 (FREE)") {
         selectedModel = 'demucs-free-v3';
     }
 }
@@ -581,11 +574,11 @@ function toggleNextButton() {
 
     // Check if input is selected and either user is logged in or they have remaining demixes
     if (selectedInput && (loggedIn || remaining > 0)) {
-        nextStep1Btn.disabled = false;
-        nextStep1Btn.textContent = 'Next';
+        nextStep2Btn.disabled = false;
+        nextStep2Btn.textContent = 'Next';
     } else {
-        nextStep1Btn.disabled = true;
-        nextStep1Btn.textContent = remaining <= 0 && !loggedIn ? 'Limit reached' : 'Next';
+        nextStep2Btn.disabled = true;
+        nextStep2Btn.textContent = remaining <= 0 && !loggedIn ? 'Limit reached' : 'Next';
     }
 }
 
@@ -662,14 +655,14 @@ function activateTierUI(userTier) {
     document.getElementById('guitar').disabled = false;
 
     // Enable PRO-tier radio buttons (medium, high quality)
-    document.getElementById('low-quality').disabled = false;
+    document.getElementById('default-quality').disabled = false;
     document.getElementById('medium-quality').disabled = false;
     document.getElementById('high-quality').disabled = false;
 
     // Remove lock symbol (🔒) from the labels
     document.querySelector('label[for="piano"]').textContent = 'Piano';
     document.querySelector('label[for="guitar"]').textContent = 'Guitar';
-    document.querySelector('label[for="low-quality"]').textContent = 'Low (fast!)';
+    document.querySelector('label[for="default-quality"]').textContent = 'Default';
     document.querySelector('label[for="medium-quality"]').textContent = 'Medium';
     document.querySelector('label[for="high-quality"]').textContent = 'High';
 
@@ -693,9 +686,21 @@ function activateTierUI(userTier) {
   checkAndResetWeeklyLimit();
 }
 
+const toggleButton = document.getElementById('advancedSettingsToggle');
+const advancedSettings = document.getElementById('advancedSettings');
+
+toggleButton.addEventListener('click', function() {
+    if (advancedSettings.style.display === 'none') {
+        advancedSettings.style.display = 'block';
+    } else {
+        advancedSettings.style.display = 'none';
+    }
+});
+
 nextStep1Btn.addEventListener('click', function() {
-    console.log('Is single mode:', isSingleMode);
-    console.log('Selected input on next step:', selectedInput);
+    updateModelBasedOnSelection();
+
+    trackProductEvent('Chose Model', { model: selectedModel });
 
     step1.style.display = 'none';
     step2.style.display = 'block';
@@ -708,9 +713,8 @@ document.getElementById('activation-form').addEventListener('submit', function(e
 });
 
 nextStep2Btn.addEventListener('click', function() {
-    updateModelBasedOnSelection();
-
-    trackProductEvent('Chose Model', { model: selectedModel });
+    console.log('Is single mode:', isSingleMode);
+    console.log('Selected input on next step:', selectedInput);
 
     initModel().then(() => {
         console.log("Starting demix job");

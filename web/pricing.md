@@ -5,9 +5,9 @@ description: "Learn more about our mission and the cutting-edge AI technology po
 
 # Pricing
 
-Our free product entitles you to 3 demixes per week, using the base 4-stem model.
+Our free product entitles you to 3 demixes per week, using the lowest quality 4-stem model.
 
-Our PRO subscription is available with a 7-day free trial. Become a member today for only <a href="https://buy.stripe.com/aEU29ZgF48Z13qEeUV">$9.99 CAD/month</a> or <a  href="https://buy.stripe.com/dR67ujdsSejl3qE3ce">$49.99 CAD/year</a>!
+For higher quality stems and unlimited demixing, our PRO subscription is available with a 7-day free trial. Become a member today for only <a href="https://buy.stripe.com/aEU29ZgF48Z13qEeUV">$9.99 CAD/month</a> or <a  href="https://buy.stripe.com/dR67ujdsSejl3qE3ce">$49.99 CAD/year</a>!
 
 No minutes, no limits, no cloud, no bullshit. 100% unlimited usage that runs privately on your own devices.
 
@@ -28,9 +28,9 @@ publishable-key="pk_live_51ObLZ9AmT5bJ3vuwDIgzrNEljt7oK42MqgmnEKZbANz0PDtlzkD3Oc
 
 We provide additional models as part of the PRO subscription:
 * **Piano 🎹 and guitar 🎸 stems** with our 6-source and Custom models
-* Our **blazing fast** v3 4-stem optimized model for vocals, drums, bass, and melody
 * Our vocal-optimized Karaoke 2-stem model with **specialized high-performance vocals and instrumental separation**
-* Our two highest-quality models for 4-stem (vocals, drums, bass, melody) separation: Fine-tuned and Deluxe for **the best drums and bass separation available on the market**
+* Higher quality models for 4-stem (vocals, drums, bass, melody) separation including 4-source, Fine-tuned, and Deluxe
+* Our Deluxe model offers **the best drums and bass separation available on the market**
 
 In the [Android app](/android), PRO subscribers get:
 
