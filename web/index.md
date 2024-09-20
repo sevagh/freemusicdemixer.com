@@ -6,12 +6,16 @@ header_class: index
 <script src="app.js" type="module"></script>
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
+<section class="info-section">
+  <h3>Unlock the <b>power of AI stem separation</b> in your browser. Our tool isolates individual stems like vocals, drums, bass, guitar, and piano effortlessly from your favorite songs with precision. Perfect for creating backing tracks and remixes, whether you're a musician, DJ, beatmaker, content creator, or karaoke enthusiast.</h3>
+</section>
+
 <section class="image-section">
 <img class="title-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
 </section>
 
 <section class="info-section">
-  <h3>Our algorithms are based on the <b>Demucs AI model</b> and winners from the Sony Music and Sound Demixing Challenges in 2021 and 2023. Powered by the same revolutionary Artificial Intelligence technology as ChatGPT.</h3>
+  <h3>Our algorithms are based on the <b>Demucs AI model</b> and winners from the Sony Music and Sound Demixing Challenges in 2021 and 2023, powered by the same revolutionary Artificial Intelligence technology as ChatGPT.</h3>
 </section>
 
 <section class="info-section">
@@ -100,9 +104,9 @@ header_class: index
             </div>
             </form>
             <br>
-            ⚠️ Powerful computers can use more memory for faster processing.
+            ⚠️ More memory is faster,  with a higher risk of crashing❗
             <br>
-            ❗If your tab crashes, lower this setting.
+            ℹ️ Read <a href="/getting-started/2024/09/20/How-to-pick-max-memory" target="_blank" alt="memory-guide">our guide on how to pick max memory.</a>
         </div>
         </div>
       </div>
@@ -145,7 +149,7 @@ header_class: index
         </div>
         This may take a while, go grab a coffee! ☕️
         <br>
-        <b>Too slow?</b> Start a new job and try more max memory from the 'Advanced' section! 💻
+        <b>Slow?</b> Start a new job and set Advanced -> Max memory higher. Read <a href="/getting-started/2024/09/20/How-to-pick-max-memory" target="_blank" alt="memory-guide">our guide for info</a> 💻
       </div>
       <div class="output-container">
         <div class="output-text" id="output-progress-text">Outputs...</div>
