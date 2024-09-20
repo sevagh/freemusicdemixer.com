@@ -2,7 +2,6 @@
 header_class: index
 #title: "Music Demixer: Powered by AI"
 ---
-<script src="WavFileEncoder.js" type="module"></script>
 <script src="app.js" type="module"></script>
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
