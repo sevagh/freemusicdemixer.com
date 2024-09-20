@@ -5,15 +5,11 @@ description: "Learn more about our mission and the cutting-edge AI technology po
 
 # About us
 
-<br>
-
 ## Contact and team
 
 Contact us via e-mail at [contact@freemusicdemixer.com](mailto:contact@freemusicdemixer.com) for all inquiries.
 
 This project is run by [Sevag H](https://sevag.xyz).
-
-<br>
 
 ## What is this tool useful for?
 
@@ -25,13 +21,9 @@ Effortlessly split your songs into individual stems - **vocals, bass, drums, mel
 
 If you want the power of Demucs **in your pocket**, [download our Android app](/android).
 
-<br>
-
 ## What is the paid product?
 
 See our [pricing page](/pricing) for more information on our PRO model. The PRO subscription offers **unlimited demixing** and **higher quality** stems.
-
-<br>
 
 ## Demo clips
 
@@ -81,5 +73,3 @@ Want to know what it sounds like? Here is some sample audio extracted from the s
     </div>
   </div>
 </div>
-
-<br>

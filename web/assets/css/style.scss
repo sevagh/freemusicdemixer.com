@@ -54,7 +54,6 @@ section {
     text-align: left;
     scroll-snap-align: start;
     flex-direction: column;
-    min-height: 60vh; /* Maintain a large height */
   }
 
   /* General body styles */
@@ -113,7 +112,7 @@ section {
     padding-left: 5%; /* Adjusts how much it's pushed to the left */
     padding-top: 5%; /* Adjusts how much higher it sits */
     padding-bottom: 5%;
-    min-height: 30vh; /* Maintain a large height */
+    min-height: 5vh; /* Maintain a large height */
     text-align: left;
   }
 
@@ -150,8 +149,16 @@ section {
     align-items: flex-start;
     padding-left: 5%; /* Adjusts how much it's pushed to the left */
     padding-top: 5%; /* Adjusts how much higher it sits */
-    min-height: 20vh; /* Maintain a large height */
+    min-height: 0vh; /* Maintain a large height */
     text-align: left;
+  }
+
+  #posts-container {
+    margin-top: -20px;
+  }
+
+  div.clouds {
+    margin-bottom: 20px;
   }
 
   /* Align SVG badges side by side using Flexbox */
@@ -202,6 +209,45 @@ button {
 
 button:hover {
   background-color: #005fa3; /* Darker on hover */
+}
+
+/* Wizard Container */
+.wizard-container {
+  width: 800px;
+  height: 500px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  color: #333;
+  position: relative; /* To ensure the footer is positioned inside the container */
+  padding: 20px;
+  box-sizing: border-box; /* Ensures padding is included in width and height */
+}
+
+/* Wizard Step */
+.wizard-step {
+  flex-grow: 1;
+  padding-bottom: 20px;
+  overflow: auto; /* Allow content to scroll if it overflows */
+}
+
+/* Wizard Footer positioned absolutely */
+.wizard-footer {
+  display: flex;
+  justify-content: space-between; /* Pushes buttons to extreme left and right */
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: calc(100% - 40px); /* Full width with padding */
+}
+
+#selectedModelMessage {
+  position: absolute;
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .wizard-footer button {
@@ -425,6 +471,7 @@ input[type="radio"][disabled] + label {
     width: 100%; /* Ensure the section takes the full width of the parent container */
     padding: 20px; /* Optional: Add some padding around the image */
     min-height: 20vh;
+    margin-top: 2vh;
   }
 
   .image-section img {
@@ -440,39 +487,6 @@ input[type="radio"][disabled] + label {
   align-items: center;
   padding: 30px 0;
   background-color: #f5f5f5; /* Light gray background for the section */
-}
-
-/* Wizard Container */
-.wizard-container {
-  width: 800px;
-  height: 500px;
-  background-color: #e0e0e0;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  color: #333;
-  position: relative; /* To ensure the footer is positioned inside the container */
-  padding: 20px;
-  box-sizing: border-box; /* Ensures padding is included in width and height */
-}
-
-/* Wizard Step */
-.wizard-step {
-  flex-grow: 1;
-  padding-bottom: 20px;
-  overflow: auto; /* Allow content to scroll if it overflows */
-}
-
-/* Wizard Footer positioned absolutely */
-.wizard-footer {
-  display: flex;
-  justify-content: space-between; /* Pushes buttons to extreme left and right */
-  align-items: center;
-  gap: 10px;
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  width: calc(100% - 40px); /* Full width with padding */
 }
 
 /* Style the input and buttons consistently */
@@ -759,6 +773,23 @@ input[type="radio"][disabled] + label {
   color: #333; /* Optional: change bullet/number color */
 }
 
+
+/* Adjust spacing for headings within main content */
+#main-content h1 {
+  margin-top: 50px; /* Add space above the h1 */
+  margin-bottom: 30px; /* Add space below the h1 */
+}
+
+#main-content h2 {
+  margin-top: 40px; /* Add space above the h2 */
+  margin-bottom: 25px; /* Add space below the h2 */
+}
+
+#main-content h3 {
+  margin-top: 35px; /* Add space above the h3 */
+  margin-bottom: 20px; /* Add space below the h3 */
+}
+
 /* Ensure progress container is centered and styled */
 .progress-container {
   width: 100%;
@@ -951,7 +982,7 @@ div.tag-cloud {
     color: #333; /* Darker text color for contrast */
     padding: 2px 5px; /* Padding around the text */
     border-radius: 3px; /* Optional: rounded corners */
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .giscus-spacing {
@@ -979,7 +1010,7 @@ div.tag-cloud {
 }
 
 .share-text {
-  color: #8b008b; /* Dark Magenta, same as your other headings */
+  color: #333; /* Dark Magenta, same as your other headings */
   //font-weight: bold; /* for a bold appearance like headings */
   //font-size: 1.2em; /* adjust the size if needed */
 }
@@ -1073,6 +1104,54 @@ div.tag-cloud {
   box-sizing: border-box; /* Ensures padding is included in width and height */
 }
 
+/* Customize the slider appearance */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #ddd;
+  outline: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Slider thumb customization */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Slider labels */
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+.slider-labels span {
+  font-size: 12px;
+  color: #333;
+}
+
+@media (max-width: 1000px) {
+  .wizard-container {
+    width: 600px;
+  }
+}
+
 @media (min-width: 800px) {
   .image-section img {
     max-width: 65%;
@@ -1108,7 +1187,7 @@ div.tag-cloud {
   }
 
   .wizard-container {
-    width: 600px;
+    width: 500px;
   }
 }
 
