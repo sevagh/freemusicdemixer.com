@@ -8,6 +8,8 @@ intro: "Demucs v4 hybrid transformer is a very powerful AI model for music demix
 "
 ---
 
+<span class="blog-highlight">**Last updated: 2024-09-20**</span>
+
 <h2>Table of contents</h2>
 * Table of contents
 {:toc}
@@ -15,6 +17,8 @@ intro: "Demucs v4 hybrid transformer is a very powerful AI model for music demix
 {{ page.intro }}
 
 <img src="/assets/blog/post4/mdxdmc4.webp" alt="demucs-available" width="75%"/>
+
+**n.b.** The above screenshot is from an older version of this website. We are still powered by Demucs 💪
 
 ## Intro
 

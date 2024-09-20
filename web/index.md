@@ -7,7 +7,7 @@ header_class: index
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
 <section class="info-section">
-  <h3>Unlock <b>AI stem separation</b> in your browser. Effortlessly isolate vocals, drums, bass, guitar, and piano from your favorite songs. Ideal for creating backing tracks, remixes, and more — perfect for musicians, DJs, beatmakers, content creators, and karaoke enthusiasts.</h3>
+  <h3>Unlock <b>AI stem separation</b> in your browser. Effortlessly isolate vocals, drums, bass, melody, guitar, and piano from your favorite songs. Ideal for creating backing tracks, remixes, and more — perfect for musicians, DJs, beatmakers, content creators, and karaoke enthusiasts.</h3>
 </section>
 
 <section class="image-section">
@@ -45,6 +45,10 @@ header_class: index
             <div>
               <input type="checkbox" id="bass" name="feature" value="bass" checked>
               <label for="bass">Bass</label>
+            </div>
+            <div>
+              <input type="checkbox" id="melody" name="feature" value="melody" checked>
+              <label for="melody">Melody</label>
             </div>
             <div>
               <input type="checkbox" id="instrumental" name="feature" value="instrumental" checked>

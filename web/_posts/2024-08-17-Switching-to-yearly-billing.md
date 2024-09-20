@@ -6,6 +6,8 @@ header_class: post
 intro: "How you can switch to our new yearly billing plan to save money!"
 ---
 
+<span class="blog-highlight">**Last updated: 2024-09-20**</span>
+
 {{ page.intro }}
 
 ## New yearly price
@@ -16,9 +18,9 @@ Now, we're introducing a yearly billing option at $49.99 CAD per year. This is a
 
 ## New customers
 
-If you're a new subscriber to our product, simply choose the yearly billing option from the Stripe product page:
+If you're a new subscriber to our product, simply choose the yearly billing option from [the signup page](http://localhost:8788/pricing#sign-up):
 
-<img src="/assets/blog/post9/yearly-billing.webp" alt="yearly-billing-option" width="50%">
+<img src="/assets/blog/post9/yearly-billing.webp" alt="yearly-billing-option" width="65%">
 
 If you visit the Stripe product page to sign up for the monthly billing, you also have the option there to switch to yearly billing, along with the savings shown ($70, or 60%!):
 

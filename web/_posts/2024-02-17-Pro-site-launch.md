@@ -7,13 +7,13 @@ description: "We have released 3 new PRO models!"
 intro: "Creating ensemble models for better demixing 📈"
 ---
 
+<span class="blog-highlight">**Last updated: 2024-09-20**</span>
+
 <h2>Table of contents</h2>
 * Table of contents
 {:toc}
 
 {{ page.intro }}
-
-<span class="blog-highlight">**Last updated: 2024-12-22**</span>
 
 ## Announcing our new PRO site!
 
@@ -21,7 +21,7 @@ Over the course of the last month, we have been hard at work on this project, an
 
 <img alt="pro-model-comparison" src="/assets/blog/post6/model_comparison.png" width="75%"/>
 
-Browse and sign up for our [PRO website](https://pro.freemusicdemixer.com) today!
+Browse and sign up for our [PRO website](https://freemusicdemixer.com) today!
 
 ## AI demixing competitions
 
@@ -48,7 +48,7 @@ As part of the new pro release, we are launching with 4 models:
 
 ## 🔥🔥 World-class drums and bass stems??
 
-I really believe it. I have added [audio clips](https://pro.freemusicdemixer.com/#demo-clips) to demo the Pro Deluxe model, and I'm confident that drum and bass stems extracted by my Pro Deluxe model are world-class. Try it for yourself! The results are astonishing.
+I really believe it. I have added [audio clips](https://freemusicdemixer.com/about#demo-clips) to demo the Pro Deluxe model, and I'm confident that drum and bass stems extracted by my Pro Deluxe model are world-class. Try it for yourself! The results are astonishing.
 
 ## Stay up to date!
 

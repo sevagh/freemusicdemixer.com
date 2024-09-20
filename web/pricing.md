@@ -11,8 +11,6 @@ For higher quality stems and unlimited demixing, our PRO subscription is availab
 
 No minutes, no limits, no cloud, no bullshit. 100% unlimited usage that runs privately on your own devices.
 
-<br>
-
 ## Sign up
 
 Sign up by purchasing a subscription below, or keep scrolling to learn more about the features of our PRO subscription:
@@ -21,8 +19,6 @@ Sign up by purchasing a subscription below, or keep scrolling to learn more abou
 <stripe-pricing-table id="pricing-table" pricing-table-id="prctbl_1OcXFtAmT5bJ3vuw0JDQk6A5"
 publishable-key="pk_live_51ObLZ9AmT5bJ3vuwDIgzrNEljt7oK42MqgmnEKZbANz0PDtlzkD3Oc6R2JopYNJnpsteV8or0hY2s1l2bmrM1hED00nMDhvPqg">
 </stripe-pricing-table>
-
-<br>
 
 ## Subscription features
 
@@ -37,5 +33,3 @@ In the [Android app](/android), PRO subscribers get:
 * Record from the microphone directly in the Music Demixer app
 * Capture audio from other apps
 * Export a custom mix from the output stems
-
-<br>

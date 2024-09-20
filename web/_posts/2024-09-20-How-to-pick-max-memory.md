@@ -26,8 +26,6 @@ However, if you pick too much memory, the tab will crash and you will lose your 
 
 <span class="blog-highlight">This post will show you how to check your computer's maximum memory.</span>
 
-<br>
-
 ## Mac users
 
 Step-by-step instructions:
@@ -48,8 +46,6 @@ Select "About This Mac" from the dropdown. This will bring up a new window displ
 
 In the demixer app, you should use the highest Max Memory setting that is **less than** your computer's memory. If your Mac has 16 GB of memory, you should select 8 GB in the demixer tool. If your Mac has 32 GB of memory, you should select 16 GB in the demixer tool, and so on.
 
-<br>
-
 ## Windows users
 
 1. Open the Start Menu
@@ -67,5 +63,3 @@ Search for "about your pc" in the search bar and click on the result. This will 
 <img src="/assets/blog/post12/windows2.webp" alt="windows-2" width="50%">
 
 For a more detailed overview, here's a deeper guide from [Crucial memory](https://www.crucial.com/articles/about-memory/how-to-check-ram-windows-10) on how to check RAM usage.
-
-<br>

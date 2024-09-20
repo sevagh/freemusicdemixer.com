@@ -110,6 +110,7 @@ function resetUIElements() {
     document.getElementById('vocals').checked = true;
     document.getElementById('drums').checked = true;
     document.getElementById('bass').checked = true;
+    document.getElementById('melody').checked = true;
     document.getElementById('instrumental').checked = true;
 
     // Reset quality radio buttons
@@ -175,7 +176,7 @@ function updateModelBasedOnSelection() {
         }
     }
     // Rule 3: Normal case (any of vocals, drums, bass, but no piano/guitar)
-    else if (selectedFeatures.some(item => ["vocals", "drums", "bass"].includes(item))) {
+    else if (selectedFeatures.some(item => ["vocals", "drums", "bass", "melody"].includes(item))) {
         if (selectedQuality === "low") {
             selectedModelLocal = "V3 (FREE)";
         } else if (selectedQuality === "default") {

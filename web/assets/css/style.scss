@@ -54,7 +54,6 @@ section {
     text-align: left;
     scroll-snap-align: start;
     flex-direction: column;
-    min-height: 60vh; /* Maintain a large height */
   }
 
   /* General body styles */
@@ -113,7 +112,7 @@ section {
     padding-left: 5%; /* Adjusts how much it's pushed to the left */
     padding-top: 5%; /* Adjusts how much higher it sits */
     padding-bottom: 5%;
-    min-height: 30vh; /* Maintain a large height */
+    min-height: 5vh; /* Maintain a large height */
     text-align: left;
   }
 
@@ -150,8 +149,12 @@ section {
     align-items: flex-start;
     padding-left: 5%; /* Adjusts how much it's pushed to the left */
     padding-top: 5%; /* Adjusts how much higher it sits */
-    min-height: 20vh; /* Maintain a large height */
+    min-height: 0vh; /* Maintain a large height */
     text-align: left;
+  }
+
+  #posts-container {
+    margin-top: -20px;
   }
 
   /* Align SVG badges side by side using Flexbox */
@@ -464,7 +467,7 @@ input[type="radio"][disabled] + label {
     width: 100%; /* Ensure the section takes the full width of the parent container */
     padding: 20px; /* Optional: Add some padding around the image */
     min-height: 20vh;
-    margin-top: 5vh;
+    margin-top: 2vh;
   }
 
   .image-section img {
@@ -766,6 +769,23 @@ input[type="radio"][disabled] + label {
   color: #333; /* Optional: change bullet/number color */
 }
 
+
+/* Adjust spacing for headings within main content */
+#main-content h1 {
+  margin-top: 50px; /* Add space above the h1 */
+  margin-bottom: 30px; /* Add space below the h1 */
+}
+
+#main-content h2 {
+  margin-top: 40px; /* Add space above the h2 */
+  margin-bottom: 25px; /* Add space below the h2 */
+}
+
+#main-content h3 {
+  margin-top: 35px; /* Add space above the h3 */
+  margin-bottom: 20px; /* Add space below the h3 */
+}
+
 /* Ensure progress container is centered and styled */
 .progress-container {
   width: 100%;
@@ -958,7 +978,7 @@ div.tag-cloud {
     color: #333; /* Darker text color for contrast */
     padding: 2px 5px; /* Padding around the text */
     border-radius: 3px; /* Optional: rounded corners */
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .giscus-spacing {
@@ -986,7 +1006,7 @@ div.tag-cloud {
 }
 
 .share-text {
-  color: #8b008b; /* Dark Magenta, same as your other headings */
+  color: #333; /* Dark Magenta, same as your other headings */
   //font-weight: bold; /* for a bold appearance like headings */
   //font-size: 1.2em; /* adjust the size if needed */
 }

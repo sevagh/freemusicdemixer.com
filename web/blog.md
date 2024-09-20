@@ -26,7 +26,6 @@ This is the blog of the freemusicdemixer site. The aim is to provide content rel
 
 <button id="resetFilters" class="btn btn-github">Reset filters</button>
 
-<br>
 ## Posts
 
 <div id="posts-container">

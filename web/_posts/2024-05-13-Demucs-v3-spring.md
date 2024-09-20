@@ -7,13 +7,19 @@ description: "We have added a new fast AI model and other updates!"
 intro: "Adding our new and fastest AI model Demucs v3, and more Spring features!"
 ---
 
+<span class="blog-highlight">**Last updated: 2024-09-20**</span>
+
 <h2>Table of contents</h2>
 * Table of contents
 {:toc}
 
-<span class="blog-highlight">**Last updated: 2024-06-24**</span>
-
 {{ page.intro }}
+
+## Latest updates
+
+The post below is based on an older version of our website.
+
+Currently, the default ("Low quality") option for vocals/drums/bass/melody/instrumental selects the fast V3 model automatically.
 
 ## Demucs v3
 
