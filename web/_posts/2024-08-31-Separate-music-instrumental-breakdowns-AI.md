@@ -6,6 +6,8 @@ header_class: post
 intro: "Music lovers, producers, and remix enthusiasts, have you ever wished to break down your favorite tracks into their instrumental components? Whether you're looking to separate music for a remix, an instrumental breakdown, or just to explore the intricate layers of your favorite songs, AI technology now makes it easier than ever. In this guide, we'll walk you through how to use cutting-edge AI tools to separate and split music and create stunning instrumental breakdowns. From rap to metal and everything in between, we'll show you how to unlock the full potential of your music library."
 ---
 
+<span class="blog-highlight">**Last updated: 2024-09-21**</span>
+
 {{ page.intro }}
 
 <span class="blog-highlight">Jump to music clips in [this section](/getting-started/2024/08/31/Separate-music-instrumental-breakdowns-AI#examples-across-genres)</span>
@@ -76,39 +78,38 @@ In each of these examples, AI demonstrates its ability to handle the unique chal
 
 At **freemusicdemixer.com**, we've harnessed the power of AI to make music separation and instrumental breakdowns easier and more effective than ever before. Our in-browser tool lets you quickly separate different elements of any track—like vocals, drums, bass, and more—without the need for complex software or technical expertise. Here's how you can use our tool to separate music and create instrumental breakdowns from your favorite songs:
 
-1. Go to the demixer on the home page of this site: [link](/#try-it-directly-in-the-browser)
-2. Upload your track or folder of tracks
-3. Optionally log in to your PRO account, or continue as a free user (limited to 3 free demixes per week)
-4. Choose your AI model (as a free user you only have one choice)
-5. Choose the max memory to use for the demixer job
-6. Wait for the job to finish
-7. When the job finishes, download your outputs! For vocals, you would be interested in the **vocals.wav** and **instrum.wav** files for the extracted vocals and removed vocals/instrumental/karaoke track
-
-Here is a video showing the steps above:
-
-<video width="400" controls>
-  <source src="/assets/blog/post10/steps.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/8tR4OHeUe_I?si=yKoNELAMuVMYJjoH" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Tips for getting the best results
 
 Achieving the best possible results when separating music with AI requires some strategic choices and adjustments. Here are some practical tips to help you maximize the effectiveness of your music separation and create professional-quality instrumental breakdowns:
 
 1. Adjust Quality Settings:
+
 Our tool offers multiple levels of separation quality, available to PRO users. For those seeking the highest fidelity in their separated tracks, selecting the higher quality settings will ensure that the nuances of each element are preserved. This is particularly useful for genres like classical or acoustic music, where subtle details are critical.
 
-2. Experiment with Speed vs. Quality:
+<ol start="2">
+  <li>Experiment with Speed vs. Quality:</li>
+</ol>
+
 Time is often of the essence, and sometimes speed is more important than perfect quality. Our tool provides a super-high-speed separation option for PRO users, allowing you to process tracks quickly at the expense of some quality. This feature is ideal for live DJ sets or when you're working on a tight deadline and need fast results.
 
-3. Leverage Advanced Features:
+<ol start="3">
+  <li>Leverage Advanced Features:</li>
+</ol>
+
 PRO users can access advanced features, including the ability to separate specific instruments such as guitar and piano. These features are especially useful for creating custom remixes or instrumental breakdowns that focus on individual instruments. If you're working on a project that requires isolating a guitar solo or a piano melody, be sure to take advantage of these capabilities.
 
-4. Optimize Memory Usage:
-For those processing multiple tracks or working with longer pieces of music, adjusting the memory usage settings can help manage resources effectively. Higher memory allocation can lead to faster processing times, especially when dealing with high-quality separations.
+<ol start="4">
+  <li>Optimize Memory Usage:</li>
+</ol>
 
-5. Test and Iterate:
+For those processing multiple tracks or working with longer pieces of music, adjusting the memory usage settings can help manage resources effectively. Higher memory allocation can lead to faster processing times, especially when dealing with high-quality separations. Check [our memory guide](/getting-started/2024/09/20/How-to-pick-max-memory) for more info.
+
+<ol start="5">
+  <li>Test and Iterate:</li>
+</ol>
+
 Don't be afraid to experiment with different tracks and settings. Each track is unique, and what works best for one may not work for another. By testing various combinations of quality settings, speed, and memory allocation, you can find the perfect balance that meets your needs.
 
 By following these tips and making the most of the features available in our tool, you can achieve top-tier results that bring out the best in your music, whether you're creating a simple instrumental version or a complex remix.

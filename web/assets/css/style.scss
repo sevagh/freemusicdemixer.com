@@ -756,7 +756,7 @@ input[type="radio"][disabled] + label {
   list-style-position: inside; /* Align bullets/numbers with the text */
   padding-left: 20px; /* Add indentation */
   margin-bottom: 20px; /* Add spacing below the entire list */
-  font-size: 1.25em; /* Match font size with paragraphs */
+  font-size: 1.25rem; /* Match font size with paragraphs */
 }
 
 #main-content ul li,
@@ -769,7 +769,7 @@ input[type="radio"][disabled] + label {
 
 #main-content ul li::marker,
 #main-content ol li::marker {
-  font-size: 1.2em; /* Make the bullets/numbers a bit larger */
+  font-size: 1.2rem; /* Make the bullets/numbers a bit larger */
   color: #333; /* Optional: change bullet/number color */
 }
 

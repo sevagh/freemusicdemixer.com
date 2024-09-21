@@ -7,13 +7,16 @@ description: "An introduction and tutorial on how to use freemusicdemixer.com fo
 intro: "Hello! I'm the creator of this site, and this post describes how I use my own website to get stems from mixed songs for free."
 ---
 
-<span class="blog-highlight">**Last updated: 2023-12-29**</span>
+<span class="blog-highlight">**Last updated: 2024-09-21**</span>
 
 <h2>Table of contents</h2>
 * Table of contents
 {:toc}
 
 {{ page.intro }}
+
+<span class="blog-highlight">**tl;dr?** watch this video:</span>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/8tR4OHeUe_I?si=yKoNELAMuVMYJjoH" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Prepare your music files
 

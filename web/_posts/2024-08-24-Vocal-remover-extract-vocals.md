@@ -6,6 +6,7 @@ header_class: post
 intro: "Are you looking to remove vocals from your favorite songs to create a karaoke track or extract vocals for a remix? With advances in AI technology, vocal removal and extraction have become more accessible than ever before. In this post, we'll dive into the best methods to remove vocals, why you might want to do it, and how you can use our online tool, **freemusicdemixer.com**, to get the job done in just a few clicks."
 ---
 
+<span class="blog-highlight">**Last updated: 2024-09-21**</span>
 
 {{ page.intro }}
 
@@ -43,19 +44,7 @@ The introduction of AI and machine learning has revolutionized the way we approa
 
 At **freemusicdemixer.com**, we've harnessed the power of AI to make vocal removal and extraction easier and more effective than ever before. Our in-browser tool lets you quickly remove vocals from any track without the need for complex software or technical know-how. Here's how you can use our tool to remove vocals from your favorite songs:
 
-1. Go to the demixer on the home page of this site: [link](/#try-it-directly-in-the-browser)
-2. Upload your track or folder of tracks
-3. Optionally log in to your PRO account, or continue as a free user (limited to 3 free demixes per week)
-4. Choose your AI model (as a free user you only have one choice)
-5. Choose the max memory to use for the demixer job
-6. Wait for the job to finish
-7. When the job finishes, download your outputs! For vocals, you would be interested in the **vocals.wav** and **instrum.wav** files for the extracted vocals and removed vocals/instrumental/karaoke track
-
-Here is a video showing the steps above:
-
-<video width="400" controls>
-  <source src="/assets/blog/post10/steps.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/8tR4OHeUe_I?si=yKoNELAMuVMYJjoH" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<br>
 
 Happy demixing!
