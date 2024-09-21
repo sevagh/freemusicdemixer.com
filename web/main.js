@@ -73,7 +73,11 @@ function activateProContent(email) {
     // Fetch the user tier based on the email
     fetch(`https://freemusicdemixer.com/getprocontent?email=${encodeURIComponent(email)}`)
         .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch content');
+            if (!response.ok) {
+              removeLoginSpinner();
+              document.getElementById('response-message').innerHTML = `Login failed. If this is a mistake, <a href="/support" target="_blank" alt="contact-link">contact us</a>.`;
+              throw new Error('Failed to fetch content');
+            }
             return response.json();
         })
         .then(data => {
