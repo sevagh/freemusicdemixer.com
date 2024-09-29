@@ -7,7 +7,7 @@ description: "Learn more about our mission and the cutting-edge AI technology po
 
 Our free product entitles you to 3 demixes per week, using the lowest quality 4-stem model. For higher quality settings, more stems, and unlimited demixing, consider our PRO tier.
 
-Our subscriptions offer the best value with flexible pricing options and a 7-day free trial. The yearly subscription at $49.99 CAD/year is the **best deal,** saving you 60% compared to the monthly subscription.
+Our subscriptions offer the best value with flexible pricing options and a 7-day free trial. The yearly subscription at $49.99 CAD/year is the **💸 best deal 💰 ,** saving you 60% compared to the monthly subscription.
 
 If you don't want a subscription, keep scrolling to purchase limited all-access passes for a one-time fee.
 
