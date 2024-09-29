@@ -69,8 +69,8 @@ export async function onRequest(context) {
 
       // Iterate through sessions to find active passes
       for (const session of sessions.data) {
-        const sessionCreationDate = new Date(session.created * 1000); // Convert from UNIX timestamp
-        const currentDate = new Date();
+        const sessionCreationTimestamp = session.created * 1000; // In milliseconds
+        const currentTimestamp = Date.now();
 
         // Retrieve line items for this session
         const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 100 });
@@ -90,13 +90,13 @@ export async function onRequest(context) {
           }
         });
 
+        const durationInMilliseconds = duration * 24 * 60 * 60 * 1000; // Convert days to milliseconds
+        const expiryTimestamp = sessionCreationTimestamp + durationInMilliseconds;
+
         // If passType is identified, calculate expiration date
         if (passType) {
-          const expiryDate = new Date(sessionCreationDate);
-          expiryDate.setDate(expiryDate.getDate() + duration); // Add 2 days for day pass, 8 days for week pass
-
           // Check if the pass is still active
-          if (currentDate <= expiryDate) {
+          if (currentTimestamp <= expiryTimestamp) {
             console.log(`Active ${passType} for ${email} found. Session created on ${sessionCreationDate}`);
             return new Response(JSON.stringify({ tier: 2 }), {
               status: 200,
