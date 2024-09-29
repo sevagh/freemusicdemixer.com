@@ -7,15 +7,11 @@ description: "Learn more about our mission and the cutting-edge AI technology po
 
 Our free product entitles you to 3 demixes per week, using the lowest quality 4-stem model. For higher quality settings, more stems, and unlimited demixing, consider our PRO tier.
 
-Our subscriptions offer the best value with flexible pricing options and a 7-day free trial:
-* [Yearly subscription](https://buy.stripe.com/dR67ujdsSejl3qE3ce): $49.99 CAD/year (**save 60%!** - equivalent of 7 months free)
-* [Monthly subscription](https://buy.stripe.com/aEU29ZgF48Z13qEeUV): $9.99 CAD/month
+Our subscriptions offer the best value with flexible pricing options and a 7-day free trial. The yearly subscription at $49.99 CAD/year is the **best deal,** saving you 60% compared to the monthly subscription.
 
-Not ready to commit to a subscription? Try our limited all-access passes:
-* [Week pass](https://buy.stripe.com/00gg0P1Ka6QTaT66os): $6.99 CAD for 7-day access
-* [Day pass](https://buy.stripe.com/bIY29ZfB05MP9P2cMP): $2.99 CAD for 24-hour access
+If you don't want a subscription, keep scrolling to purchase limited all-access passes for a one-time fee.
 
-**Always keep track of the e-mail address you use for the purchase to activate your PRO content.**
+**Always keep track of the e-mail address you use for purchases to activate your PRO content.**
 
 No minutes, no limits, no cloud, no bullshit. 100% unlimited usage that runs privately on your own devices.
 
@@ -23,13 +19,6 @@ No minutes, no limits, no cloud, no bullshit. 100% unlimited usage that runs pri
 
 <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
 <stripe-pricing-table pricing-table-id="prctbl_1OcXFtAmT5bJ3vuw0JDQk6A5"
-publishable-key="pk_live_51ObLZ9AmT5bJ3vuwDIgzrNEljt7oK42MqgmnEKZbANz0PDtlzkD3Oc6R2JopYNJnpsteV8or0hY2s1l2bmrM1hED00nMDhvPqg">
-</stripe-pricing-table>
-
-### Not ready to subscribe? Try our all-access passes!
-
-<script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-<stripe-pricing-table pricing-table-id="prctbl_1Q40clAmT5bJ3vuwWh8l91Xf"
 publishable-key="pk_live_51ObLZ9AmT5bJ3vuwDIgzrNEljt7oK42MqgmnEKZbANz0PDtlzkD3Oc6R2JopYNJnpsteV8or0hY2s1l2bmrM1hED00nMDhvPqg">
 </stripe-pricing-table>
 
@@ -46,3 +35,10 @@ In the [Android app](/android), PRO members get:
 * Record from the microphone directly in the Music Demixer app
 * Capture audio from other apps
 * Export a custom mix from the output stems
+
+## Not ready to subscribe? Try our all-access passes!
+
+<script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+<stripe-pricing-table pricing-table-id="prctbl_1Q40clAmT5bJ3vuwWh8l91Xf"
+publishable-key="pk_live_51ObLZ9AmT5bJ3vuwDIgzrNEljt7oK42MqgmnEKZbANz0PDtlzkD3Oc6R2JopYNJnpsteV8or0hY2s1l2bmrM1hED00nMDhvPqg">
+</stripe-pricing-table>
