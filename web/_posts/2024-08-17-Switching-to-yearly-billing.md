@@ -18,7 +18,7 @@ Now, we're introducing a yearly billing option at $49.99 CAD per year. This is a
 
 ## New customers
 
-If you're a new subscriber to our product, simply choose the yearly billing option from [the signup page](http://localhost:8788/pricing#sign-up):
+If you're a new subscriber to our product, simply choose the yearly billing option from [the signup page](/pricing#subscribe-today):
 
 <img src="/assets/blog/post9/yearly-billing.webp" alt="yearly-billing-option" width="65%">
 
