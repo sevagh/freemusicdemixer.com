@@ -166,6 +166,7 @@
   </footer>
 
 <script src="{{ '/main.js' | relative_url }}"></script>
+{% if site.cf_pages_branch == 'main' %}
 <!-- Komito Analytics -->
 <script src="https://komito.net/komito.js" async></script>
 <script>
@@ -190,5 +191,8 @@
     'nonInteraction': ['adblock', 'audio', 'color-scheme', 'form', 'heartbeat', 'orientation', 'print', 'scroll', 'video']
   };
 </script>
+{% else %}
+<!-- DISABLED Komito Analytics -->
+{% endif %}
 </body>
 </html>
