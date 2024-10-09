@@ -1,8 +1,5 @@
 <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
-<!-- Setup theme-color -->
-{% include head-custom-theme-colors.html %}
-
 <!-- Product analytics -->
 <script type="text/javascript">
     !function(){"use strict";window.RudderSnippetVersion="3.0.6";var sdkBaseUrl="https://cdn.rudderlabs.com/v3"
@@ -33,6 +30,7 @@
     }
 </script>
 
+<!-- "{{ site.cf_pages_branch }}" -->
 {% if site.google_analytics %}
 <!-- Setup Google Analytics -->
 {% include head-custom-analytics.html %}
