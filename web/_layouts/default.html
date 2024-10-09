@@ -164,35 +164,6 @@
     </div>
     <p class="footer-bottom">© 2024 Music Demixer. All Rights Reserved.</p>
   </footer>
-
 <script src="{{ '/main.js' | relative_url }}"></script>
-{% if site.cf_pages_branch == 'main' %}
-<!-- Komito Analytics -->
-<script src="https://komito.net/komito.js" async></script>
-<script>
-  var _komito = _komito || {
-    'trackTwitter': 1,
-    'trackFacebook': 1,
-    'trackLinkedIn': 1,
-    'trackDownloads': 1,
-    'trackOutbound': 1,
-    'trackForms': 1,
-    'trackUsers': 1,
-    'trackActions': 1,
-    'trackPrint': 1,
-    'trackOrientation': 1,
-    'trackColorScheme': 1,
-    'trackAdblock': 0,
-    'trackErrorPages': 0,
-    'sendHeartbeat': 0,
-    'debugMode': 0,
-    'trackScroll': [25, 50, 75, 100],
-    'trackMedia': ['html5', 'vimeo', 'youtube'],
-    'nonInteraction': ['adblock', 'audio', 'color-scheme', 'form', 'heartbeat', 'orientation', 'print', 'scroll', 'video']
-  };
-</script>
-{% else %}
-<!-- DISABLED Komito Analytics -->
-{% endif %}
 </body>
 </html>
