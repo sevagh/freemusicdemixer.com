@@ -418,8 +418,9 @@ input[type="radio"][disabled] + label {
   border-radius: 10px; /* Rounded corners */
   color: #333; /* Darker gray text */
   max-height: 130px; /* Set a max height to prevent overflow */
-  overflow-y: scroll; /* Always show the vertical scrollbar */
-  scrollbar-width: thin; /* For Firefox */
+  overflow-y: auto; /* Always show the vertical scrollbar */
+  overflow-x: scroll; /* Always show the horizontal scrollbar */
+  //scrollbar-width: thin; /* For Firefox */
   width: calc(100% - 25px); /* Ensure the container takes the full width minus space for the scrollbar */
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
