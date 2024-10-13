@@ -244,6 +244,26 @@ button:hover {
   width: calc(100% - 40px); /* Full width with padding */
 }
 
+.cta-legend {
+  font-size: 14px;
+  color: #333;
+  //background-color: #f0f0f0;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.cta-legend a {
+  color: #0066ff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.cta-legend a:hover {
+  text-decoration: underline;
+}
+
 #selectedModelMessage {
   position: absolute;
   margin-top: auto;
