@@ -18,7 +18,7 @@ header_class: index
 </section>
 
 <section class="info-section">
-  <h3>No cloud. No bullshit. <b>100% privacy in your browser.</b> Choose your music files and start demixing right now!</h3>
+  <h3>No cloud. No bullshit. <b>100% privacy in your browser.</b> Since our launch in 2024, nearly 100 customers have switched from expensive competitors to our superior, simple website. Join them today!</h3>
 </section>
 
 <!-- Wizard sections here... -->
@@ -115,6 +115,9 @@ header_class: index
       </div>
       <br>
       <br>
+      <div class="cta-legend">
+        <p id="pro-cta">🔒 <a href="/pricing" target="_blank">Go PRO today</a> to unlock all features and higher quality!</p>
+      </div>
       <div class="wizard-footer">
         <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>
         <button id="next-step-1" class="wizard-next-btn">Next</button>

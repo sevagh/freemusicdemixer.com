@@ -45,6 +45,17 @@ document.addEventListener("DOMContentLoaded", function() {
         emailInput.value = storedEmail;
         responseMessage.textContent = '';
     }
+
+    // if the user is logged in, activate tier UIs
+    const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
+    let userTier = 0;
+    if (loggedIn) {
+        userTier = parseInt(sessionStorage.getItem('userTier'));
+        if ((userTier === -1) || isNaN(userTier)) {
+            userTier = 0;
+        }
+    }
+    activateTierUI(userTier);
 });
 
 // Function to display the spinner and overlay
@@ -89,28 +100,34 @@ function activateProContent(email) {
             sessionStorage.setItem('loggedIn', 'true');
             sessionStorage.setItem('userTier', userTier);
 
-            // Remove the spinner and re-enable the buttons
-            removeLoginSpinner();
-
-            // Find the logo image element and the container for the tier text
-            const logoImage = document.querySelector('#logo-display img');
-            const tierText = document.querySelector('#logo-display small');
-
-            // Update the logo source and tier text based on the userTier
-            if (logoImage && tierText) {
-                logoImage.src = tierLogos[userTier];
-                logoImage.alt = `freemusicdemixer-${tierNames[userTier].toLowerCase()}-logo`;
-                tierText.textContent = `${tierNames[userTier]} tier `;
-                tierText.appendChild(logoImage); // Ensure the image stays within the <small> tag
-            }
-
-            document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
-
-            // Dispatch a custom event for app.js to listen to
-            const loginSuccessEvent = new CustomEvent('loginSuccess');
-
-            // Trigger the event on the window or document
-            window.dispatchEvent(loginSuccessEvent);
+            activateTierUI(userTier);
         })
         .catch(error => console.error('Error fetching user tier:', error));
+}
+
+function activateTierUI(userTier) {
+  // Remove the spinner and re-enable the buttons
+  removeLoginSpinner();
+
+  // Find the logo image element and the container for the tier text
+  const logoImage = document.querySelector('#logo-display img');
+  const tierText = document.querySelector('#logo-display small');
+
+  // Update the logo source and tier text based on the userTier
+  if (logoImage && tierText) {
+      logoImage.src = tierLogos[userTier];
+      logoImage.alt = `freemusicdemixer-${tierNames[userTier].toLowerCase()}-logo`;
+      tierText.textContent = `${tierNames[userTier]} tier `;
+      tierText.appendChild(logoImage); // Ensure the image stays within the <small> tag
+  }
+
+  if (userTier === 2) {
+    document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
+  }
+
+  // Dispatch a custom event for app.js to listen to
+  const loginSuccessEvent = new CustomEvent('loginSuccess');
+
+  // Trigger the event on the window or document
+  window.dispatchEvent(loginSuccessEvent);
 }

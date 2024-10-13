@@ -244,6 +244,26 @@ button:hover {
   width: calc(100% - 40px); /* Full width with padding */
 }
 
+.cta-legend {
+  font-size: 14px;
+  color: #333;
+  //background-color: #f0f0f0;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.cta-legend a {
+  color: #0066ff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.cta-legend a:hover {
+  text-decoration: underline;
+}
+
 #selectedModelMessage {
   position: absolute;
   margin-top: auto;
@@ -389,6 +409,7 @@ input[type="radio"][disabled] + label {
 .output-link-container {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   align-items: flex-start; /* Align items to the top-left */
   justify-content: flex-start; /* Start content from the top */
   padding: 5px 10px; /* Add a little padding for the content */
@@ -397,14 +418,15 @@ input[type="radio"][disabled] + label {
   border-radius: 10px; /* Rounded corners */
   color: #333; /* Darker gray text */
   max-height: 130px; /* Set a max height to prevent overflow */
-  overflow-y: scroll; /* Always show the vertical scrollbar */
-  scrollbar-width: thin; /* For Firefox */
+  overflow-y: auto; /* Always show the vertical scrollbar */
+  overflow-x: scroll; /* Always show the horizontal scrollbar */
+  //scrollbar-width: thin; /* For Firefox */
   width: calc(100% - 25px); /* Ensure the container takes the full width minus space for the scrollbar */
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 .output-link-container::-webkit-scrollbar {
-  width: 10px; /* Width of the scrollbar for WebKit browsers */
+  width: 16px; /* Width of the scrollbar for WebKit browsers */
 }
 
 .output-link-container::-webkit-scrollbar-track {
@@ -412,12 +434,13 @@ input[type="radio"][disabled] + label {
 }
 
 .output-link-container::-webkit-scrollbar-thumb {
-  background: #888; /* Darker gray for scrollbar thumb */
+  background: #555; /* Darker gray for scrollbar thumb */
   border-radius: 10px; /* Rounded corners for the scrollbar thumb */
+  border: 4px solid #e0e0e0;
 }
 
 .output-link-container::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Darker gray on hover */
+  background: #333; /* Darker gray on hover */
 }
 
 /* Adjust the spacing between the links */
@@ -425,6 +448,7 @@ input[type="radio"][disabled] + label {
   color: #333; /* Dark gray links */
   text-decoration: underline;
   white-space: nowrap; /* Prevent links from wrapping onto a new line */
+  margin-right: 15px;
 }
 
 /* Hover effect for output links */
