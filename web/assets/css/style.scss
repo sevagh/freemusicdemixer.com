@@ -409,6 +409,7 @@ input[type="radio"][disabled] + label {
 .output-link-container {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   align-items: flex-start; /* Align items to the top-left */
   justify-content: flex-start; /* Start content from the top */
   padding: 5px 10px; /* Add a little padding for the content */
@@ -424,7 +425,7 @@ input[type="radio"][disabled] + label {
 }
 
 .output-link-container::-webkit-scrollbar {
-  width: 10px; /* Width of the scrollbar for WebKit browsers */
+  width: 16px; /* Width of the scrollbar for WebKit browsers */
 }
 
 .output-link-container::-webkit-scrollbar-track {
@@ -432,12 +433,13 @@ input[type="radio"][disabled] + label {
 }
 
 .output-link-container::-webkit-scrollbar-thumb {
-  background: #888; /* Darker gray for scrollbar thumb */
+  background: #555; /* Darker gray for scrollbar thumb */
   border-radius: 10px; /* Rounded corners for the scrollbar thumb */
+  border: 4px solid #e0e0e0;
 }
 
 .output-link-container::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Darker gray on hover */
+  background: #333; /* Darker gray on hover */
 }
 
 /* Adjust the spacing between the links */
@@ -445,6 +447,7 @@ input[type="radio"][disabled] + label {
   color: #333; /* Dark gray links */
   text-decoration: underline;
   white-space: nowrap; /* Prevent links from wrapping onto a new line */
+  margin-right: 15px;
 }
 
 /* Hover effect for output links */
