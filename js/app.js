@@ -619,7 +619,7 @@ function checkAndResetWeeklyLimit() {
         const remaining = 3 - usageData.count;
         usageLimits.innerHTML = `You have ${remaining} free demixes remaining this week. Your limit will reset on ${new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}. 🔒 <b><a href="/pricing" target="_blank">Go PRO today</a></b> for unlimited demixes.`;
     } else {
-        usageLimits.textContent = '🎉 You have unlimited demixes with your PRO subscription!';
+        usageLimits.textContent = 'You have unlimited demixes with your PRO subscription!';
 
         let userTier = parseInt(sessionStorage.getItem('userTier'));
         if ((userTier === -1) || isNaN(userTier)) {
@@ -668,7 +668,7 @@ function activateTierUI(userTier) {
     document.querySelector('label[for="high-quality"]').textContent = 'High';
 
     document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
-    document.getElementById('pro-cta').innerHTML = '🎉 Pro content unlocked!';
+    document.getElementById('pro-cta').innerHTML = 'Pro content unlocked!';
 
     console.log('PRO-tier UI elements enabled.');
   }

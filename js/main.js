@@ -123,7 +123,6 @@ function activateTierUI(userTier) {
 
   if (userTier === 2) {
     document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
-    //document.getElementById('pro-cta').innerHTML = '🎉 Pro content unlocked!';
   }
 
   // Dispatch a custom event for app.js to listen to
