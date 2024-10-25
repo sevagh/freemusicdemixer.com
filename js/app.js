@@ -17,9 +17,11 @@ let completedSongsBatch = 0; // Counter for processed songs in batch mode
 let batchNextFileResolveCallback = null; // Callback for resolving the next file in batch mode
 let globalProgressIncrement = 0; // Global progress increment for batch mode
 
-const SAMPLE_RATE = 44100;
-const OVERLAP_S = 0.75;
-const OVERLAP_SAMPLES = Math.floor(SAMPLE_RATE * OVERLAP_S);
+const DEMUCS_SAMPLE_RATE = 44100;
+const DEMUCS_OVERLAP_S = 0.75;
+const DEMUCS_OVERLAP_SAMPLES = Math.floor(DEMUCS_SAMPLE_RATE * DEMUCS_OVERLAP_S);
+
+const BASICPITCH_SAMPLE_RATE = 22050;
 
 const tierNames = {0: 'Free', 2: 'Pro'};
 
@@ -34,8 +36,6 @@ const modelStemMapping = {
     'demucs-pro-cust': ['bass', 'drums', 'other_melody', 'vocals', 'guitar', 'piano', 'melody'],
     'demucs-pro-deluxe': ['bass', 'drums', 'melody', 'vocals']
 };
-
-let audioContext;
 
 const fileInput = document.getElementById('audio-upload');
 const folderInput = document.getElementById('batch-upload');
@@ -56,11 +56,22 @@ const prevStep3Btn = document.getElementById('prev-step-3');
 
 const usageLimits = document.getElementById('usage-limits');
 
-function getAudioContext() {
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)({sampleRate: SAMPLE_RATE});
+let demucsAudioContext;
+
+function getDemucsAudioContext() {
+    if (!demucsAudioContext) {
+        demucsAudioContext = new (window.AudioContext || window.webkitAudioContext)({sampleRate: DEMUCS_SAMPLE_RATE});
     }
-    return audioContext;
+    return demucsAudioContext;
+}
+
+let basicpitchAudioContext;
+
+function getBasicpitchAudioContext() {
+    if (!basicpitchAudioContext) {
+        basicpitchAudioContext = new (window.AudioContext || window.webkitAudioContext)({sampleRate: BASICPITCH_SAMPLE_RATE});
+    }
+    return basicpitchAudioContext;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -213,32 +224,32 @@ function segmentWaveform(left, right, n_segments) {
     for (let i = 0; i < n_segments; i++) {
         const start = i * segmentLength;
         const end = Math.min(totalLength, start + segmentLength);
-        const leftSegment = new Float32Array(end - start + 2 * OVERLAP_SAMPLES);
-        const rightSegment = new Float32Array(end - start + 2 * OVERLAP_SAMPLES);
+        const leftSegment = new Float32Array(end - start + 2 * DEMUCS_OVERLAP_SAMPLES);
+        const rightSegment = new Float32Array(end - start + 2 * DEMUCS_OVERLAP_SAMPLES);
 
         // Overlap-padding for the left and right channels
         // For the first segment, no padding at the start
         if (i === 0) {
-            leftSegment.fill(left[0], 0, OVERLAP_SAMPLES);
-            rightSegment.fill(right[0], 0, OVERLAP_SAMPLES);
+            leftSegment.fill(left[0], 0, DEMUCS_OVERLAP_SAMPLES);
+            rightSegment.fill(right[0], 0, DEMUCS_OVERLAP_SAMPLES);
         } else {
-            leftSegment.set(left.slice(start - OVERLAP_SAMPLES, start), 0);
-            rightSegment.set(right.slice(start - OVERLAP_SAMPLES, start), 0);
+            leftSegment.set(left.slice(start - DEMUCS_OVERLAP_SAMPLES, start), 0);
+            rightSegment.set(right.slice(start - DEMUCS_OVERLAP_SAMPLES, start), 0);
         }
 
         // For the last segment, no padding at the end
         if (i === n_segments - 1) {
             const remainingSamples = totalLength - end;
-            leftSegment.set(left.slice(end, end + Math.min(OVERLAP_SAMPLES, remainingSamples)), end - start + OVERLAP_SAMPLES);
-            rightSegment.set(right.slice(end, end + Math.min(OVERLAP_SAMPLES, remainingSamples)), end - start + OVERLAP_SAMPLES);
+            leftSegment.set(left.slice(end, end + Math.min(DEMUCS_OVERLAP_SAMPLES, remainingSamples)), end - start + DEMUCS_OVERLAP_SAMPLES);
+            rightSegment.set(right.slice(end, end + Math.min(DEMUCS_OVERLAP_SAMPLES, remainingSamples)), end - start + DEMUCS_OVERLAP_SAMPLES);
         } else {
-            leftSegment.set(left.slice(end, end + OVERLAP_SAMPLES), end - start + OVERLAP_SAMPLES);
-            rightSegment.set(right.slice(end, end + OVERLAP_SAMPLES), end - start + OVERLAP_SAMPLES);
+            leftSegment.set(left.slice(end, end + DEMUCS_OVERLAP_SAMPLES), end - start + DEMUCS_OVERLAP_SAMPLES);
+            rightSegment.set(right.slice(end, end + DEMUCS_OVERLAP_SAMPLES), end - start + DEMUCS_OVERLAP_SAMPLES);
         }
 
         // Assign the original segment data
-        leftSegment.set(left.slice(start, end), OVERLAP_SAMPLES);
-        rightSegment.set(right.slice(start, end), OVERLAP_SAMPLES);
+        leftSegment.set(left.slice(start, end), DEMUCS_OVERLAP_SAMPLES);
+        rightSegment.set(right.slice(start, end), DEMUCS_OVERLAP_SAMPLES);
 
         segments.push([leftSegment, rightSegment]);
     }
@@ -249,7 +260,7 @@ function segmentWaveform(left, right, n_segments) {
 function sumSegments(segments, desiredLength) {
     const totalLength = desiredLength;
     const segmentLengthWithPadding = segments[0][0].length;
-    const actualSegmentLength = segmentLengthWithPadding - 2 * OVERLAP_SAMPLES;
+    const actualSegmentLength = segmentLengthWithPadding - 2 * DEMUCS_OVERLAP_SAMPLES;
     const output = new Array(segments[0].length).fill().map(() => new Float32Array(totalLength));
 
     // Create weights for the segment
@@ -271,7 +282,7 @@ function sumSegments(segments, desiredLength) {
             const channelSegment = segment[target];
 
             for (let i = 0; i < channelSegment.length; i++) {
-                const segmentPos = i - OVERLAP_SAMPLES;
+                const segmentPos = i - DEMUCS_OVERLAP_SAMPLES;
                 const outputIndex = start + segmentPos;
 
                 if (outputIndex >= 0 && outputIndex < totalLength) {
@@ -298,9 +309,13 @@ function sumSegments(segments, desiredLength) {
 
 // Event listener for user interaction
 document.addEventListener('click', function() {
-    let context = getAudioContext();
-    if (context.state === 'suspended') {
-        context.resume();
+    let context1 = getDemucsAudioContext();
+    if (context1.state === 'suspended') {
+        context1.resume();
+    }
+    let context2 = getBasicpitchAudioContext();
+    if (context2.state === 'suspended') {
+        context2.resume();
     }
 });
 
@@ -758,7 +773,7 @@ nextStep2Btn.addEventListener('click', function() {
 
                 const arrayBuffer = event.target.result;
 
-                audioContext.decodeAudioData(arrayBuffer, function(decodedData) {
+                demucsAudioContext.decodeAudioData(arrayBuffer, function(decodedData) {
                     let leftChannel, rightChannel;
                     // decodedData is an AudioBuffer
                     if (decodedData.numberOfChannels == 1) {
@@ -829,7 +844,7 @@ function packageAndDownload(targetWaveforms) {
     const buffers = {};
 
     stemNames.forEach((name, index) => {
-        const buffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+        const buffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
         buffer.copyToChannel(targetWaveforms[index * 2], 0); // Left channel
         buffer.copyToChannel(targetWaveforms[index * 2 + 1], 1); // Right channel
         buffers[name] = buffer;
@@ -845,7 +860,7 @@ function packageAndDownload(targetWaveforms) {
         }
 
         // Sum specified stems for instrumental
-        const instrumentalBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+        const instrumentalBuffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
         instrumentalStems.forEach(name => {
             for (let i = 0; i < targetWaveforms[0].length; i++) {
                 instrumentalBuffer.getChannelData(0)[i] += buffers[name].getChannelData(0)[i] || 0;
@@ -889,7 +904,7 @@ async function processFiles(files) {
             reader.onload = async function(event) {
                 const arrayBuffer = event.target.result;
 
-                audioContext.decodeAudioData(
+                demucsAudioContext.decodeAudioData(
                     arrayBuffer,
                     function(decodedData) {
                         let leftChannel, rightChannel;
@@ -927,7 +942,7 @@ function packageAndZip(targetWaveforms, filename) {
 
     // Iterate over each stem name to process and package waveforms
     stemNames.forEach((stemName, index) => {
-        const buffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+        const buffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
         buffer.copyToChannel(targetWaveforms[index * 2], 0); // Left channel
         buffer.copyToChannel(targetWaveforms[index * 2 + 1], 1); // Right channel
         const wavData = encodeWavFileFromAudioBuffer(buffer, 0); // Convert buffer to WAV
@@ -937,7 +952,7 @@ function packageAndZip(targetWaveforms, filename) {
     // Handle instrumental mix based on model specifics, excluding karaoke
     if (selectedModel !== 'demucs-karaoke') {
         const instrumentalStems = stemNames.filter(name => name !== 'vocals');
-        const instrumentalBuffer = audioContext.createBuffer(2, targetWaveforms[0].length, SAMPLE_RATE);
+        const instrumentalBuffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
 
         // Sum specified stems for instrumental, exclude 'guitar', 'piano', 'other' for 'demucs-pro-cust'
         instrumentalStems.forEach(stemName => {
