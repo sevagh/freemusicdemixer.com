@@ -373,8 +373,8 @@ function initWorkers() {
                     completedSegments = 0;
 
                     // enable the buttons to leave the final wizard step
-                    prevStep3Btn.disabled = false;
-                    nextStep3Btn.disabled = false;
+                    //prevStep3Btn.disabled = false;
+                    //nextStep3Btn.disabled = false;
                 }
             } else if (e.data.msg === 'PROCESSING_DONE_BATCH') {
                 // similar global bs here
@@ -406,8 +406,8 @@ function initWorkers() {
                         completedSongsBatch = 0;
                         // re-enable the buttons
                         // enable the buttons to leave the final wizard step
-                        prevStep3Btn.disabled = false;
-                        nextStep3Btn.disabled = false;
+                        //prevStep3Btn.disabled = false;
+                        //nextStep3Btn.disabled = false;
 
                         // terminate the workers
                         workers.forEach(worker => {
@@ -845,6 +845,7 @@ const midiQueue = [];
 let isProcessing = false;
 let midiWorker;
 let midiWasmLoaded = false; // Flag to check if WASM is loaded
+let midiBuffers = {}; // Store MIDI data by stem name
 
 function initializeMidiWorker() {
     midiWorker = new Worker('basicpitch_worker.js');
@@ -870,8 +871,10 @@ function initializeMidiWorker() {
 }
 
 function handleMidiDone(data) {
-    // just log it for now
-    console.log(`MIDI generation done for ${data.stemName}.`);
+    const { midiBytes, stemName } = data;
+    const midiBlob = new Blob([midiBytes], { type: 'audio/midi' });
+    midiBuffers[stemName] = midiBlob; // Store the MIDI blob by stem name
+    console.log(`MIDI generation done for ${stemName}.`);
 }
 
 // Add a new function to queue the request
@@ -897,7 +900,6 @@ function generateMidi(audioBuffer, stemName) {
 
     // Decode the WAV data in basicPitchAudioContext at 22.05 kHz
     basicpitchAudioContext.decodeAudioData(wavArrayBuffer, async (decodedData) => {
-        console.log(`[MIDI] How many channels? ${decodedData.numberOfChannels}`);
         const leftChannel = decodedData.getChannelData(0);
         const rightChannel = decodedData.numberOfChannels > 1 ? decodedData.getChannelData(1) : leftChannel;
         const monoAudioData = new Float32Array(leftChannel.length);
@@ -965,7 +967,21 @@ function packageAndDownload(targetWaveforms) {
         buffers['instrum'] = instrumentalBuffer; // Add instrumental buffer
     }
 
-    createDownloadLinks(buffers);
+    // Wait for all MIDI files to complete processing, then create download links
+    waitForMidiProcessing().then(() => createDownloadLinks(buffers));
+}
+
+function waitForMidiProcessing() {
+    return new Promise(resolve => {
+        const checkQueueCompletion = () => {
+            if (midiQueue.length === 0 && !isProcessing) {
+                resolve(); // All MIDI files are processed
+            } else {
+                setTimeout(checkQueueCompletion, 100); // Check again in 100ms
+            }
+        };
+        checkQueueCompletion();
+    });
 }
 
 function createDownloadLinks(buffers) {
@@ -973,14 +989,29 @@ function createDownloadLinks(buffers) {
     downloadLinksDiv.innerHTML = ''; // Clear existing links
 
     Object.keys(buffers).forEach(stemName => {
-        const blob = new Blob([encodeWavFileFromAudioBuffer(buffers[stemName], 0)], {type: 'audio/wav'});
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.textContent = `${stemName}.wav`;
-        link.download = `${stemName}.wav`;
-        downloadLinksDiv.appendChild(link);
+        // Create WAV file link
+        const wavBlob = new Blob([encodeWavFileFromAudioBuffer(buffers[stemName], 0)], {type: 'audio/wav'});
+        const wavUrl = URL.createObjectURL(wavBlob);
+        const wavLink = document.createElement('a');
+        wavLink.href = wavUrl;
+        wavLink.textContent = `${stemName}.wav`;
+        wavLink.download = `${stemName}.wav`;
+        downloadLinksDiv.appendChild(wavLink);
+
+        // Check if MIDI data exists for this stem and create a link if it does
+        if (midiBuffers[stemName]) {
+            const midiBlob = midiBuffers[stemName];
+            const midiUrl = URL.createObjectURL(midiBlob);
+            const midiLink = document.createElement('a');
+            midiLink.href = midiUrl;
+            midiLink.textContent = `${stemName}.mid`;
+            midiLink.download = `${stemName}.mid`;
+            downloadLinksDiv.appendChild(midiLink);
+        }
     });
+
+    // Clear midiBuffers after links are created
+    midiBuffers = {};
 
     prevStep3Btn.disabled = false;
     nextStep3Btn.disabled = false;
@@ -1031,25 +1062,36 @@ async function processFiles(files) {
 }
 
 function packageAndZip(targetWaveforms, filename) {
+    // Queue MIDI generation for stems if enabled
     const stemNames = modelStemMapping[selectedModel] || [];
-    const directoryName = `${filename}_stems/`; // Directory for storing stems
+    const directoryName = `${filename}_stems/`;
     let zipFiles = {};
 
-    // Iterate over each stem name to process and package waveforms
+    if (outputMidi) {
+        if (midiWorker) {
+            midiWorker.terminate();
+        }
+        initializeMidiWorker();
+    }
+
     stemNames.forEach((stemName, index) => {
         const buffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
         buffer.copyToChannel(targetWaveforms[index * 2], 0); // Left channel
         buffer.copyToChannel(targetWaveforms[index * 2 + 1], 1); // Right channel
         const wavData = encodeWavFileFromAudioBuffer(buffer, 0); // Convert buffer to WAV
         zipFiles[`${directoryName}${stemName}.wav`] = new Uint8Array(wavData); // Add WAV data to zip
+
+        if (outputMidi && midiStemNames.includes(stemName)) {
+            console.log(`Queueing MIDI for ${stemName}...`);
+            queueMidiRequest(buffer, stemName);
+        }
     });
 
-    // Handle instrumental mix based on model specifics, excluding karaoke
+    // Handle instrumental mix if model type requires it
     if (selectedModel !== 'demucs-karaoke') {
         const instrumentalStems = stemNames.filter(name => name !== 'vocals');
         const instrumentalBuffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
 
-        // Sum specified stems for instrumental, exclude 'guitar', 'piano', 'other' for 'demucs-pro-cust'
         instrumentalStems.forEach(stemName => {
             if (!(selectedModel === 'demucs-pro-cust' && ['guitar', 'piano', 'other_melody'].includes(stemName))) {
                 for (let i = 0; i < targetWaveforms[0].length; i++) {
@@ -1059,20 +1101,34 @@ function packageAndZip(targetWaveforms, filename) {
             }
         });
         const instrumentalWavData = encodeWavFileFromAudioBuffer(instrumentalBuffer, 0);
-        zipFiles[`${directoryName}instrum.wav`] = new Uint8Array(instrumentalWavData); // Add instrumental WAV data to zip
+        zipFiles[`${directoryName}instrum.wav`] = new Uint8Array(instrumentalWavData);
     }
 
-    // Use fflate to create a zip file
-    const zipData = fflate.zipSync(zipFiles, { level: 0 }); // Disables compression for speed
+    // Wait for MIDI files to complete processing before zipping
+    waitForMidiProcessing().then(() => {
+        // Add MIDI files to the zip if they are available
+        Object.keys(midiBuffers).forEach(stemName => {
+            const midiBlob = midiBuffers[stemName];
+            midiBlob.arrayBuffer().then(arrayBuffer => {
+                zipFiles[`${directoryName}${stemName}.mid`] = new Uint8Array(arrayBuffer); // Add MIDI data to zip
 
-    // Create a Blob from the zipped data and generate a download link
-    const zipBlob = new Blob([zipData.buffer], { type: 'application/zip' });
-    const zipUrl = URL.createObjectURL(zipBlob);
-    const zipLink = document.createElement('a');
-    zipLink.href = zipUrl;
-    zipLink.textContent = `${filename}_stems.zip`;
-    zipLink.download = `${filename}_stems.zip`;
-    document.getElementById('output-links').appendChild(zipLink);
+                // Once all files are added to `zipFiles`, zip them up
+                const zipData = fflate.zipSync(zipFiles, { level: 0 }); // Disable compression for speed
+                const zipBlob = new Blob([zipData.buffer], { type: 'application/zip' });
+
+                // Create a download link for the zip file
+                const zipUrl = URL.createObjectURL(zipBlob);
+                const zipLink = document.createElement('a');
+                zipLink.href = zipUrl;
+                zipLink.textContent = `${filename}_stems.zip`;
+                zipLink.download = `${filename}_stems.zip`;
+                document.getElementById('output-links').appendChild(zipLink);
+            });
+        });
+
+        // Clear midiBuffers after zip creation
+        midiBuffers = {};
+    });
 }
 
 function incrementUsage() {
