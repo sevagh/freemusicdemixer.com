@@ -6,6 +6,9 @@ modelCheckboxes.forEach(checkbox => checkbox.addEventListener('change', updateMo
 qualityRadios.forEach(radio => radio.addEventListener('change', updateModelBasedOnSelection));
 let selectedModel;
 
+// new midi feature
+let outputMidi = true;
+
 let NUM_WORKERS = 4;
 let workers;
 let workerProgress;
@@ -837,7 +840,93 @@ nextStep3Btn.addEventListener('click', function() {
     step1.style.display = 'block';
 });
 
+// MIDI globals
+const midiQueue = [];
+let isProcessing = false;
+let midiWorker;
+let midiWasmLoaded = false; // Flag to check if WASM is loaded
+
+function initializeMidiWorker() {
+    midiWorker = new Worker('basicpitch_worker.js');
+
+    midiWorker.onmessage = function(e) {
+        if (e.data.msg === 'WASM_READY') {
+            console.log('WASM module loaded successfully');
+            midiWasmLoaded = true;
+            processNextMidi(); // Start processing the queue
+        } else if (e.data.msg === 'PROCESSING_DONE') {
+            handleMidiDone(e.data);
+            isProcessing = false;
+            processNextMidi();
+        } else if (e.data.msg === 'PROCESSING_FAILED') {
+            console.error(`Failed to generate MIDI for ${e.data.stemName}.`);
+            isProcessing = false;
+            processNextMidi();
+        }
+    };
+
+    // Load the WASM module when the worker is created
+    midiWorker.postMessage({ msg: 'LOAD_WASM', scriptName: 'basicpitch.js' });
+}
+
+function handleMidiDone(data) {
+    // just log it for now
+    console.log(`MIDI generation done for ${data.stemName}.`);
+}
+
+// Add a new function to queue the request
+function queueMidiRequest(audioBuffer, stemName) {
+    midiQueue.push({ audioBuffer, stemName });
+    processNextMidi();
+}
+
+// Process the next item in the queue if not currently processing
+function processNextMidi() {
+    if (isProcessing || midiQueue.length === 0 || !midiWasmLoaded) return;
+
+    isProcessing = true;
+    const { audioBuffer, stemName } = midiQueue.shift();
+
+    // Call generateMidi with the next item in the queue
+    generateMidi(audioBuffer, stemName);
+}
+
+// Function to handle MIDI generation
+function generateMidi(audioBuffer, stemName) {
+    const wavArrayBuffer = encodeWavFileFromAudioBuffer(audioBuffer, 0);
+
+    // Decode the WAV data in basicPitchAudioContext at 22.05 kHz
+    basicpitchAudioContext.decodeAudioData(wavArrayBuffer, async (decodedData) => {
+        console.log(`[MIDI] How many channels? ${decodedData.numberOfChannels}`);
+        const leftChannel = decodedData.getChannelData(0);
+        const rightChannel = decodedData.numberOfChannels > 1 ? decodedData.getChannelData(1) : leftChannel;
+        const monoAudioData = new Float32Array(leftChannel.length);
+
+        // Average stereo channels for mono
+        for (let i = 0; i < leftChannel.length; i++) {
+            monoAudioData[i] = (leftChannel[i] + rightChannel[i]) / 2.0;
+        }
+
+        midiWorker.postMessage({
+            msg: 'PROCESS_AUDIO',
+            inputData: monoAudioData.buffer,
+            length: monoAudioData.length,
+            stemName: stemName
+        });
+    });
+}
+
+const midiStemNames = ['vocals', 'bass', 'melody', 'other_melody', 'piano', 'guitar'];
+
 function packageAndDownload(targetWaveforms) {
+    // terminate and recreate the worker
+    if (outputMidi) {
+        if (midiWorker) {
+            midiWorker.terminate();
+        }
+        initializeMidiWorker();
+    }
+
     console.log(targetWaveforms)
 
     const stemNames = modelStemMapping[selectedModel] || [];
@@ -848,6 +937,12 @@ function packageAndDownload(targetWaveforms) {
         buffer.copyToChannel(targetWaveforms[index * 2], 0); // Left channel
         buffer.copyToChannel(targetWaveforms[index * 2 + 1], 1); // Right channel
         buffers[name] = buffer;
+
+        // Generate MIDI if `outputMidi` is true and the stem name is in midiStemNames
+        if (outputMidi && midiStemNames.includes(name)) {
+            console.log(`Queueing MIDI for ${name}...`);
+            queueMidiRequest(buffer, name);
+        }
     });
 
      // Handle instrumental mix based on model specifics
