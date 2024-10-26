@@ -170,7 +170,7 @@ header_class: index
         <div class="progress-bar">
             <div class="progress-bar-inner" id="inference-progress-bar" style="width: 0%"></div>
         </div>
-        <div class="progress-text" id="inference-progress-text">MIDI progress...</div>
+        <div class="progress-text" id="midi-progress-text">MIDI progress...</div>
         <div class="progress-bar">
             <div class="progress-bar-inner" id="midi-progress-bar" style="width: 0%"></div>
         </div>
