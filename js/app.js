@@ -977,8 +977,8 @@ function handleMidiDone(data) {
 }
 
 // Add a new function to queue the request
-function queueMidiRequest(audioBuffer, stemName, batchMode) {
-    midiQueue.push({ audioBuffer, stemName, batchMode });
+function queueMidiRequest(audioBuffer, stemName, batchMode, directArrayBuffer = false) {
+    midiQueue.push({ audioBuffer, stemName, batchMode, directArrayBuffer });
     queueTotal += 1;
     processNextMidi();
 }
@@ -988,35 +988,57 @@ function processNextMidi() {
     if (isProcessing || midiQueue.length === 0 || !midiWasmLoaded) return;
 
     isProcessing = true;
-    const { audioBuffer, stemName, batchMode } = midiQueue.shift();
+    const { audioBuffer, stemName, batchMode, directArrayBuffer } = midiQueue.shift();
 
     // Call generateMidi with the next item in the queue
-    generateMidi(audioBuffer, stemName, batchMode);
+    generateMidi(audioBuffer, stemName, batchMode, directArrayBuffer);
 }
 
 // Function to handle MIDI generation
-function generateMidi(audioBuffer, stemName, batchMode) {
-    const wavArrayBuffer = encodeWavFileFromAudioBuffer(audioBuffer, 0);
+function generateMidi(inputBuffer, stemName, batchMode, directArrayBuffer = false) {
+    if (directArrayBuffer) {
+        // Decode directly from arrayBuffer in MIDI-only mode
+        basicpitchAudioContext.decodeAudioData(inputBuffer, async (decodedData) => {
+            const leftChannel = decodedData.getChannelData(0);
+            const rightChannel = decodedData.numberOfChannels > 1 ? decodedData.getChannelData(1) : leftChannel;
+            const monoAudioData = new Float32Array(leftChannel.length);
 
-    // Decode the WAV data in basicPitchAudioContext at 22.05 kHz
-    basicpitchAudioContext.decodeAudioData(wavArrayBuffer, async (decodedData) => {
-        const leftChannel = decodedData.getChannelData(0);
-        const rightChannel = decodedData.numberOfChannels > 1 ? decodedData.getChannelData(1) : leftChannel;
-        const monoAudioData = new Float32Array(leftChannel.length);
+            // Mix stereo to mono by averaging channels
+            for (let i = 0; i < leftChannel.length; i++) {
+                monoAudioData[i] = (leftChannel[i] + rightChannel[i]) / 2.0;
+            }
 
-        // Average stereo channels for mono
-        for (let i = 0; i < leftChannel.length; i++) {
-            monoAudioData[i] = (leftChannel[i] + rightChannel[i]) / 2.0;
-        }
-
-        midiWorker.postMessage({
-            msg: 'PROCESS_AUDIO',
-            inputData: monoAudioData.buffer,
-            length: monoAudioData.length,
-            stemName: stemName,
-            batchMode: batchMode
+            // Send to the worker for MIDI processing
+            midiWorker.postMessage({
+                msg: 'PROCESS_AUDIO',
+                inputData: monoAudioData.buffer,
+                length: monoAudioData.length,
+                stemName: stemName,
+                batchMode: batchMode
+            }, [monoAudioData.buffer]); // Transfer buffer ownership
         });
-    });
+    } else {
+        // Existing behavior for audioBuffer
+        const wavArrayBuffer = encodeWavFileFromAudioBuffer(inputBuffer, 0);
+
+        basicpitchAudioContext.decodeAudioData(wavArrayBuffer, async (decodedData) => {
+            const leftChannel = decodedData.getChannelData(0);
+            const rightChannel = decodedData.numberOfChannels > 1 ? decodedData.getChannelData(1) : leftChannel;
+            const monoAudioData = new Float32Array(leftChannel.length);
+
+            for (let i = 0; i < leftChannel.length; i++) {
+                monoAudioData[i] = (leftChannel[i] + rightChannel[i]) / 2.0;
+            }
+
+            midiWorker.postMessage({
+                msg: 'PROCESS_AUDIO',
+                inputData: monoAudioData.buffer,
+                length: monoAudioData.length,
+                stemName: stemName,
+                batchMode: batchMode
+            }, [monoAudioData.buffer]); // Transfer buffer ownership
+        });
+    }
 }
 
 const midiStemNames = ['vocals', 'bass', 'melody', 'other_melody', 'piano', 'guitar'];
@@ -1076,7 +1098,9 @@ function packageAndDownloadMidiOnly(inputArrayBuffer) {
         initializeMidiWorker();
     }
 
-    //queueMidiRequest(buffer, name, false);
+    // use the stem name 'output' for the midi-only output
+    // directly operating on the user input
+    queueMidiRequest(inputArrayBuffer, "output", false, true);
 
     // Wait for all MIDI files to complete processing, then create download links
     waitForMidiProcessing().then(() => createDownloadLinks(null, true));
