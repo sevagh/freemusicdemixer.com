@@ -102,6 +102,13 @@ const registerServiceWorker = async () => {
 };
 
 function resetUIElements() {
+    // Disable PRO-tier MIDI feature
+    document.getElementById('midi').disabled = true;
+    document.getElementById('both').disabled = true;
+    document.querySelector('label[for="both"]').textContent = 'Stems + MIDI 🔒';
+    document.querySelector('label[for="midi"]').textContent = 'MIDI 🔒';
+    document.getElementById('stems').checked = true;
+
     // Disable PRO-tier checkboxes (piano, guitar) and add lock symbol
     document.getElementById('piano').disabled = true;
     document.querySelector('label[for="piano"]').textContent = 'Piano 🔒';
@@ -669,6 +676,12 @@ function activateTierUI(userTier) {
   // Enable buttons based on user tier
 
   if (userTier === 2) {
+    // Enable PRO-tier MIDI feature
+    document.getElementById('midi').disabled = false;
+    document.getElementById('both').disabled = false;
+    document.querySelector('label[for="both"]').textContent = 'Stems + MIDI';
+    document.querySelector('label[for="midi"]').textContent = 'MIDI';
+
     // Enable PRO-tier checkboxes (piano, guitar)
     document.getElementById('piano').disabled = false;
     document.getElementById('guitar').disabled = false;
@@ -768,6 +781,7 @@ nextStep2Btn.addEventListener('click', function() {
             reader.onload = function(event) {
                 // reset the progress bar
                 document.getElementById('inference-progress-bar').style.width = '0%';
+                document.getElementById('midi-progress-bar').style.width = '0%';
                 // delete the previous download links
                 let downloadLinksDiv = document.getElementById('output-links');
                 while (downloadLinksDiv.firstChild) {
@@ -807,6 +821,7 @@ nextStep2Btn.addEventListener('click', function() {
             initWorkers();
 
             document.getElementById('inference-progress-bar').style.width = '0%';
+            document.getElementById('midi-progress-bar').style.width = '0%';
 
             // delete the previous download links
             let downloadLinksDiv = document.getElementById('output-links');
@@ -846,16 +861,31 @@ let isProcessing = false;
 let midiWorker;
 let midiWasmLoaded = false; // Flag to check if WASM is loaded
 let midiBuffers = {}; // Store MIDI data by stem name
+let queueTotal = 0; // Total number of items in the queue
+let queueCompleted = 0; // Number of items processed
+let completedSongsBatchMidi = 0; // Counter for processed songs in batch mode
 
 function initializeMidiWorker() {
     midiWorker = new Worker('basicpitch_worker.js');
 
     midiWorker.onmessage = function(e) {
         if (e.data.msg === 'WASM_READY') {
-            console.log('WASM module loaded successfully');
+            console.log('Basicpitch WASM module loaded successfully');
             midiWasmLoaded = true;
             processNextMidi(); // Start processing the queue
+        } else if (e.data.msg === 'PROGRESS_UPDATE') {
+            let prog = e.data.data; // `prog` represents the current track's progress from 0 to 1
+            const totalProgress = ((queueCompleted + prog) / queueTotal) * 100;
+            // log each aspect of the progress for debugging: prog, totalProgress, queueCompleted, queueTotal
+            document.getElementById('midi-progress-bar').style.width = `${totalProgress}%`;
+        } else if (e.data.msg === 'PROGRESS_UPDATE_BATCH') {
+            let prog = e.data.data;
+            const trackProgressInBatch = ((queueCompleted + prog) / queueTotal) * globalProgressIncrement;
+            const startingPointForCurrentSong = completedSongsBatchMidi * globalProgressIncrement;
+            const newBatchWidth = startingPointForCurrentSong + trackProgressInBatch;
+            document.getElementById('midi-progress-bar').style.width = `${newBatchWidth}%`;
         } else if (e.data.msg === 'PROCESSING_DONE') {
+            queueCompleted += 1;
             handleMidiDone(e.data);
             isProcessing = false;
             processNextMidi();
@@ -878,8 +908,9 @@ function handleMidiDone(data) {
 }
 
 // Add a new function to queue the request
-function queueMidiRequest(audioBuffer, stemName) {
-    midiQueue.push({ audioBuffer, stemName });
+function queueMidiRequest(audioBuffer, stemName, batchMode) {
+    midiQueue.push({ audioBuffer, stemName, batchMode });
+    queueTotal += 1;
     processNextMidi();
 }
 
@@ -888,14 +919,14 @@ function processNextMidi() {
     if (isProcessing || midiQueue.length === 0 || !midiWasmLoaded) return;
 
     isProcessing = true;
-    const { audioBuffer, stemName } = midiQueue.shift();
+    const { audioBuffer, stemName, batchMode } = midiQueue.shift();
 
     // Call generateMidi with the next item in the queue
-    generateMidi(audioBuffer, stemName);
+    generateMidi(audioBuffer, stemName, batchMode);
 }
 
 // Function to handle MIDI generation
-function generateMidi(audioBuffer, stemName) {
+function generateMidi(audioBuffer, stemName, batchMode) {
     const wavArrayBuffer = encodeWavFileFromAudioBuffer(audioBuffer, 0);
 
     // Decode the WAV data in basicPitchAudioContext at 22.05 kHz
@@ -913,7 +944,8 @@ function generateMidi(audioBuffer, stemName) {
             msg: 'PROCESS_AUDIO',
             inputData: monoAudioData.buffer,
             length: monoAudioData.length,
-            stemName: stemName
+            stemName: stemName,
+            batchMode: batchMode
         });
     });
 }
@@ -940,7 +972,7 @@ function packageAndDownload(targetWaveforms) {
         // Generate MIDI if `outputMidi` is true and the stem name is in midiStemNames
         if (outputMidi && midiStemNames.includes(name)) {
             console.log(`Queueing MIDI for ${name}...`);
-            queueMidiRequest(buffer, name);
+            queueMidiRequest(buffer, name, false);
         }
     });
 
@@ -1009,6 +1041,8 @@ function createDownloadLinks(buffers) {
 
     // Clear midiBuffers after links are created
     midiBuffers = {};
+    queueTotal = 0; // Reset the total queue items
+    queueCompleted = 0; // Reset the current queue item
 
     prevStep3Btn.disabled = false;
     nextStep3Btn.disabled = false;
@@ -1081,7 +1115,7 @@ function packageAndZip(targetWaveforms, filename) {
         // Queue MIDI generation if enabled and stem is in midiStemNames
         if (outputMidi && midiStemNames.includes(stemName)) {
             console.log(`Queueing MIDI for ${stemName}...`);
-            queueMidiRequest(buffer, stemName);
+            queueMidiRequest(buffer, stemName, true);
         }
     });
 
@@ -1127,6 +1161,13 @@ function packageAndZip(targetWaveforms, filename) {
 
         // Clear midiBuffers after zip creation
         midiBuffers = {};
+        queueTotal = 0; // Reset the total queue items
+        queueCompleted = 0; // Reset the current queue item
+        if (completedSongsBatchMidi < document.getElementById('batch-upload').files.length-1) {
+            completedSongsBatchMidi += 1; // Increment the counter for processed songs in batch mode
+        } else {
+            completedSongsBatchMidi = 0; // Reset the counter if all songs are processed
+        }
 
         prevStep3Btn.disabled = false;
         nextStep3Btn.disabled = false;

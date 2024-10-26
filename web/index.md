@@ -31,6 +31,23 @@ header_class: index
       <p>Choose your parameters</p>
       <div class="columns-container">
         <div class="column">
+          <b>Mode:</b>
+          <form id="processingPickerForm">
+            <div>
+              <input type="radio" id="stems" name="processingMode" value="stems" checked>
+              <label for="stems">Stems</label>
+            </div>
+            <div>
+              <input type="radio" id="both" name="processingMode" value="both" disabled>
+              <label for="both">Stems + MIDI 🔒'</label>
+            </div>
+            <div>
+              <input type="radio" id="midi" name="processingMode" value="midi" disabled>
+              <label for="midi">MIDI 🔒'</label>
+            </div>
+          </form>
+        </div>
+        <div class="column">
           <b>Components:</b>
           <form id="modelPickerForm">
             <div>
@@ -146,12 +163,16 @@ header_class: index
       </div>
     </div>
     <div id="wizard-step-3" class="wizard-step" style="display: none;">
-    <p>Demix progress and output stems</p>
+    <p>Progress and outputs</p>
       🚫 To cancel the current job, refresh the page
       <div class="progress-container">
-        <div class="progress-text" id="inference-progress-text">Progress...</div>
+        <div class="progress-text" id="inference-progress-text">Stems progress...</div>
         <div class="progress-bar">
             <div class="progress-bar-inner" id="inference-progress-bar" style="width: 0%"></div>
+        </div>
+        <div class="progress-text" id="inference-progress-text">MIDI progress...</div>
+        <div class="progress-bar">
+            <div class="progress-bar-inner" id="midi-progress-bar" style="width: 0%"></div>
         </div>
         This may take a while, go grab a coffee! ☕️
         <br>

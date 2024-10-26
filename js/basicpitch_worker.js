@@ -8,8 +8,9 @@ onmessage = function(e) {
         const inputData = new Float32Array(e.data.inputData); // Convert back from ArrayBuffer
         const length = e.data.length;  // Use the correct length
 
-        console.log('Running inference with WASM...');
-        console.log('length:', length);
+        const batchMode = e.data.batchMode;
+
+        console.log('Running MIDI inference...');
 
         // Allocate memory in WASM and copy input data into the WASM memory
         const audioPointer = loadedModule._malloc(inputData.length * inputData.BYTES_PER_ELEMENT);
@@ -21,7 +22,7 @@ onmessage = function(e) {
         const midiSizePointer = loadedModule._malloc(4);  // Allocate 4 bytes for the size (int)
 
         // Call the WASM function with the audio buffer, length, and pointers for the MIDI data and size
-        loadedModule._convertToMidi(audioPointer, length, midiDataPointer, midiSizePointer);
+        loadedModule._convertToMidi(audioPointer, length, midiDataPointer, midiSizePointer, batchMode);
 
         // Retrieve the MIDI data pointer and size from WASM memory
         const midiData = loadedModule.getValue(midiDataPointer, 'i32');  // Get the pointer to MIDI data
@@ -36,12 +37,6 @@ onmessage = function(e) {
             const transferableMidiBytes = new Uint8Array(midiSize);
             transferableMidiBytes.set(midiBytes);
 
-            console.log('[Worker] Posting PROCESSING_DONE message with data:', {
-                msg: 'PROCESSING_DONE',
-                midiBytes: transferableMidiBytes.buffer,
-                stemName: e.data.stemName
-            });
-
             // Send the copied MIDI data back to the main thread with transferList
             postMessage({
                 msg: 'PROCESSING_DONE',
@@ -53,8 +48,6 @@ onmessage = function(e) {
             loadedModule._free(midiData);
         } else {
             console.error('Failed to generate MIDI data.');
-            console.log('midiData:', midiData);
-            console.log('midiSize:', midiSize);
             postMessage({ msg: 'PROCESSING_FAILED' });
         }
 
@@ -72,7 +65,6 @@ function loadWASMModule(scriptName) {
     wasmModule = libbasicpitch(); // Module is created in the glue code
 
     wasmModule.then((loaded_module) => {
-        console.log('MIDI WASM module loaded');
         postMessage({ msg: 'WASM_READY' });
         loadedModule = loaded_module;
     });
