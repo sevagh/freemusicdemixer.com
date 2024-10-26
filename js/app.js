@@ -7,7 +7,32 @@ qualityRadios.forEach(radio => radio.addEventListener('change', updateModelBased
 let selectedModel;
 
 // new midi feature
-let outputMidi = true;
+let processingMode = 'stems';
+
+document.getElementById('processingPickerForm').addEventListener('change', (event) => {
+  const isMidiOnly = document.getElementById('midi').checked;
+  const isBoth = document.getElementById('both').checked;
+  const componentsCheckboxes = document.querySelectorAll('#modelPickerForm input[type="checkbox"]');
+  const qualityRadios = document.querySelectorAll('#qualityPickerForm input[type="radio"]');
+
+  componentsCheckboxes.forEach((checkbox) => {
+    checkbox.disabled = isMidiOnly;
+  });
+
+  qualityRadios.forEach((radio) => {
+    radio.disabled = isMidiOnly;
+  });
+
+  if (isMidiOnly) {
+      processingMode = 'midi';
+  } else if (isBoth) {
+      processingMode = 'both';
+  } else {
+      processingMode = 'stems';
+  }
+
+  console.log("Setting processing mode to:", processingMode);
+});
 
 let NUM_WORKERS = 4;
 let workers;
@@ -680,7 +705,7 @@ function activateTierUI(userTier) {
     document.getElementById('midi').disabled = false;
     document.getElementById('both').disabled = false;
     document.querySelector('label[for="both"]').textContent = 'Stems + MIDI';
-    document.querySelector('label[for="midi"]').textContent = 'MIDI';
+    document.querySelector('label[for="midi"]').textContent = 'MIDI-only';
 
     // Enable PRO-tier checkboxes (piano, guitar)
     document.getElementById('piano').disabled = false;

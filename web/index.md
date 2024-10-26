@@ -43,7 +43,7 @@ header_class: index
             </div>
             <div>
               <input type="radio" id="midi" name="processingMode" value="midi" disabled>
-              <label for="midi">MIDI 🔒'</label>
+              <label for="midi">MIDI-only 🔒'</label>
             </div>
           </form>
         </div>
