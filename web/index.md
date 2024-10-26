@@ -167,11 +167,11 @@ header_class: index
       🚫 To cancel the current job, refresh the page
       <div class="progress-container">
         <div class="progress-text" id="inference-progress-text">Stems progress...</div>
-        <div class="progress-bar">
+        <div class="progress-bar" id="inference-progress-bar-outer">
             <div class="progress-bar-inner" id="inference-progress-bar" style="width: 0%"></div>
         </div>
         <div class="progress-text" id="midi-progress-text">MIDI progress...</div>
-        <div class="progress-bar">
+        <div class="progress-bar" id="midi-progress-bar-outer">
             <div class="progress-bar-inner" id="midi-progress-bar" style="width: 0%"></div>
         </div>
         This may take a while, go grab a coffee! ☕️

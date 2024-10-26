@@ -27,20 +27,26 @@ document.getElementById('processingPickerForm').addEventListener('change', (even
     processingMode = 'midi';
     document.getElementById('inference-progress-bar').style.display = 'none';
     document.getElementById('inference-progress-text').style.display = 'none';
+    document.getElementById('inference-progress-bar-outer').style.display = 'none';
     document.getElementById('midi-progress-bar').style.display = 'block';
     document.getElementById('midi-progress-text').style.display = 'block';
+    document.getElementById('midi-progress-bar-outer').style.display = 'block';
   } else if (isBoth) {
     processingMode = 'both';
     document.getElementById('inference-progress-bar').style.display = 'block';
     document.getElementById('inference-progress-text').style.display = 'block';
+    document.getElementById('inference-progress-bar-outer').style.display = 'block';
     document.getElementById('midi-progress-bar').style.display = 'block';
     document.getElementById('midi-progress-text').style.display = 'block';
+    document.getElementById('midi-progress-bar-outer').style.display = 'block';
   } else {
     processingMode = 'stems';
     document.getElementById('midi-progress-bar').style.display = 'none';
     document.getElementById('midi-progress-text').style.display = 'none';
+    document.getElementById('midi-progress-bar-outer').style.display = 'none';
     document.getElementById('inference-progress-bar').style.display = 'block';
     document.getElementById('inference-progress-text').style.display = 'block';
+    document.getElementById('inference-progress-bar-outer').style.display = 'block';
   }
 
   console.log("Setting processing mode to:", processingMode);
@@ -147,8 +153,10 @@ function resetUIElements() {
     document.getElementById('stems').checked = true;
     document.getElementById('midi-progress-bar').style.display = 'none';
     document.getElementById('midi-progress-text').style.display = 'none';
+    document.getElementById('midi-progress-bar-outer').style.display = 'none';
     document.getElementById('inference-progress-text').style.display = 'block';
     document.getElementById('inference-progress-bar').style.display = 'block';
+    document.getElementById('inference-progress-bar-outer').style.display = 'block';
 
     // Disable PRO-tier checkboxes (piano, guitar) and add lock symbol
     document.getElementById('piano').disabled = true;
@@ -551,6 +559,9 @@ function fetchAndCacheFiles(model) {
 }
 
 async function initModel() {
+    if (processingMode === 'midi') {
+        return;
+    }
     displayStep2Spinner();
 
     try {
@@ -860,7 +871,8 @@ nextStep2Btn.addEventListener('click', function() {
                         processAudioSegments(leftChannel, rightChannel, NUM_WORKERS, originalLength);
                     });
                 } else {
-
+                    console.log("Converting input file to MIDI directly");
+                    packageAndDownloadMidiOnly(arrayBuffer);
                 }
             };
 
@@ -1054,7 +1066,20 @@ function packageAndDownload(targetWaveforms) {
     }
 
     // Wait for all MIDI files to complete processing, then create download links
-    waitForMidiProcessing().then(() => createDownloadLinks(buffers));
+    waitForMidiProcessing().then(() => createDownloadLinks(buffers, false));
+}
+
+function packageAndDownloadMidiOnly(inputArrayBuffer) {
+    console.log(`Processing ${inputArrayBuffer} bytes of audio data in MIDI-only mode`);
+    // create the worker
+    if (processingMode != 'stems' && !midiWorker) {
+        initializeMidiWorker();
+    }
+
+    //queueMidiRequest(buffer, name, false);
+
+    // Wait for all MIDI files to complete processing, then create download links
+    waitForMidiProcessing().then(() => createDownloadLinks(null, true));
 }
 
 function waitForMidiProcessing() {
@@ -1070,22 +1095,36 @@ function waitForMidiProcessing() {
     });
 }
 
-function createDownloadLinks(buffers) {
+function createDownloadLinks(buffers, midiOnlyMode) {
     let downloadLinksDiv = document.getElementById('output-links');
     downloadLinksDiv.innerHTML = ''; // Clear existing links
 
-    Object.keys(buffers).forEach(stemName => {
-        // Create WAV file link
-        const wavBlob = new Blob([encodeWavFileFromAudioBuffer(buffers[stemName], 0)], {type: 'audio/wav'});
-        const wavUrl = URL.createObjectURL(wavBlob);
-        const wavLink = document.createElement('a');
-        wavLink.href = wavUrl;
-        wavLink.textContent = `${stemName}.wav`;
-        wavLink.download = `${stemName}.wav`;
-        downloadLinksDiv.appendChild(wavLink);
+    if (!midiOnlyMode) {
+        Object.keys(buffers).forEach(stemName => {
+            // Create WAV file link
+            const wavBlob = new Blob([encodeWavFileFromAudioBuffer(buffers[stemName], 0)], {type: 'audio/wav'});
+            const wavUrl = URL.createObjectURL(wavBlob);
+            const wavLink = document.createElement('a');
+            wavLink.href = wavUrl;
+            wavLink.textContent = `${stemName}.wav`;
+            wavLink.download = `${stemName}.wav`;
+            downloadLinksDiv.appendChild(wavLink);
 
-        // Check if MIDI data exists for this stem and create a link if it does
-        if (midiBuffers[stemName]) {
+            // Check if MIDI data exists for this stem and create a link if it does
+            if (midiBuffers[stemName]) {
+                const midiBlob = midiBuffers[stemName];
+                const midiUrl = URL.createObjectURL(midiBlob);
+                const midiLink = document.createElement('a');
+                midiLink.href = midiUrl;
+                midiLink.textContent = `${stemName}.mid`;
+                midiLink.download = `${stemName}.mid`;
+                downloadLinksDiv.appendChild(midiLink);
+            }
+        });
+    } else {
+        // create midi-only outputs for all the items in the global
+        // midiBuffers object
+        Object.keys(midiBuffers).forEach(stemName => {
             const midiBlob = midiBuffers[stemName];
             const midiUrl = URL.createObjectURL(midiBlob);
             const midiLink = document.createElement('a');
@@ -1093,8 +1132,8 @@ function createDownloadLinks(buffers) {
             midiLink.textContent = `${stemName}.mid`;
             midiLink.download = `${stemName}.mid`;
             downloadLinksDiv.appendChild(midiLink);
-        }
-    });
+        });
+    }
 
     // Clear midiBuffers after links are created
     midiBuffers = {};
