@@ -52,9 +52,6 @@ document.getElementById('processingPickerForm').addEventListener('change', (even
   if (isMidiOnly) {
     // Hide and disable the advanced settings dropdown
     advancedSettings.style.display = 'none'; // Ensure advanced settings are hidden
-  } else {
-    // Show and enable the advanced settings dropdown
-    advancedSettingsToggle.style.display = 'inline';
   }
 
   if (isMidiOnly) {
@@ -84,6 +81,7 @@ document.getElementById('processingPickerForm').addEventListener('change', (even
   }
 
   console.log("Setting processing mode to:", processingMode);
+  updateModelBasedOnSelection();
 });
 
 let NUM_WORKERS = 4;

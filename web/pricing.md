@@ -5,7 +5,7 @@ description: "Learn more about our mission and the cutting-edge AI technology po
 
 # Pricing
 
-Our free product allows 3 demixes per week using the lowest quality 4-stem model. For higher quality settings, more stems, and unlimited demixing, consider our PRO tier.
+Our free product allows 3 jobs per week, and stem separation is limited to the lowest quality 4-stem model. For higher quality settings, more stems, and unlimited jobs, consider our PRO tier.
 
 Our subscriptions offer the best value with flexible pricing options and a free trial period. The yearly subscription at $49.99 CAD/year is the **best deal**, saving you 60% compared to the monthly option.
 
@@ -33,6 +33,7 @@ publishable-key="pk_live_51ObLZ9AmT5bJ3vuwDIgzrNEljt7oK42MqgmnEKZbANz0PDtlzkD3Oc
 
 ## PRO features
 
+* Unlimited usage for stem separation and MIDI generation
 * **Piano and guitar stems** with our 6-source and Custom models
 * Karaoke 2-stem model with **high-performance vocals and instrumental separation**
 * Higher quality models for 4-stem (vocals, drums, bass, melody) separation, including Fine-tuned and Deluxe models
