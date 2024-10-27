@@ -8,7 +8,7 @@ favicon: assets/favicon.ico
   #title: "music demixer"
 
 # dont mess with SEO here
-description: "Do it all with our cutting-edge AI tool: separate songs, split stems, instrumental breakdowns, vocal remover, isolate vocals, extract instruments, create karaoke tracks, and more."
+description: "Do it all with our cutting-edge AI tool: separate songs, split stems, instrumental breakdowns, vocal remover, isolate vocals, extract instruments, create karaoke tracks, transcribe music, create MIDI files, and more."
 keywords:
   - vocal remover
   - extract vocals
@@ -26,6 +26,9 @@ keywords:
   - Android music app
   - private music separation
   - unlimited music splitting
+  - automatic music transcription
+  - MIDI file generation
+  - MIDI to sheet music
 
 url: "https://freemusicdemixer.com"
 

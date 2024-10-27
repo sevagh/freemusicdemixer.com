@@ -6,7 +6,11 @@ header_class: index
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
 <section class="info-section">
-  <h3>Unlock <b>AI stem separation</b> in your browser. Effortlessly isolate vocals, drums, bass, melody, guitar, and piano from your favorite songs. Ideal for creating backing tracks, remixes, and more — perfect for musicians, DJs, beatmakers, content creators, and karaoke enthusiasts.</h3>
+  <h3>Unlock <b>AI stem separation</b> and <b>automatic music transcription and MIDI generation</b> in your browser. Effortlessly isolate vocals, drums, bass, melody, guitar, and piano, or generate precise MIDI files for your instruments. Ideal for creating tracks, remixes, and more — perfect for musicians, DJs, beatmakers, content creators, and karaoke enthusiasts.</h3>
+</section>
+
+<section class="info-section">
+  <h3>Our stem separation algorithms are based on the <b>Demucs AI model</b> and winners from the Sony Music and Sound Demixing Challenges in 2021 and 2023, powered by the same revolutionary Artificial Intelligence technology as ChatGPT.</h3>
 </section>
 
 <section class="image-section">
@@ -14,7 +18,11 @@ header_class: index
 </section>
 
 <section class="info-section">
-  <h3>Our algorithms are based on the <b>Demucs AI model</b> and winners from the Sony Music and Sound Demixing Challenges in 2021 and 2023, powered by the same revolutionary Artificial Intelligence technology as ChatGPT.</h3>
+  <h3>Our new <b>automatic music transcription and MIDI generation</b> feature is lightweight, powerful, and will save you hours of manual work. Use your instrument instead of a MIDI controller and skip the music theory books!</h3>
+</section>
+
+<section class="image-section">
+<img class="title-img" src="/assets/images/midi-amt.webp" alt="midi-amt-diagram"/>
 </section>
 
 <section class="info-section">
@@ -30,6 +38,23 @@ header_class: index
     <div id="wizard-step-1" class="wizard-step">
       <p>Choose your parameters</p>
       <div class="columns-container">
+        <div class="column">
+          <b>Mode:</b>
+          <form id="processingPickerForm">
+            <div>
+              <input type="radio" id="stems" name="processingMode" value="stems" checked>
+              <label for="stems">Stems</label>
+            </div>
+            <div>
+              <input type="radio" id="both" name="processingMode" value="both">
+              <label for="both">Stems + MIDI</label>
+            </div>
+            <div>
+              <input type="radio" id="midi" name="processingMode" value="midi">
+              <label for="midi">MIDI-only</label>
+            </div>
+          </form>
+        </div>
         <div class="column">
           <b>Components:</b>
           <form id="modelPickerForm">
@@ -146,12 +171,16 @@ header_class: index
       </div>
     </div>
     <div id="wizard-step-3" class="wizard-step" style="display: none;">
-    <p>Demix progress and output stems</p>
+    <p>Progress and outputs</p>
       🚫 To cancel the current job, refresh the page
       <div class="progress-container">
-        <div class="progress-text" id="inference-progress-text">Progress...</div>
-        <div class="progress-bar">
+        <div class="progress-text" id="inference-progress-text">Stems progress...</div>
+        <div class="progress-bar" id="inference-progress-bar-outer">
             <div class="progress-bar-inner" id="inference-progress-bar" style="width: 0%"></div>
+        </div>
+        <div class="progress-text" id="midi-progress-text">MIDI progress...</div>
+        <div class="progress-bar" id="midi-progress-bar-outer">
+            <div class="progress-bar-inner" id="midi-progress-bar" style="width: 0%"></div>
         </div>
         This may take a while, go grab a coffee! ☕️
         <br>

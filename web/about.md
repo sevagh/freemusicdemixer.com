@@ -21,9 +21,13 @@ Effortlessly split your songs into individual stems - **vocals, bass, drums, mel
 
 If you want the power of Demucs **in your pocket**, [download our Android app](/android).
 
+Our tool also provides **automatic music transcription and MIDI generation.** It works best on single instruments, making it the perfect complement to stem separation algorithms. Split your favorite song into stems and generate MIDI files for each harmonic instrument or component, or upload a single instrument track directly and directly convert to MIDI, skipping the stem separation step.
+
+Use your instrument of choice to record pieces for other instruments, and use our MIDI generation tool to convert them into MIDI files. This is a great way to create music with a single instrument without a MIDI controller or hours of manual transcription.
+
 ## What is the paid product?
 
-See our [pricing page](/pricing) for more information on our PRO model. The PRO subscription offers **unlimited demixing** and **higher quality** stems.
+See our [pricing page](/pricing) for more information on our PRO model. The PRO subscription offers **unlimited demixing and MIDI creation** and **higher quality** stems.
 
 ## Demo clips
 

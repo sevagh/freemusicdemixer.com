@@ -20,4 +20,4 @@ Some anonymous website usage data is collected to improve the service. This data
 
 ## Legal
 
-The AI on this site uses the [Demucs Hybrid Transformer model](https://github.com/facebookresearch/demucs). ⚠️ By using this site, you acknowledge that **your usage of the outputs of the Music Demixer apps are governed by the Meta AI Research Academic licenses ([[1]](https://github.com/facebookresearch/demucs/issues/327#issuecomment-1134828611), [[2]](https://ai.meta.com/llama/license/))!**
+The stem separation AI on this site uses the [Demucs Hybrid Transformer model](https://github.com/facebookresearch/demucs). ⚠️ You acknowledge that **your usage of the stem outputs of the Music Demixer apps are governed by the Meta AI Research Academic licenses ([[1]](https://github.com/facebookresearch/demucs/issues/327#issuecomment-1134828611), [[2]](https://ai.meta.com/llama/license/))!**
