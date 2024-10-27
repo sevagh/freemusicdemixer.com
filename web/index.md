@@ -6,7 +6,11 @@ header_class: index
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
 <section class="info-section">
-  <h3>Unlock <b>AI stem separation</b> in your browser. Effortlessly isolate vocals, drums, bass, melody, guitar, and piano from your favorite songs. Ideal for creating backing tracks, remixes, and more — perfect for musicians, DJs, beatmakers, content creators, and karaoke enthusiasts.</h3>
+  <h3>Unlock <b>AI stem separation</b> and <b>automatic music transcription and MIDI generation</b> in your browser. Effortlessly isolate vocals, drums, bass, melody, guitar, and piano, or generate precise MIDI files for your instruments. Ideal for creating backing tracks, remixes, MIDI sequences, and more — perfect for musicians, DJs, beatmakers, content creators, and karaoke enthusiasts.</h3>
+</section>
+
+<section class="info-section">
+  <h3>Our stem separation algorithms are based on the <b>Demucs AI model</b> and winners from the Sony Music and Sound Demixing Challenges in 2021 and 2023, powered by the same revolutionary Artificial Intelligence technology as ChatGPT.</h3>
 </section>
 
 <section class="image-section">
@@ -14,7 +18,11 @@ header_class: index
 </section>
 
 <section class="info-section">
-  <h3>Our algorithms are based on the <b>Demucs AI model</b> and winners from the Sony Music and Sound Demixing Challenges in 2021 and 2023, powered by the same revolutionary Artificial Intelligence technology as ChatGPT.</h3>
+  <h3>Our new <b>automatic music transcription and MIDI generation</b> feature is lightweight, powerful, and will save you hours of manual work. Use your instrument instead of a MIDI controller and skip the music theory books!</h3>
+</section>
+
+<section class="image-section">
+<img class="title-img" src="/assets/images/midi-amt.webp" alt="midi-amt-diagram"/>
 </section>
 
 <section class="info-section">
