@@ -38,12 +38,12 @@ header_class: index
               <label for="stems">Stems</label>
             </div>
             <div>
-              <input type="radio" id="both" name="processingMode" value="both" disabled>
-              <label for="both">Stems + MIDI 🔒'</label>
+              <input type="radio" id="both" name="processingMode" value="both">
+              <label for="both">Stems + MIDI</label>
             </div>
             <div>
-              <input type="radio" id="midi" name="processingMode" value="midi" disabled>
-              <label for="midi">MIDI-only 🔒'</label>
+              <input type="radio" id="midi" name="processingMode" value="midi">
+              <label for="midi">MIDI-only</label>
             </div>
           </form>
         </div>
