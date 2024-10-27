@@ -14,6 +14,7 @@ document.getElementById('processingPickerForm').addEventListener('change', (even
   const isBoth = document.getElementById('both').checked;
   const componentsCheckboxes = document.querySelectorAll('#modelPickerForm input[type="checkbox"]');
   const qualityRadios = document.querySelectorAll('#qualityPickerForm input[type="radio"]');
+  const memoryRadios = document.querySelectorAll('#memorySelectorForm input[type="radio"]');
 
   // if the user is logged in, activate tier UIs
   const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
@@ -40,6 +41,20 @@ document.getElementById('processingPickerForm').addEventListener('change', (even
     componentsCheckboxes.forEach(checkbox => checkbox.disabled = isMidiOnly);
     // iterate and disable all radio buttons
     qualityRadios.forEach(radio => radio.disabled = isMidiOnly);
+  }
+
+  // also disable the "advancedSettingsToggle" and radios
+  memoryRadios.forEach(radio => radio.disabled = isMidiOnly);
+
+  // Hide and disable advanced settings toggle button
+  const advancedSettings = document.getElementById('advancedSettings');
+
+  if (isMidiOnly) {
+    // Hide and disable the advanced settings dropdown
+    advancedSettings.style.display = 'none'; // Ensure advanced settings are hidden
+  } else {
+    // Show and enable the advanced settings dropdown
+    advancedSettingsToggle.style.display = 'inline';
   }
 
   if (isMidiOnly) {
@@ -181,6 +196,10 @@ function resetUIElements() {
     document.getElementById('melody').disabled = false;
     document.getElementById('instrumental').disabled = false;
     document.getElementById('low-quality').disabled = false;
+    document.getElementById('4gb').disabled = false;
+    document.getElementById('8gb').disabled = false;
+    document.getElementById('16gb').disabled = false;
+    document.getElementById('32gb').disabled = false;
 
     // Disable PRO-tier checkboxes (piano, guitar) and add lock symbol
     document.getElementById('piano').disabled = true;
@@ -1192,7 +1211,10 @@ function createDownloadLinks(buffers, midiOnlyMode) {
     queueTotal = 0; // Reset the total queue items
     queueCompleted = 0; // Reset the current queue item
 
-    incrementUsage(); // Increment the weekly usage counter
+    // if in any mode that has midi, increment usage here
+    if (processingMode != 'stems') {
+        incrementUsage(); // Increment the weekly usage counter
+    }
 
     prevStep3Btn.disabled = false;
     nextStep3Btn.disabled = false;
@@ -1276,10 +1298,13 @@ async function processFiles(files, midiOnlyMode) {
         queueTotal = 0; // Reset the total queue items
         queueCompleted = 0; // Reset the current queue item
 
-        incrementUsage(); // Increment the weekly usage counter
-
         prevStep3Btn.disabled = false;
         nextStep3Btn.disabled = false;
+    }
+
+    // for all modes that have midi, increment usage here
+    if (processingMode != 'stems') {
+        incrementUsage(); // Increment the weekly usage counter
     }
 }
 
@@ -1374,4 +1399,6 @@ function incrementUsage() {
     const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
     usageData.count += 1;
     localStorage.setItem('weeklyUsage', JSON.stringify(usageData));
+
+    checkAndResetWeeklyLimit();
 }
