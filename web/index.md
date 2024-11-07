@@ -92,12 +92,8 @@ header_class: index
             <b>Quality:</b>
             <form id="qualityPickerForm">
               <div>
-                <input type="radio" id="low-quality" name="quality" value="low" checked>
-                <label for="low-quality">Low</label>
-              </div>
-              <div>
-                <input type="radio" id="default-quality" name="quality" value="default" disabled>
-                <label for="default-quality">Default 🔒</label>
+                <input type="radio" id="default-quality" name="quality" value="default" checked>
+                <label for="default-quality">Default</label>
               </div>
               <div>
                 <input type="radio" id="medium-quality" name="quality" value="medium" disabled>

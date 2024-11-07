@@ -35,7 +35,7 @@ document.getElementById('processingPickerForm').addEventListener('change', (even
     document.getElementById('bass').disabled = isMidiOnly;
     document.getElementById('melody').disabled = isMidiOnly;
     document.getElementById('instrumental').disabled = isMidiOnly;
-    document.getElementById('low-quality').disabled = isMidiOnly;
+    document.getElementById('default-quality').disabled = isMidiOnly;
   } else if (userTier === 2) {
     // iterate and disable all checkboxes
     componentsCheckboxes.forEach(checkbox => checkbox.disabled = isMidiOnly);
@@ -108,7 +108,6 @@ const dl_prefix = "https://bucket.freemusicdemixer.com";
 const modelStemMapping = {
     'demucs-free-4s': ['bass', 'drums', 'melody', 'vocals'],
     'demucs-free-6s': ['bass', 'drums', 'other_melody', 'vocals', 'guitar', 'piano'],
-    'demucs-free-v3': ['bass', 'drums', 'melody', 'vocals'],
     'demucs-karaoke': ['vocals', 'instrum'],
     'demucs-pro-ft': ['bass', 'drums', 'melody', 'vocals'],
     'demucs-pro-cust': ['bass', 'drums', 'other_melody', 'vocals', 'guitar', 'piano', 'melody'],
@@ -153,8 +152,8 @@ function getBasicpitchAudioContext() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+    registerServiceWorker();
     resetUIElements();
-
 });
 
 const registerServiceWorker = async () => {
@@ -193,7 +192,7 @@ function resetUIElements() {
     document.getElementById('bass').disabled = false;
     document.getElementById('melody').disabled = false;
     document.getElementById('instrumental').disabled = false;
-    document.getElementById('low-quality').disabled = false;
+    document.getElementById('default-quality').disabled = false;
     document.getElementById('4gb').disabled = false;
     document.getElementById('8gb').disabled = false;
     document.getElementById('16gb').disabled = false;
@@ -205,10 +204,6 @@ function resetUIElements() {
 
     document.getElementById('guitar').disabled = true;
     document.querySelector('label[for="guitar"]').textContent = 'Guitar 🔒';
-
-    // Disable PRO-tier radio buttons (medium, high quality) and add lock symbol
-    document.getElementById('default-quality').disabled = true;
-    document.querySelector('label[for="default-quality"]').textContent = 'Default 🔒';
 
     document.getElementById('medium-quality').disabled = true;
     document.querySelector('label[for="medium-quality"]').textContent = 'Medium 🔒';
@@ -226,7 +221,7 @@ function resetUIElements() {
 
     // Reset quality radio buttons
     qualityRadios.forEach(radio => radio.checked = false);
-    document.getElementById('low-quality').checked = true;
+    document.getElementById('default-quality').checked = true;
 
     // reset all disabled buttons to disabled
     nextStep2Btn.disabled = true;
@@ -270,7 +265,7 @@ function updateModelBasedOnSelection() {
 
     const selectedQuality = document.querySelector('input[type="radio"][name="quality"]:checked').value;
 
-    let selectedModelLocal = "V3 (FREE)"; // Default model
+    let selectedModelLocal = "4-SOURCE (FREE)"; // Default model
 
     // Rule 1: If the sources contain piano and/or guitar
     if (selectedFeatures.includes("piano") || selectedFeatures.includes("guitar")) {
@@ -282,10 +277,8 @@ function updateModelBasedOnSelection() {
     }
     // Rule 2: If the sources contain only vocals and/or instrumental (with no other stems)
     else if (selectedFeatures.every(item => ["vocals", "instrumental"].includes(item))) {
-        if (selectedQuality === "low") {
-            selectedModelLocal = "V3 (FREE)";
-        } else if (selectedQuality === "default") {
-            selectedModelLocal = "4-SOURCE (PRO)";
+        if (selectedQuality === "default") {
+            selectedModelLocal = "4-SOURCE (FREE)";
         } else if (selectedQuality === "medium") {
             selectedModelLocal = "FINE-TUNED (PRO)";
         } else if (selectedQuality === "high") {
@@ -294,10 +287,8 @@ function updateModelBasedOnSelection() {
     }
     // Rule 3: Normal case (any of vocals, drums, bass, but no piano/guitar)
     else if (selectedFeatures.some(item => ["vocals", "drums", "bass", "melody"].includes(item))) {
-        if (selectedQuality === "low") {
-            selectedModelLocal = "V3 (FREE)";
-        } else if (selectedQuality === "default") {
-            selectedModelLocal = "4-SOURCE (PRO)";
+        if (selectedQuality === "default") {
+            selectedModelLocal = "4-SOURCE (FREE)";
         } else if (selectedQuality === "medium") {
             selectedModelLocal = "FINE-TUNED (PRO)";
         } else if (selectedQuality === "high") {
@@ -305,7 +296,7 @@ function updateModelBasedOnSelection() {
         }
     }
 
-    if (selectedModelLocal === "4-SOURCE (PRO)") {
+    if (selectedModelLocal === "4-SOURCE (FREE)") {
         selectedModel = 'demucs-free-4s';
     } else if (selectedModelLocal === "6-SOURCE (PRO)") {
         selectedModel = 'demucs-free-6s';
@@ -317,8 +308,6 @@ function updateModelBasedOnSelection() {
         selectedModel = 'demucs-pro-cust';
     } else if (selectedModelLocal === "DELUXE (PRO)") {
         selectedModel = 'demucs-pro-deluxe';
-    } else if (selectedModelLocal === "V3 (FREE)") {
-        selectedModel = 'demucs-free-v3';
     }
 }
 
@@ -531,28 +520,9 @@ function initWorkers() {
         // such as 'demucs_free', 'demucs_karaoke', or 'demucs_pro'
         console.log(`Selected model: ${selectedModel}`);
 
-        // assign wasm module name based on selected model, which is not
-        // an exact mapping
-        let wasmModuleName = "";
-
-        if (selectedModel === 'demucs-free-4s' || selectedModel === 'demucs-free-6s') {
-            wasmModuleName = 'demucs_free';
-        } else if (selectedModel === 'demucs-free-v3') {
-            wasmModuleName = 'demucs_free_v3';
-        } else if (selectedModel === 'demucs-karaoke') {
-            wasmModuleName = 'demucs_karaoke';
-        } else if (selectedModel === 'demucs-pro-ft' || selectedModel === 'demucs-pro-cust') {
-            wasmModuleName = 'demucs_pro';
-        } else if (selectedModel === 'demucs-pro-deluxe') {
-            wasmModuleName = 'demucs_deluxe';
-        }
-
-        let jsBlobName = `${wasmModuleName}.js`;
-
         // Post the blob URLs to the worker
         workers[i].postMessage({
             msg: 'LOAD_WASM',
-            scriptName: jsBlobName,
             model: selectedModel,
             modelBuffers: dlModelBuffers
         });
@@ -562,28 +532,25 @@ function initWorkers() {
 function fetchAndCacheFiles(model) {
     let modelFiles = [];
     if (model === 'demucs-free-4s') {
-        // append ggml-model-htdemucs-4s-f16.bin to modelFiles
-        modelFiles.push('ggml-model-htdemucs-4s-f16.bin');
+        modelFiles.push('htdemucs.ort.gz');
     } else if (model === 'demucs-free-6s') {
-        modelFiles.push('ggml-model-htdemucs-6s-f16.bin');
+        modelFiles.push('htdemucs_6s.ort.gz');
     } else if (model === 'demucs-karaoke') {
-        modelFiles.push('ggml-model-custom-2s-f32.bin');
+        modelFiles.push('htdemucs_2s_cust.ort.gz');
     } else if (model === 'demucs-pro-ft') {
-        modelFiles.push('ggml-model-htdemucs_ft_bass-4s-f16.bin');
-        modelFiles.push('ggml-model-htdemucs_ft_drums-4s-f16.bin');
-        modelFiles.push('ggml-model-htdemucs_ft_other-4s-f16.bin');
-        modelFiles.push('ggml-model-htdemucs_ft_vocals-4s-f16.bin');
+        modelFiles.push('htdemucs_ft_bass.ort.gz');
+        modelFiles.push('htdemucs_ft_drums.ort.gz');
+        modelFiles.push('htdemucs_ft_other.ort.gz');
+        modelFiles.push('htdemucs_ft_vocals.ort.gz');
     } else if (model === 'demucs-pro-cust') {
-        modelFiles.push('ggml-model-htdemucs_ft_vocals-4s-f16.bin');
-        modelFiles.push('ggml-model-htdemucs-4s-f16.bin');
-        modelFiles.push('ggml-model-htdemucs-6s-f16.bin');
+        modelFiles.push('htdemucs_ft_vocals.ort.gz');
+        modelFiles.push('htdemucs.ort.gz');
+        modelFiles.push('htdemucs_6s.ort.gz');
     } else if (model === 'demucs-pro-deluxe') {
-        modelFiles.push('ggml-model-htdemucs_ft_bass-4s-f16.bin');
-        modelFiles.push('ggml-model-htdemucs_ft_drums-4s-f16.bin');
-        modelFiles.push('ggml-model-htdemucs_ft_other-4s-f16.bin');
-        modelFiles.push('ggml-model-custom-2s-f32.bin');
-    } else if (model === 'demucs-free-v3') {
-        modelFiles.push('ggml-model-hdemucs_mmi-f16.bin');
+        modelFiles.push('htdemucs_ft_bass.ort.gz');
+        modelFiles.push('htdemucs_ft_drums.ort.gz');
+        modelFiles.push('htdemucs_ft_other.ort.gz');
+        modelFiles.push('htdemucs_2s_cust.ort.gz');
     }
 
     // prepend raw gh url to all modelFiles
@@ -790,14 +757,12 @@ function activateTierUI(userTier) {
     document.getElementById('guitar').disabled = false;
 
     // Enable PRO-tier radio buttons (medium, high quality)
-    document.getElementById('default-quality').disabled = false;
     document.getElementById('medium-quality').disabled = false;
     document.getElementById('high-quality').disabled = false;
 
     // Remove lock symbol (🔒) from the labels
     document.querySelector('label[for="piano"]').textContent = 'Piano';
     document.querySelector('label[for="guitar"]').textContent = 'Guitar';
-    document.querySelector('label[for="default-quality"]').textContent = 'Default';
     document.querySelector('label[for="medium-quality"]').textContent = 'Medium';
     document.querySelector('label[for="high-quality"]').textContent = 'High';
 
@@ -840,8 +805,6 @@ nextStep1Btn.addEventListener('click', function() {
 
     step1.style.display = 'none';
     step2.style.display = 'block';
-
-    registerServiceWorker();
 });
 
 document.getElementById('activation-form').addEventListener('submit', function(event) {
