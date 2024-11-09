@@ -106,12 +106,12 @@ const tierNames = {0: 'Free', 2: 'Pro'};
 const dl_prefix = "https://bucket.freemusicdemixer.com";
 
 const modelStemMapping = {
-    'demucs-free-4s': ['bass', 'drums', 'melody', 'vocals'],
-    'demucs-free-6s': ['bass', 'drums', 'other_melody', 'vocals', 'guitar', 'piano'],
+    'demucs-free-4s': ['drums', 'bass', 'melody', 'vocals'],
+    'demucs-free-6s': ['drums', 'bass', 'other_melody', 'vocals', 'guitar', 'piano'],
+    'demucs-pro-cust': ['drums', 'bass', 'other_melody', 'vocals', 'guitar', 'piano', 'melody'],
     'demucs-karaoke': ['vocals', 'instrum'],
-    'demucs-pro-ft': ['bass', 'drums', 'melody', 'vocals'],
-    'demucs-pro-cust': ['bass', 'drums', 'other_melody', 'vocals', 'guitar', 'piano', 'melody'],
-    'demucs-pro-deluxe': ['bass', 'drums', 'melody', 'vocals']
+    'demucs-pro-ft': ['drums', 'bass', 'melody', 'vocals'],
+    'demucs-pro-deluxe': ['drums', 'bass', 'melody', 'vocals']
 };
 
 const fileInput = document.getElementById('audio-upload');
@@ -538,17 +538,17 @@ function fetchAndCacheFiles(model) {
     } else if (model === 'demucs-karaoke') {
         modelFiles.push('htdemucs_2s_cust.ort.gz');
     } else if (model === 'demucs-pro-ft') {
-        modelFiles.push('htdemucs_ft_bass.ort.gz');
         modelFiles.push('htdemucs_ft_drums.ort.gz');
+        modelFiles.push('htdemucs_ft_bass.ort.gz');
         modelFiles.push('htdemucs_ft_other.ort.gz');
         modelFiles.push('htdemucs_ft_vocals.ort.gz');
     } else if (model === 'demucs-pro-cust') {
-        modelFiles.push('htdemucs_ft_vocals.ort.gz');
+        modelFiles.push('htdemucs_2s_cust.ort.gz');
         modelFiles.push('htdemucs.ort.gz');
         modelFiles.push('htdemucs_6s.ort.gz');
     } else if (model === 'demucs-pro-deluxe') {
-        modelFiles.push('htdemucs_ft_bass.ort.gz');
         modelFiles.push('htdemucs_ft_drums.ort.gz');
+        modelFiles.push('htdemucs_ft_bass.ort.gz');
         modelFiles.push('htdemucs_ft_other.ort.gz');
         modelFiles.push('htdemucs_2s_cust.ort.gz');
     }
