@@ -1,15 +1,15 @@
-let wasmModules = [];
 let modelName;
 let modelBuffers;
 
-function loadWASMModule(numModels) {
+function loadWASMModule() {
     // Assuming the demucs.js script automatically initializes the WASM module
     try {
         importScripts('demucs_onnx_simd.js');
-        //wasmModule = libdemucs();
-        wasmModules = Array(numModels).fill().map(() => libdemucs());
+        let wasmModule = libdemucs();
+        return wasmModule;
     } catch (error) {
         console.error("Error loading WASM module script:", error);
+        return null;
     }
 }
 
@@ -26,11 +26,10 @@ function getNumModelsFromModelName() {
 }
 
 // Define the onmessage event listener
-onmessage = function(e) {
+onmessage = async function(e) {
     if (e.data.msg === 'LOAD_WASM') {
         modelName = e.data.model;
         modelBuffers = e.data.modelBuffers;
-        loadWASMModule(getNumModelsFromModelName());
     } else if (e.data.msg === 'PROCESS_AUDIO' || e.data.msg === 'PROCESS_AUDIO_BATCH') {
         const leftChannel = e.data.leftChannel;
         const rightChannel = e.data.rightChannel;
@@ -49,76 +48,80 @@ onmessage = function(e) {
         // Directly prepare data for initialization
         const modelDataArray = modelBuffers.map(buffer => new Uint8Array(buffer));
 
-        // Wait for all wasmModules to be loaded
-        Promise.all(wasmModules).then(async (loadedModules) => {
-            // map with index to use the respective wasmModules _malloc function
-            const modelDataPtrs = modelDataArray.map((data, index) => loadedModules[index]._malloc(data.byteLength));
-
-            // Copy data into WASM memory
-            modelDataArray.forEach((data, index) => loadedModules[index].HEAPU8.set(data, modelDataPtrs[index]));
-
-            // easy way to do sequential processing of each wasmModule
-            if (modelName != 'demucs-pro-cust') {
-                for (let i = 0; i < modelTotal; i++) {
-                    const loaded_module = await loadedModules[i];
-                    console.log(`Loading wasm module for model ${modelName} with len ${modelDataArray[i].byteLength}`);
-
-                    loaded_module._modelInit(
-                        modelDataPtrs[i], modelDataArray[i].byteLength);
-
-                    // Free the allocated memory if it's not needed beyond this point
-                    loaded_module._free(modelDataPtrs[i]);
-
-                    let targetWaveforms;
-                    if (e.data.msg === 'PROCESS_AUDIO') {
-                        targetWaveforms = await processAudio(leftChannel, rightChannel, loaded_module, false, modelTotal, i);
-                    } else if (e.data.msg === 'PROCESS_AUDIO_BATCH') {
-                        targetWaveforms = await processAudio(leftChannel, rightChannel, loaded_module, true, modelTotal, i);
-                    }
-
-                    inferenceResults.push(targetWaveforms);
+        // easy way to do sequential processing of each wasmModule
+        if (modelName != 'demucs-pro-cust') {
+            for (let i = 0; i < modelTotal; i++) {
+                let loadedModule = await loadWASMModule();
+                if (!loadedModule) {
+                    console.error("Error loading WASM module");
+                    return;
                 }
+
+                // map with index to use the respective wasmModules _malloc function
+                const modelDataPtr = loadedModule._malloc(modelDataArray[i].byteLength);
+
+                // Copy data into WASM memory
+                loadedModule.HEAPU8.set(modelDataArray[i], modelDataPtr);
+
+                // Load the model weights into the module
+                loadedModule._modelInit(modelDataPtr, modelDataArray[i].byteLength);
+
+                console.log(`Loaded wasm module for model ${modelName} with len ${modelDataArray[i].byteLength}`);
+
+                // Free the allocated memory if it's not needed beyond this point
+                loadedModule._free(modelDataPtr);
+
+                let targetWaveforms;
+                if (e.data.msg === 'PROCESS_AUDIO') {
+                    targetWaveforms = processAudio(leftChannel, rightChannel, loadedModule, false, modelTotal, i);
+                } else if (e.data.msg === 'PROCESS_AUDIO_BATCH') {
+                    targetWaveforms = processAudio(leftChannel, rightChannel, loadedModule, true, modelTotal, i);
+                }
+
+                inferenceResults.push(targetWaveforms);
+
+                // Free the module by deleting the reference
+                loadedModule = null;
             }
-            else {
-                // error case unsupported for now
-                console.error("Unsupported model name:", modelName);
-            }
-        }).then(() => {
-            // now, we have all the results in inferenceResults
-            // apply a postprocessing function that has per-model logic
-            // and then send the results back to the main thread
-            console.log(inferenceResults);
+        } else {
+            // error case unsupported for now
+            console.error("Unsupported model name:", modelName);
+        }
 
-            let finalWaveforms;
+        // now, we have all the results in inferenceResults
+        // apply a postprocessing function that has per-model logic
+        // and then send the results back to the main thread
+        console.log(inferenceResults);
 
-            // now inferenceResults[0] has the results for the first model
-            // for karaoke, free-4s, free-6s (single-model models), we're done
-            if (modelName === 'demucs-karaoke' || modelName === 'demucs-free-4s' || modelName === 'demucs-free-6s') {
-                finalWaveforms = inferenceResults[0];
-            }
-            // pro finetuned and deluxe are straightforward: 4 models, 4 demix for ft and 8 demix for deluxe
-            // we extract each target from the separate models e.g. final bass = model 1 bass, final drums = model 2 drums, etc.
-            else if (modelName === 'demucs-pro-ft' || modelName === 'demucs-pro-deluxe') {
-                // construct finalWaveforms from inferenceResults
-                finalWaveforms = inferenceResults[0];
+        let finalWaveforms;
 
-                finalWaveforms[0] = inferenceResults[0][1];
-                finalWaveforms[1] = inferenceResults[1][1];
-                finalWaveforms[2] = inferenceResults[2][1];
-                finalWaveforms[3] = inferenceResults[3][1];
-            } else if (modelName === 'demucs-pro-cust') {
-                console.error("Unsupported model name:", modelName);
-            }
+        // now inferenceResults[0] has the results for the first model
+        // for karaoke, free-4s, free-6s (single-model models), we're done
+        if (modelName === 'demucs-karaoke' || modelName === 'demucs-free-4s' || modelName === 'demucs-free-6s') {
+            finalWaveforms = inferenceResults[0];
+        }
+        // pro finetuned and deluxe are straightforward: 4 models, 4 demix for ft and 8 demix for deluxe
+        // we extract each target from the separate models e.g. final bass = model 1 bass, final drums = model 2 drums, etc.
+        else if (modelName === 'demucs-pro-ft' || modelName === 'demucs-pro-deluxe') {
+            // construct finalWaveforms from inferenceResults
+            finalWaveforms = [
+                inferenceResults[0][1],
+                inferenceResults[1][1],
+                inferenceResults[2][1],
+                inferenceResults[3][1],
+            ];
+        } else if (modelName === 'demucs-pro-cust') {
+            console.error("Unsupported model name:", modelName);
+        }
 
-            const transferList = finalWaveforms.map(arr => arr.buffer);
+        const transferList = finalWaveforms.map(arr => arr.buffer);
 
-            postMessage({
-                msg: e.data.msg === 'PROCESS_AUDIO' ? 'PROCESSING_DONE' : 'PROCESSING_DONE_BATCH',
-                waveforms: finalWaveforms,
-                originalLength: e.data.originalLength,
-                filename: e.data.msg === 'PROCESS_AUDIO' ? "" : e.data.filename,
-            }, transferList);
-        });
+        postMessage({
+            msg: e.data.msg === 'PROCESS_AUDIO' ? 'PROCESSING_DONE' : 'PROCESSING_DONE_BATCH',
+            waveforms: finalWaveforms,
+            originalLength: e.data.originalLength,
+            filename: e.data.msg === 'PROCESS_AUDIO' ? "" : e.data.filename,
+        }, transferList);
     }
 };
 
