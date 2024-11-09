@@ -26,14 +26,18 @@ function getNumModelsFromModelName() {
 }
 
 function getNumTargetsFromModelName() {
-    // base case for free-4s, demucs-pro-ft, demucs-pro-deluxe
-    let numTargets = 4;
+    // base case for free-4s
+    let numTargets = [4];
     if (modelName === 'demucs-free-6s') {
         // demucs-free-6s has 6 targets
-        numTargets = 6;
+        numTargets = [6];
     } else if (modelName === 'demucs-karaoke') {
         // demucs-karaoke has 2 targets
-        numTargets = 2;
+        numTargets = [2];
+    } else if (modelName === 'demucs-pro-ft') {
+        numTargets = [4, 4, 4, 4];
+    } else if (modelName === 'demucs-pro-deluxe') {
+        numTargets = [4, 4, 4, 2];
     }
 
     // demucs-pro-cust as an ensemble model outputs 7 targets
@@ -88,13 +92,13 @@ onmessage = async function(e) {
                 let targetWaveforms;
                 const batch = e.data.msg === 'PROCESS_AUDIO_BATCH';
                 let indexInModel = invert ? i * 2 : i;
-                targetWaveforms = processAudio(leftChannel, rightChannel, loadedModule, numTargets, batch, modelTotalWithAugmentations, indexInModel);
+                targetWaveforms = processAudio(leftChannel, rightChannel, loadedModule, numTargets[i], batch, modelTotalWithAugmentations, indexInModel);
 
                 // if we need to invert the waveform, we do it here
                 if (invert) {
                     invertedLeftChannel = leftChannel.map(x => -x);
                     invertedRightChannel = rightChannel.map(x => -x);
-                    invertedTargetWaveforms = processAudio(invertedLeftChannel, invertedRightChannel, loadedModule, numTargets, batch, modelTotalWithAugmentations, indexInModel + 1);
+                    invertedTargetWaveforms = processAudio(invertedLeftChannel, invertedRightChannel, loadedModule, numTargets[i], batch, modelTotalWithAugmentations, indexInModel + 1);
                     // now invert the targetWaveforms
                     invertInvertTargetWaveforms = invertedTargetWaveforms.map(arr => arr.map(x => -x));
 
@@ -216,15 +220,26 @@ onmessage = async function(e) {
         if (modelName === 'demucs-karaoke' || modelName === 'demucs-free-4s' || modelName === 'demucs-free-6s' || modelName === 'demucs-pro-cust') {
             finalWaveforms = inferenceResults[0];
         }
-        // pro finetuned and deluxe are straightforward: 4 models, 4 demix for ft and 8 demix for deluxe
+        // pro finetuned is straightforward: 4 models,  4 targets
         // we extract each target from the separate models e.g. final bass = model 1 bass, final drums = model 2 drums, etc.
-        else if (modelName === 'demucs-pro-ft' || modelName === 'demucs-pro-deluxe') {
+        else if (modelName === 'demucs-pro-ft') {
             // construct finalWaveforms from inferenceResults
             finalWaveforms = [
                 inferenceResults[0][0], inferenceResults[0][1], // drums is correct
                 inferenceResults[1][2], inferenceResults[1][3],
                 inferenceResults[2][4], inferenceResults[2][5],
                 inferenceResults[3][6], inferenceResults[3][7],
+            ];
+        }
+        // pro deluxe is similar except vocals was from a 2-stem model, so we take its first two l/r, not index 6/7
+        // we extract each target from the separate models e.g. final bass = model 1 bass, final drums = model 2 drums, etc.
+        else if (modelName === 'demucs-pro-deluxe') {
+            // construct finalWaveforms from inferenceResults
+            finalWaveforms = [
+                inferenceResults[0][0], inferenceResults[0][1], // drums is correct
+                inferenceResults[1][2], inferenceResults[1][3],
+                inferenceResults[2][4], inferenceResults[2][5],
+                inferenceResults[3][0], inferenceResults[3][1], // vocals is 0th stem from model 4 which is the 2-stem custom
             ];
         }
 

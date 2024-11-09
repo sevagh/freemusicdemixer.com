@@ -114,6 +114,47 @@ const modelStemMapping = {
     'demucs-pro-deluxe': ['drums', 'bass', 'melody', 'vocals']
 };
 
+function fetchAndCacheFiles(model) {
+    let modelFiles = [];
+    if (model === 'demucs-free-4s') {
+        modelFiles.push('htdemucs.ort.gz');
+    } else if (model === 'demucs-free-6s') {
+        modelFiles.push('htdemucs_6s.ort.gz');
+    } else if (model === 'demucs-karaoke') {
+        modelFiles.push('htdemucs_2s_cust.ort.gz');
+    } else if (model === 'demucs-pro-ft') {
+        modelFiles.push('htdemucs_ft_drums.ort.gz');
+        modelFiles.push('htdemucs_ft_bass.ort.gz');
+        modelFiles.push('htdemucs_ft_other.ort.gz');
+        modelFiles.push('htdemucs_ft_vocals.ort.gz');
+    } else if (model === 'demucs-pro-cust') {
+        modelFiles.push('htdemucs_2s_cust.ort.gz');
+        modelFiles.push('htdemucs.ort.gz');
+        modelFiles.push('htdemucs_6s.ort.gz');
+    } else if (model === 'demucs-pro-deluxe') {
+        modelFiles.push('htdemucs_ft_drums.ort.gz');
+        modelFiles.push('htdemucs_ft_bass.ort.gz');
+        modelFiles.push('htdemucs_ft_other.ort.gz');
+        modelFiles.push('htdemucs_2s_cust.ort.gz');
+    }
+
+    // prepend raw gh url to all modelFiles
+    modelFiles = modelFiles.map(file =>
+            `${dl_prefix}/${file}`
+    )
+
+    // Map each file to a fetch request and then process the response
+    const fetchPromises = modelFiles.map(file =>
+        fetch(file).then(response => {
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${file}`);
+            }
+            return response.arrayBuffer(); // Or another appropriate method depending on the file type
+        })
+    );
+    return Promise.all(fetchPromises);
+}
+
 const fileInput = document.getElementById('audio-upload');
 const folderInput = document.getElementById('batch-upload');
 const selectedInputMessage = document.getElementById('selectedInputMessage');
@@ -528,47 +569,6 @@ function initWorkers() {
         });
     }
 };
-
-function fetchAndCacheFiles(model) {
-    let modelFiles = [];
-    if (model === 'demucs-free-4s') {
-        modelFiles.push('htdemucs.ort.gz');
-    } else if (model === 'demucs-free-6s') {
-        modelFiles.push('htdemucs_6s.ort.gz');
-    } else if (model === 'demucs-karaoke') {
-        modelFiles.push('htdemucs_2s_cust.ort.gz');
-    } else if (model === 'demucs-pro-ft') {
-        modelFiles.push('htdemucs_ft_drums.ort.gz');
-        modelFiles.push('htdemucs_ft_bass.ort.gz');
-        modelFiles.push('htdemucs_ft_other.ort.gz');
-        modelFiles.push('htdemucs_ft_vocals.ort.gz');
-    } else if (model === 'demucs-pro-cust') {
-        modelFiles.push('htdemucs_2s_cust.ort.gz');
-        modelFiles.push('htdemucs.ort.gz');
-        modelFiles.push('htdemucs_6s.ort.gz');
-    } else if (model === 'demucs-pro-deluxe') {
-        modelFiles.push('htdemucs_ft_drums.ort.gz');
-        modelFiles.push('htdemucs_ft_bass.ort.gz');
-        modelFiles.push('htdemucs_ft_other.ort.gz');
-        modelFiles.push('htdemucs_2s_cust.ort.gz');
-    }
-
-    // prepend raw gh url to all modelFiles
-    modelFiles = modelFiles.map(file =>
-            `${dl_prefix}/${file}`
-    )
-
-    // Map each file to a fetch request and then process the response
-    const fetchPromises = modelFiles.map(file =>
-        fetch(file).then(response => {
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${file}`);
-            }
-            return response.arrayBuffer(); // Or another appropriate method depending on the file type
-        })
-    );
-    return Promise.all(fetchPromises);
-}
 
 async function initModel() {
     if (processingMode === 'midi') {
