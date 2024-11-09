@@ -35,11 +35,13 @@ onmessage = async function(e) {
         const rightChannel = e.data.rightChannel;
 
         const modelTotal = getNumModelsFromModelName();
+        let modelTotalWithAugmentations = modelTotal;
 
         let invert = false;
         // we invert waveform for deluxe, custom, and karaoke
         if (modelName === 'demucs-pro-deluxe' || modelName === 'demucs-pro-cust' || modelName === 'demucs-karaoke') {
             invert = true;
+            modelTotalWithAugmentations *= 2;
         }
 
         let inferenceResults = [];
@@ -72,10 +74,21 @@ onmessage = async function(e) {
                 loadedModule._free(modelDataPtr);
 
                 let targetWaveforms;
-                if (e.data.msg === 'PROCESS_AUDIO') {
-                    targetWaveforms = processAudio(leftChannel, rightChannel, loadedModule, false, modelTotal, i);
-                } else if (e.data.msg === 'PROCESS_AUDIO_BATCH') {
-                    targetWaveforms = processAudio(leftChannel, rightChannel, loadedModule, true, modelTotal, i);
+                const batch = e.data.msg === 'PROCESS_AUDIO_BATCH';
+
+                targetWaveforms = processAudio(leftChannel, rightChannel, loadedModule, batch, modelTotalWithAugmentations, i);
+
+                // if we need to invert the waveform, we do it here
+                if (invert) {
+                    console.log("Running augmented inference");
+                    invertedLeftChannel = leftChannel.map(x => -x);
+                    invertedRightChannel = rightChannel.map(x => -x);
+                    invertedTargetWaveforms = processAudio(invertedLeftChannel, invertedRightChannel, loadedModule, batch, modelTotalWithAugmentations, i+1);
+                    // now invert the targetWaveforms
+                    invertInvertTargetWaveforms = invertedTargetWaveforms.map(arr => arr.map(x => -x));
+
+                    // now sum and average with the original targetWaveforms
+                    targetWaveforms = targetWaveforms.map((arr, idx) => arr.map((x, i) => (x + invertInvertTargetWaveforms[idx][i]) / 2.0));
                 }
 
                 inferenceResults.push(targetWaveforms);
@@ -105,10 +118,10 @@ onmessage = async function(e) {
         else if (modelName === 'demucs-pro-ft' || modelName === 'demucs-pro-deluxe') {
             // construct finalWaveforms from inferenceResults
             finalWaveforms = [
-                inferenceResults[0][1],
-                inferenceResults[1][1],
-                inferenceResults[2][1],
-                inferenceResults[3][1],
+                inferenceResults[0][0], inferenceResults[0][1],
+                inferenceResults[1][0], inferenceResults[1][1],
+                inferenceResults[2][0], inferenceResults[2][1],
+                inferenceResults[3][0], inferenceResults[3][1],
             ];
         } else if (modelName === 'demucs-pro-cust') {
             console.error("Unsupported model name:", modelName);
