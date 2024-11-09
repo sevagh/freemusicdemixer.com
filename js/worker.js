@@ -31,6 +31,8 @@ onmessage = async function(e) {
         modelName = e.data.model;
         modelBuffers = e.data.modelBuffers;
     } else if (e.data.msg === 'PROCESS_AUDIO' || e.data.msg === 'PROCESS_AUDIO_BATCH') {
+        console.log(`Started demix job at ${new Date().toString()}`);
+
         const leftChannel = e.data.leftChannel;
         const rightChannel = e.data.rightChannel;
 
@@ -38,8 +40,9 @@ onmessage = async function(e) {
         let modelTotalWithAugmentations = modelTotal;
 
         let invert = false;
-        // we invert waveform for deluxe, custom, and karaoke
+        // we invert waveform for deluxe (4 models 8 inferences), custom (3 models 6 inferences), and karaoke (1 model 2 inferences)
         if (modelName === 'demucs-pro-deluxe' || modelName === 'demucs-pro-cust' || modelName === 'demucs-karaoke') {
+            console.log("Using augmented inference for model:", modelName);
             invert = true;
             modelTotalWithAugmentations *= 2;
         }
@@ -68,27 +71,26 @@ onmessage = async function(e) {
                 // Load the model weights into the module
                 loadedModule._modelInit(modelDataPtr, modelDataArray[i].byteLength);
 
-                console.log(`Loaded wasm module for model ${modelName} with len ${modelDataArray[i].byteLength}`);
-
                 // Free the allocated memory if it's not needed beyond this point
                 loadedModule._free(modelDataPtr);
 
                 let targetWaveforms;
                 const batch = e.data.msg === 'PROCESS_AUDIO_BATCH';
 
-                targetWaveforms = processAudio(leftChannel, rightChannel, loadedModule, batch, modelTotalWithAugmentations, i);
+                let indexInModel = invert ? i * 2 : i;
+
+                targetWaveforms = processAudio(leftChannel, rightChannel, loadedModule, batch, modelTotalWithAugmentations, indexInModel);
 
                 // if we need to invert the waveform, we do it here
                 if (invert) {
-                    console.log("Running augmented inference");
                     invertedLeftChannel = leftChannel.map(x => -x);
                     invertedRightChannel = rightChannel.map(x => -x);
-                    invertedTargetWaveforms = processAudio(invertedLeftChannel, invertedRightChannel, loadedModule, batch, modelTotalWithAugmentations, i+1);
+                    invertedTargetWaveforms = processAudio(invertedLeftChannel, invertedRightChannel, loadedModule, batch, modelTotalWithAugmentations, indexInModel + 1);
                     // now invert the targetWaveforms
                     invertInvertTargetWaveforms = invertedTargetWaveforms.map(arr => arr.map(x => -x));
 
                     // now sum and average with the original targetWaveforms
-                    targetWaveforms = targetWaveforms.map((arr, idx) => arr.map((x, i) => (x + invertInvertTargetWaveforms[idx][i]) / 2.0));
+                    targetWaveforms = targetWaveforms.map((arr, idx) => arr.map((x, inner_idx) => (x + invertInvertTargetWaveforms[idx][inner_idx]) / 2.0));
                 }
 
                 inferenceResults.push(targetWaveforms);
@@ -129,6 +131,7 @@ onmessage = async function(e) {
 
         const transferList = finalWaveforms.map(arr => arr.buffer);
 
+        console.log(`Finished demix job at ${new Date().toString()}`);
         postMessage({
             msg: e.data.msg === 'PROCESS_AUDIO' ? 'PROCESSING_DONE' : 'PROCESSING_DONE_BATCH',
             waveforms: finalWaveforms,
@@ -139,7 +142,6 @@ onmessage = async function(e) {
 };
 
 function processAudio(leftChannel, rightChannel, module, batch, modelTotal, indexInModel) {
-    console.log(`Started demix job at ${new Date().toString()}`);
     // Handle left channel
     let arrayPointerL = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
     let wasmArrayL = new Float32Array(module.HEAPF32.buffer, arrayPointerL, leftChannel.length);
@@ -196,7 +198,6 @@ function processAudio(leftChannel, rightChannel, module, batch, modelTotal, inde
         module._free(arrayPointerLVocals);
         module._free(arrayPointerRVocals);
 
-        console.log(`Finished demix job at ${new Date().toString()}`);
         return [
             new Float32Array(wasmArrayLBass), new Float32Array(wasmArrayRBass),
             new Float32Array(wasmArrayLDrums), new Float32Array(wasmArrayRDrums),
@@ -277,7 +278,6 @@ function processAudio(leftChannel, rightChannel, module, batch, modelTotal, inde
         }
 
         if (modelName === 'demucs-free-6s') {
-            console.log(`Finished demix job at ${new Date().toString()}`);
             return [
                 new Float32Array(wasmArrayLBass), new Float32Array(wasmArrayRBass),
                 new Float32Array(wasmArrayLDrums), new Float32Array(wasmArrayRDrums),
@@ -287,7 +287,6 @@ function processAudio(leftChannel, rightChannel, module, batch, modelTotal, inde
                 new Float32Array(wasmArrayLPiano), new Float32Array(wasmArrayRPiano)
             ];
         } else if (modelName === 'demucs-pro-cust') {
-            console.log(`Finished demix job at ${new Date().toString()}`);
             return [
                 new Float32Array(wasmArrayLBass), new Float32Array(wasmArrayRBass),
                 new Float32Array(wasmArrayLDrums), new Float32Array(wasmArrayRDrums),
@@ -327,7 +326,6 @@ function processAudio(leftChannel, rightChannel, module, batch, modelTotal, inde
         module._free(arrayPointerLInstrum);
         module._free(arrayPointerRInstrum);
 
-        console.log(`Finished demix job at ${new Date().toString()}`);
         return [
             new Float32Array(wasmArrayLVocals), new Float32Array(wasmArrayRVocals),
             new Float32Array(wasmArrayLInstrum), new Float32Array(wasmArrayRInstrum)
