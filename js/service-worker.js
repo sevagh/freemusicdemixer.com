@@ -40,7 +40,6 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  console.log(`Logging the request url: ${event.request.url}`)
   // Check if the request is for a .bin file from the external resource
   if (event.request.url.startsWith("https://bucket.freemusicdemixer.com/") &&
       event.request.url.endsWith('.ort.gz')) {
