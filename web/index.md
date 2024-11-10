@@ -111,11 +111,11 @@ header_class: index
             <b>Max memory:</b>
             <form id="memorySelectorForm">
             <div>
-                <input type="radio" id="4gb" name="memory" value="4gb" checked>
-                <label for="4gb">4 GB (default speed)</label>
+                <input type="radio" id="4gb" name="memory" value="4gb">
+                <label for="4gb">4 GB (slowest)</label>
             </div>
             <div>
-                <input type="radio" id="8gb" name="memory" value="8gb">
+                <input type="radio" id="8gb" name="memory" value="8gb" checked>
                 <label for="8gb">8 GB (2x faster)</label>
             </div>
             <div>

@@ -210,9 +210,6 @@ onmessage = async function(e) {
 
         // now, we have all the results in inferenceResults
         // apply a postprocessing function that has per-model logic
-        // and then send the results back to the main thread
-        console.log(inferenceResults);
-
         let finalWaveforms;
 
         // now inferenceResults[0] has the results for the first model
