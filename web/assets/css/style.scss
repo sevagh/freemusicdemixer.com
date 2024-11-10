@@ -37,10 +37,27 @@
   box-sizing: border-box;
 }
 
+/* Default link colors for light theme, excluding navbar links */
+.theme-light body a:not(.navbar-links a) {
+  color: #0000EE; /* Standard blue */
+}
+
+.theme-light body a:not(.navbar-links a):visited {
+  color: #551A8B; /* Standard purple for visited links */
+}
+
+/* Custom link colors for dark theme, excluding navbar links */
+.theme-dark body a:not(.navbar-links a) {
+  color: #87CEEB; /* Light blue for contrast */
+}
+
+.theme-dark body a:not(.navbar-links a):visited {
+  color: #9370DB; /* Light purple for visited links */
+}
+
 img.responsive-img-android {
   width: 75%; /* default width for mobile devices */
 }
-
 
 // Smooth scrolling
 html {

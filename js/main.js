@@ -51,14 +51,20 @@ function applyTheme(theme) {
         document.documentElement.classList.add('theme-dark');
         themeIcon.className = 'fa fa-sun';
         themeToggle.setAttribute('aria-label', 'Switch to light mode');
-        demixImg.src = '/assets/images/music-demix-dark.webp';
-        amtImg.src = '/assets/images/midi-amt-dark.webp';
+        // only toggle images if they're not null
+        if (demixImg && amtImg) {
+            demixImg.src = '/assets/images/music-demix-dark.webp';
+            amtImg.src = '/assets/images/midi-amt-dark.webp';
+        }
     } else {
         document.documentElement.classList.add('theme-light');
         themeIcon.className = 'fa fa-moon';
         themeToggle.setAttribute('aria-label', 'Switch to dark mode');
-        demixImg.src = '/assets/images/music-demix.webp';
-        amtImg.src = '/assets/images/midi-amt.webp';
+        // only toggle images if they're not null
+        if (demixImg && amtImg) {
+          demixImg.src = '/assets/images/music-demix.webp';
+          amtImg.src = '/assets/images/midi-amt.webp';
+        }
     }
 }
 
