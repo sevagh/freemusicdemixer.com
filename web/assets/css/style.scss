@@ -252,7 +252,7 @@ button:hover {
 }
 
 .theme-dark .wizard-container {
-  background-color: #333;
+  background-color: #595959;
   color: #e0e0e0;
 }
 
@@ -405,7 +405,7 @@ input[type="radio"][disabled] + label {
 }
 
 .theme-dark .modal-content {
-  background-color: black;
+  background-color: #333;
 }
 
 .modal-content form {
@@ -566,7 +566,14 @@ section.featured-badges {
   justify-content: center;
   align-items: center;
   padding: 30px 0;
+}
+
+.theme-light .demixer-section {
   background-color: #f5f5f5; /* Light gray background for the section */
+}
+
+.theme-dark .demixer-section {
+  background-color: #333; /* Dark gray background for the section */
 }
 
 /* Style the input and buttons consistently */
