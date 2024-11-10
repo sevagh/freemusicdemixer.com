@@ -269,7 +269,7 @@ button:hover {
 }
 
 .theme-dark .wizard-container {
-  background-color: #595959;
+  background-color: #4c4c4c;
   color: #e0e0e0;
 }
 
@@ -295,12 +295,19 @@ button:hover {
 //TODO: colors here?
 .cta-legend {
   font-size: 14px;
-  color: #333;
   //background-color: #f0f0f0;
   padding: 10px;
   text-align: center;
   border-radius: 5px;
   margin-top: 10px;
+}
+
+.theme-light .cta-legend {
+  color: #333;
+}
+
+.theme-dark .cta-legend {
+  color: #e0e0e0;
 }
 
 .cta-legend a {
@@ -899,9 +906,16 @@ footer {
 /* Ensure progress container is centered and styled */
 .progress-container {
   width: 100%;
-  background-color: #ddd;
   border-radius: 10px;
   margin-bottom: 20px; /* Reintroducing the margin-bottom */
+}
+
+.theme-light .progress-container {
+  background-color: #ddd;
+}
+
+.theme-dark .progress-container {
+  background-color: #4c4c4c;
 }
 
 .progress-bar {
