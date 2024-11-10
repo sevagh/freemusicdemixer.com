@@ -361,7 +361,13 @@ function processAudio(leftChannel, rightChannel, module, numTargets, batch, mode
         return processedWaveforms;
     } catch (error) {
         console.error('Error in processAudio:', error);
-        // Optionally, handle memory cleanup here if necessary
-        return [];
+
+        console.error("Error processing audio");
+        postMessage({
+            msg: 'WASM_ERROR',
+        });
+
+        // don't return here but abort
+        close();
     }
 }

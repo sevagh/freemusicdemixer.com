@@ -264,6 +264,9 @@ function resetUIElements() {
     qualityRadios.forEach(radio => radio.checked = false);
     document.getElementById('default-quality').checked = true;
 
+    // set memory radio buttons to default
+    document.getElementById('8gb').checked = true;
+
     // reset all disabled buttons to disabled
     nextStep2Btn.disabled = true;
     nextStep3Btn.disabled = true;
@@ -554,6 +557,20 @@ function initWorkers() {
                         processedSegments = null;
                     }
                 }
+            } else if (e.data.msg === 'WASM_ERROR') {
+                // Handle the error by modifying the UI to reflect the error state
+                console.log('Error executing WASM');
+                // fill the inference progress bar with the color red
+                document.getElementById('inference-progress-bar').style.backgroundColor = 'red';
+                document.getElementById('inference-progress-bar').style.width = "100%";
+
+                // in the outputs div, write in red text
+                const outputLinksDiv = document.getElementById('output-links');
+
+                const errorText = document.createElement('p');
+                errorText.textContent = '❌ An error occurred. Refresh the page and try again with more memory from "Advanced" settings';
+
+                outputLinksDiv.appendChild(errorText);
             }
         };
 
