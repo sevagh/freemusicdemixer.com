@@ -14,7 +14,7 @@ header_class: index
 </section>
 
 <section class="image-section">
-<img class="title-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
+<img id="music-demix-img" class="title-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
 </section>
 
 <section class="info-section">
@@ -22,7 +22,7 @@ header_class: index
 </section>
 
 <section class="image-section">
-<img class="title-img" src="/assets/images/midi-amt.webp" alt="midi-amt-diagram"/>
+<img id="amt-img" class="title-img" src="/assets/images/midi-amt.webp" alt="midi-amt-diagram"/>
 </section>
 
 <section class="info-section">

@@ -40,6 +40,8 @@ document.getElementById('activation-form').addEventListener('submit', function(e
 
 const themeToggle = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
+const demixImg = document.getElementById('music-demix-img');
+const amtImg = document.getElementById('amt-img');
 
 // Apply theme and update icon and label
 function applyTheme(theme) {
@@ -49,10 +51,14 @@ function applyTheme(theme) {
         document.documentElement.classList.add('theme-dark');
         themeIcon.className = 'fa fa-sun';
         themeToggle.setAttribute('aria-label', 'Switch to light mode');
+        demixImg.src = '/assets/images/music-demix-dark.webp';
+        amtImg.src = '/assets/images/midi-amt-dark.webp';
     } else {
         document.documentElement.classList.add('theme-light');
         themeIcon.className = 'fa fa-moon';
         themeToggle.setAttribute('aria-label', 'Switch to dark mode');
+        demixImg.src = '/assets/images/music-demix.webp';
+        amtImg.src = '/assets/images/midi-amt.webp';
     }
 }
 
