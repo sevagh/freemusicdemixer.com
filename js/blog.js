@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
         filteredPosts = [];  // clear previously filtered posts
 
         allPosts.forEach(function(post) {
-            if ((type === "category" && post.getAttribute("data-category").includes(value)) || 
+            if ((type === "category" && post.getAttribute("data-category").includes(value)) ||
                 !type) {
                 filteredPosts.push(post);
             }
@@ -20,13 +20,13 @@ document.addEventListener("DOMContentLoaded", function() {
     function updateDisplayedPosts() {
         // First, hide all posts
         allPosts.forEach(post => post.style.display = 'none');
-      
+
         // Then display the ones based on the current page
         const start = (currentPage - 1) * postsPerPage;
         const end = start + postsPerPage;
 
         filteredPosts.slice(start, end).forEach(post => post.style.display = 'block');
-      
+
         // Update pagination buttons' state
         document.getElementById('prevPage').disabled = (currentPage === 1);
         document.getElementById('nextPage').disabled = (currentPage * postsPerPage >= filteredPosts.length);
@@ -58,14 +58,14 @@ document.addEventListener("DOMContentLoaded", function() {
     blogLandingFilterLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-    
+
             let type = this.getAttribute('data-type');
             let value = this.getAttribute('data-value');
-    
+
             // Use pushState to update URL without reloading
             let newURL = `/blog?${type}=${value}`;
             window.history.pushState({}, "", newURL);
-            
+
             filterPosts(type, value);
             updateDisplayedPosts();
         });
@@ -73,13 +73,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.addEventListener('popstate', function(event) {
         const params = getQueryParams();
-        
+
         if (params.category) {
             filterPosts("category", params.category);
         } else {
             resetFilters();
         }
-        
+
         updateDisplayedPosts();
     });
 
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         return params;
     }
-    
+
     const params = getQueryParams();
     if (params.category) {
         filterPosts("category", params.category);

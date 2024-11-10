@@ -37,21 +37,21 @@
   box-sizing: border-box;
 }
 
-/* Default link colors for light theme, excluding navbar links */
-.theme-light body a:not(.navbar-links a) {
+/* Default link colors for light theme, excluding navbar and footer links */
+.theme-light body a:not(.navbar-links a):not(.footer-container a) {
   color: #0000EE; /* Standard blue */
 }
 
-.theme-light body a:not(.navbar-links a):visited {
+.theme-light body a:not(.navbar-links a):not(.footer-container a):visited {
   color: #551A8B; /* Standard purple for visited links */
 }
 
-/* Custom link colors for dark theme, excluding navbar links */
-.theme-dark body a:not(.navbar-links a) {
+/* Custom link colors for dark theme, excluding navbar and footer links */
+.theme-dark body a:not(.navbar-links a):not(.footer-container a) {
   color: #87CEEB; /* Light blue for contrast */
 }
 
-.theme-dark body a:not(.navbar-links a):visited {
+.theme-dark body a:not(.navbar-links a):not(.footer-container a):visited {
   color: #9370DB; /* Light purple for visited links */
 }
 
@@ -947,13 +947,20 @@ footer {
 }
 
 .card {
-  background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: auto; /* Adjust as necessary */
   margin: 10px;
   overflow: hidden;
   transition: box-shadow 0.3s ease-in-out;
+}
+
+.theme-light .card {
+  background: #fff;
+}
+
+.theme-dark .card {
+  background: #666;
 }
 
 .card-content {
@@ -974,12 +981,12 @@ footer {
   margin: 0px 0; /* Reduced margin for less vertical space */
 }
 
-#demo-app h2.card-title {
-  color: white;
+.theme-light #demo-app h2.card-title {
+  color: black;
 }
 
-#demo-app h2.card-title {
-  color: black;
+.theme-dark #demo-app h2.card-title {
+  color: white;
 }
 
 audio {
@@ -1129,10 +1136,12 @@ div.tag-cloud {
     vertical-align: middle; /* Align middle to make sure it aligns well with the text */
 }
 
-.share-text {
+.theme-light .share-text {
   color: #333; /* Dark Magenta, same as your other headings */
-  //font-weight: bold; /* for a bold appearance like headings */
-  //font-size: 1.2em; /* adjust the size if needed */
+}
+
+.theme-dark .share-text {
+  color: #f5f5f5; /* Light Magenta, same as your other headings */
 }
 
 #mc_embed_signup {

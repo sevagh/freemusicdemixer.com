@@ -43,6 +43,21 @@ const themeIcon = document.getElementById('theme-icon');
 const demixImg = document.getElementById('music-demix-img');
 const amtImg = document.getElementById('amt-img');
 
+// Function to change the Giscus theme if the iframe is loaded
+function changeGiscusTheme(theme) {
+  function sendMessage(message) {
+      const iframe = document.querySelector('iframe.giscus-frame');
+      if (!iframe) return; // Exit if the iframe is not loaded
+      iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+  }
+
+  sendMessage({
+      setConfig: {
+          theme: theme
+      }
+  });
+}
+
 // Apply theme and update icon and label
 function applyTheme(theme) {
     document.documentElement.classList.remove('theme-dark', 'theme-light');
@@ -65,6 +80,12 @@ function applyTheme(theme) {
           demixImg.src = '/assets/images/music-demix.webp';
           amtImg.src = '/assets/images/midi-amt.webp';
         }
+    }
+
+    // Additional behavior for post.html pages
+    const isPostPage = document.getElementById('giscus-script');
+    if (isPostPage) {
+        changeGiscusTheme(theme);
     }
 }
 
