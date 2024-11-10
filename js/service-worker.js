@@ -1,4 +1,4 @@
-const CACHE_NAME = "PRO_v20241107";
+const CACHE_NAME = "PRO_v20241110";
 
 const RESOURCES_TO_PRELOAD = [
   "https://bucket.freemusicdemixer.com/htdemucs.ort.gz",
