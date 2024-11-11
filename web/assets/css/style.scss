@@ -37,10 +37,214 @@
   box-sizing: border-box;
 }
 
+.theme-light {
+  body a:not(.navbar-links a):not(.footer-container a) {
+    color: #0000EE; /* Standard blue */
+  }
+  body a:not(.navbar-links a):not(.footer-container a):visited {
+    color: #551A8B; /* Standard purple for visited links */
+  }
+  body {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+  h1 {
+    color: #333;
+  }
+  h2 {
+    color: #444;
+  }
+  .wizard-container {
+    background-color: #e0e0e0;
+    color: #333;
+  }
+  cta-legend {
+    color: #333;
+  }
+  #membership-status {
+    color: white;
+  }
+  .modal-content {
+    background-color: white;
+  }
+  .output-link-container {
+    background-color: #f0f0f0; /* Light gray background to match the site */
+    color: #333; /* Darker gray text */
+  }
+  .demixer-section {
+    background-color: #f5f5f5; /* Light gray background for the section */
+  }
+  .progress-container {
+    background-color: #ddd;
+  }
+  .card {
+    background: #fff;
+  }
+  #demo-app h2.card-title {
+    color: black;
+  }
+  .share-text {
+    color: #333; /* Dark Magenta, same as your other headings */
+  }
+}
+
+.theme-dark {
+  body a:not(.navbar-links a):not(.footer-container a) {
+    color: #87CEEB; /* Light blue for contrast */
+  }
+  body a:not(.navbar-links a):not(.footer-container a):visited {
+    color: #9370DB; /* Light purple for visited links */
+  }
+  body {
+    background-color: #333;
+    color: #f5f5f5;
+  }
+  h1 {
+    color: #f5f5f5;
+  }
+  h2 {
+    color: #f5f5f5;
+  }
+  .wizard-container {
+    background-color: #4c4c4c;
+    color: #e0e0e0;
+  }
+  .cta-legend {
+    color: #e0e0e0;
+  }
+  #membership-status {
+    color: black;
+  }
+  .modal-content {
+    background-color: #333;
+  }
+  .output-link-container {
+    background-color: #333; /* Dark gray background to match the site */
+    color: #f0f0f0; /* Lighter gray text */
+  }
+  .demixer-section {
+    background-color: #333; /* Dark gray background for the section */
+  }
+  .progress-container {
+    background-color: #4c4c4c;
+  }
+  .card {
+    background: #666;
+  }
+  #demo-app h2.card-title {
+    color: white;
+  }
+  .share-text {
+    color: #f5f5f5; /* Light Magenta, same as your other headings */
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body a:not(.navbar-links a):not(.footer-container a) {
+    color: #0000EE; /* Standard blue */
+  }
+  body a:not(.navbar-links a):not(.footer-container a):visited {
+    color: #551A8B; /* Standard purple for visited links */
+  }
+  body {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+  h1 {
+    color: #333;
+  }
+  h2 {
+    color: #444;
+  }
+  .wizard-container {
+    background-color: #e0e0e0;
+    color: #333;
+  }
+  cta-legend {
+    color: #333;
+  }
+  #membership-status {
+    color: white;
+  }
+  .modal-content {
+    background-color: white;
+  }
+  .output-link-container {
+    background-color: #f0f0f0; /* Light gray background to match the site */
+    color: #333; /* Darker gray text */
+  }
+  .demixer-section {
+    background-color: #f5f5f5; /* Light gray background for the section */
+  }
+  .progress-container {
+    background-color: #ddd;
+  }
+  .card {
+    background: #fff;
+  }
+  #demo-app h2.card-title {
+    color: black;
+  }
+  .share-text {
+    color: #333; /* Dark Magenta, same as your other headings */
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body a:not(.navbar-links a):not(.footer-container a) {
+    color: #87CEEB; /* Light blue for contrast */
+  }
+  body a:not(.navbar-links a):not(.footer-container a):visited {
+    color: #9370DB; /* Light purple for visited links */
+  }
+  body {
+    background-color: #333;
+    color: #f5f5f5;
+  }
+  h1 {
+    color: #f5f5f5;
+  }
+  h2 {
+    color: #f5f5f5;
+  }
+  .wizard-container {
+    background-color: #4c4c4c;
+    color: #e0e0e0;
+  }
+  .cta-legend {
+    color: #e0e0e0;
+  }
+  #membership-status {
+    color: black;
+  }
+  .modal-content {
+    background-color: #333;
+  }
+  .output-link-container {
+    background-color: #333; /* Dark gray background to match the site */
+    color: #f0f0f0; /* Lighter gray text */
+  }
+  .demixer-section {
+    background-color: #333; /* Dark gray background for the section */
+  }
+  .progress-container {
+    background-color: #4c4c4c;
+  }
+  .card {
+    background: #666;
+  }
+  #demo-app h2.card-title {
+    color: white;
+  }
+  .share-text {
+    color: #f5f5f5; /* Light Magenta, same as your other headings */
+  }
+}
+
+
 img.responsive-img-android {
   width: 75%; /* default width for mobile devices */
 }
-
 
 // Smooth scrolling
 html {
@@ -48,153 +252,150 @@ html {
 }
 
 section {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    text-align: left;
-    scroll-snap-align: start;
-    flex-direction: column;
-  }
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  text-align: left;
+  scroll-snap-align: start;
+  flex-direction: column;
+}
 
-  /* General body styles */
-  body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
-    overflow-x: hidden;
-    scroll-snap-type: y mandatory;
-  }
+/* General body styles */
+body {
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+}
 
-  .main-container {
-    max-width: 1200px; /* Content will not exceed 1200px */
-    margin: 0 auto; /* Center content horizontally */
-    padding-left: 50px; /* Adjust for how far from the left it should be */
-  }
+.main-container {
+  max-width: 1200px; /* Content will not exceed 1200px */
+  margin: 0 auto; /* Center content horizontally */
+  padding-left: 50px; /* Adjust for how far from the left it should be */
+}
 
-  h1 {
-    font-size: 3em;
-    font-weight: 600;
-    color: #111;
-    display: inline-block; /* This makes the h1 behave better when it wraps */
-    line-height: 1.2em;
-    margin-bottom: 15px;
-  }
+h1 {
+  font-size: 3em;
+  font-weight: 600;
+  display: inline-block; /* This makes the h1 behave better when it wraps */
+  line-height: 1.2em;
+  margin-bottom: 15px;
+}
 
-  h2 {
-    font-size: 2em;
-    font-weight: 600;
-    color: #444;
-    display: inline-block; /* This makes the h1 behave better when it wraps */
-    line-height: 1.2em;
-    margin-bottom: 15px;
-  }
+h2 {
+  font-size: 2em;
+  font-weight: 600;
+  display: inline-block; /* This makes the h1 behave better when it wraps */
+  line-height: 1.2em;
+  margin-bottom: 15px;
+}
 
-  h3 {
-    font-size: 1.4em;
-    font-weight: 500;
-  }
+h3 {
+  font-size: 1.4em;
+  font-weight: 500;
+}
 
-  h4 {
-    font-size: 1.25em;
-    font-weight: 525;
-  }
+h4 {
+  font-size: 1.25em;
+  font-weight: 525;
+}
 
-  p {
-    font-size: 0.75em;
-    margin-bottom: 20px;
-  }
+p {
+  font-size: 0.75em;
+  margin-bottom: 20px;
+}
 
-  /* Title Section Styling */
-  section.title-section {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    padding-left: 5%; /* Adjusts how much it's pushed to the left */
-    padding-top: 5%; /* Adjusts how much higher it sits */
-    padding-bottom: 5%;
-    min-height: 5vh; /* Maintain a large height */
-    text-align: left;
-  }
+/* Title Section Styling */
+section.title-section {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-left: 5%; /* Adjusts how much it's pushed to the left */
+  padding-top: 5%; /* Adjusts how much higher it sits */
+  padding-bottom: 5%;
+  min-height: 5vh; /* Maintain a large height */
+  text-align: left;
+}
 
-  section.title-section h1 {
-    margin-bottom: 20px;
-  }
+section.title-section h1 {
+  margin-bottom: 20px;
+}
 
-  section.title-section h2 {
-    margin-left: 80px;
-    margin-top: -20px;
-    margin-bottom: 20px;
-  }
+section.title-section h2 {
+  margin-left: 80px;
+  margin-top: -20px;
+  margin-bottom: 20px;
+}
 
-  /* Remove underline from title link */
-  a.title-link {
-    text-decoration: none;
-    color: inherit; /* Ensures the link has the same color as the text */
-  }
+/* Remove underline from title link */
+a.title-link {
+  text-decoration: none;
+  color: inherit; /* Ensures the link has the same color as the text */
+}
 
-  a.title-link:hover {
-    text-decoration: none; /* Ensures no underline on hover as well */
-  }
+a.title-link:hover {
+  text-decoration: none; /* Ensures no underline on hover as well */
+}
 
-  img.title-img {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    max-width: 50%;
-  }
+img.title-img {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  max-width: 50%;
+}
 
-  section.info-section {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    padding-left: 5%; /* Adjusts how much it's pushed to the left */
-    padding-top: 5%; /* Adjusts how much higher it sits */
-    min-height: 0vh; /* Maintain a large height */
-    text-align: left;
-  }
+section.info-section {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-left: 5%; /* Adjusts how much it's pushed to the left */
+  padding-top: 5%; /* Adjusts how much higher it sits */
+  min-height: 0vh; /* Maintain a large height */
+  text-align: left;
+}
 
-  #posts-container {
-    margin-top: -20px;
-  }
+#posts-container {
+  margin-top: -20px;
+}
 
-  div.clouds {
-    margin-bottom: 20px;
-  }
+div.clouds {
+  margin-bottom: 20px;
+}
 
-  /* Align SVG badges side by side using Flexbox */
-  section.featured-badges {
-    display: flex;
-    flex-wrap: wrap; /* Wrap to the next line if needed */
-    justify-content: center;
-    gap: 15px; /* Space between badges */
-    align-items: center;
-  }
+/* Align SVG badges side by side using Flexbox */
+section.featured-badges {
+  display: flex;
+  flex-wrap: wrap; /* Wrap to the next line if needed */
+  justify-content: center;
+  gap: 15px; /* Space between badges */
+  align-items: center;
+}
 
-  section.featured-section h3 {
-    margin-bottom: 20px;
-    text-align: left; /* Ensure "Featured on" is left-aligned */
-  }
+section.featured-section h3 {
+  margin-bottom: 20px;
+  text-align: left; /* Ensure "Featured on" is left-aligned */
+}
 
-  /* Align SVG badges side by side */
-  section.featured-section a {
-    display: inline-block;
-    margin: 0px; /* Space between the badges */
-    vertical-align: middle;
-  }
+/* Align SVG badges side by side */
+section.featured-section a {
+  display: inline-block;
+  margin: 0px; /* Space between the badges */
+  vertical-align: middle;
+}
 
-  input[type="file"], button {
-    padding: 15px 30px;
-    font-size: 1.1em;
-    border: none;
-    border-radius: 5px;
-    background-color: #0077cc;
-    color: white;
-    cursor: pointer;
-  }
+//TODO: colors here?
+input[type="file"], button {
+  padding: 15px 30px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 5px;
+  background-color: #0077cc;
+  color: white;
+  cursor: pointer;
+}
 
-  button:hover, input[type="file"]:hover {
-    background-color: #005fa3;
-  }
+button:hover, input[type="file"]:hover {
+  background-color: #005fa3;
+}
 
   /* Style for enabled buttons */
 button {
@@ -215,11 +416,9 @@ button:hover {
 .wizard-container {
   width: 800px;
   height: 500px;
-  background-color: #e0e0e0;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  color: #333;
   position: relative; /* To ensure the footer is positioned inside the container */
   padding: 20px;
   box-sizing: border-box; /* Ensures padding is included in width and height */
@@ -244,9 +443,9 @@ button:hover {
   width: calc(100% - 40px); /* Full width with padding */
 }
 
+//TODO: colors here?
 .cta-legend {
   font-size: 14px;
-  color: #333;
   //background-color: #f0f0f0;
   padding: 10px;
   text-align: center;
@@ -270,6 +469,7 @@ button:hover {
   flex-shrink: 0;
 }
 
+//TODO: colors here?
 .wizard-footer button {
   padding: 10px 15px;
   background-color: #007bff;
@@ -298,34 +498,34 @@ button:disabled:hover {
   color: #666666; /* Darker grey text to lower contrast */
 }
 
-  /* Top-Right Button Styles */
-  .top-right-container {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9em; /* Make the text size smaller */
-    z-index: 100; /* Ensures it's always on top */
-  }
+/* Top-Right Button Styles */
+.top-right-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9em; /* Make the text size smaller */
+  z-index: 100; /* Ensures it's always on top */
+}
 
-  .top-right-container .btn-small,
-  .top-right-container button {
-    background-color: #0077cc;
-    color: white;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 0.9em; /* Smaller text size */
-    cursor: pointer;
-  }
+.top-right-container .btn-small,
+.top-right-container button {
+  background-color: #0077cc;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 0.9em; /* Smaller text size */
+  cursor: pointer;
+}
 
-  .top-right-container .btn-small:hover,
-  .top-right-container button:hover {
-    background-color: #005fa3;
-  }
+.top-right-container .btn-small:hover,
+.top-right-container button:hover {
+  background-color: #005fa3;
+}
 
 /* Ensure the cursor shows as not-allowed for disabled checkboxes and radio buttons */
 input[type="checkbox"][disabled] + label,
@@ -335,75 +535,73 @@ input[type="radio"][disabled] + label {
   opacity: 0.6; /* Slightly faded to match the disabled state */
 }
 
-  #membership-status {
-    color: white;
-    font-size: 0.9em;
-  }
+#membership-status {
+  font-size: 0.9em;
+}
 
-  /* Modal Styling */
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-  }
+/* Modal Styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
 
-  .modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 400px;
-    width: 100%;
-  }
+.modal-content {
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
+}
 
-  .modal-content form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-  .modal-content label {
-    font-size: 1em;
-  }
+.modal-content label {
+  font-size: 1em;
+}
 
-  .modal-content input[type="email"] {
-    padding: 10px;
-    font-size: 1em;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
+.modal-content input[type="email"] {
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
 
-  .modal-content button {
-    padding: 10px;
-    background-color: #0077cc;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
+//TODO: colors here?
+.modal-content button {
+  padding: 10px;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
-  .modal-content button:hover {
-    background-color: #005fa3;
-  }
+.modal-content button:hover {
+  background-color: #005fa3;
+}
 
-  .modal-content .close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.5em;
-    cursor: pointer;
-  }
+.modal-content .close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5em;
+  cursor: pointer;
+}
 
-  /* Wizard Section */
-  section.wizard-section {
-    padding: 30px 0; /* Reduce padding for tighter spacing */
-  }
+/* Wizard Section */
+section.wizard-section {
+  padding: 30px 0; /* Reduce padding for tighter spacing */
+}
 
 /* Output links container */
 .output-link-container {
@@ -414,9 +612,7 @@ input[type="radio"][disabled] + label {
   justify-content: flex-start; /* Start content from the top */
   padding: 5px 10px; /* Add a little padding for the content */
   margin: 0 auto; /* Auto horizontal margins for centering */
-  background-color: #f0f0f0; /* Light gray background to match the site */
   border-radius: 10px; /* Rounded corners */
-  color: #333; /* Darker gray text */
   max-height: 130px; /* Set a max height to prevent overflow */
   overflow-y: auto; /* Always show the vertical scrollbar */
   overflow-x: scroll; /* Always show the horizontal scrollbar */
@@ -429,6 +625,7 @@ input[type="radio"][disabled] + label {
   width: 16px; /* Width of the scrollbar for WebKit browsers */
 }
 
+//TODO: colors here?
 .output-link-container::-webkit-scrollbar-track {
   background: #e0e0e0; /* Lighter gray for scrollbar track */
 }
@@ -474,35 +671,35 @@ input[type="radio"][disabled] + label {
   max-width: 300px; /* Adjust this value as necessary */
 }
 
-  /* Featured Section */
-  section.featured-section {
-    padding: 20px 0;
-    min-height: 10vh; /* Maintain a large height */
-  }
+/* Featured Section */
+section.featured-section {
+  padding: 20px 0;
+  min-height: 10vh; /* Maintain a large height */
+}
 
-  section.featured-badges {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start; /* Align badges to the left */
-    gap: 15px; /* Space between badges */
-    margin-top: 20px;
-  }
+section.featured-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; /* Align badges to the left */
+  gap: 15px; /* Space between badges */
+  margin-top: 20px;
+}
 
-  .image-section {
-    display: flex; /* Use flexbox to center the image */
-    justify-content: center; /* Horizontally center the image */
-    align-items: center; /* Vertically center the image (if necessary) */
-    width: 100%; /* Ensure the section takes the full width of the parent container */
-    padding: 20px; /* Optional: Add some padding around the image */
-    min-height: 20vh;
-    margin-top: 2vh;
-  }
+.image-section {
+  display: flex; /* Use flexbox to center the image */
+  justify-content: center; /* Horizontally center the image */
+  align-items: center; /* Vertically center the image (if necessary) */
+  width: 100%; /* Ensure the section takes the full width of the parent container */
+  padding: 20px; /* Optional: Add some padding around the image */
+  min-height: 20vh;
+  margin-top: 2vh;
+}
 
-  .image-section img {
-    width: 100%; /* Make the image expand to fill the parent container */
-    height: auto; /* Maintain the aspect ratio */
-    max-width: 100%; /* Optional: Limit the maximum width to avoid stretching too much */
-  }
+.image-section img {
+  width: 100%; /* Make the image expand to fill the parent container */
+  height: auto; /* Maintain the aspect ratio */
+  max-width: 100%; /* Optional: Limit the maximum width to avoid stretching too much */
+}
 
   /* Container for the wizard application */
 .demixer-section {
@@ -510,7 +707,6 @@ input[type="radio"][disabled] + label {
   justify-content: center;
   align-items: center;
   padding: 30px 0;
-  background-color: #f5f5f5; /* Light gray background for the section */
 }
 
 /* Style the input and buttons consistently */
@@ -522,142 +718,144 @@ input[type="radio"][disabled] + label {
   margin-top: 10px;
 }
 
-  // Footer Styles
-  footer {
-    background-color: #111;
-    padding: 20px;
-    color: #fff;
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    width: 100vw; /* Full viewport width */
-  }
+// Footer Styles
+footer {
+  background-color: #111;
+  padding: 20px;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  width: 100vw; /* Full viewport width */
+}
 
-  .footer-container {
-    display: flex;
-    justify-content: space-between;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 50px; /* Add padding to match main container */
-  }
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 50px; /* Add padding to match main container */
+}
 
-  .footer-left {
-    text-align: left;
-  }
+.footer-left {
+  text-align: left;
+}
 
-  .contact a {
-    color: #00acee;
-    text-decoration: none;
-  }
+.contact a {
+  color: #00acee;
+  text-decoration: none;
+}
 
-  .contact a:hover {
-    text-decoration: underline;
-  }
+.contact a:hover {
+  text-decoration: underline;
+}
 
-  .social-media a {
-    margin: 0 10px;
-    color: #fff;
-    font-size: 24px;
-  }
+.social-media a {
+  margin: 0 10px;
+  color: #fff;
+  font-size: 24px;
+}
 
 /* Middle Column (Products) */
 .footer-middle {
-    text-align: left;
-  }
+  text-align: left;
+}
 
-  .footer-middle nav {
-    display: flex;
-    flex-direction: column;
-  }
+.footer-middle nav {
+  display: flex;
+  flex-direction: column;
+}
 
-  .footer-middle nav a {
-    margin-bottom: 10px;
-    color: #fff;
-    text-decoration: none;
-  }
+// TODO: colors here?
+.footer-middle nav a {
+  margin-bottom: 10px;
+  color: #fff;
+  text-decoration: none;
+}
 
-  .footer-middle nav a:hover {
-    text-decoration: underline;
-  }
+.footer-middle nav a:hover {
+  text-decoration: underline;
+}
 
-  .footer-right {
-    text-align: left;
-  }
+.footer-right {
+  text-align: left;
+}
 
-  .footer-right nav {
-    display: flex;
-    flex-direction: column;
-  }
+.footer-right nav {
+  display: flex;
+  flex-direction: column;
+}
 
-  .footer-right nav a {
-    margin-bottom: 10px;
-    color: #fff;
-    text-decoration: none;
-  }
+.footer-right nav a {
+  margin-bottom: 10px;
+  color: #fff;
+  text-decoration: none;
+}
 
-  .footer-right nav a:hover {
-    text-decoration: underline;
-  }
+.footer-right nav a:hover {
+  text-decoration: underline;
+}
 
-  .footer-left, .footer-middle, .footer-right {
-    flex: 1; /* Allow each column to take equal space */
-    max-width: 20%; /* Limit each column to a third of the footer */
-  }
-  .footer-middle, .footer-right {
-    padding-left: 5%;
-  }
+.footer-left, .footer-middle, .footer-right {
+  flex: 1; /* Allow each column to take equal space */
+  max-width: 20%; /* Limit each column to a third of the footer */
+}
+.footer-middle, .footer-right {
+  padding-left: 5%;
+}
 
-  .small-text {
-    font-size: 0.9em;
-    color: #888;
-  }
+//TODO: colors here?
+.small-text {
+  font-size: 0.9em;
+  color: #888;
+}
 
-  .footer-bottom {
-    font-size: 0.9em;
-    color: #888;
-    text-align: center;
-    margin-top: 20px;
-  }
+.footer-bottom {
+  font-size: 0.9em;
+  color: #888;
+  text-align: center;
+  margin-top: 20px;
+}
 
-  .styled-link {
-    display: inline-block;
-    height: 40px; /* Match the height of your images */
-    border: 1.5px solid #636363; /* Add a border for a button-like appearance */
-    color: #3b3b3b; /* Choose the color of the text */
-    // add left text border
-    padding: 12px 5px; /* Add padding to the left and right */
-    font-weight: bold; /* Make the text bold */
-    text-align: center; /* Center the text horizontally */
-    text-decoration: none; /* Remove the underline from the link */
-    box-sizing: border-box; /* Include padding and border in the width */
-    //vertical-align: middle; /* Align inline-block elements vertically */
-    vertical-align: top; /* Align inline-block elements vertically */
-  }
+.styled-link {
+  display: inline-block;
+  height: 40px; /* Match the height of your images */
+  border: 1.5px solid #636363; /* Add a border for a button-like appearance */
+  color: #3b3b3b; /* Choose the color of the text */
+  // add left text border
+  padding: 12px 5px; /* Add padding to the left and right */
+  font-weight: bold; /* Make the text bold */
+  text-align: center; /* Center the text horizontally */
+  text-decoration: none; /* Remove the underline from the link */
+  box-sizing: border-box; /* Include padding and border in the width */
+  //vertical-align: middle; /* Align inline-block elements vertically */
+  vertical-align: top; /* Align inline-block elements vertically */
+}
 
-  .styled-link:hover {
-    text-decoration: none; /* Ensure the underline doesn't appear on hover */
-  }
+.styled-link:hover {
+  text-decoration: none; /* Ensure the underline doesn't appear on hover */
+}
 
-  /* Make the navbar stretch the entire width */
-  .navbar {
-    background-color: black;
-    width: 100%;
-    display: flex;
-    justify-content: center; /* Center the contents */
-    padding: 20px 0;
-    position: relative;
-    height: 60px;
-  }
+/* Make the navbar stretch the entire width */
+.navbar {
+  background-color: black;
+  width: 100%;
+  display: flex;
+  justify-content: center; /* Center the contents */
+  padding: 20px 0;
+  position: relative;
+  height: 60px;
+}
 
-  /* Constrain the navbar contents to a max width */
-  .navbar-contents {
-    max-width: 1200px; /* Same as your main-container */
-    width: 100%;
-    display: flex;
-    justify-content: space-between; /* Space between logo and menu items */
-    align-items: center;
-    margin-left: 10px;
-    margin-right: 10px;
-  }
+/* Constrain the navbar contents to a max width */
+.navbar-contents {
+  max-width: 1200px; /* Same as your main-container */
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /* Space between logo and menu items */
+  align-items: center;
+  margin-left: 10px;
+  margin-right: 10px;
+}
 
 /* Logo */
 .navbar-logo img {
@@ -817,7 +1015,6 @@ input[type="radio"][disabled] + label {
 /* Ensure progress container is centered and styled */
 .progress-container {
   width: 100%;
-  background-color: #ddd;
   border-radius: 10px;
   margin-bottom: 20px; /* Reintroducing the margin-bottom */
 }
@@ -851,7 +1048,6 @@ input[type="radio"][disabled] + label {
 }
 
 .card {
-  background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: auto; /* Adjust as necessary */
@@ -876,14 +1072,6 @@ input[type="radio"][disabled] + label {
 #demo-app h2.card-title {
   font-size: 1.25em; /* Smaller size */
   margin: 0px 0; /* Reduced margin for less vertical space */
-}
-
-#demo-app h2.card-title {
-  color: white;
-}
-
-#demo-app h2.card-title {
-  color: black;
 }
 
 audio {
@@ -1031,12 +1219,6 @@ div.tag-cloud {
     height: 24px; /* Set height for icons */
     margin: 0 10px; /* Add some horizontal margin between icons */
     vertical-align: middle; /* Align middle to make sure it aligns well with the text */
-}
-
-.share-text {
-  color: #333; /* Dark Magenta, same as your other headings */
-  //font-weight: bold; /* for a bold appearance like headings */
-  //font-size: 1.2em; /* adjust the size if needed */
 }
 
 #mc_embed_signup {

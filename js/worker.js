@@ -1,284 +1,373 @@
-const SAMPLE_RATE = 44100;
-
-let wasmModule;
 let modelName;
 let modelBuffers;
 
-function loadWASMModule(scriptName) {
+function loadWASMModule() {
     // Assuming the demucs.js script automatically initializes the WASM module
     try {
-        importScripts(scriptName);
-
-        wasmModule = libdemucs();
+        importScripts('demucs_onnx_simd.js');
+        let wasmModule = libdemucs();
+        return wasmModule;
     } catch (error) {
         console.error("Error loading WASM module script:", error);
+        return null;
     }
 }
 
+function getNumModelsFromModelName() {
+    let numModels = 0;
+    if (modelName === 'demucs-free-4s' || modelName === 'demucs-free-6s' || modelName === 'demucs-karaoke') {
+        numModels = 1;
+    } else if (modelName === 'demucs-pro-ft' || modelName === 'demucs-pro-deluxe') {
+        numModels = 4;
+    } else if (modelName === 'demucs-pro-cust') {
+        numModels = 3;
+    }
+    return numModels;
+}
+
+function getNumTargetsFromModelName() {
+    // base case for free-4s
+    let numTargets = [4];
+    if (modelName === 'demucs-free-6s') {
+        // demucs-free-6s has 6 targets
+        numTargets = [6];
+    } else if (modelName === 'demucs-karaoke') {
+        // demucs-karaoke has 2 targets
+        numTargets = [2];
+    } else if (modelName === 'demucs-pro-ft') {
+        numTargets = [4, 4, 4, 4];
+    } else if (modelName === 'demucs-pro-deluxe') {
+        numTargets = [4, 4, 4, 2];
+    }
+
+    // demucs-pro-cust as an ensemble model outputs 7 targets
+    // however, those outputs are created from other models
+    // so it's a special case and we don't need to consider it here
+    return numTargets;
+}
+
 // Define the onmessage event listener
-onmessage = function(e) {
+onmessage = async function(e) {
     if (e.data.msg === 'LOAD_WASM') {
         modelName = e.data.model;
-        scriptName = e.data.scriptName;
         modelBuffers = e.data.modelBuffers;
-        loadWASMModule(scriptName);
     } else if (e.data.msg === 'PROCESS_AUDIO' || e.data.msg === 'PROCESS_AUDIO_BATCH') {
+        console.log(`Started demix job at ${new Date().toString()}`);
+
         const leftChannel = e.data.leftChannel;
         const rightChannel = e.data.rightChannel;
 
-        // Assuming wasmModule is a promise that resolves to your loaded WASM module
-        wasmModule.then((loaded_module) => {
-            console.log(`Loading wasm module for model ${modelName}`);
+        const modelTotal = getNumModelsFromModelName();
+        let modelTotalWithAugmentations = modelTotal;
 
-            // modelBuffers is already an array of array buffers sent from the main thread
-            // Directly prepare data for initialization
-            const modelDataArray = modelBuffers.map(buffer => new Uint8Array(buffer));
-            const modelDataPtrs = modelDataArray.map(data => loaded_module._malloc(data.byteLength));
+        let invert = false;
+        // we invert waveform for deluxe (4 models 8 inferences), custom (3 models 6 inferences), and karaoke (1 model 2 inferences)
+        if (modelName === 'demucs-pro-deluxe' || modelName === 'demucs-pro-cust' || modelName === 'demucs-karaoke') {
+            console.log("Using augmented inference for model:", modelName);
+            invert = true;
+            modelTotalWithAugmentations *= 2;
+        }
 
-            // Copy data into WASM memory
-            modelDataArray.forEach((data, index) => loaded_module.HEAPU8.set(data, modelDataPtrs[index]));
+        let inferenceResults = [];
 
-            // for free-4s, free-6s, and karaoke, there's just 1 model
-            if (modelName === 'demucs-free-4s' || modelName === 'demucs-free-6s' || modelName === 'demucs-free-v3' || modelName === 'demucs-karaoke') {
-                // Assuming _modelInit requires pointers and sizes for all models
-                loaded_module._modelInit(modelDataPtrs[0], modelDataArray[0].byteLength);
-            } else if (modelName === 'demucs-pro-ft' || modelName === 'demucs-pro-deluxe') {
-                // For demucs-pro-ft, there are 4 models
-                loaded_module._modelInit(modelDataPtrs[0], modelDataArray[0].byteLength,
-                    modelDataPtrs[1], modelDataArray[1].byteLength,
-                    modelDataPtrs[2], modelDataArray[2].byteLength,
-                    modelDataPtrs[3], modelDataArray[3].byteLength);
-            } else if (modelName === 'demucs-pro-cust') {
-                loaded_module._modelInit(modelDataPtrs[0], modelDataArray[0].byteLength,
-                    modelDataPtrs[1], modelDataArray[1].byteLength,
-                    modelDataPtrs[2], modelDataArray[2].byteLength,
-                    null, 0);
-            } else {
-                console.error("Unsupported model name:", modelName);
+        // modelBuffers is already an array of array buffers sent from the main thread
+        // Directly prepare data for initialization
+        const modelDataArray = modelBuffers.map(buffer => new Uint8Array(buffer));
+
+        // easy way to do sequential processing of each wasmModule
+        if (modelName != 'demucs-pro-cust') {
+            let numTargets = getNumTargetsFromModelName();
+            for (let i = 0; i < modelTotal; i++) {
+                let loadedModule = await loadWASMModule();
+                if (!loadedModule) {
+                    console.error("Error loading WASM module");
+                    return;
+                }
+
+                const modelDataPtr = loadedModule._malloc(modelDataArray[i].byteLength);
+                loadedModule.HEAPU8.set(modelDataArray[i], modelDataPtr);
+                loadedModule._modelInit(modelDataPtr, modelDataArray[i].byteLength);
+                loadedModule._free(modelDataPtr);
+
+                let targetWaveforms;
+                const batch = e.data.msg === 'PROCESS_AUDIO_BATCH';
+                let indexInModel = invert ? i * 2 : i;
+                targetWaveforms = processAudio(leftChannel, rightChannel, loadedModule, numTargets[i], batch, modelTotalWithAugmentations, indexInModel);
+
+                // if we need to invert the waveform, we do it here
+                if (invert) {
+                    invertedLeftChannel = leftChannel.map(x => -x);
+                    invertedRightChannel = rightChannel.map(x => -x);
+                    invertedTargetWaveforms = processAudio(invertedLeftChannel, invertedRightChannel, loadedModule, numTargets[i], batch, modelTotalWithAugmentations, indexInModel + 1);
+                    // now invert the targetWaveforms
+                    invertInvertTargetWaveforms = invertedTargetWaveforms.map(arr => arr.map(x => -x));
+
+                    // now sum and average with the original targetWaveforms
+                    targetWaveforms = targetWaveforms.map((arr, idx) => arr.map((x, inner_idx) => (x + invertInvertTargetWaveforms[idx][inner_idx]) / 2.0));
+                }
+
+                inferenceResults.push(targetWaveforms);
+                loadedModule = null;
+            }
+        } else {
+            // here we implement the logic of demucs-pro-cust, from:
+            // https://github.com/sevagh/demucs.cpp-pro/blob/main/src_wasm/demucs_pro.cpp
+            let loadedModule = await loadWASMModule();
+            if (!loadedModule) {
+                console.error("Error loading WASM module");
+                return;
             }
 
-            // Free the allocated memory if it's not needed beyond this point
-            modelDataPtrs.forEach(ptr => loaded_module._free(ptr));
+            const model1DataPtr = loadedModule._malloc(modelDataArray[0].byteLength);
+            loadedModule.HEAPU8.set(modelDataArray[0], model1DataPtr);
+            loadedModule._modelInit(model1DataPtr, modelDataArray[0].byteLength);
+            loadedModule._free(model1DataPtr);
 
-            // Send a message to the main thread to indicate that the WASM module is ready
-            postMessage({ msg: 'WASM_READY'});
+            let targetWaveforms1;
+            const batch = e.data.msg === 'PROCESS_AUDIO_BATCH';
+            targetWaveforms1 = processAudio(leftChannel, rightChannel, loadedModule, 2, batch, modelTotalWithAugmentations, 0);
 
-            let targetWaveforms;
-            if (e.data.msg === 'PROCESS_AUDIO') {
-                targetWaveforms = processAudio(leftChannel, rightChannel, loaded_module, false);
-            } else if (e.data.msg === 'PROCESS_AUDIO_BATCH') {
-                targetWaveforms = processAudio(leftChannel, rightChannel, loaded_module, true);
+            invertedLeftChannel1 = leftChannel.map(x => -x);
+            invertedRightChannel1 = rightChannel.map(x => -x);
+            invertedTargetWaveforms1 = processAudio(invertedLeftChannel1, invertedRightChannel1, loadedModule, 2, batch, modelTotalWithAugmentations, 1);
+            // now invert the targetWaveforms
+            invertInvertTargetWaveforms1 = invertedTargetWaveforms1.map(arr => arr.map(x => -x));
+
+            // now sum and average with the original targetWaveforms
+            targetWaveforms1 = targetWaveforms1.map((arr, idx) => arr.map((x, inner_idx) => (x + invertInvertTargetWaveforms1[idx][inner_idx]) / 2.0));
+
+            // now we have the final vocals and intermediate accompaniment
+            let intermediateAccompanimentL = targetWaveforms1[2];
+            let intermediateAccompanimentR = targetWaveforms1[3];
+
+            // start with model 2
+            loadedModule = await loadWASMModule();
+            if (!loadedModule) {
+                console.error("Error loading WASM module");
+                return;
             }
-            const transferList = targetWaveforms.map(arr => arr.buffer);
-            postMessage({
-                msg: e.data.msg === 'PROCESS_AUDIO' ? 'PROCESSING_DONE' : 'PROCESSING_DONE_BATCH',
-                waveforms: targetWaveforms,
-                originalLength: e.data.originalLength,
-                filename: e.data.msg === 'PROCESS_AUDIO' ? "" : e.data.filename,
-            }, transferList);
-        });
+
+            const model2DataPtr = loadedModule._malloc(modelDataArray[1].byteLength);
+            loadedModule.HEAPU8.set(modelDataArray[1], model2DataPtr);
+            loadedModule._modelInit(model2DataPtr, modelDataArray[1].byteLength);
+            loadedModule._free(model2DataPtr);
+
+            let targetWaveforms2;
+            targetWaveforms2 = processAudio(
+                intermediateAccompanimentL, intermediateAccompanimentR, loadedModule, 4, batch, modelTotalWithAugmentations, 2);
+
+            invertedLeftChannel2 = intermediateAccompanimentL.map(x => -x);
+            invertedRightChannel2 = intermediateAccompanimentR.map(x => -x);
+            invertedTargetWaveforms2 = processAudio(invertedLeftChannel2, invertedRightChannel2, loadedModule, 4, batch, modelTotalWithAugmentations, 3);
+            // now invert the targetWaveforms
+            invertInvertTargetWaveforms2 = invertedTargetWaveforms2.map(arr => arr.map(x => -x));
+
+            // now sum and average with the original targetWaveforms
+            targetWaveforms2 = targetWaveforms2.map((arr, idx) => arr.map((x, inner_idx) => (x + invertInvertTargetWaveforms2[idx][inner_idx]) / 2.0));
+
+            // now finally model 3
+            loadedModule = await loadWASMModule();
+            if (!loadedModule) {
+                console.error("Error loading WASM module");
+                return;
+            }
+
+            const model3DataPtr = loadedModule._malloc(modelDataArray[2].byteLength);
+            loadedModule.HEAPU8.set(modelDataArray[2], model3DataPtr);
+            loadedModule._modelInit(model3DataPtr, modelDataArray[2].byteLength);
+            loadedModule._free(model3DataPtr);
+
+            let targetWaveforms3;
+            targetWaveforms3 = processAudio(
+                intermediateAccompanimentL, intermediateAccompanimentR, loadedModule, 6, batch, modelTotalWithAugmentations, 4);
+
+            // can re-use same invertedLeftChannel2, invertedRightChannel2
+            invertedTargetWaveforms3 = processAudio(invertedLeftChannel2, invertedRightChannel2, loadedModule, 6, batch, modelTotalWithAugmentations, 5);
+            // now invert the targetWaveforms
+            invertInvertTargetWaveforms3 = invertedTargetWaveforms3.map(arr => arr.map(x => -x));
+
+            // now sum and average with the original targetWaveforms
+            targetWaveforms3 = targetWaveforms3.map((arr, idx) => arr.map((x, inner_idx) => (x + invertInvertTargetWaveforms3[idx][inner_idx]) / 2.0));
+
+            // drums and bass need to be summed and averaged between targetWaveforms2 and targetWaveforms3
+            let drumsL = targetWaveforms2[0].map((x, idx) => (x + targetWaveforms3[0][idx]) / 2.0);
+            let drumsR = targetWaveforms2[1].map((x, idx) => (x + targetWaveforms3[1][idx]) / 2.0);
+            let bassL = targetWaveforms2[2].map((x, idx) => (x + targetWaveforms3[2][idx]) / 2.0);
+            let bassR = targetWaveforms2[3].map((x, idx) => (x + targetWaveforms3[3][idx]) / 2.0);
+
+            // now we have everything we need
+            let returnWaveforms = [
+                drumsL, drumsR, // final drums averaged from model 2 and model 3
+                bassL, bassR,   // final bass averaged from model 2 and model 3
+                targetWaveforms3[4], targetWaveforms3[5], // final other accompaniment directly from model 3
+                targetWaveforms1[0], targetWaveforms1[1], // final vocals from model 1
+                targetWaveforms3[8], targetWaveforms3[9], // final guitar from model 3
+                targetWaveforms3[10], targetWaveforms3[11], // final piano from model 3
+                targetWaveforms2[4], targetWaveforms2[5], // final 'other' as 'melody' from model 2
+            ]
+            inferenceResults.push(returnWaveforms);
+        }
+
+        // now, we have all the results in inferenceResults
+        // apply a postprocessing function that has per-model logic
+        let finalWaveforms;
+
+        // now inferenceResults[0] has the results for the first model
+        // for karaoke, free-4s, free-6s (single-model models), we're done
+        if (modelName === 'demucs-karaoke' || modelName === 'demucs-free-4s' || modelName === 'demucs-free-6s' || modelName === 'demucs-pro-cust') {
+            finalWaveforms = inferenceResults[0];
+        }
+        // pro finetuned is straightforward: 4 models,  4 targets
+        // we extract each target from the separate models e.g. final bass = model 1 bass, final drums = model 2 drums, etc.
+        else if (modelName === 'demucs-pro-ft') {
+            // construct finalWaveforms from inferenceResults
+            finalWaveforms = [
+                inferenceResults[0][0], inferenceResults[0][1], // drums is correct
+                inferenceResults[1][2], inferenceResults[1][3],
+                inferenceResults[2][4], inferenceResults[2][5],
+                inferenceResults[3][6], inferenceResults[3][7],
+            ];
+        }
+        // pro deluxe is similar except vocals was from a 2-stem model, so we take its first two l/r, not index 6/7
+        // we extract each target from the separate models e.g. final bass = model 1 bass, final drums = model 2 drums, etc.
+        else if (modelName === 'demucs-pro-deluxe') {
+            // construct finalWaveforms from inferenceResults
+            finalWaveforms = [
+                inferenceResults[0][0], inferenceResults[0][1], // drums is correct
+                inferenceResults[1][2], inferenceResults[1][3],
+                inferenceResults[2][4], inferenceResults[2][5],
+                inferenceResults[3][0], inferenceResults[3][1], // vocals is 0th stem from model 4 which is the 2-stem custom
+            ];
+        }
+
+        const transferList = finalWaveforms.map(arr => arr.buffer);
+
+        console.log(`Finished demix job at ${new Date().toString()}`);
+        postMessage({
+            msg: e.data.msg === 'PROCESS_AUDIO' ? 'PROCESSING_DONE' : 'PROCESSING_DONE_BATCH',
+            waveforms: finalWaveforms,
+            originalLength: e.data.originalLength,
+            filename: e.data.msg === 'PROCESS_AUDIO' ? "" : e.data.filename,
+        }, transferList);
     }
 };
 
-function processAudio(leftChannel, rightChannel, module, is_batch_mode) {
-    // Handle left channel
-    let arrayPointerL = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-    let wasmArrayL = new Float32Array(module.HEAPF32.buffer, arrayPointerL, leftChannel.length);
-    wasmArrayL.set(leftChannel);
+const MAX_TARGETS = 6; // Adjust based on the maximum number of targets
 
-    // Handle right channel
-    let arrayPointerR = module._malloc(rightChannel.length * rightChannel.BYTES_PER_ELEMENT);
-    let wasmArrayR = new Float32Array(module.HEAPF32.buffer, arrayPointerR, rightChannel.length);
-    wasmArrayR.set(rightChannel);
+/**
+ * Allocates memory for a Float32Array in WASM and sets its data.
+ * @param {WASMModule} module - The loaded WASM module.
+ * @param {Float32Array} data - The audio channel data.
+ * @returns {number} - The pointer to the allocated memory in WASM.
+ */
+function allocateWasmArray(module, data) {
+    const byteLength = data.length * data.BYTES_PER_ELEMENT;
+    const ptr = module._malloc(byteLength);
+    if (ptr === 0) {
+        throw new Error('Memory allocation failed');
+    }
+    const wasmArray = new Float32Array(module.HEAPF32.buffer, ptr, data.length);
+    wasmArray.set(data);
+    return ptr;
+}
 
-    if (modelName === 'demucs-free-4s' || modelName === 'demucs-free-v3' || modelName === 'demucs-pro-ft' || modelName === 'demucs-pro-deluxe') {
-        // create 8 similar arrays for 4 targets * 2 channels
-        // with allocated but empty contents to be filled by the WASM function
-        let arrayPointerLBass = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerLDrums = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerLOther = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerLVocals = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
+/**
+ * Frees allocated WASM memory.
+ * @param {WASMModule} module - The loaded WASM module.
+ * @param {number[]} pointers - Array of memory pointers to free.
+ */
+function freeWasmMemory(module, pointers) {
+    pointers.forEach(ptr => {
+        if (ptr !== null && ptr !== 0) {
+            module._free(ptr);
+        }
+    });
+}
 
-        let arrayPointerRBass = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerRDrums = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerROther = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerRVocals = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-
-        // Call the WASM function for both channels
-        module._modelDemixSegment(
-            arrayPointerL, arrayPointerR, leftChannel.length,
-            arrayPointerLDrums, arrayPointerRDrums,
-            arrayPointerLBass, arrayPointerRBass,
-            arrayPointerLOther, arrayPointerROther,
-            arrayPointerLVocals, arrayPointerRVocals,
-            null, null, // for 4s or ft, no guitar
-            null, null, // for 4s or ft, no piano
-            null, null, // for 4s or ft, no melody
-            is_batch_mode);
-
-        let wasmArrayLBass = new Float32Array(module.HEAPF32.buffer, arrayPointerLBass, leftChannel.length);
-        let wasmArrayLDrums = new Float32Array(module.HEAPF32.buffer, arrayPointerLDrums, leftChannel.length);
-        let wasmArrayLOther = new Float32Array(module.HEAPF32.buffer, arrayPointerLOther, leftChannel.length);
-        let wasmArrayLVocals = new Float32Array(module.HEAPF32.buffer, arrayPointerLVocals, leftChannel.length);
-
-        let wasmArrayRBass = new Float32Array(module.HEAPF32.buffer, arrayPointerRBass, leftChannel.length);
-        let wasmArrayRDrums = new Float32Array(module.HEAPF32.buffer, arrayPointerRDrums, leftChannel.length);
-        let wasmArrayROther = new Float32Array(module.HEAPF32.buffer, arrayPointerROther, leftChannel.length);
-        let wasmArrayRVocals = new Float32Array(module.HEAPF32.buffer, arrayPointerRVocals, leftChannel.length);
-
-        // Free the allocated memory
-        module._free(arrayPointerL);
-        module._free(arrayPointerR);
-        module._free(arrayPointerLBass);
-        module._free(arrayPointerRBass);
-        module._free(arrayPointerLDrums);
-        module._free(arrayPointerRDrums);
-        module._free(arrayPointerLOther);
-        module._free(arrayPointerROther);
-        module._free(arrayPointerLVocals);
-        module._free(arrayPointerRVocals);
-
-        return [
-            new Float32Array(wasmArrayLBass), new Float32Array(wasmArrayRBass),
-            new Float32Array(wasmArrayLDrums), new Float32Array(wasmArrayRDrums),
-            new Float32Array(wasmArrayLOther), new Float32Array(wasmArrayROther),
-            new Float32Array(wasmArrayLVocals), new Float32Array(wasmArrayRVocals)
+/**
+ * Processes audio using the WASM module.
+ * @param {Float32Array} leftChannel - The left audio channel data.
+ * @param {Float32Array} rightChannel - The right audio channel data.
+ * @param {WASMModule} module - The loaded WASM module.
+ * @param {number} numTargets - Number of targets to process.
+ * @param {boolean} batch - Batch processing flag.
+ * @param {number} modelTotal - Total number of models.
+ * @param {number} indexInModel - Current model index.
+ * @returns {Float32Array[]} - Array of processed waveforms.
+ */
+function processAudio(leftChannel, rightChannel, module, numTargets, batch, modelTotal, indexInModel) {
+    try {
+        // Allocate memory for input channels
+        const inputPointers = [
+            allocateWasmArray(module, leftChannel),
+            allocateWasmArray(module, rightChannel)
         ];
-    } else if (modelName === 'demucs-free-6s' || modelName === 'demucs-pro-cust') {
-        // create 8 similar arrays for 4 targets * 2 channels
-        // with allocated but empty contents to be filled by the WASM function
-        let arrayPointerLBass = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerLDrums = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerLOther = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerLVocals = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
 
-        let arrayPointerRBass = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerRDrums = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerROther = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerRVocals = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
+        // Prepare pointers for target outputs
+        const targetPointers = [];
 
-        let arrayPointerLGuitar = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerRGuitar = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerLPiano = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerRPiano = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-
-        let arrayPointerLMelody = null;
-        let arrayPointerRMelody = null;
-
-        if (modelName === 'demucs-pro-cust') {
-            arrayPointerLMelody = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-            arrayPointerRMelody = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
+        for (let i = 0; i < MAX_TARGETS; i++) {
+            if (i < numTargets) {
+                // Allocate memory for this target's left and right channels
+                const ptrL = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
+                const ptrR = module._malloc(rightChannel.length * rightChannel.BYTES_PER_ELEMENT);
+                if (ptrL === 0 || ptrR === 0) {
+                    throw new Error(`Memory allocation failed for target ${i}`);
+                }
+                targetPointers.push(ptrL, ptrR);
+            } else {
+                // Pass null pointers for unused targets
+                targetPointers.push(0, 0);
+            }
         }
 
-        // Call the WASM function for both channels
-        module._modelDemixSegment(
-            arrayPointerL, arrayPointerR, leftChannel.length,
-            arrayPointerLDrums, arrayPointerRDrums,
-            arrayPointerLBass, arrayPointerRBass,
-            arrayPointerLOther, arrayPointerROther,
-            arrayPointerLVocals, arrayPointerRVocals,
-            arrayPointerLGuitar, arrayPointerRGuitar,
-            arrayPointerLPiano, arrayPointerRPiano,
-            arrayPointerLMelody, arrayPointerRMelody,
-            is_batch_mode);
-
-        let wasmArrayLBass = new Float32Array(module.HEAPF32.buffer, arrayPointerLBass, leftChannel.length);
-        let wasmArrayLDrums = new Float32Array(module.HEAPF32.buffer, arrayPointerLDrums, leftChannel.length);
-        let wasmArrayLOther = new Float32Array(module.HEAPF32.buffer, arrayPointerLOther, leftChannel.length);
-        let wasmArrayLVocals = new Float32Array(module.HEAPF32.buffer, arrayPointerLVocals, leftChannel.length);
-
-        let wasmArrayRBass = new Float32Array(module.HEAPF32.buffer, arrayPointerRBass, leftChannel.length);
-        let wasmArrayRDrums = new Float32Array(module.HEAPF32.buffer, arrayPointerRDrums, leftChannel.length);
-        let wasmArrayROther = new Float32Array(module.HEAPF32.buffer, arrayPointerROther, leftChannel.length);
-        let wasmArrayRVocals = new Float32Array(module.HEAPF32.buffer, arrayPointerRVocals, leftChannel.length);
-
-        let wasmArrayLGuitar = new Float32Array(module.HEAPF32.buffer, arrayPointerLGuitar, leftChannel.length);
-        let wasmArrayRGuitar = new Float32Array(module.HEAPF32.buffer, arrayPointerRGuitar, leftChannel.length);
-        let wasmArrayLPiano = new Float32Array(module.HEAPF32.buffer, arrayPointerLPiano, leftChannel.length);
-        let wasmArrayRPiano = new Float32Array(module.HEAPF32.buffer, arrayPointerRPiano, leftChannel.length);
-
-        let wasmArrayLMelody = null;
-        let wasmArrayRMelody = null;
-
-        if (modelName === 'demucs-pro-cust') {
-            wasmArrayLMelody = new Float32Array(module.HEAPF32.buffer, arrayPointerLMelody, leftChannel.length);
-            wasmArrayRMelody = new Float32Array(module.HEAPF32.buffer, arrayPointerRMelody, leftChannel.length);
-        }
-
-        // Free the allocated memory
-        module._free(arrayPointerL);
-        module._free(arrayPointerR);
-        module._free(arrayPointerLBass);
-        module._free(arrayPointerRBass);
-        module._free(arrayPointerLDrums);
-        module._free(arrayPointerRDrums);
-        module._free(arrayPointerLOther);
-        module._free(arrayPointerROther);
-        module._free(arrayPointerLVocals);
-        module._free(arrayPointerRVocals);
-        module._free(arrayPointerLGuitar);
-        module._free(arrayPointerRGuitar);
-        module._free(arrayPointerLPiano);
-        module._free(arrayPointerRPiano);
-
-        if (modelName === 'demucs-pro-cust') {
-            module._free(arrayPointerLMelody);
-            module._free(arrayPointerRMelody);
-        }
-
-        if (modelName === 'demucs-free-6s') {
-            return [
-                new Float32Array(wasmArrayLBass), new Float32Array(wasmArrayRBass),
-                new Float32Array(wasmArrayLDrums), new Float32Array(wasmArrayRDrums),
-                new Float32Array(wasmArrayLOther), new Float32Array(wasmArrayROther),
-                new Float32Array(wasmArrayLVocals), new Float32Array(wasmArrayRVocals),
-                new Float32Array(wasmArrayLGuitar), new Float32Array(wasmArrayRGuitar),
-                new Float32Array(wasmArrayLPiano), new Float32Array(wasmArrayRPiano)
-            ];
-        } else if (modelName === 'demucs-pro-cust') {
-            return [
-                new Float32Array(wasmArrayLBass), new Float32Array(wasmArrayRBass),
-                new Float32Array(wasmArrayLDrums), new Float32Array(wasmArrayRDrums),
-                new Float32Array(wasmArrayLOther), new Float32Array(wasmArrayROther),
-                new Float32Array(wasmArrayLVocals), new Float32Array(wasmArrayRVocals),
-                new Float32Array(wasmArrayLGuitar), new Float32Array(wasmArrayRGuitar),
-                new Float32Array(wasmArrayLPiano), new Float32Array(wasmArrayRPiano),
-                new Float32Array(wasmArrayLMelody), new Float32Array(wasmArrayRMelody)
-            ];
-        }
-    } else if (modelName === 'demucs-karaoke') {
-        let arrayPointerLVocals = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerLInstrum = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-
-        let arrayPointerRVocals = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-        let arrayPointerRInstrum = module._malloc(leftChannel.length * leftChannel.BYTES_PER_ELEMENT);
-
-        // Call the WASM function for both channels
-        module._modelDemixSegment(
-            arrayPointerL, arrayPointerR, leftChannel.length,
-            arrayPointerLVocals, arrayPointerRVocals,
-            arrayPointerLInstrum, arrayPointerRInstrum,
-            is_batch_mode);
-
-        let wasmArrayLVocals = new Float32Array(module.HEAPF32.buffer, arrayPointerLVocals, leftChannel.length);
-        let wasmArrayLInstrum = new Float32Array(module.HEAPF32.buffer, arrayPointerLInstrum, leftChannel.length);
-
-        let wasmArrayRVocals = new Float32Array(module.HEAPF32.buffer, arrayPointerRVocals, leftChannel.length);
-        let wasmArrayRInstrum = new Float32Array(module.HEAPF32.buffer, arrayPointerRInstrum, leftChannel.length);
-
-        // Free the allocated memory
-        module._free(arrayPointerL);
-        module._free(arrayPointerR);
-        module._free(arrayPointerLVocals);
-        module._free(arrayPointerRVocals);
-        module._free(arrayPointerLInstrum);
-        module._free(arrayPointerRInstrum);
-
-        return [
-            new Float32Array(wasmArrayLVocals), new Float32Array(wasmArrayRVocals),
-            new Float32Array(wasmArrayLInstrum), new Float32Array(wasmArrayRInstrum)
+        // Combine all pointers into a single arguments array
+        // The WASM function signature is assumed to be:
+        // _modelDemixSegment(inputL, inputR, length, target1L, target1R, target2L, target2R, ..., batch, modelTotal, indexInModel)
+        const wasmArgs = [
+            inputPointers[0],
+            inputPointers[1],
+            leftChannel.length
         ];
-    } else {
-        console.error("Unsupported model name:", modelName);
+
+        // Add target pointers in order
+        wasmArgs.push(...targetPointers);
+
+        // Add additional parameters
+        wasmArgs.push(batch, modelTotal, indexInModel);
+
+        // Call the WASM function with all arguments
+        module._modelDemixSegment(...wasmArgs);
+
+        // Retrieve the processed data from WASM memory
+        const processedWaveforms = [];
+
+        for (let i = 0; i < numTargets; i++) {
+            const ptrL = targetPointers[i * 2];
+            const ptrR = targetPointers[i * 2 + 1];
+            if (ptrL !== 0 && ptrR !== 0) {
+                const waveformL = new Float32Array(module.HEAPF32.buffer, ptrL, leftChannel.length);
+                const waveformR = new Float32Array(module.HEAPF32.buffer, ptrR, rightChannel.length);
+                processedWaveforms.push(new Float32Array(waveformL));
+                processedWaveforms.push(new Float32Array(waveformR));
+            }
+        }
+
+        // Free all allocated memory
+        freeWasmMemory(module, [...inputPointers, ...targetPointers]);
+
+        // log
+        console.log(`Processed waveforms for model index ${indexInModel}`);
+        return processedWaveforms;
+    } catch (error) {
+        console.error('Error in processAudio:', error);
+
+        console.error("Error processing audio");
+        postMessage({
+            msg: 'WASM_ERROR',
+        });
+
+        // don't return here but abort
+        close();
     }
 }

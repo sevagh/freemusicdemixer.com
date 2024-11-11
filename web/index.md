@@ -14,7 +14,7 @@ header_class: index
 </section>
 
 <section class="image-section">
-<img class="title-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
+<img id="music-demix-img" class="title-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
 </section>
 
 <section class="info-section">
@@ -22,7 +22,7 @@ header_class: index
 </section>
 
 <section class="image-section">
-<img class="title-img" src="/assets/images/midi-amt.webp" alt="midi-amt-diagram"/>
+<img id="amt-img" class="title-img" src="/assets/images/midi-amt.webp" alt="midi-amt-diagram"/>
 </section>
 
 <section class="info-section">
@@ -92,12 +92,8 @@ header_class: index
             <b>Quality:</b>
             <form id="qualityPickerForm">
               <div>
-                <input type="radio" id="low-quality" name="quality" value="low" checked>
-                <label for="low-quality">Low</label>
-              </div>
-              <div>
-                <input type="radio" id="default-quality" name="quality" value="default" disabled>
-                <label for="default-quality">Default 🔒</label>
+                <input type="radio" id="default-quality" name="quality" value="default" checked>
+                <label for="default-quality">Default</label>
               </div>
               <div>
                 <input type="radio" id="medium-quality" name="quality" value="medium" disabled>
@@ -115,11 +111,11 @@ header_class: index
             <b>Max memory:</b>
             <form id="memorySelectorForm">
             <div>
-                <input type="radio" id="4gb" name="memory" value="4gb" checked>
-                <label for="4gb">4 GB (default speed)</label>
+                <input type="radio" id="4gb" name="memory" value="4gb">
+                <label for="4gb">4 GB (slowest)</label>
             </div>
             <div>
-                <input type="radio" id="8gb" name="memory" value="8gb">
+                <input type="radio" id="8gb" name="memory" value="8gb" checked>
                 <label for="8gb">8 GB (2x faster)</label>
             </div>
             <div>

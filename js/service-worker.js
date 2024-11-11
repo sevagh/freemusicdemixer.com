@@ -1,14 +1,13 @@
-const CACHE_NAME = "PRO_v20241010";
+const CACHE_NAME = "PRO_v20241110";
 
 const RESOURCES_TO_PRELOAD = [
-  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs-4s-f16.bin",
-  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs-6s-f16.bin",
-  "https://bucket.freemusicdemixer.com/ggml-model-hdemucs_mmi-f16.bin",
-  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs_ft_bass-4s-f16.bin",
-  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs_ft_drums-4s-f16.bin",
-  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs_ft_other-4s-f16.bin",
-  "https://bucket.freemusicdemixer.com/ggml-model-htdemucs_ft_vocals-4s-f16.bin",
-  "https://bucket.freemusicdemixer.com/ggml-model-custom-2s-f32.bin"
+  "https://bucket.freemusicdemixer.com/htdemucs.ort.gz",
+  "https://bucket.freemusicdemixer.com/htdemucs_6s.ort.gz",
+  "https://bucket.freemusicdemixer.com/htdemucs_ft_drums.ort.gz",
+  "https://bucket.freemusicdemixer.com/htdemucs_ft_bass.ort.gz",
+  "https://bucket.freemusicdemixer.com/htdemucs_ft_other.ort.gz",
+  "https://bucket.freemusicdemixer.com/htdemucs_ft_vocals.ort.gz",
+  "https://bucket.freemusicdemixer.com/htdemucs_2s_cust.ort.gz",
 ];
 
 // Pre-cache resources
@@ -43,7 +42,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   // Check if the request is for a .bin file from the external resource
   if (event.request.url.startsWith("https://bucket.freemusicdemixer.com/") &&
-      event.request.url.endsWith('.bin')) {
+      event.request.url.endsWith('.ort.gz')) {
     event.respondWith(
       caches.open(CACHE_NAME).then(cache => {
         return cache.match(event.request).then(response => {
