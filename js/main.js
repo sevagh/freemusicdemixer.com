@@ -110,9 +110,7 @@ themeToggle.addEventListener('click', () => {
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Apply theme on initial load
     loadTheme();
-
     const storedEmail = localStorage.getItem('billingEmail');
 
     if (storedEmail) {

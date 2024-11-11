@@ -37,23 +37,210 @@
   box-sizing: border-box;
 }
 
-/* Default link colors for light theme, excluding navbar and footer links */
-.theme-light body a:not(.navbar-links a):not(.footer-container a) {
-  color: #0000EE; /* Standard blue */
+.theme-light {
+  body a:not(.navbar-links a):not(.footer-container a) {
+    color: #0000EE; /* Standard blue */
+  }
+  body a:not(.navbar-links a):not(.footer-container a):visited {
+    color: #551A8B; /* Standard purple for visited links */
+  }
+  body {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+  h1 {
+    color: #333;
+  }
+  h2 {
+    color: #444;
+  }
+  .wizard-container {
+    background-color: #e0e0e0;
+    color: #333;
+  }
+  cta-legend {
+    color: #333;
+  }
+  #membership-status {
+    color: white;
+  }
+  .modal-content {
+    background-color: white;
+  }
+  .output-link-container {
+    background-color: #f0f0f0; /* Light gray background to match the site */
+    color: #333; /* Darker gray text */
+  }
+  .demixer-section {
+    background-color: #f5f5f5; /* Light gray background for the section */
+  }
+  .progress-container {
+    background-color: #ddd;
+  }
+  .card {
+    background: #fff;
+  }
+  #demo-app h2.card-title {
+    color: black;
+  }
+  .share-text {
+    color: #333; /* Dark Magenta, same as your other headings */
+  }
 }
 
-.theme-light body a:not(.navbar-links a):not(.footer-container a):visited {
-  color: #551A8B; /* Standard purple for visited links */
+.theme-dark {
+  body a:not(.navbar-links a):not(.footer-container a) {
+    color: #87CEEB; /* Light blue for contrast */
+  }
+  body a:not(.navbar-links a):not(.footer-container a):visited {
+    color: #9370DB; /* Light purple for visited links */
+  }
+  body {
+    background-color: #333;
+    color: #f5f5f5;
+  }
+  h1 {
+    color: #f5f5f5;
+  }
+  h2 {
+    color: #f5f5f5;
+  }
+  .wizard-container {
+    background-color: #4c4c4c;
+    color: #e0e0e0;
+  }
+  .cta-legend {
+    color: #e0e0e0;
+  }
+  #membership-status {
+    color: black;
+  }
+  .modal-content {
+    background-color: #333;
+  }
+  .output-link-container {
+    background-color: #333; /* Dark gray background to match the site */
+    color: #f0f0f0; /* Lighter gray text */
+  }
+  .demixer-section {
+    background-color: #333; /* Dark gray background for the section */
+  }
+  .progress-container {
+    background-color: #4c4c4c;
+  }
+  .card {
+    background: #666;
+  }
+  #demo-app h2.card-title {
+    color: white;
+  }
+  .share-text {
+    color: #f5f5f5; /* Light Magenta, same as your other headings */
+  }
 }
 
-/* Custom link colors for dark theme, excluding navbar and footer links */
-.theme-dark body a:not(.navbar-links a):not(.footer-container a) {
-  color: #87CEEB; /* Light blue for contrast */
+@media (prefers-color-scheme: light) {
+  body a:not(.navbar-links a):not(.footer-container a) {
+    color: #0000EE; /* Standard blue */
+  }
+  body a:not(.navbar-links a):not(.footer-container a):visited {
+    color: #551A8B; /* Standard purple for visited links */
+  }
+  body {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+  h1 {
+    color: #333;
+  }
+  h2 {
+    color: #444;
+  }
+  .wizard-container {
+    background-color: #e0e0e0;
+    color: #333;
+  }
+  cta-legend {
+    color: #333;
+  }
+  #membership-status {
+    color: white;
+  }
+  .modal-content {
+    background-color: white;
+  }
+  .output-link-container {
+    background-color: #f0f0f0; /* Light gray background to match the site */
+    color: #333; /* Darker gray text */
+  }
+  .demixer-section {
+    background-color: #f5f5f5; /* Light gray background for the section */
+  }
+  .progress-container {
+    background-color: #ddd;
+  }
+  .card {
+    background: #fff;
+  }
+  #demo-app h2.card-title {
+    color: black;
+  }
+  .share-text {
+    color: #333; /* Dark Magenta, same as your other headings */
+  }
 }
 
-.theme-dark body a:not(.navbar-links a):not(.footer-container a):visited {
-  color: #9370DB; /* Light purple for visited links */
+@media (prefers-color-scheme: dark) {
+  body a:not(.navbar-links a):not(.footer-container a) {
+    color: #87CEEB; /* Light blue for contrast */
+  }
+  body a:not(.navbar-links a):not(.footer-container a):visited {
+    color: #9370DB; /* Light purple for visited links */
+  }
+  body {
+    background-color: #333;
+    color: #f5f5f5;
+  }
+  h1 {
+    color: #f5f5f5;
+  }
+  h2 {
+    color: #f5f5f5;
+  }
+  .wizard-container {
+    background-color: #4c4c4c;
+    color: #e0e0e0;
+  }
+  .cta-legend {
+    color: #e0e0e0;
+  }
+  #membership-status {
+    color: black;
+  }
+  .modal-content {
+    background-color: #333;
+  }
+  .output-link-container {
+    background-color: #333; /* Dark gray background to match the site */
+    color: #f0f0f0; /* Lighter gray text */
+  }
+  .demixer-section {
+    background-color: #333; /* Dark gray background for the section */
+  }
+  .progress-container {
+    background-color: #4c4c4c;
+  }
+  .card {
+    background: #666;
+  }
+  #demo-app h2.card-title {
+    color: white;
+  }
+  .share-text {
+    color: #f5f5f5; /* Light Magenta, same as your other headings */
+  }
 }
+
 
 img.responsive-img-android {
   width: 75%; /* default width for mobile devices */
@@ -80,16 +267,6 @@ body {
   scroll-snap-type: y mandatory;
 }
 
-.theme-light body {
-  background-color: #f5f5f5;
-  color: #333;
-}
-
-.theme-dark body {
-  background-color: #333;
-  color: #f5f5f5;
-}
-
 .main-container {
   max-width: 1200px; /* Content will not exceed 1200px */
   margin: 0 auto; /* Center content horizontally */
@@ -104,28 +281,12 @@ h1 {
   margin-bottom: 15px;
 }
 
-.theme-light h1 {
-  color: #333;
-}
-
-.theme-dark h1 {
-  color: #f5f5f5;
-}
-
 h2 {
   font-size: 2em;
   font-weight: 600;
   display: inline-block; /* This makes the h1 behave better when it wraps */
   line-height: 1.2em;
   margin-bottom: 15px;
-}
-
-.theme-light h2 {
-  color: #444;
-}
-
-.theme-dark h2 {
-  color: #f5f5f5;
 }
 
 h3 {
@@ -263,16 +424,6 @@ button:hover {
   box-sizing: border-box; /* Ensures padding is included in width and height */
 }
 
-.theme-light .wizard-container {
-  background-color: #e0e0e0;
-  color: #333;
-}
-
-.theme-dark .wizard-container {
-  background-color: #4c4c4c;
-  color: #e0e0e0;
-}
-
 /* Wizard Step */
 .wizard-step {
   flex-grow: 1;
@@ -300,14 +451,6 @@ button:hover {
   text-align: center;
   border-radius: 5px;
   margin-top: 10px;
-}
-
-.theme-light .cta-legend {
-  color: #333;
-}
-
-.theme-dark .cta-legend {
-  color: #e0e0e0;
 }
 
 .cta-legend a {
@@ -396,14 +539,6 @@ input[type="radio"][disabled] + label {
   font-size: 0.9em;
 }
 
-.theme-light #membership-status {
-  color: white;
-}
-
-.theme-dark #membership-status {
-  color: black;
-}
-
 /* Modal Styling */
 .modal {
   display: none;
@@ -422,14 +557,6 @@ input[type="radio"][disabled] + label {
   border-radius: 10px;
   max-width: 400px;
   width: 100%;
-}
-
-.theme-light .modal-content {
-  background-color: white;
-}
-
-.theme-dark .modal-content {
-  background-color: #333;
 }
 
 .modal-content form {
@@ -492,16 +619,6 @@ section.wizard-section {
   //scrollbar-width: thin; /* For Firefox */
   width: calc(100% - 25px); /* Ensure the container takes the full width minus space for the scrollbar */
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
-
-.theme-light .output-link-container {
-  background-color: #f0f0f0; /* Light gray background to match the site */
-  color: #333; /* Darker gray text */
-}
-
-.theme-dark .output-link-container {
-  background-color: #333; /* Dark gray background to match the site */
-  color: #f0f0f0; /* Lighter gray text */
 }
 
 .output-link-container::-webkit-scrollbar {
@@ -590,14 +707,6 @@ section.featured-badges {
   justify-content: center;
   align-items: center;
   padding: 30px 0;
-}
-
-.theme-light .demixer-section {
-  background-color: #f5f5f5; /* Light gray background for the section */
-}
-
-.theme-dark .demixer-section {
-  background-color: #333; /* Dark gray background for the section */
 }
 
 /* Style the input and buttons consistently */
@@ -910,14 +1019,6 @@ footer {
   margin-bottom: 20px; /* Reintroducing the margin-bottom */
 }
 
-.theme-light .progress-container {
-  background-color: #ddd;
-}
-
-.theme-dark .progress-container {
-  background-color: #4c4c4c;
-}
-
 .progress-bar {
   width: 100%;
   height: 25px;
@@ -955,14 +1056,6 @@ footer {
   transition: box-shadow 0.3s ease-in-out;
 }
 
-.theme-light .card {
-  background: #fff;
-}
-
-.theme-dark .card {
-  background: #666;
-}
-
 .card-content {
   padding: 16px;
 }
@@ -979,14 +1072,6 @@ footer {
 #demo-app h2.card-title {
   font-size: 1.25em; /* Smaller size */
   margin: 0px 0; /* Reduced margin for less vertical space */
-}
-
-.theme-light #demo-app h2.card-title {
-  color: black;
-}
-
-.theme-dark #demo-app h2.card-title {
-  color: white;
 }
 
 audio {
@@ -1134,14 +1219,6 @@ div.tag-cloud {
     height: 24px; /* Set height for icons */
     margin: 0 10px; /* Add some horizontal margin between icons */
     vertical-align: middle; /* Align middle to make sure it aligns well with the text */
-}
-
-.theme-light .share-text {
-  color: #333; /* Dark Magenta, same as your other headings */
-}
-
-.theme-dark .share-text {
-  color: #f5f5f5; /* Light Magenta, same as your other headings */
 }
 
 #mc_embed_signup {
