@@ -42,6 +42,13 @@ const themeToggle = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
 const demixImg = document.getElementById('music-demix-img');
 const amtImg = document.getElementById('amt-img');
+const themeResetButton = document.getElementById('theme-reset');
+
+// Reset theme to system preference
+themeResetButton.addEventListener('click', () => {
+    localStorage.removeItem('theme');
+    loadTheme();
+});
 
 // Function to change the Giscus theme if the iframe is loaded
 function changeGiscusTheme(theme) {
