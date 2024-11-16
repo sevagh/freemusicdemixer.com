@@ -38,7 +38,6 @@ publishable-key="pk_live_51ObLZ9AmT5bJ3vuwDIgzrNEljt7oK42MqgmnEKZbANz0PDtlzkD3Oc
 * Karaoke 2-stem model with **high-performance vocals and instrumental separation**
 * Higher quality models for 4-stem (vocals, drums, bass, melody) separation, including Fine-tuned and Deluxe models
 * We offer among the **best drums and bass separation** available today
-* In the [Android app](/android), record from microphone, capture audio from other apps, and export a custom mix from output stems
 
 ## Not ready to subscribe? Try our all-access passes!
 

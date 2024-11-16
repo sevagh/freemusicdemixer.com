@@ -21,8 +21,8 @@ Creating a karaoke track is easy with Free Music Demixer:
 
 See our [pricing page](/pricing) for a comparison of the free and PRO features.
 
-- **Free:** use the free tier [of our site](/) or [Android app](/android) for up to 3 demixes per week
-- **Totally private:** your files stay on your device (browser or Android phone) and are never uploaded to any server
+- **Free:** use the free tier [of our site](/) for up to 3 demixes per week
+- **Totally private:** your files stay on your computer and are never uploaded to any server
 - **Easy to use:** Our user-friendly interfaces makes creating karaoke tracks simple and quick; visit our [beginner's guide](https://freemusicdemixer.com/getting-started/2023/09/23/Beginners-guide-to-free-stems) for additional help
 - **High quality:** Get professional-grade instrumental tracks with clear, crisp sound
 - **Multiple formats:** Export your tracks in various formats suitable for any device
@@ -46,25 +46,10 @@ For the best experience, use Free Music Demixer on your computer. Whether you're
 - **High-Performance:** Leverage the power of your computer to process tracks quickly and efficiently. Choose up to 32 GB of memory to use multithreading and get your tracks faster!
 - **Free and pro options:** Enjoy basic features for free, or upgrade to our PRO subscription for even more advanced capabilities
 
-## Android app
-
-![Smartphones with Karaoke App](/assets/images/karaoke-smartphones-small.webp)
-
-Take your karaoke experience on the go with our Android app. Perfect for spontaneous singing sessions or parties, our app brings the power of vocal removal to your smartphone. Record live performances, capture songs from other apps, or upload your own music for impromptu karaoke parties.
-
-### Benefits of the Android app
-
-- **Portable and convenient:** Create karaoke tracks anywhere, anytime
-- **User-friendly:** Simple, intuitive interface designed for mobile users
-- **Live music recording and app capture:** Record live performances or capture songs from other apps for instant karaoke
-- **Free and pro options:** Access basic features for free, or upgrade for advanced functionalities and unlimited use, using the same PRO subscription as the website
-
-[Get the Android App here!](/android)
-
 ## Why choose Free Music Demixer for karaoke?
 
 - **Completely free:** Create and download up to 3 karaoke tracks without any cost
-- **Totally private:** your files stay on your device (browser or Android phone) and are never uploaded to any server
+- **Totally private:** your files stay on your computer and are never uploaded to any server
 - **No downloads required:** Use our web app directly from your browser
 - **Professional quality:** Achieve studio-quality results with minimal effort
 - **Two-source karaoke (PRO):** For the ultimate karaoke experience, upgrade to our PRO subscription for professional two-source karaoke models with exceptional vocal/instrumental separation
@@ -76,9 +61,6 @@ A: Simply upload your song to our platform, and our AI will remove the vocals fo
 
 **Q: Is Free Music Demixer really free?**
 A: Yes, you can create and download karaoke tracks for free. We also offer a PRO subscription with additional features.
-
-**Q: Can I use Free Music Demixer on my phone?**
-A: Yes! Download our Android app to create karaoke tracks on the go.
 
 **Q: What formats can I download my karaoke tracks in?**
 A: You can save your karaoke tracks in the wav format, compatible with any device.

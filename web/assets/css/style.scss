@@ -731,7 +731,7 @@ footer {
 .footer-container {
   display: flex;
   justify-content: space-between;
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 0 50px; /* Add padding to match main container */
 }
@@ -755,27 +755,6 @@ footer {
   font-size: 24px;
 }
 
-/* Middle Column (Products) */
-.footer-middle {
-  text-align: left;
-}
-
-.footer-middle nav {
-  display: flex;
-  flex-direction: column;
-}
-
-// TODO: colors here?
-.footer-middle nav a {
-  margin-bottom: 10px;
-  color: #fff;
-  text-decoration: none;
-}
-
-.footer-middle nav a:hover {
-  text-decoration: underline;
-}
-
 .footer-right {
   text-align: left;
 }
@@ -795,11 +774,11 @@ footer {
   text-decoration: underline;
 }
 
-.footer-left, .footer-middle, .footer-right {
+.footer-left, .footer-right {
   flex: 1; /* Allow each column to take equal space */
   max-width: 20%; /* Limit each column to a third of the footer */
 }
-.footer-middle, .footer-right {
+.footer-right {
   padding-left: 5%;
 }
 
@@ -1388,7 +1367,7 @@ input[type="range"]::-moz-range-thumb {
     display: block;
   }
 
-  .footer-left, .footer-middle, .footer-right {
+  .footer-left, .footer-right {
     max-width: 25%;
   }
 
@@ -1404,21 +1383,20 @@ input[type="range"]::-moz-range-thumb {
     padding: 0 20px; /* Reduce left/right padding for smaller screens */
   }
 
-  .footer-left, .footer-middle, .footer-right {
+  .footer-left, .footer-right {
     margin-bottom: 20px; /* Add some space between stacked sections */
     max-width: 80%;
     padding-left: 0px;
   }
 
   /* Reduce the font size slightly for smaller screens */
-  .footer-middle nav a,
   .footer-right nav a,
   .small-text {
     font-size: 0.85em;
   }
 
   /* Center-align the text to make it more readable on small screens */
-  .footer-left, .footer-middle, .footer-right {
+  .footer-left, .footer-right {
     text-align: left;
   }
 

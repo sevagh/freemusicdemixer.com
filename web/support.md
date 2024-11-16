@@ -1,5 +1,5 @@
 ---
-description: "Get help and support for using our music demixing tools, whether you're on the web or Android."
+description: "Get help and support for using our music demixing tools."
 ---
 
 # Support & legal
