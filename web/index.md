@@ -137,7 +137,7 @@ header_class: index
       <br>
       <br>
       <div class="cta-legend">
-        <p id="pro-cta">🔒 <a href="/pricing" target="_blank">Go PRO today</a> to unlock all features and higher quality!</p>
+        <p id="pro-cta">🔒 <a href="/pricing#subscribe-today" target="_blank">Click here to unlock guitar and piano stems and higher qualities!</a></p>
       </div>
       <div class="wizard-footer">
         <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>
