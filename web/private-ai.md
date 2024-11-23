@@ -11,7 +11,7 @@ Are you frustrated with the limitations imposed by cloud-based music tools and <
 
 ### Record Labels Often Don't Respect Artists
 
-For decades, artists have faced unfair treatment from record labels, often losing control over their own creations due to complex contracts. High-profile disputes, such as [Taylor Swift's battle over her master recordings](https://www.bbc.com/news/entertainment-arts-50490700), highlight how artists can be deprived of rights to their own music.
+For decades, artists have faced unfair treatment from record labels, often losing control over their own creations due to complex contracts. High-profile disputes, such as [Taylor Swift's battle over her master recordings](https://studentvanguardintl.org/taylor-swifts-master-recordings-battle-a-case-study-in-artist-ownership-and-power/), highlight how artists can be deprived of rights to their own music.
 
 ### Ethical Concerns with AI Companies Training Data
 
