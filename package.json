@@ -1,14 +1,13 @@
 {
   "devDependencies": {
     "gulp": "^5.0.0",
-    "gulp-concat": "^2.6.1",
     "gulp-uglify": "^3.0.2",
-    "wrangler": "^3.70.0"
+    "wrangler": "^3.90.0"
   },
   "dependencies": {
-    "stripe": "^14.14.0"
+    "stripe": "^17.4.0"
   },
   "scripts": {
-    "minify-js": "gulp minify-js"
+    "dev": "gulp"
   }
 }
