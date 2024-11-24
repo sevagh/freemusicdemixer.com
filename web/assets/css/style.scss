@@ -258,7 +258,7 @@
 }
 
 img.responsive-img-android {
-  width: 75%; /* default width for mobile devices */
+  width: 100%; /* default width for mobile devices */
 }
 
 // Smooth scrolling
@@ -1345,6 +1345,69 @@ input[type="range"]::-moz-range-thumb {
   color: #333;
 }
 
+/* popup banner */
+.popup-banner-hidden {
+  display: none;
+}
+
+.popup-banner-shown {
+  display: flex;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto; /* adjust width as necessary */
+  max-width: 500px; /* max-width for responsiveness */
+  background: #ffffff;
+  color: black;
+  font-size: 24px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: none;
+}
+
+.popup-overlay-shown {
+  display: block;
+}
+
+.popup-close-button {
+  all: unset; /* Resets all inherited styles from global button */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 24px;
+  background: none; /* Explicitly ensure no background */
+  border: none;
+  color: black; /* Set color explicitly */
+  padding: 0 10px 0 10px; /* Reset padding */
+}
+
+// now write popup-close-button hover
+.popup-close-button:hover {
+  color: red;
+  background: white;
+}
+
+.popup-title {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
 @media (max-width: 1000px) {
   .wizard-container {
     width: 600px;
@@ -1357,7 +1420,7 @@ input[type="range"]::-moz-range-thumb {
   }
 
   img.responsive-img-android {
-    width: 25%; /* Width for larger screens */
+    width: 50%;
   }
 }
 
@@ -1387,6 +1450,10 @@ input[type="range"]::-moz-range-thumb {
 
   .wizard-container {
     width: 500px;
+  }
+
+  img.responsive-img-android {
+    width: 65%;
   }
 }
 
@@ -1433,6 +1500,10 @@ input[type="range"]::-moz-range-thumb {
 
   section.title-section h2 {
     margin-left: 30px;
+  }
+
+  img.responsive-img-android {
+    width: 100%;
   }
 }
 

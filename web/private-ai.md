@@ -19,7 +19,7 @@ Many companies train their AI models using copyrighted material without proper l
 
 Additionally, there's a lack of transparency regarding how user data is utilized. According to VentureBeat, [ethical dilemmas arise when AI models are trained on user inputs without explicit consent, potentially infringing on users' intellectual property rights](https://venturebeat.com/games/how-ai-is-making-copyright-issues-more-complicated-devcom-panel/).
 
-<img alt="ai-meme" src="/assets/images/ai-meme.webp" width="35%"/>
+<img class="responsive-img-android" alt="ai-meme" src="/assets/images/ai-meme.webp" width="50%"/>
 
 Legal challenges are emerging in this space, with lawsuits highlighting the misuse of data in AI training. [This article by the Guardian](https://www.theguardian.com/technology/2024/apr/02/musicians-demand-protection-against-ai) shows that <span class="blog-highlight">major artists and musicians like Billie Eilish, Nicki Minaj, Stevie Wonder, and others are demanding protection against AI-generated music that infringes on their copyrights</span>.
 
