@@ -136,28 +136,54 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     activateTierUI(userTier);
 
+    popupLogic();
+});
+
+function popupLogic() {
+    // Get references to popup elements
     const popupBanner = document.getElementById('popup-banner');
     const popupOverlay = document.getElementById('popup-overlay');
     const closeButton = document.getElementById('close-popup');
+
+    // early exit if popup elements don't exist
+    if (!popupBanner || !popupOverlay) {
+        return;
+    }
+
     // Initialize shouldShowPopup based on sessionStorage
     let shouldShowPopup = !sessionStorage.getItem('popupDismissed');
+
     // Function to hide the popup and overlay
     function hidePopup() {
-        popupBanner.classList.remove('popup-banner-shown');
-        popupOverlay.classList.remove('popup-overlay-shown');
+        if (popupBanner) {
+            popupBanner.classList.remove('popup-banner-shown');
+        }
+        if (popupOverlay) {
+            popupOverlay.classList.remove('popup-overlay-shown');
+        }
         shouldShowPopup = false; // Update the flag so it won't show again
         sessionStorage.setItem('popupDismissed', 'true');
     }
-    window.addEventListener('scroll', () => {
-        let scrolledPercentage = (window.scrollY / (document.body.offsetHeight - window.innerHeight)) * 100;
-        if (scrolledPercentage > 30 && shouldShowPopup) { // Trigger at 30% scroll
-            popupBanner.classList.add('popup-banner-shown');
-            popupOverlay.classList.add('popup-overlay-shown');
-        }
-    });
-    closeButton.addEventListener('click', hidePopup);
-    popupOverlay.addEventListener('click', hidePopup);
-});
+
+    // Add scroll event listener if popup elements exist
+    if (popupBanner && popupOverlay) {
+        window.addEventListener('scroll', () => {
+            let scrolledPercentage = (window.scrollY / (document.body.offsetHeight - window.innerHeight)) * 100;
+            if (scrolledPercentage > 30 && shouldShowPopup) { // Trigger at 30% scroll
+                popupBanner.classList.add('popup-banner-shown');
+                popupOverlay.classList.add('popup-overlay-shown');
+            }
+        });
+    }
+
+    // Add click event listeners if the elements exist
+    if (closeButton) {
+        closeButton.addEventListener('click', hidePopup);
+    }
+    if (popupOverlay) {
+        popupOverlay.addEventListener('click', hidePopup);
+    }
+}
 
 // Function to display the spinner and overlay
 function displayLoginSpinner() {
