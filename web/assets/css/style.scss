@@ -912,6 +912,35 @@ footer {
   max-height: 50px;
 }
 
+/* Logo Section */
+.navbar-logo {
+  display: flex; /* Enable flexbox */
+  align-items: center; /* Vertically center the content */
+  gap: 10px; /* Space between logo and theme switcher */
+}
+
+.navbar-logo img {
+  max-height: 50px; /* Ensure consistent size for the logo */
+}
+
+/* Theme Switcher Button */
+.navbar-logo button {
+  display: inline-flex; /* Ensures the button retains its styling */
+  align-items: center; /* Centers the icon inside the button */
+  justify-content: center; /* Centers the icon inside the button */
+  padding: 10px 14px; /* Adjust padding for button size */
+  background-color: #0077cc; /* Match brand color */
+  color: white; /* Icon color */
+  border: none; /* Remove any default border */
+  border-radius: 5px; /* Match button style */
+  cursor: pointer; /* Pointer cursor for interactivity */
+  transition: background-color 0.3s ease;
+}
+
+.navbar-logo button:hover {
+  background-color: #005fa3; /* Darker blue on hover */
+}
+
 /* Navbar Links */
 .navbar-links {
   display: flex;
@@ -944,20 +973,45 @@ footer {
   gap: 15px;
 }
 
-.navbar-login-signup button,
-.navbar-login-signup a {
-  background-color: #0077cc;
-  color: white;
+/* Shared styles for both buttons */
+.navbar-login-signup button {
   padding: 8px 15px;
-  border: none;
   border-radius: 5px;
-  text-decoration: none;
   cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.navbar-login-signup button:hover,
-.navbar-login-signup a:hover {
-  background-color: #005fa3;
+#signup-btn {
+  display: inline-block; /* Makes the link behave like a button */
+  background-color: #0077cc; /* Button background color */
+  color: white; /* Button text color */
+  padding: 5px 12px; /* Adjust padding */
+  border-radius: 5px; /* Rounded corners */
+  text-decoration: none; /* Remove underline */
+  font-weight: 515; /* Semi-bold text */
+  text-align: center; /* Centers text */
+  cursor: pointer; /* Show pointer cursor */
+  transition: background-color 0.3s ease;
+}
+
+#signup-btn:hover {
+  background-color: #005fa3; /* Darker hover color */
+}
+
+.navbar-login-signup #login-btn {
+  color: white; /* Slightly brighter blue text */
+  border-color: #005fa3; /* Matches text color */
+}
+
+.navbar-login-signup #login-btn:hover {
+  background-color: #e6f2ff; /* Light background for better visibility */
+  color: #003f6b; /* Darker blue for hover */
+}
+
+/* Optional spacing between buttons */
+.navbar-login-signup button + button {
+  margin-left: 2px; /* Adjust spacing as needed */
 }
 
 /* Hamburger Menu (hidden by default) */
