@@ -805,13 +805,23 @@ function activateTierUI(userTier) {
 }
 
 const toggleButton = document.getElementById('advancedSettingsToggle');
+const tooltipToggleButton = document.getElementById('midiTooltipToggle');
 const advancedSettings = document.getElementById('advancedSettings');
+const tooltipContents = document.getElementById('midiTooltip');
 
 toggleButton.addEventListener('click', function() {
     if (advancedSettings.style.display === 'none') {
         advancedSettings.style.display = 'block';
     } else {
         advancedSettings.style.display = 'none';
+    }
+});
+
+tooltipToggleButton.addEventListener('click', function() {
+    if (tooltipContents.style.display === 'none') {
+        tooltipContents.style.display = 'block';
+    } else {
+        tooltipContents.style.display = 'none';
     }
 });
 

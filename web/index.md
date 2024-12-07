@@ -47,13 +47,17 @@ header_class: index
             </div>
             <div>
               <input type="radio" id="both" name="processingMode" value="both">
-              <label for="both">Stems + MIDI</label>
+              <label for="both">Stems + MIDI music transcription</label>
             </div>
             <div>
               <input type="radio" id="midi" name="processingMode" value="midi">
-              <label for="midi">MIDI-only</label>
+              <label for="midi">MIDI music transcription only</label>
             </div>
           </form>
+        <b><a href="javascript:void(0);" id="midiTooltipToggle" style="text-decoration: none; cursor: pointer;">ℹ️</a></b>
+        <div id="midiTooltip" style="display: none;">
+          <a href="/getting-started/2024/12/07/Music-transcription-feature">Learn more about our MIDI music transcription feature</a>
+        </div>
         </div>
         <div class="column">
           <b>Components:</b>
