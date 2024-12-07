@@ -8,6 +8,8 @@ intro: "Turning a favorite track into readable music notation no longer has to b
 
 {{ page.intro }}
 
+<img alt="flow-diagram" src="/assets/blog/post14/flow.webp" width="100%">
+
 <h2>Table of contents</h2>
 * Table of contents
 {:toc}
@@ -32,23 +34,39 @@ When you convert audio to MIDI, you’re essentially translating a raw sound wav
 
 Start by selecting the track you want to transcribe. This could be a popular hit, a classical recording, or even a personal composition. Our platform accepts common audio formats like MP3 or WAV.
 
-2. Isolate instrumental stems (optional but recommended)
+<ol start="2">
+<li>Isolate instrumental stems (optional but recommended)</li>
+</ol>
 
 For the highest quality AI music transcription results, consider using our stem separation feature first. By isolating a particular instrument or vocal line, you’ll get a cleaner, more accurate MIDI output. This especially helps if you want to create sheet music from MP3 recordings that have dense mixes.
 
-3. Run the MIDI transcription tool
+<img src="/assets/blog/post13/midi_settings.webp" alt="midi-selection" width="50%"/>
+
+<ol start="3">
+<li>Run the MIDI transcription tool</li>
+</ol>
 
 In your project settings, enable the "Stems + MIDI" option. Our MIDI transcription tool uses advanced algorithms to analyze pitches, timing, and intensity, swiftly producing a MIDI file. The process is largely automated, giving you professional-grade results without the hassle.
 
-4. Download your MIDI file
+<ol start="4">
+<li>Download your MIDI file</li>
+</ol>
 
 Once the transcription process is complete, you can download wav files for the stems and the resulting MIDI files of the transcription. This file is the bridge between your original audio and your sheet music.
 
-5. Convert the MIDI file into notation
+<img src="/assets/blog/post13/midi_outputs.webp" alt="midi-selection" width="50%"/>
+
+<ol start="5">
+<li>Convert the MIDI file into notation</li>
+</ol>
 
 Open your preferred notation software (e.g., MuseScore). Import the MIDI file to generate music notation. The initial transcription will be reasonably accurate, and you can tweak note lengths, phrasing, or dynamics for the cleanest and most musician-friendly score.
 
-6. Refine and print
+<img src="/assets/blog/post13/musescore.webp" alt="midi-selection" width="75%"/>
+
+<ol start="6">
+<li>Refine and print</li>
+</ol>
 
 Make any final adjustments, then save and print the sheet music. Congratulations—you’ve just converted an audio recording into a beautifully readable score!
 
