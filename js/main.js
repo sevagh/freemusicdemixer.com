@@ -42,6 +42,11 @@ const themeToggle = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
 const demixImg = document.getElementById('music-demix-img');
 const amtImg = document.getElementById('amt-img');
+const rssImg = document.getElementById('rss-img');
+const twitterImg = document.getElementById('twitter-img');
+const redditImg = document.getElementById('reddit-img');
+const ycImg = document.getElementById('yc-img');
+const fbImg = document.getElementById('fb-img');
 const themeResetButton = document.getElementById('theme-reset');
 
 // Reset theme to system preference
@@ -78,6 +83,16 @@ function applyTheme(theme) {
             demixImg.src = '/assets/images/music-demix-dark.webp';
             amtImg.src = '/assets/images/midi-amt-dark.webp';
         }
+        if (rssImg) {
+            rssImg.src = '/assets/social/rss-dark.svg';
+        }
+        if (twitterImg) {
+            twitterImg.src = '/assets/social/x-twitter-dark.svg';
+            // assume the rest of the social icons are present if twitter is
+            redditImg.src = '/assets/social/reddit-dark.svg';
+            ycImg.src = '/assets/social/y-combinator-dark.svg';
+            fbImg.src = '/assets/social/facebook-dark.svg';
+        }
     } else {
         document.documentElement.classList.add('theme-light');
         themeIcon.className = 'fa fa-moon';
@@ -86,6 +101,16 @@ function applyTheme(theme) {
         if (demixImg && amtImg) {
           demixImg.src = '/assets/images/music-demix.webp';
           amtImg.src = '/assets/images/midi-amt.webp';
+        }
+        if (rssImg) {
+            rssImg.src = '/assets/social/rss.svg';
+        }
+        if (twitterImg) {
+            twitterImg.src = '/assets/social/x-twitter.svg';
+            // assume the rest of the social icons are present if twitter is
+            redditImg.src = '/assets/social/reddit.svg';
+            ycImg.src = '/assets/social/y-combinator.svg';
+            fbImg.src = '/assets/social/facebook.svg';
         }
     }
 

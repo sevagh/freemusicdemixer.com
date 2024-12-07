@@ -8,7 +8,7 @@ description: "Explore our blog for expert tips, in-depth guides, and the latest 
 <div class="social-share-bar">
 <span class="share-text">Don't miss a post; subscribe to the RSS feed!</span>
 <a href="/feed.xml" title="Subscribe to RSS feed">
-  <img src="/assets/social/rss.svg" alt="RSS Feed">
+  <img id="rss-img" src="/assets/social/rss.svg" alt="RSS Feed">
 </a>
 </div>
 
