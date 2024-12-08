@@ -83,14 +83,22 @@ header_class: index
               <label for="instrumental">Instrumental</label>
             </div>
             <div>
-              <input type="checkbox" id="piano" name="feature" value="piano" disabled>
-              <label for="piano">Piano 🔒</label>
+              <input type="checkbox" id="piano" name="feature" value="piano">
+              <label for="piano">Piano</label>
             </div>
             <div>
-              <input type="checkbox" id="guitar" name="feature" value="guitar" disabled>
-              <label for="guitar">Guitar 🔒</label>
+              <input type="checkbox" id="guitar" name="feature" value="guitar">
+              <label for="guitar">Guitar</label>
+            </div>
+            <div>
+              <input type="checkbox" id="other_melody" name="feature" value="other_melody">
+              <label for="other_melody">Other melody (violin, flute, etc.)</label>
             </div>
           </form>
+        <b><a href="javascript:void(0);" id="componentTooltipToggle" style="text-decoration: none; cursor: pointer;">ℹ️</a></b>
+        <div id="componentTooltip" style="display: none;">
+          Picking "melody" or "instrumental" may add more components automatically.
+        </div>
         </div>
         <div class="column">
             <b>Quality:</b>
@@ -108,6 +116,10 @@ header_class: index
                 <label for="high-quality">High 🔒</label>
               </div>
             </form>
+        <b><a href="javascript:void(0);" id="qualityTooltipToggle" style="text-decoration: none; cursor: pointer;">ℹ️</a></b>
+        <div id="qualityTooltip" style="display: none;">
+          Higher quality is slower, depending on total number of components.
+        </div>
         </div>
         <div class="column">
         <b><a href="javascript:void(0);" id="advancedSettingsToggle" style="text-decoration: none; cursor: pointer;">Advanced &#x25BC;</a></b>
@@ -138,10 +150,8 @@ header_class: index
         </div>
         </div>
       </div>
-      <br>
-      <br>
       <div class="cta-legend">
-        <p id="pro-cta">🔒 <a href="/pricing#subscribe-today" target="_blank">Click here to unlock guitar and piano stems and higher qualities!</a></p>
+        <p id="pro-cta">🔒 <a href="/pricing#subscribe-today" target="_blank">Click here to unlock higher qualities!</a></p>
       </div>
       <div class="wizard-footer">
         <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>

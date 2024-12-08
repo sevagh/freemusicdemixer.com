@@ -1,20 +1,30 @@
 import { encodeWavFileFromAudioBuffer } from './WavFileEncoder.js';
 
-const modelCheckboxes = document.querySelectorAll('input[type="checkbox"][name="feature"]');
-const qualityRadios = document.querySelectorAll('input[type="radio"][name="quality"]');
-modelCheckboxes.forEach(checkbox => checkbox.addEventListener('change', updateModelBasedOnSelection));
+const componentsCheckboxes = document.querySelectorAll('#modelPickerForm input[type="checkbox"]');
+const qualityRadios = document.querySelectorAll('#qualityPickerForm input[type="radio"]');
+const memoryRadios = document.querySelectorAll('#memorySelectorForm input[type="radio"]');
 qualityRadios.forEach(radio => radio.addEventListener('change', updateModelBasedOnSelection));
 let selectedModel;
+let selectedStems;
 
-// new midi feature
+componentsCheckboxes.forEach((checkbox) => {
+    checkbox.addEventListener('change', () => {
+        const checkboxes = document.querySelectorAll('#modelPickerForm input[type="checkbox"]:not([disabled])');
+        const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+
+        if (checkedCount === 0) {
+            checkbox.checked = true;
+        }
+
+        updateModelBasedOnSelection();
+    });
+});
+
 let processingMode = 'stems';
 
 document.getElementById('processingPickerForm').addEventListener('change', (event) => {
   const isMidiOnly = document.getElementById('midi').checked;
   const isBoth = document.getElementById('both').checked;
-  const componentsCheckboxes = document.querySelectorAll('#modelPickerForm input[type="checkbox"]');
-  const qualityRadios = document.querySelectorAll('#qualityPickerForm input[type="radio"]');
-  const memoryRadios = document.querySelectorAll('#memorySelectorForm input[type="radio"]');
 
   // if the user is logged in, activate tier UIs
   const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
@@ -26,20 +36,13 @@ document.getElementById('processingPickerForm').addEventListener('change', (even
       }
   }
 
-  // if userTier is 0, keep piano and guitar checkboxes disabled
-  // keep default/medium/high quality radio buttons disabled
-  // i.e. don't touch them
+  // if userTier is 0, keep default/medium/high quality radio buttons disabled
   if (userTier === 0) {
-    document.getElementById('vocals').disabled = isMidiOnly;
-    document.getElementById('drums').disabled = isMidiOnly;
-    document.getElementById('bass').disabled = isMidiOnly;
-    document.getElementById('melody').disabled = isMidiOnly;
-    document.getElementById('instrumental').disabled = isMidiOnly;
-    document.getElementById('default-quality').disabled = isMidiOnly;
+    ['vocals', 'drums', 'bass', 'melody', 'instrumental', 'piano', 'guitar', 'other_melody', 'default-quality'].forEach(element => {
+        document.getElementById(element).disabled = isMidiOnly;
+    });
   } else if (userTier === 2) {
-    // iterate and disable all checkboxes
-    componentsCheckboxes.forEach(checkbox => checkbox.disabled = isMidiOnly);
-    // iterate and disable all radio buttons
+    // iterate and disable all quality radio buttons
     qualityRadios.forEach(radio => radio.disabled = isMidiOnly);
   }
 
@@ -54,31 +57,28 @@ document.getElementById('processingPickerForm').addEventListener('change', (even
     advancedSettings.style.display = 'none'; // Ensure advanced settings are hidden
   }
 
+  let inferenceStyle = '';
+  let midiStyle = '';
   if (isMidiOnly) {
     processingMode = 'midi';
-    document.getElementById('inference-progress-bar').style.display = 'none';
-    document.getElementById('inference-progress-text').style.display = 'none';
-    document.getElementById('inference-progress-bar-outer').style.display = 'none';
-    document.getElementById('midi-progress-bar').style.display = 'block';
-    document.getElementById('midi-progress-text').style.display = 'block';
-    document.getElementById('midi-progress-bar-outer').style.display = 'block';
+    inferenceStyle = 'none';
+    midiStyle = 'block';
   } else if (isBoth) {
     processingMode = 'both';
-    document.getElementById('inference-progress-bar').style.display = 'block';
-    document.getElementById('inference-progress-text').style.display = 'block';
-    document.getElementById('inference-progress-bar-outer').style.display = 'block';
-    document.getElementById('midi-progress-bar').style.display = 'block';
-    document.getElementById('midi-progress-text').style.display = 'block';
-    document.getElementById('midi-progress-bar-outer').style.display = 'block';
+    inferenceStyle = 'block';
+    midiStyle = 'block';
   } else {
     processingMode = 'stems';
-    document.getElementById('midi-progress-bar').style.display = 'none';
-    document.getElementById('midi-progress-text').style.display = 'none';
-    document.getElementById('midi-progress-bar-outer').style.display = 'none';
-    document.getElementById('inference-progress-bar').style.display = 'block';
-    document.getElementById('inference-progress-text').style.display = 'block';
-    document.getElementById('inference-progress-bar-outer').style.display = 'block';
+    inferenceStyle = 'block';
+    midiStyle = 'none';
   }
+
+  document.getElementById('inference-progress-bar').style.display = inferenceStyle;
+  document.getElementById('inference-progress-text').style.display = inferenceStyle;
+  document.getElementById('inference-progress-bar-outer').style.display = inferenceStyle;
+  document.getElementById('midi-progress-bar').style.display = midiStyle;
+  document.getElementById('midi-progress-text').style.display = midiStyle;
+  document.getElementById('midi-progress-bar-outer').style.display = midiStyle;
 
   console.log("Setting processing mode to:", processingMode);
   updateModelBasedOnSelection();
@@ -105,16 +105,7 @@ const tierNames = {0: 'Free', 2: 'Pro'};
 
 const dl_prefix = "https://bucket.freemusicdemixer.com";
 
-const modelStemMapping = {
-    'demucs-free-4s': ['drums', 'bass', 'melody', 'vocals'],
-    'demucs-free-6s': ['drums', 'bass', 'other_melody', 'vocals', 'guitar', 'piano'],
-    'demucs-pro-cust': ['drums', 'bass', 'other_melody', 'vocals', 'guitar', 'piano', 'melody'],
-    'demucs-karaoke': ['vocals', 'instrum'],
-    'demucs-pro-ft': ['drums', 'bass', 'melody', 'vocals'],
-    'demucs-pro-deluxe': ['drums', 'bass', 'melody', 'vocals']
-};
-
-function fetchAndCacheFiles(model) {
+function fetchAndCacheFiles(model, components) {
     let modelFiles = [];
     if (model === 'demucs-free-4s') {
         modelFiles.push('htdemucs.ort.gz');
@@ -122,25 +113,32 @@ function fetchAndCacheFiles(model) {
         modelFiles.push('htdemucs_6s.ort.gz');
     } else if (model === 'demucs-karaoke') {
         modelFiles.push('htdemucs_2s_cust.ort.gz');
-    } else if (model === 'demucs-pro-ft') {
-        modelFiles.push('htdemucs_ft_drums.ort.gz');
-        modelFiles.push('htdemucs_ft_bass.ort.gz');
-        modelFiles.push('htdemucs_ft_other.ort.gz');
-        modelFiles.push('htdemucs_ft_vocals.ort.gz');
+    } else if (model === 'demucs-pro-ft' || model === 'demucs-pro-deluxe') {
+        if (components.includes('drums')) {
+            modelFiles.push('htdemucs_ft_drums.ort.gz');
+        }
+        if (components.includes('bass')) {
+            modelFiles.push('htdemucs_ft_bass.ort.gz');
+        }
+        if (components.includes('melody')) {
+            modelFiles.push('htdemucs_ft_other.ort.gz');
+        }
+        if (components.includes('vocals')) {
+            modelFiles.push(model === 'demucs-pro-ft' ? 'htdemucs_ft_vocals.ort.gz' : 'htdemucs_2s_cust.ort.gz');
+        }
     } else if (model === 'demucs-pro-cust') {
-        modelFiles.push('htdemucs_2s_cust.ort.gz');
-        modelFiles.push('htdemucs.ort.gz');
+        modelFiles.push('htdemucs_ft_vocals.ort.gz');
         modelFiles.push('htdemucs_6s.ort.gz');
-    } else if (model === 'demucs-pro-deluxe') {
+    } else if (model === 'demucs-pro-cust-spec') {
+        modelFiles.push('htdemucs_2s_cust.ort.gz');
         modelFiles.push('htdemucs_ft_drums.ort.gz');
         modelFiles.push('htdemucs_ft_bass.ort.gz');
-        modelFiles.push('htdemucs_ft_other.ort.gz');
-        modelFiles.push('htdemucs_2s_cust.ort.gz');
+        modelFiles.push('htdemucs_6s.ort.gz');
     }
 
     // prepend raw gh url to all modelFiles
     modelFiles = modelFiles.map(file =>
-            `${dl_prefix}/${file}`
+        `${dl_prefix}/${file}`
     )
 
     // Map each file to a fetch request and then process the response
@@ -228,24 +226,11 @@ function resetUIElements() {
 
     // enable all free-tier checkboxes
     // accounting for midi toggle disabling
-    document.getElementById('vocals').disabled = false;
-    document.getElementById('drums').disabled = false;
-    document.getElementById('bass').disabled = false;
-    document.getElementById('melody').disabled = false;
-    document.getElementById('instrumental').disabled = false;
-    document.getElementById('default-quality').disabled = false;
-    document.getElementById('4gb').disabled = false;
-    document.getElementById('8gb').disabled = false;
-    document.getElementById('16gb').disabled = false;
-    document.getElementById('32gb').disabled = false;
+    ['vocals', 'drums', 'bass', 'melody', 'instrumental', 'piano', 'guitar', 'other_melody', 'default-quality', '4gb', '8gb', '16gb', '32gb'].forEach(element => {
+        document.getElementById(element).disabled = false;
+    });
 
-    // Disable PRO-tier checkboxes (piano, guitar) and add lock symbol
-    document.getElementById('piano').disabled = true;
-    document.querySelector('label[for="piano"]').textContent = 'Piano 🔒';
-
-    document.getElementById('guitar').disabled = true;
-    document.querySelector('label[for="guitar"]').textContent = 'Guitar 🔒';
-
+    // Disable PRO-tier checkboxes and add lock symbol
     document.getElementById('medium-quality').disabled = true;
     document.querySelector('label[for="medium-quality"]').textContent = 'Medium 🔒';
 
@@ -253,12 +238,10 @@ function resetUIElements() {
     document.querySelector('label[for="high-quality"]').textContent = 'High 🔒';
 
     // Reset checkboxes
-    modelCheckboxes.forEach(checkbox => checkbox.checked = false);
-    document.getElementById('vocals').checked = true;
-    document.getElementById('drums').checked = true;
-    document.getElementById('bass').checked = true;
-    document.getElementById('melody').checked = true;
-    document.getElementById('instrumental').checked = true;
+    componentsCheckboxes.forEach(checkbox => checkbox.checked = false);
+    ['vocals', 'drums', 'bass', 'melody', 'instrumental'].forEach(element => {
+        document.getElementById(element).checked = true;
+    });
 
     // Reset quality radio buttons
     qualityRadios.forEach(radio => radio.checked = false);
@@ -303,7 +286,7 @@ function updateModelBasedOnSelection() {
         return;
     }
 
-    const selectedFeatures = Array.from(modelCheckboxes)
+    const selectedFeatures = Array.from(componentsCheckboxes)
     .filter(checkbox => checkbox.checked)
     .map(checkbox => checkbox.value);
 
@@ -312,11 +295,13 @@ function updateModelBasedOnSelection() {
     let selectedModelLocal = "4-SOURCE (FREE)"; // Default model
 
     // Rule 1: If the sources contain piano and/or guitar
-    if (selectedFeatures.includes("piano") || selectedFeatures.includes("guitar")) {
-        if (selectedQuality === "low" || selectedQuality === "default") {
+    if (selectedFeatures.includes("piano") || selectedFeatures.includes("guitar") || selectedFeatures.includes("other_melody")) {
+        if (selectedQuality === "default") {
             selectedModelLocal = "6-SOURCE (PRO)";
-        } else if (selectedQuality === "medium" || selectedQuality === "high") {
+        } else if (selectedQuality === "medium") {
             selectedModelLocal = "CUSTOM (PRO)";
+        } else if (selectedQuality === "high") {
+            selectedModelLocal = "CUSTOM SPECIAL (PRO)";
         }
     }
     // Rule 2: If the sources contain only vocals and/or instrumental (with no other stems)
@@ -352,7 +337,102 @@ function updateModelBasedOnSelection() {
         selectedModel = 'demucs-pro-cust';
     } else if (selectedModelLocal === "DELUXE (PRO)") {
         selectedModel = 'demucs-pro-deluxe';
+    } else if (selectedModelLocal === "CUSTOM SPECIAL (PRO)") {
+        selectedModel = 'demucs-pro-cust-spec';
     }
+
+    // finally, store selected components
+    selectedStems = selectedFeatures;
+
+    // now, tricky - if selectedStems incudes instrumental and it's not
+    // the demucs-karaoke model, we need to include other stems by necessity
+    if (selectedStems.includes('instrumental') && selectedModel !== 'demucs-karaoke') {
+        // for free-4s, ft, and deluxe, include drums, bass, melody (if not already there)
+        if (['demucs-free-4s', 'demucs-pro-ft', 'demucs-pro-deluxe'].includes(selectedModel)) {
+            if (!selectedStems.includes('drums')) {
+                selectedStems.push('drums');
+            }
+            if (!selectedStems.includes('bass')) {
+                selectedStems.push('bass');
+            }
+            if (!selectedStems.includes('melody')) {
+                selectedStems.push('melody');
+            }
+        }
+
+        // for free-6s, pro-cust, include drums, bass, other_melody, guitar, piano
+        if (['demucs-free-6s', 'demucs-pro-cust', 'demucs-pro-cust-spec'].includes(selectedModel)) {
+            if (!selectedStems.includes('drums')) {
+                selectedStems.push('drums');
+            }
+            if (!selectedStems.includes('bass')) {
+                selectedStems.push('bass');
+            }
+            if (!selectedStems.includes('other_melody')) {
+                selectedStems.push('other_melody');
+            }
+            if (!selectedStems.includes('guitar')) {
+                selectedStems.push('guitar');
+            }
+            if (!selectedStems.includes('piano')) {
+                selectedStems.push('piano');
+            }
+        }
+    }
+
+    // another edge case - if selectedStems includes melody and it's
+    // free-6s or pro-cust, then we need other_melody, guitar, piano
+    if (selectedStems.includes('melody') && ['demucs-free-6s', 'demucs-pro-cust', 'demucs-pro-cust-spec'].includes(selectedModel)) {
+        if (!selectedStems.includes('other_melody')) {
+            selectedStems.push('other_melody');
+        }
+        if (!selectedStems.includes('guitar')) {
+            selectedStems.push('guitar');
+        }
+        if (!selectedStems.includes('piano')) {
+            selectedStems.push('piano');
+        }
+    }
+
+    // we need to enforce a sorting order on selectedStems
+    // it should go in this order:
+    // drums, bass, melody, vocals
+    // so that the model outputs are in the correct order
+
+    // go ahead and sort the selectedStems
+    // instrumental goes last
+    selectedStems.sort((a, b) => {
+        if (a === 'drums') {
+            return -1;
+        } else if (b === 'drums') {
+            return 1;
+        } else if (a === 'bass') {
+            return -1;
+        } else if (b === 'bass') {
+            return 1;
+        } else if (a === 'melody') {
+            return -1;
+        } else if (b === 'melody') {
+            return 1;
+        } else if (a === 'vocals') {
+            return -1;
+        } else if (b === 'vocals') {
+            return 1;
+        } else if (a === 'guitar') {
+            return -1;
+        } else if (b === 'guitar') {
+            return 1;
+        } else if (a === 'piano') {
+            return -1;
+        } else if (b === 'piano') {
+            return 1;
+        } else if (a === 'instrumental') {
+            return -1;
+        } else if (b === 'instrumental') {
+            return 1;
+        }
+        return 0;
+    });
 }
 
 function segmentWaveform(left, right, n_segments) {
@@ -509,10 +589,6 @@ function initWorkers() {
                     // reset globals etc.
                     processedSegments = null; // this one will be recreated with appropriate num_workers next time
                     completedSegments = 0;
-
-                    // enable the buttons to leave the final wizard step
-                    //prevStep3Btn.disabled = false;
-                    //nextStep3Btn.disabled = false;
                 }
             } else if (e.data.msg === 'PROCESSING_DONE_BATCH') {
                 // similar global bs here
@@ -544,10 +620,6 @@ function initWorkers() {
                     // if all songs are done, reset completedSongsBatch
                     if (completedSongsBatch === document.getElementById('batch-upload').files.length) {
                         completedSongsBatch = 0;
-                        // re-enable the buttons
-                        // enable the buttons to leave the final wizard step
-                        //prevStep3Btn.disabled = false;
-                        //nextStep3Btn.disabled = false;
 
                         // terminate the workers
                         workers.forEach(worker => {
@@ -568,7 +640,7 @@ function initWorkers() {
                 const outputLinksDiv = document.getElementById('output-links');
 
                 const errorText = document.createElement('p');
-                errorText.textContent = '❌ An error occurred. Refresh the page and try again with more memory from "Advanced" settings';
+                errorText.textContent = '❌ An error occured. Refresh the page and try again with more memory from "Advanced" settings';
 
                 outputLinksDiv.appendChild(errorText);
             }
@@ -576,12 +648,13 @@ function initWorkers() {
 
         // Assuming 'selectedModel' is a global variable that is set to the model name prefix
         // such as 'demucs_free', 'demucs_karaoke', or 'demucs_pro'
-        console.log(`Selected model: ${selectedModel}`);
+        console.log(`Selected model: ${selectedModel}, with stems: ${selectedStems}`);
 
         // Post the blob URLs to the worker
         workers[i].postMessage({
             msg: 'LOAD_WASM',
             model: selectedModel,
+            stems: selectedStems,
             modelBuffers: dlModelBuffers
         });
     }
@@ -595,7 +668,7 @@ async function initModel() {
 
     try {
         try {
-            const buffers = await fetchAndCacheFiles(selectedModel);
+            const buffers = await fetchAndCacheFiles(selectedModel, selectedStems);
             // WASM module is ready, enable the buttons
             nextStep3Btn.disabled = false;
 
@@ -769,17 +842,11 @@ function activateTierUI(userTier) {
     document.querySelector('label[for="both"]').textContent = 'Stems + MIDI';
     document.querySelector('label[for="midi"]').textContent = 'MIDI-only';
 
-    // Enable PRO-tier checkboxes (piano, guitar)
-    document.getElementById('piano').disabled = false;
-    document.getElementById('guitar').disabled = false;
-
     // Enable PRO-tier radio buttons (medium, high quality)
     document.getElementById('medium-quality').disabled = false;
     document.getElementById('high-quality').disabled = false;
 
     // Remove lock symbol (🔒) from the labels
-    document.querySelector('label[for="piano"]').textContent = 'Piano';
-    document.querySelector('label[for="guitar"]').textContent = 'Guitar';
     document.querySelector('label[for="medium-quality"]').textContent = 'Medium';
     document.querySelector('label[for="high-quality"]').textContent = 'High';
 
@@ -808,6 +875,18 @@ const toggleButton = document.getElementById('advancedSettingsToggle');
 const tooltipToggleButton = document.getElementById('midiTooltipToggle');
 const advancedSettings = document.getElementById('advancedSettings');
 const tooltipContents = document.getElementById('midiTooltip');
+const qualitytooltipToggleButton = document.getElementById('qualityTooltipToggle');
+const qualityTooltipContents = document.getElementById('qualityTooltip');
+const componenttooltipToggleButton = document.getElementById('componentTooltipToggle');
+const componentTooltipContents = document.getElementById('componentTooltip');
+
+componenttooltipToggleButton.addEventListener('click', function() {
+    if (componentTooltipContents.style.display === 'none') {
+        componentTooltipContents.style.display = 'block';
+    } else {
+        componentTooltipContents.style.display = 'none';
+    }
+});
 
 toggleButton.addEventListener('click', function() {
     if (advancedSettings.style.display === 'none') {
@@ -822,6 +901,14 @@ tooltipToggleButton.addEventListener('click', function() {
         tooltipContents.style.display = 'block';
     } else {
         tooltipContents.style.display = 'none';
+    }
+});
+
+qualitytooltipToggleButton.addEventListener('click', function() {
+    if (qualityTooltipContents.style.display === 'none') {
+        qualityTooltipContents.style.display = 'block';
+    } else {
+        qualityTooltipContents.style.display = 'none';
     }
 });
 
@@ -1078,51 +1165,87 @@ function generateMidi(inputBuffer, stemName, batchMode, directArrayBuffer = fals
 
 const midiStemNames = ['vocals', 'bass', 'melody', 'other_melody', 'piano', 'guitar'];
 
-function packageAndDownload(targetWaveforms) {
-    // create the worker
-    if (processingMode != 'stems' && !midiWorker) {
-        initializeMidiWorker();
+function generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames) {
+    let stemNames = selectedStems.filter(stem => stem !== 'instrumental');
+
+    // If model is free-6s or pro-cust, exclude melody from stems
+    if (selectedModel === 'demucs-free-6s' || selectedModel === 'demucs-pro-cust' || selectedModel === 'demucs-pro-cust-spec') {
+        stemNames = stemNames.filter(stem => stem !== 'melody');
     }
 
-    console.log(targetWaveforms)
-
-    const stemNames = modelStemMapping[selectedModel] || [];
     const buffers = {};
 
+    // Create buffers for each stem
     stemNames.forEach((name, index) => {
         const buffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
         buffer.copyToChannel(targetWaveforms[index * 2], 0); // Left channel
         buffer.copyToChannel(targetWaveforms[index * 2 + 1], 1); // Right channel
         buffers[name] = buffer;
 
-        // Generate MIDI if `outputMidi` is true and the stem name is in midiStemNames
-        if (processingMode != 'stems' && midiStemNames.includes(name)) {
-            console.log(`Queueing MIDI for ${name}...`);
+        // Queue MIDI generation if required
+        if (processingMode !== 'stems' && midiStemNames.includes(name)) {
             queueMidiRequest(buffer, name, false);
         }
     });
 
-     // Handle instrumental mix based on model specifics
-    if (selectedModel !== 'demucs-karaoke') {
-        // Define stems to include in the instrumental mix
-        let instrumentalStems = stemNames.filter(name => name !== 'vocals');
-        if (selectedModel === 'demucs-pro-cust') {
-            // For demucs-pro-cust, use only specified stems for instrumental
-            instrumentalStems = ['drums', 'bass', 'melody']; // Omitting 'guitar', 'piano', 'other_melody'
+    // Add instrumental if requested
+    if (selectedStems.includes('instrumental')) {
+        if (selectedModel === 'demucs-karaoke') {
+            // For demucs-karaoke, instrumental is simply the second returned stem
+            const instrumentalBuffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
+            instrumentalBuffer.copyToChannel(targetWaveforms[2], 0);
+            instrumentalBuffer.copyToChannel(targetWaveforms[3], 1);
+            buffers['instrumental'] = instrumentalBuffer;
+        } else {
+            // For other models, sum up all non-vocal stems (except certain stems in pro-cust)
+            const instrumentalBuffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
+            const instrumentalStems = stemNames.filter(name => name !== 'vocals');
+            instrumentalStems.forEach(stemName => {
+                // In pro-cust, skip adding guitar/piano/other_melody to instrumental
+                // if you want to replicate that logic here, conditionally check selectedModel and stemName.
+                const skipForProCust = selectedModel === 'demucs-pro-cust' &&
+                                       ['guitar', 'piano', 'other_melody'].includes(stemName);
+                if (!skipForProCust) {
+                    const stemBuffer = buffers[stemName];
+                    for (let i = 0; i < targetWaveforms[0].length; i++) {
+                        instrumentalBuffer.getChannelData(0)[i] += stemBuffer.getChannelData(0)[i] || 0;
+                        instrumentalBuffer.getChannelData(1)[i] += stemBuffer.getChannelData(1)[i] || 0;
+                    }
+                }
+            });
+            buffers['instrumental'] = instrumentalBuffer;
         }
-
-        // Sum specified stems for instrumental
-        const instrumentalBuffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
-        instrumentalStems.forEach(name => {
-            for (let i = 0; i < targetWaveforms[0].length; i++) {
-                instrumentalBuffer.getChannelData(0)[i] += buffers[name].getChannelData(0)[i] || 0;
-                instrumentalBuffer.getChannelData(1)[i] += buffers[name].getChannelData(1)[i] || 0;
-            }
-        });
-        buffers['instrum'] = instrumentalBuffer; // Add instrumental buffer
     }
 
-    // Wait for all MIDI files to complete processing, then create download links
+    // Add melody for certain models by summing other_melody, piano, guitar
+    if (selectedStems.includes('melody') && (selectedModel === 'demucs-free-6s' || selectedModel === 'demucs-pro-cust' || selectedModel === 'demucs-pro-cust-spec')) {
+        const melodyBuffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
+        const melodyStems = stemNames.filter(name => ['other_melody', 'piano', 'guitar'].includes(name));
+        melodyStems.forEach(name => {
+            const stemBuffer = buffers[name];
+            for (let i = 0; i < targetWaveforms[0].length; i++) {
+                melodyBuffer.getChannelData(0)[i] += stemBuffer.getChannelData(0)[i] || 0;
+                melodyBuffer.getChannelData(1)[i] += stemBuffer.getChannelData(1)[i] || 0;
+            }
+        });
+        buffers['melody'] = melodyBuffer;
+    }
+
+    return buffers;
+}
+
+function packageAndDownload(targetWaveforms) {
+    // create the worker if needed
+    if (processingMode != 'stems' && !midiWorker) {
+        initializeMidiWorker();
+    }
+
+    console.log(targetWaveforms);
+
+    // Generate all buffers and stems using the helper function
+    const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames);
+
+    // Wait for MIDI files to finish, then create download links
     waitForMidiProcessing().then(() => createDownloadLinks(buffers, false));
 }
 
@@ -1155,57 +1278,95 @@ function waitForMidiProcessing() {
 }
 
 function createDownloadLinks(buffers, midiOnlyMode) {
-    let downloadLinksDiv = document.getElementById('output-links');
+    var downloadLinksDiv = document.getElementById('output-links');
     downloadLinksDiv.innerHTML = ''; // Clear existing links
 
+    var zipFiles = {};
+    var tasks = [];
+
     if (!midiOnlyMode) {
-        Object.keys(buffers).forEach(stemName => {
-            // Create WAV file link
-            const wavBlob = new Blob([encodeWavFileFromAudioBuffer(buffers[stemName], 0)], {type: 'audio/wav'});
-            const wavUrl = URL.createObjectURL(wavBlob);
-            const wavLink = document.createElement('a');
+        // WAV + MIDI mode
+        Object.keys(buffers).forEach(function(stemName) {
+            // Create WAV file data
+            var wavData = encodeWavFileFromAudioBuffer(buffers[stemName], 0);
+            zipFiles[stemName + ".wav"] = new Uint8Array(wavData);
+
+            // WAV download link
+            var wavBlob = new Blob([wavData], { type: 'audio/wav' });
+            var wavUrl = URL.createObjectURL(wavBlob);
+            var wavLink = document.createElement('a');
             wavLink.href = wavUrl;
-            wavLink.textContent = `${stemName}.wav`;
-            wavLink.download = `${stemName}.wav`;
+            wavLink.textContent = stemName + ".wav";
+            wavLink.download = stemName + ".wav";
             downloadLinksDiv.appendChild(wavLink);
 
-            // Check if MIDI data exists for this stem and create a link if it does
+            // If MIDI data exists for this stem, we queue it up
             if (midiBuffers[stemName]) {
-                const midiBlob = midiBuffers[stemName];
-                const midiUrl = URL.createObjectURL(midiBlob);
-                const midiLink = document.createElement('a');
-                midiLink.href = midiUrl;
-                midiLink.textContent = `${stemName}.mid`;
-                midiLink.download = `${stemName}.mid`;
-                downloadLinksDiv.appendChild(midiLink);
+                // Add a task to handle MIDI arrayBuffer conversion
+                tasks.push(midiBuffers[stemName].arrayBuffer().then(function(arrBuf) {
+                    zipFiles[stemName + ".mid"] = new Uint8Array(arrBuf);
+
+                    var midiUrl = URL.createObjectURL(midiBuffers[stemName]);
+                    var midiLink = document.createElement('a');
+                    midiLink.href = midiUrl;
+                    midiLink.textContent = stemName + ".mid";
+                    midiLink.download = stemName + ".mid";
+                    downloadLinksDiv.appendChild(midiLink);
+                }));
             }
         });
     } else {
-        // create midi-only outputs for all the items in the global
-        // midiBuffers object
-        Object.keys(midiBuffers).forEach(stemName => {
-            const midiBlob = midiBuffers[stemName];
-            const midiUrl = URL.createObjectURL(midiBlob);
-            const midiLink = document.createElement('a');
-            midiLink.href = midiUrl;
-            midiLink.textContent = `${stemName}.mid`;
-            midiLink.download = `${stemName}.mid`;
-            downloadLinksDiv.appendChild(midiLink);
+        // MIDI-only mode
+        Object.keys(midiBuffers).forEach(function(stemName) {
+            tasks.push(midiBuffers[stemName].arrayBuffer().then(function(arrBuf) {
+                zipFiles[stemName + ".mid"] = new Uint8Array(arrBuf);
+
+                var midiUrl = URL.createObjectURL(midiBuffers[stemName]);
+                var midiLink = document.createElement('a');
+                midiLink.href = midiUrl;
+                midiLink.textContent = stemName + ".mid";
+                midiLink.download = stemName + ".mid";
+                downloadLinksDiv.appendChild(midiLink);
+            }));
         });
     }
 
-    // Clear midiBuffers after links are created
-    midiBuffers = {};
-    queueTotal = 0; // Reset the total queue items
-    queueCompleted = 0; // Reset the current queue item
+    // Once all MIDI tasks are done, create the ZIP at the top
+    Promise.all(tasks).then(function() {
+        if (Object.keys(zipFiles).length > 0) {
+            var zipData = fflate.zipSync(zipFiles, { level: 0 }); // no compression for speed
+            var zipBlob = new Blob([zipData.buffer], { type: 'application/zip' });
+            var zipUrl = URL.createObjectURL(zipBlob);
+            var zipLink = document.createElement('a');
+            zipLink.href = zipUrl;
+            zipLink.textContent = "all_stems.zip";
+            zipLink.download = "all_stems.zip";
 
-    // if in any mode that has midi, increment usage here
-    if (processingMode != 'stems') {
-        incrementUsage(); // Increment the weekly usage counter
-    }
+            // Style the zip link to stand out
+            zipLink.classList.add("supreme-zip-link");
 
-    prevStep3Btn.disabled = false;
-    nextStep3Btn.disabled = false;
+            // Insert the ZIP link at the top of the list
+            if (downloadLinksDiv.firstChild) {
+                downloadLinksDiv.insertBefore(zipLink, downloadLinksDiv.firstChild);
+            } else {
+                // If no other links present, just append
+                downloadLinksDiv.appendChild(zipLink);
+            }
+        }
+
+        // Clear MIDI buffers after links are created
+        midiBuffers = {};
+        queueTotal = 0; // Reset the total queue items
+        queueCompleted = 0; // Reset the current queue item
+
+        // If in a mode that includes MIDI, increment usage
+        if (processingMode != 'stems') {
+            incrementUsage(); // Increment the weekly usage counter
+        }
+
+        prevStep3Btn.disabled = false;
+        nextStep3Btn.disabled = false;
+    });
 }
 
 async function processFiles(files, midiOnlyMode) {
@@ -1297,50 +1458,27 @@ async function processFiles(files, midiOnlyMode) {
 }
 
 function packageAndZip(targetWaveforms, filename) {
-    // create the worker
+    // create the worker if needed
     if (processingMode != 'stems' && !midiWorker) {
         initializeMidiWorker();
     }
 
     console.log(targetWaveforms);
-    const stemNames = modelStemMapping[selectedModel] || [];
+
+    // Generate buffers for all stems, including instrumental/melody logic
+    const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames);
+
+    // Now we don't need to redo logic. Just zip all stems and MIDI files.
     const directoryName = `${filename}_stems/`;
-    let zipFiles = {}; // Accumulate all files in this object
+    let zipFiles = {};
 
-    stemNames.forEach((stemName, index) => {
-        const buffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
-        buffer.copyToChannel(targetWaveforms[index * 2], 0); // Left channel
-        buffer.copyToChannel(targetWaveforms[index * 2 + 1], 1); // Right channel
-
-        // Encode WAV and add to zipFiles
-        const wavData = encodeWavFileFromAudioBuffer(buffer, 0);
+    // Encode WAV data from buffers and add them to zip
+    Object.keys(buffers).forEach(stemName => {
+        const wavData = encodeWavFileFromAudioBuffer(buffers[stemName], 0);
         zipFiles[`${directoryName}${stemName}.wav`] = new Uint8Array(wavData);
-
-        // Queue MIDI generation if enabled and stem is in midiStemNames
-        if (processingMode != 'stems' && midiStemNames.includes(stemName)) {
-            console.log(`Queueing MIDI for ${stemName}...`);
-            queueMidiRequest(buffer, stemName, true);
-        }
     });
 
-    // Handle instrumental mix if model type requires it
-    if (selectedModel !== 'demucs-karaoke') {
-        const instrumentalStems = stemNames.filter(name => name !== 'vocals');
-        const instrumentalBuffer = demucsAudioContext.createBuffer(2, targetWaveforms[0].length, DEMUCS_SAMPLE_RATE);
-
-        instrumentalStems.forEach(stemName => {
-            if (!(selectedModel === 'demucs-pro-cust' && ['guitar', 'piano', 'other_melody'].includes(stemName))) {
-                for (let i = 0; i < targetWaveforms[0].length; i++) {
-                    instrumentalBuffer.getChannelData(0)[i] += targetWaveforms[stemNames.indexOf(stemName) * 2][i];
-                    instrumentalBuffer.getChannelData(1)[i] += targetWaveforms[stemNames.indexOf(stemName) * 2 + 1][i];
-                }
-            }
-        });
-        const instrumentalWavData = encodeWavFileFromAudioBuffer(instrumentalBuffer, 0);
-        zipFiles[`${directoryName}instrum.wav`] = new Uint8Array(instrumentalWavData);
-    }
-
-    // Wait for all MIDI files to complete processing, then add them to the zip and generate it
+    // Wait for MIDI
     waitForMidiProcessing().then(() => {
         // Add MIDI files to zipFiles once processing is complete
         return Promise.all(
@@ -1365,12 +1503,13 @@ function packageAndZip(targetWaveforms, filename) {
 
         // Clear midiBuffers after zip creation
         midiBuffers = {};
-        queueTotal = 0; // Reset the total queue items
-        queueCompleted = 0; // Reset the current queue item
-        if (completedSongsBatchMidi < document.getElementById('batch-upload').files.length-1) {
-            completedSongsBatchMidi += 1; // Increment the counter for processed songs in batch mode
+        queueTotal = 0; // Reset
+        queueCompleted = 0; // Reset
+
+        if (completedSongsBatchMidi < document.getElementById('batch-upload').files.length - 1) {
+            completedSongsBatchMidi += 1;
         } else {
-            completedSongsBatchMidi = 0; // Reset the counter if all songs are processed
+            completedSongsBatchMidi = 0;
         }
 
         prevStep3Btn.disabled = false;

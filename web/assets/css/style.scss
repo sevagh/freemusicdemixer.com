@@ -38,7 +38,14 @@
 }
 
 .theme-light {
-  body a:not(.navbar-links a):not(.footer-container a) {
+  .supreme-zip-link {
+    color: #047857; /* a teal shade for light theme */
+  }
+  .supreme-zip-link:hover {
+    color: #047857; /* a teal shade for light theme */
+    text-decoration: none;
+  }
+  body a:not(.navbar-links a):not(.footer-container a):not(.supreme-zip-link) {
     color: #0000EE; /* Standard blue */
   }
   body a:not(.navbar-links a):not(.footer-container a):visited {
@@ -107,7 +114,14 @@
 }
 
 .theme-dark {
-  body a:not(.navbar-links a):not(.footer-container a) {
+  .supreme-zip-link {
+    color: #4ade80; /* a lighter green that pops on #333 */
+  }
+  .supreme-zip-link:hover {
+    color: #4ade80; /* a lighter green that pops on #333 */
+    text-decoration: none;
+  }
+  body a:not(.navbar-links a):not(.footer-container a):not(.supreme-zip-link) {
     color: #87CEEB; /* Light blue for contrast */
   }
   body a:not(.navbar-links a):not(.footer-container a):visited {
@@ -176,7 +190,14 @@
 }
 
 @media (prefers-color-scheme: light) {
-  body a:not(.navbar-links a):not(.footer-container a) {
+  .supreme-zip-link {
+    color: #047857; /* a teal shade for light theme */
+  }
+  .supreme-zip-link:hover {
+    color: #047857; /* a teal shade for light theme */
+    text-decoration: none;
+  }
+  body a:not(.navbar-links a):not(.footer-container a):not(.supreme-zip-link) {
     color: #0000EE; /* Standard blue */
   }
   body a:not(.navbar-links a):not(.footer-container a):visited {
@@ -245,7 +266,14 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  body a:not(.navbar-links a):not(.footer-container a) {
+  .supreme-zip-link {
+    color: #4ade80; /* a lighter green that pops on #333 */
+  }
+  .supreme-zip-link:hover {
+    color: #4ade80; /* a lighter green that pops on #333 */
+    text-decoration: none;
+  }
+  body a:not(.navbar-links a):not(.footer-container a):not(.supreme-zip-link) {
     color: #87CEEB; /* Light blue for contrast */
   }
   body a:not(.navbar-links a):not(.footer-container a):visited {
@@ -311,6 +339,12 @@
     color: red;
     background: black;
   }
+}
+
+.supreme-zip-link {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 2px;
 }
 
 img.responsive-img-android {
@@ -1499,6 +1533,12 @@ input[type="range"]::-moz-range-thumb {
 .popup-title {
   font-size: 32px;
   margin-bottom: 20px;
+}
+
+.quality-slider {
+  margin-left: 10px;
+  width: 150px;
+  vertical-align: middle;
 }
 
 @media (max-width: 1000px) {
