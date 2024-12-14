@@ -1,10 +1,11 @@
 let modelName;
+let selectedStems;
 let modelBuffers;
 
 function loadWASMModule() {
     // Assuming the demucs.js script automatically initializes the WASM module
     try {
-        importScripts('demucs_onnx_simd.js');
+        importScripts("demucs_onnx_simd.js");
         let wasmModule = libdemucs();
         return wasmModule;
     } catch (error) {
@@ -14,13 +15,13 @@ function loadWASMModule() {
 }
 
 function getNumModelsFromModelName() {
-    let numModels = 0;
-    if (modelName === 'demucs-free-4s' || modelName === 'demucs-free-6s' || modelName === 'demucs-karaoke') {
-        numModels = 1;
-    } else if (modelName === 'demucs-pro-ft' || modelName === 'demucs-pro-deluxe') {
-        numModels = 4;
+    let numModels = 1; // default case for free-4s, free-6s, karaoke
+    if (modelName === 'demucs-pro-ft' || modelName === 'demucs-pro-deluxe') {
+        numModels = selectedStems.length;
     } else if (modelName === 'demucs-pro-cust') {
-        numModels = 3;
+        numModels = 2;
+    } else if (modelName === 'demucs-pro-cust-spec') {
+        numModels = 4;
     }
     return numModels;
 }
@@ -34,10 +35,19 @@ function getNumTargetsFromModelName() {
     } else if (modelName === 'demucs-karaoke') {
         // demucs-karaoke has 2 targets
         numTargets = [2];
-    } else if (modelName === 'demucs-pro-ft') {
-        numTargets = [4, 4, 4, 4];
-    } else if (modelName === 'demucs-pro-deluxe') {
-        numTargets = [4, 4, 4, 2];
+    } else if (modelName === 'demucs-pro-ft' || modelName === 'demucs-pro-deluxe') {
+        numTargets = [];
+        for (let i = 0; i < selectedStems.length; i++) {
+            if (selectedStems[i] === 'drums') {
+                numTargets.push(4);
+            } else if (selectedStems[i] === 'bass') {
+                numTargets.push(4);
+            } else if (selectedStems[i] === 'melody') {
+                numTargets.push(4);
+            } else if (selectedStems[i] === 'vocals') {
+                numTargets.push(modelName === 'demucs-pro-ft' ? 4 : 2);
+            }
+        }
     }
 
     // demucs-pro-cust as an ensemble model outputs 7 targets
@@ -50,6 +60,13 @@ function getNumTargetsFromModelName() {
 onmessage = async function(e) {
     if (e.data.msg === 'LOAD_WASM') {
         modelName = e.data.model;
+        // filter out 'instrumental' from selectedStems
+        selectedStems = e.data.stems.filter(stem => stem !== 'instrumental');
+
+        // if modelName is demucs-free-6s or demucs-pro-cust, filter our melody
+        if (modelName === 'demucs-free-6s' || modelName === 'demucs-pro-cust') {
+            selectedStems = selectedStems.filter(stem => stem !== 'melody');
+        }
         modelBuffers = e.data.modelBuffers;
     } else if (e.data.msg === 'PROCESS_AUDIO' || e.data.msg === 'PROCESS_AUDIO_BATCH') {
         console.log(`Started demix job at ${new Date().toString()}`);
@@ -62,7 +79,7 @@ onmessage = async function(e) {
 
         let invert = false;
         // we invert waveform for deluxe (4 models 8 inferences), custom (3 models 6 inferences), and karaoke (1 model 2 inferences)
-        if (modelName === 'demucs-pro-deluxe' || modelName === 'demucs-pro-cust' || modelName === 'demucs-karaoke') {
+        if (modelName === 'demucs-pro-deluxe' || modelName === 'demucs-pro-cust' || modelName === 'demucs-karaoke' || modelName === 'demucs-pro-cust-spec') {
             console.log("Using augmented inference for model:", modelName);
             invert = true;
             modelTotalWithAugmentations *= 2;
@@ -75,7 +92,7 @@ onmessage = async function(e) {
         const modelDataArray = modelBuffers.map(buffer => new Uint8Array(buffer));
 
         // easy way to do sequential processing of each wasmModule
-        if (modelName != 'demucs-pro-cust') {
+        if (modelName != 'demucs-pro-cust' && modelName != 'demucs-pro-cust-spec') {
             let numTargets = getNumTargetsFromModelName();
             for (let i = 0; i < modelTotal; i++) {
                 let loadedModule = await loadWASMModule();
@@ -109,7 +126,9 @@ onmessage = async function(e) {
                 inferenceResults.push(targetWaveforms);
                 loadedModule = null;
             }
-        } else {
+        } else if (modelName === 'demucs-pro-cust') {
+            // medium quality = budget of 4 inferences
+
             // here we implement the logic of demucs-pro-cust, from:
             // https://github.com/sevagh/demucs.cpp-pro/blob/main/src_wasm/demucs_pro.cpp
             let loadedModule = await loadWASMModule();
@@ -125,22 +144,95 @@ onmessage = async function(e) {
 
             let targetWaveforms1;
             const batch = e.data.msg === 'PROCESS_AUDIO_BATCH';
-            targetWaveforms1 = processAudio(leftChannel, rightChannel, loadedModule, 2, batch, modelTotalWithAugmentations, 0);
+            targetWaveforms1 = processAudio(
+                leftChannel, rightChannel, loadedModule, 4, batch, modelTotalWithAugmentations, 0);
 
             invertedLeftChannel1 = leftChannel.map(x => -x);
             invertedRightChannel1 = rightChannel.map(x => -x);
-            invertedTargetWaveforms1 = processAudio(invertedLeftChannel1, invertedRightChannel1, loadedModule, 2, batch, modelTotalWithAugmentations, 1);
+            let invertedTargetWaveforms1 = processAudio(invertedLeftChannel1, invertedRightChannel1, loadedModule, 4, batch, modelTotalWithAugmentations, 1);
             // now invert the targetWaveforms
-            invertInvertTargetWaveforms1 = invertedTargetWaveforms1.map(arr => arr.map(x => -x));
+            let invertInvertTargetWaveforms1 = invertedTargetWaveforms1.map(arr => arr.map(x => -x));
 
             // now sum and average with the original targetWaveforms
-            targetWaveforms1 = targetWaveforms1.map((arr, idx) => arr.map((x, inner_idx) => (x + invertInvertTargetWaveforms1[idx][inner_idx]) / 2.0));
+            targetWaveforms1 = targetWaveforms1.map(
+                (arr, idx) => arr.map((x, inner_idx) => (x + invertInvertTargetWaveforms1[idx][inner_idx]) / 2.0));
 
-            // now we have the final vocals and intermediate accompaniment
-            let intermediateAccompanimentL = targetWaveforms1[2];
-            let intermediateAccompanimentR = targetWaveforms1[3];
+            // now we have the final vocals
+            // create intermediateAccompaniment by subtracting vocals from the original waveform
+            let intermediateAccompanimentL = leftChannel.map((x, idx) => x - targetWaveforms1[6][idx]);
+            let intermediateAccompanimentR = rightChannel.map((x, idx) => x - targetWaveforms1[7][idx]);
 
-            // start with model 2
+            // now model 2
+            loadedModule = await loadWASMModule();
+            if (!loadedModule) {
+                console.error("Error loading WASM module");
+                return;
+            }
+
+            const model2DataPtr = loadedModule._malloc(modelDataArray[1].byteLength);
+            loadedModule.HEAPU8.set(modelDataArray[1], model2DataPtr);
+            loadedModule._modelInit(model2DataPtr, modelDataArray[1].byteLength);
+            loadedModule._free(model2DataPtr);
+
+            let targetWaveforms2;
+            targetWaveforms2 = processAudio(
+                intermediateAccompanimentL, intermediateAccompanimentR, loadedModule, 6, batch, modelTotalWithAugmentations, 2);
+
+            // create inverted intermediate accompaniment left and right
+            let invertedIntermediateAccompanimentL = intermediateAccompanimentL.map(x => -x);
+            let invertedIntermediateAccompanimentR = intermediateAccompanimentR.map(x => -x);
+
+            let invertedTargetWaveforms2 = processAudio(invertedIntermediateAccompanimentL, invertedIntermediateAccompanimentR, loadedModule, 6, batch, modelTotalWithAugmentations, 3);
+            // now invert the targetWaveforms
+            let invertInvertTargetWaveforms2 = invertedTargetWaveforms2.map(arr => arr.map(x => -x));
+
+            // now sum and average with the original targetWaveforms
+            targetWaveforms2 = targetWaveforms2.map((arr, idx) => arr.map((x, inner_idx) => (x + invertInvertTargetWaveforms2[idx][inner_idx]) / 2.0));
+
+            // now we have everything we need
+            let returnWaveforms = [
+                targetWaveforms2[0], targetWaveforms2[1], // final drums directly from model 3
+                targetWaveforms2[2], targetWaveforms2[3],   // final bass directly from model 3
+                targetWaveforms2[4], targetWaveforms2[5], // final other accompaniment directly from model 3
+                targetWaveforms1[6], targetWaveforms1[7], // final vocals from model 1
+                targetWaveforms2[8], targetWaveforms2[9], // final guitar from model 3
+                targetWaveforms2[10], targetWaveforms2[11], // final piano from model 3
+            ]
+            inferenceResults.push(returnWaveforms);
+        } else if (modelName === 'demucs-pro-cust-spec') {
+            // high quality = budget of 8 inferences
+            let loadedModule = await loadWASMModule();
+            if (!loadedModule) {
+                console.error("Error loading WASM module");
+                return;
+            }
+
+            const model1DataPtr = loadedModule._malloc(modelDataArray[0].byteLength);
+            loadedModule.HEAPU8.set(modelDataArray[0], model1DataPtr);
+            loadedModule._modelInit(model1DataPtr, modelDataArray[0].byteLength);
+            loadedModule._free(model1DataPtr);
+
+            let targetWaveforms1;
+            const batch = e.data.msg === 'PROCESS_AUDIO_BATCH';
+            targetWaveforms1 = processAudio(
+                leftChannel, rightChannel, loadedModule, 2, batch, modelTotalWithAugmentations, 0);
+
+            invertedLeftChannel1 = leftChannel.map(x => -x);
+            invertedRightChannel1 = rightChannel.map(x => -x);
+            let invertedTargetWaveforms1 = processAudio(invertedLeftChannel1, invertedRightChannel1, loadedModule, 2, batch, modelTotalWithAugmentations, 1);
+            // now invert the targetWaveforms
+            let invertInvertTargetWaveforms1 = invertedTargetWaveforms1.map(arr => arr.map(x => -x));
+
+            // now sum and average with the original targetWaveforms
+            targetWaveforms1 = targetWaveforms1.map(
+                (arr, idx) => arr.map((x, inner_idx) => (x + invertInvertTargetWaveforms1[idx][inner_idx]) / 2.0));
+
+            // now we have the final vocals
+            // create intermediateAccompaniment by subtracting vocals from the original waveform
+            let intermediateAccompanimentL = leftChannel.map((x, idx) => x - targetWaveforms1[0][idx]);
+            let intermediateAccompanimentR = rightChannel.map((x, idx) => x - targetWaveforms1[1][idx]);
+
+            // now model 2
             loadedModule = await loadWASMModule();
             if (!loadedModule) {
                 console.error("Error loading WASM module");
@@ -156,16 +248,22 @@ onmessage = async function(e) {
             targetWaveforms2 = processAudio(
                 intermediateAccompanimentL, intermediateAccompanimentR, loadedModule, 4, batch, modelTotalWithAugmentations, 2);
 
-            invertedLeftChannel2 = intermediateAccompanimentL.map(x => -x);
-            invertedRightChannel2 = intermediateAccompanimentR.map(x => -x);
-            invertedTargetWaveforms2 = processAudio(invertedLeftChannel2, invertedRightChannel2, loadedModule, 4, batch, modelTotalWithAugmentations, 3);
+            // create inverted intermediate accompaniment left and right
+            let invertedIntermediateAccompanimentL = intermediateAccompanimentL.map(x => -x);
+            let invertedIntermediateAccompanimentR = intermediateAccompanimentR.map(x => -x);
+
+            let invertedTargetWaveforms2 = processAudio(invertedIntermediateAccompanimentL, invertedIntermediateAccompanimentR, loadedModule, 4, batch, modelTotalWithAugmentations, 3);
             // now invert the targetWaveforms
-            invertInvertTargetWaveforms2 = invertedTargetWaveforms2.map(arr => arr.map(x => -x));
+            let invertInvertTargetWaveforms2 = invertedTargetWaveforms2.map(arr => arr.map(x => -x));
 
             // now sum and average with the original targetWaveforms
             targetWaveforms2 = targetWaveforms2.map((arr, idx) => arr.map((x, inner_idx) => (x + invertInvertTargetWaveforms2[idx][inner_idx]) / 2.0));
 
-            // now finally model 3
+            // this is drums that we subtract again from the intermediate accompaniment
+            let intermediateAccompanimentL2 = intermediateAccompanimentL.map((x, idx) => x - targetWaveforms2[0][idx]);
+            let intermediateAccompanimentR2 = intermediateAccompanimentR.map((x, idx) => x - targetWaveforms2[1][idx]);
+
+            // now load model 3
             loadedModule = await loadWASMModule();
             if (!loadedModule) {
                 console.error("Error loading WASM module");
@@ -179,31 +277,61 @@ onmessage = async function(e) {
 
             let targetWaveforms3;
             targetWaveforms3 = processAudio(
-                intermediateAccompanimentL, intermediateAccompanimentR, loadedModule, 6, batch, modelTotalWithAugmentations, 4);
+                intermediateAccompanimentL2, intermediateAccompanimentR2, loadedModule, 4, batch, modelTotalWithAugmentations, 4);
 
-            // can re-use same invertedLeftChannel2, invertedRightChannel2
-            invertedTargetWaveforms3 = processAudio(invertedLeftChannel2, invertedRightChannel2, loadedModule, 6, batch, modelTotalWithAugmentations, 5);
+            // create inverted intermediate accompaniment left and right
+            let invertedIntermediateAccompanimentL2 = intermediateAccompanimentL2.map(x => -x);
+            let invertedIntermediateAccompanimentR2 = intermediateAccompanimentR2.map(x => -x);
+
+            let invertedTargetWaveforms3 = processAudio(invertedIntermediateAccompanimentL2, invertedIntermediateAccompanimentR2, loadedModule, 4, batch, modelTotalWithAugmentations, 5);
+
             // now invert the targetWaveforms
-            invertInvertTargetWaveforms3 = invertedTargetWaveforms3.map(arr => arr.map(x => -x));
+            let invertInvertTargetWaveforms3 = invertedTargetWaveforms3.map(arr => arr.map(x => -x));
 
             // now sum and average with the original targetWaveforms
             targetWaveforms3 = targetWaveforms3.map((arr, idx) => arr.map((x, inner_idx) => (x + invertInvertTargetWaveforms3[idx][inner_idx]) / 2.0));
 
-            // drums and bass need to be summed and averaged between targetWaveforms2 and targetWaveforms3
-            let drumsL = targetWaveforms2[0].map((x, idx) => (x + targetWaveforms3[0][idx]) / 2.0);
-            let drumsR = targetWaveforms2[1].map((x, idx) => (x + targetWaveforms3[1][idx]) / 2.0);
-            let bassL = targetWaveforms2[2].map((x, idx) => (x + targetWaveforms3[2][idx]) / 2.0);
-            let bassR = targetWaveforms2[3].map((x, idx) => (x + targetWaveforms3[3][idx]) / 2.0);
+            // this is the bass that we subtract again from the intermediate accompaniment
+            let intermediateAccompanimentL3 = intermediateAccompanimentL2.map((x, idx) => x - targetWaveforms3[2][idx]);
+            let intermediateAccompanimentR3 = intermediateAccompanimentR2.map((x, idx) => x - targetWaveforms3[3][idx]);
+
+            // now load model 4, finally this is the 6s that will create guitar and piano
+
+            loadedModule = await loadWASMModule();
+            if (!loadedModule) {
+                console.error("Error loading WASM module");
+                return;
+            }
+
+            const model4DataPtr = loadedModule._malloc(modelDataArray[3].byteLength);
+            loadedModule.HEAPU8.set(modelDataArray[3], model4DataPtr);
+            loadedModule._modelInit(model4DataPtr, modelDataArray[3].byteLength);
+            loadedModule._free(model4DataPtr);
+
+            let targetWaveforms4;
+            targetWaveforms4 = processAudio(
+                intermediateAccompanimentL3, intermediateAccompanimentR3, loadedModule, 6, batch, modelTotalWithAugmentations, 6);
+
+            // create inverted intermediate accompaniment left and right
+            let invertedIntermediateAccompanimentL3 = intermediateAccompanimentL3.map(x => -x);
+            let invertedIntermediateAccompanimentR3 = intermediateAccompanimentR3.map(x => -x);
+
+            let invertedTargetWaveforms4 = processAudio(invertedIntermediateAccompanimentL3, invertedIntermediateAccompanimentR3, loadedModule, 6, batch, modelTotalWithAugmentations, 7);
+
+            // now invert the targetWaveforms
+            let invertInvertTargetWaveforms4 = invertedTargetWaveforms4.map(arr => arr.map(x => -x));
+
+            // now sum and average with the original targetWaveforms
+            targetWaveforms4 = targetWaveforms4.map((arr, idx) => arr.map((x, inner_idx) => (x + invertInvertTargetWaveforms4[idx][inner_idx]) / 2.0));
 
             // now we have everything we need
             let returnWaveforms = [
-                drumsL, drumsR, // final drums averaged from model 2 and model 3
-                bassL, bassR,   // final bass averaged from model 2 and model 3
-                targetWaveforms3[4], targetWaveforms3[5], // final other accompaniment directly from model 3
+                targetWaveforms2[0], targetWaveforms2[1], // final drums directly from model 2
+                targetWaveforms3[2], targetWaveforms3[3], // final bass directly from model 3
+                targetWaveforms4[4], targetWaveforms4[5], // final other accompaniment directly from model 3
                 targetWaveforms1[0], targetWaveforms1[1], // final vocals from model 1
-                targetWaveforms3[8], targetWaveforms3[9], // final guitar from model 3
-                targetWaveforms3[10], targetWaveforms3[11], // final piano from model 3
-                targetWaveforms2[4], targetWaveforms2[5], // final 'other' as 'melody' from model 2
+                targetWaveforms4[8], targetWaveforms4[9], // final guitar from model 3
+                targetWaveforms4[10], targetWaveforms4[11], // final piano from model 3
             ]
             inferenceResults.push(returnWaveforms);
         }
@@ -214,30 +342,80 @@ onmessage = async function(e) {
 
         // now inferenceResults[0] has the results for the first model
         // for karaoke, free-4s, free-6s (single-model models), we're done
-        if (modelName === 'demucs-karaoke' || modelName === 'demucs-free-4s' || modelName === 'demucs-free-6s' || modelName === 'demucs-pro-cust') {
+        if (modelName === 'demucs-karaoke') {
             finalWaveforms = inferenceResults[0];
+        }
+        else if (modelName === 'demucs-free-4s') {
+            // construct finalWaveforms from inferenceResults
+            finalWaveforms = [];
+            // iterate over selectedStems
+            for (let i = 0; i < selectedStems.length; i++) {
+                if (selectedStems[i] === 'drums') {
+                    finalWaveforms.push(inferenceResults[0][0], inferenceResults[0][1]);
+                } else if (selectedStems[i] === 'bass') {
+                    finalWaveforms.push(inferenceResults[0][2], inferenceResults[0][3]);
+                } else if (selectedStems[i] === 'melody') {
+                    finalWaveforms.push(inferenceResults[0][4], inferenceResults[0][5]);
+                } else if (selectedStems[i] === 'vocals') {
+                    finalWaveforms.push(inferenceResults[0][6], inferenceResults[0][7]);
+                }
+            }
+        }
+        else if (modelName === 'demucs-free-6s' || modelName === 'demucs-pro-cust' || modelName === 'demucs-pro-cust-spec') {
+            // construct finalWaveforms from inferenceResults
+            finalWaveforms = [];
+            // iterate over selectedStems
+            for (let i = 0; i < selectedStems.length; i++) {
+                if (selectedStems[i] === 'drums') {
+                    finalWaveforms.push(inferenceResults[0][0], inferenceResults[0][1]);
+                } else if (selectedStems[i] === 'bass') {
+                    finalWaveforms.push(inferenceResults[0][2], inferenceResults[0][3]);
+                } else if (selectedStems[i] === 'other_melody') {
+                    finalWaveforms.push(inferenceResults[0][4], inferenceResults[0][5]);
+                } else if (selectedStems[i] === 'vocals') {
+                    finalWaveforms.push(inferenceResults[0][6], inferenceResults[0][7]);
+                } else if (selectedStems[i] === 'guitar') {
+                    finalWaveforms.push(inferenceResults[0][8], inferenceResults[0][9]);
+                } else if (selectedStems[i] === 'piano') {
+                    finalWaveforms.push(inferenceResults[0][10], inferenceResults[0][11]);
+                }
+            }
         }
         // pro finetuned is straightforward: 4 models,  4 targets
         // we extract each target from the separate models e.g. final bass = model 1 bass, final drums = model 2 drums, etc.
         else if (modelName === 'demucs-pro-ft') {
             // construct finalWaveforms from inferenceResults
-            finalWaveforms = [
-                inferenceResults[0][0], inferenceResults[0][1], // drums is correct
-                inferenceResults[1][2], inferenceResults[1][3],
-                inferenceResults[2][4], inferenceResults[2][5],
-                inferenceResults[3][6], inferenceResults[3][7],
-            ];
+            finalWaveforms = [];
+            // iterate over selectedStems
+            for (let i = 0; i < selectedStems.length; i++) {
+                if (selectedStems[i] === 'drums') {
+                    finalWaveforms.push(inferenceResults[i][0], inferenceResults[i][1]);
+                } else if (selectedStems[i] === 'bass') {
+                    finalWaveforms.push(inferenceResults[i][2], inferenceResults[i][3]);
+                } else if (selectedStems[i] === 'melody') {
+                    finalWaveforms.push(inferenceResults[i][4], inferenceResults[i][5]);
+                } else if (selectedStems[i] === 'vocals') {
+                    finalWaveforms.push(inferenceResults[i][6], inferenceResults[i][7]);
+                }
+            }
         }
         // pro deluxe is similar except vocals was from a 2-stem model, so we take its first two l/r, not index 6/7
         // we extract each target from the separate models e.g. final bass = model 1 bass, final drums = model 2 drums, etc.
         else if (modelName === 'demucs-pro-deluxe') {
             // construct finalWaveforms from inferenceResults
-            finalWaveforms = [
-                inferenceResults[0][0], inferenceResults[0][1], // drums is correct
-                inferenceResults[1][2], inferenceResults[1][3],
-                inferenceResults[2][4], inferenceResults[2][5],
-                inferenceResults[3][0], inferenceResults[3][1], // vocals is 0th stem from model 4 which is the 2-stem custom
-            ];
+            finalWaveforms = [];
+            // iterate over selectedStems
+            for (let i = 0; i < selectedStems.length; i++) {
+                if (selectedStems[i] === 'drums') {
+                    finalWaveforms.push(inferenceResults[i][0], inferenceResults[i][1]);
+                } else if (selectedStems[i] === 'bass') {
+                    finalWaveforms.push(inferenceResults[i][2], inferenceResults[i][3]);
+                } else if (selectedStems[i] === 'melody') {
+                    finalWaveforms.push(inferenceResults[i][4], inferenceResults[i][5]);
+                } else if (selectedStems[i] === 'vocals') {
+                    finalWaveforms.push(inferenceResults[i][0], inferenceResults[i][1]);
+                }
+            }
         }
 
         const transferList = finalWaveforms.map(arr => arr.buffer);
