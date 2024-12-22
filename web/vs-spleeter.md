@@ -10,9 +10,17 @@ Our site, Music Demixer (aka <https://freemusicdemixer.com>), is a web-based too
 
 In this article, we compare Music Demixer to Spleeter, the AI model developed by Deezer that revolutionized stem separation in 2020.
 
-Spleeter is an AI model, not a consumer website, so it's more fair to compare Spleeter vs. Demucs, which is the core AI technology used by our site Music Demixer.
+Spleeter is an AI model, not a consumer website, so it's more fair to compare **Spleeter vs. Demucs**, which is the core AI technology used by our site, Music Demixer.
 
-However, Spleeter has led to many websites and tools that use it, so we will also do a comparison of Spleeter vs. Music Demixer to account for all of the web-based versions of Spleeter that exist in the wild. Out of all of the Spleeter alternatives, we propose that Music Demixer is a great choice for stem separation.
+However, Spleeter has led to many websites and tools that use it, so we will also do a comparison of **Spleeter vs. Music Demixer** to account for all of the web-based versions of Spleeter that exist. Out of all of the Spleeter alternatives, we propose that Music Demixer is a great choice for stem separation.
+
+{% include admonitions.html
+    type="tip"
+    title="Impatient?"
+    content="**Skip directly to the [sample audio clips](/vs-spleeter#audio-clips)!**"
+%}
+
+---
 
 ## Introduction to Spleeter
 
@@ -22,60 +30,73 @@ Music Demixer, powered by the cutting-edge <span class="blog-highlight">Demucs A
 
 There are multiple Spleeter alternatives, and Demucs is one of the best, which is why we use it as the backbone of our website. We have also developed custom ensemble models and strategies to further improve the quality of our stems. Keep reading to learn more about the differences between Spleeter and Demucs.
 
-## Spleeter’s limitations
+---
+
+## Spleeter’s Limitations
 
 While Spleeter was a game-changer in its time, it now struggles to meet the expectations of modern users. Some key drawbacks include:
-* Quality issues: In many real world tests, some users report hearing artifacts or less precise separation, especially in professional-level projects requiring pristine audio quality.
-* Lacking flexibility in stem options: Can only output fixed configurations of stems (2, 4, or 5), without support for guitar or 'other melody'.
-* Limited quality settings: Only offers a single quality setting, with no customization options.
-* Complex setup: Requires technical expertise to install and use, especially for offline applications.
-* Websites based on Spleeter: Many Spleeter-based websites have experienced server issues and extended wait times, making it challenging for users who need consistent results quickly.
+- **Quality issues:** In many real-world tests, some users report hearing artifacts or less precise separation, especially in professional-level projects requiring pristine audio quality.
+- **Lacking flexibility in stem options:** Can only output fixed configurations of stems (2, 4, or 5), without support for guitar or “other melody.”
+- **Limited quality settings:** Only offers a single quality setting, with no customization options.
+- **Complex setup:** Requires technical expertise to install and use, especially for offline applications.
+- **Websites based on Spleeter:** Many Spleeter-based websites have experienced server issues and extended wait times, making it challenging for users who need consistent results quickly.
+
+---
 
 ## Music Demixer: Powered by Demucs
 
-Music Demixer harnesses the power of Demucs, a state-of-the-art AI model designed for high-quality audio separation. Key advantages include:
-* Superior quality: Demucs excels in separating complex audio, handling overlapping frequencies with precision, and minimizing artifacts.
-* Broader stem support: Music Demixer supports vocals, bass, drums, piano, melody, and ‘other melody’ (e.g., violin, flute) in arbitrary combinations.
-* Even higher quality settings: In ensemble configurations, Demucs can generate much higher qualities than Spleeter, comparable to the best in the world.
-* Ease of use: A simple, web-based platform that works on any operating system, including Linux, Windows, and macOS. No complex parameters (frequency cutoff?) or setup required. No backend that may go offline.
-* Private and secure: Music Demixer respects user privacy and does not store or share uploaded audio files. All processing is done locally.
+Music Demixer harnesses the power of **Demucs**, a state-of-the-art AI model designed for high-quality audio separation. Key advantages include:
 
-Our website uses the latest trained AI models of Demucs that were improved and updated <b>as recently as the 2023 Sound Demixing Challenge</b>, and we are constantly experimenting with improving our algorithms and models.
+- **Superior quality:** Demucs excels in separating complex audio, handling overlapping frequencies with precision, and minimizing artifacts.
+- **Broader stem support:** Music Demixer supports vocals, bass, drums, piano, melody, and ‘other melody’ (e.g., violin, flute) in arbitrary combinations.
+- **Even higher quality settings:** In ensemble configurations, Demucs can generate much higher quality than Spleeter, comparable to the best in the world.
+- **Ease of use:** A simple, web-based platform that works on any operating system, including Linux, Windows, and macOS. There’s no installation required or command lines to navigate.
+- **Private and secure:** Music Demixer respects user privacy and does not store or share uploaded audio files. All processing is done locally in your browser.
 
-## Which tools use Spleeter?
+Our website uses the latest trained AI models of Demucs that were improved and updated **as recently as the 2023 Sound Demixing Challenge**, and we are constantly experimenting with improving our algorithms and models.
+
+---
+
+## Which Tools Use Spleeter?
 
 Several popular tools and websites rely on Spleeter, inheriting its limitations:
-* [Moises.ai](https://moises.ai): Offers a user-friendly interface but [uses Spleeter’s legacy technology](https://musically.com/2019/11/22/moises-makes-deezers-spleeter-audio-separation-tool-user-friendly/).
-* [Ezstems.com](https://ezstems.com): This service once provided direct access to Spleeter’s functionality. However, users now report it has gone offline and that support inquiries remain unanswered.
-* [Vocalremover.org](https://vocalremover.org): A free tool based on Spleeter, with an inconsistent payment system and limited stem options (no piano).
-* [Izotope RX8](https://www.izotope.com/en/learn/whats-new-in-rx-8.html): [Previously based on Spleeter](https://literecords.com/showthread.php?68357-iZotope-RX-8-Music-Rebalance), though newer versions use unnamed proprietary models.
 
-## Privacy and security
+- [Moises.ai](https://moises.ai): Offers a user-friendly interface but [uses Spleeter’s legacy technology](https://musically.com/2019/11/22/moises-makes-deezers-spleeter-audio-separation-tool-user-friendly/).
+- [Ezstems.com](https://ezstems.com): This service once provided direct access to Spleeter’s functionality. However, users now report it has gone offline and that support inquiries remain unanswered.
+- [Vocalremover.org](https://vocalremover.org): A free tool based on Spleeter, with an inconsistent payment system and limited stem options (no piano).
+- [Izotope RX8](https://www.izotope.com/en/learn/whats-new-in-rx-8.html): [Previously based on Spleeter](https://literecords.com/showthread.php?68357-iZotope-RX-8-Music-Rebalance), though newer versions use unnamed proprietary models.
 
-If you install Spleeter on your computer, of course, your audio files never leave your computer. This requires some work and set up, because you need expertise in Python and AI software.
+---
 
-However, on web-based versions of Spleeter, your audio files are uploaded to a server and processed there. This can be a privacy concern, especially if you are working with sensitive or unreleased audio.
+## Privacy and Security
 
-Music Demixer uses a unique design that is web-based, but delivers the AI model to your computer and performs the processing locally on your computer. This means that your audio files never leave your computer, and you can be sure that your audio is safe and secure.
+If you install Spleeter on your computer, your audio files never leave your computer. However, installing it requires expertise in Python and AI software.
 
-It also ensures you don't need to do any work to set up the Music Demixer software, and we are always testing and refining it so that every time you visit the website, you're getting the latest and greatest version of the software.
+On web-based versions of Spleeter, your audio files are uploaded to a remote server for processing. This can be a privacy concern, especially if you are working with sensitive or unreleased audio.
+
+**Music Demixer** uses a unique design: it’s web-based, but delivers the AI model to your browser and performs the processing locally. Your audio files never leave your computer, ensuring they remain private and secure. Plus, you don’t need any special setup—simply open our site and start demixing. We continuously test and refine it so you always have the latest and greatest version of our software.
+
+---
 
 ## Why Music Demixer Outperforms Spleeter
 
 Here’s a quick comparison of Music Demixer and Spleeter:
 
-|  Feature | Music Demixer | Spleeter |
-|:---|:---|:---|
-| Audio Quality | Clear, artifact-free | Artifacts and imprecision |
-| Stems Supported | Vocals, Drums, Bass, Piano, Guitar, Accompaniment, Melody, Other | Vocals, Drums, Bass, Accompaniment |
-| Ease of Use | Requires setup | Web-based, no setup |
-| Platform Support | ? | Any OS via the web |
-| Advanced Features | Ensemble models for high quality | None |
-| Extra Features | MIDI music transcription | None |
+| Feature                 | Music Demixer                                          | Spleeter                                               |
+|:------------------------|:--------------------------------------------------------|:--------------------------------------------------------|
+| **Audio Quality**       | Clear, artifact-minimized, high fidelity               | Some artifacts and imprecision reported                |
+| **Stems Supported**     | Vocals, Bass, Drums, Piano, Melody, Other (e.g. Violin) | Vocals, Drums, Bass, Accompaniment                     |
+| **Ease of Use**         | **Web-based, no setup**                                 | Requires setup (locally) or reliant on 3rd-party sites  |
+| **Platform Support**    | Any OS via modern web browser                           | Varies by Spleeter-based site; local install requires Python |
+| **Advanced Features**   | Ensemble models for higher quality                      | None                                                   |
+| **Extra Features**      | MIDI transcription (PRO plan)                           | None                                                   |
 
-## Audio clips
+---
 
-Don't just take our word for it. Listen to these audio clips to hear the difference between Spleeter and Demucs for a short clip from Shimmy Shimmy Ya by Ol' Dirty Bastard in 2-stem (vocals/accompaniment or instrumental separation):
+## Audio Clips
+
+Don’t just take our word for it. Listen to these audio clips to hear the difference between Spleeter and Demucs for a short clip from *Shimmy Shimmy Ya* by Ol’ Dirty Bastard in 2-stem (vocals/accompaniment or instrumental) separation:
+
 <div class="card-container" id="demo-app">
   <div class="card">
     <div class="card-content">
@@ -106,7 +127,8 @@ Don't just take our word for it. Listen to these audio clips to hear the differe
   </div>
 </div>
 
-You'll immediately notice the difference in clarity and separation between the two. This is only for the simple 2-stem separation, but the difference is even more pronounced with more complex instrument stems:
+You’ll immediately notice the difference in clarity and separation between the two. This is only for a simple 2-stem separation, but the disparity is even more pronounced with more complex instrument stems:
+
 <div class="card-container" id="demo-app">
   <div class="card">
     <div class="card-content">
@@ -147,38 +169,49 @@ You'll immediately notice the difference in clarity and separation between the t
 
 Notice the audible difference in clarity between the Spleeter stems and those produced by Demucs.
 
-TODO make this an admonition or some kind of big popping visual thingy
-**Ready to try Music Demixer for yourself?** [**Start a free demix now**](/) and experience the clarity of Demucs-powered stems firsthand!
+{% include admonitions.html
+    type="tip"
+    title="Ready to Try Music Demixer?"
+    content="**Start a free demix now** [**HERE**](/) and experience the clarity of Demucs-powered stems firsthand!"
+%}
 
-## Customer feedback
+---
+
+## Customer Feedback
 
 Users from communities like [HackerNews](https://news.ycombinator.com/item?id=32360816), [GitHub](https://github.com/facebookresearch/demucs/issues/267), and [KVRAudio](https://www.kvraudio.com/forum/viewtopic.php?t=576467) consistently praise Demucs for its superior performance compared to Spleeter. Here’s what they’ve said:
-* “After months of testing and hundreds of isolated tracks, I think Demucs is simply the best, in terms of both quality output and fidelity.”
-* “I’d pay for a good GUI for Demucs.”
-* “Demucs is hands-down better than Spleeter and even Izotope RX9.”
+
+- “After months of testing and hundreds of isolated tracks, I think Demucs is simply the best, in terms of both quality output and fidelity.”
+- “I’d pay for a good GUI for Demucs.”
+- “Demucs is hands-down better than Spleeter and even Izotope RX9.”
 
 On YouTube, there is a video describing how Demucs is better than Spleeter, with the comments agreeing:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/XOVqRfoc0aI?si=MqH58_78HyP-VTxP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 <br>
 
-Many of these posts are referring to Demucs v3, which is the older generation of Demucs. <span class="blog-highlight">We support the latest Demucs v4, which offers even better performance and quality</span>, and we develop custom in-house ensemble models and combinations of custom versions of Demucs v4 which compete with or outperform leading stem separation tools today!
+Many of these posts refer to Demucs v3, which is the older generation of Demucs. **We support the latest Demucs v4**, offering even better performance and quality, plus custom in-house ensemble models that compete with or outperform leading stem separation tools today!
 
-## User testimonials
+---
+
+## User Testimonials
 
 We have some direct user testimonials from our website:
-* "The demixing was very good, and much better than I was getting with RX 10. Thank you for giving me this chance to try the PRO version 🙂"
-* "it is probably the most useful application of the AI things I have seen AND it does as advertised on the box. nice work on the project."
-* "Man, this is \*\*\*\*ing awesome. Thank you for building this!
+
+- “The demixing was very good, and much better than I was getting with RX 10. Thank you for giving me this chance to try the PRO version 🙂”
+- “It is probably the most useful application of the AI things I have seen AND it does as advertised on the box. Nice work on the project.”
+- “Man, this is ****ing awesome. Thank you for building this!”
 
 Join the growing community of users who have experienced the power of Demucs through Music Demixer.
 
-## Music Demixer vs. Spleeter FAQ (Frequently Asked Questions)
+---
+
+## Music Demixer vs. Spleeter FAQ
 
 ### 1. What makes Music Demixer a strong alternative to Spleeter?
 **Answer:** While Spleeter was groundbreaking for its time, many users now prefer the Demucs AI model for cleaner separation and more flexible stem options. Music Demixer harnesses Demucs in a web-based platform, offering privacy-friendly local processing and continuous updates.
 
 ### 2. Can I use Music Demixer for free?
-**Answer:** Yes! You can separate stems at no cost using our free plan. When you’re ready for unlimited high-quality stems and additional features like MIDI transcription, you can [upgrade to the PRO plan](/pricing).
+**Answer:** Yes! You can separate stems at no cost using our free plan (up to 3 free “unmixes” with our low-quality model). When you’re ready for unlimited high-quality stems and additional features like MIDI transcription, you can [upgrade to the PRO plan](/pricing).
 
 ### 3. How does Music Demixer ensure my files are secure?
 **Answer:** Music Demixer runs the AI processing locally in your browser. Your files never leave your device, keeping your audio private and secure.
@@ -195,8 +228,27 @@ Join the growing community of users who have experienced the power of Demucs thr
 ### 7. Will Music Demixer provide MIDI files?
 **Answer:** Yes, we offer a MIDI transcription option for PRO subscribers. This feature is especially useful for remixers, producers, or musicians who want a notation reference for their extracted stems.
 
+---
+
+## Free vs. PRO: Which Plan Is Right for You?
+
+- **Free Plan**
+  - 3 unmixes included
+  - Access to our low-quality model
+  - Web-based local processing for privacy
+
+- **PRO Plan**
+  - Unlimited unmixes
+  - Two higher quality levels (ensemble models)
+  - MIDI transcription for all your tracks
+
+Ready to unlock the full potential of Music Demixer?
+[**Start with the Free Plan**](/) or [**Go PRO**](/pricing) and elevate your stem separation.
+
+---
+
 ## Conclusion
 
-While Spleeter played a pivotal role in the evolution of AI stem separation, many professionals have begun seeking more advanced solutions for top-tier results. Music Demixer, powered by Demucs, offers unmatched quality, broader stem support, and seamless usability.
+While Spleeter played a pivotal role in the evolution of AI stem separation, many professionals have begun seeking more advanced solutions for top-tier results. **Music Demixer**, powered by Demucs, offers unmatched quality, broader stem support, and seamless usability—all while keeping your audio private on your own device.
 
-Upgrade your stem separation experience today with Music Demixer. [Start for free](/) and when you're ready, [subscribe to our PRO plan](/pricing) for unlimited high-quality stems and MIDI transcription.
+Upgrade your stem separation experience today with Music Demixer. [**Start for free**](/) and when you’re ready, [**subscribe to our PRO plan**](/pricing) for unlimited high-quality stems and MIDI transcription.
