@@ -1579,6 +1579,16 @@ input[type="range"]::-moz-range-thumb {
   vertical-align: middle;
 }
 
+.youtube-container {
+  display: flex;
+  justify-content: center;
+}
+
+iframe {
+  aspect-ratio: 16 / 9;
+  width: 100% !important;
+}
+
 @media (max-width: 1000px) {
   .wizard-container {
     width: 600px;

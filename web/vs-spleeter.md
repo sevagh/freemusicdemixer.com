@@ -186,7 +186,9 @@ Users from communities like [HackerNews](https://news.ycombinator.com/item?id=32
 - “Demucs is hands-down better than Spleeter and even Izotope RX9.”
 
 On YouTube, there is a video describing how Demucs is better than Spleeter, with the comments agreeing:
-<iframe width="560" height="315" src="https://www.youtube.com/embed/XOVqRfoc0aI?si=MqH58_78HyP-VTxP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div class="youtube-container">
+<iframe src="https://www.youtube.com/embed/XOVqRfoc0aI?si=MqH58_78HyP-VTxP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
 <br>
 
 Many of these posts refer to Demucs v3, which is the older generation of Demucs. **We support the latest Demucs v4**, offering even better performance and quality, plus custom in-house ensemble models that compete with or outperform leading stem separation tools today!
