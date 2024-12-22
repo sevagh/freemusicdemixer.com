@@ -1,6 +1,7 @@
 ---
 header_class: index
 description: "Our deprecated Android app."
+title: Android app
 ---
 
 ⚠️ Our Android app is **no longer supported.**
