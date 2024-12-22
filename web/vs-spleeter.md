@@ -16,7 +16,7 @@ Freemusicdemixer.com, powered by the cutting-edge <span class="blog-highlight">D
 
 While Spleeter was a game-changer in its time, it now struggles to meet the expectations of modern users. Some key drawbacks include:
 * Quality issues: Audio artifacts and imprecise separation make it less suitable for professional use.
-* Limited stems: Supports only vocals, drums, bass, and accompaniment, excluding instruments like piano or melody.
+* Unflexible stem options: Supports fixed configurations of stems (2, 4, or 5), without support for guitar or 'other melody'.
 * Limited quality settings: Only offers a single quality setting, with no customization options.
 * Complex setup: Requires technical expertise to install and use, especially for offline applications.
 * Websites based on Spleeter: Spleeter-based websites are often unreliable, leading to long wait times and potential downtime. Some are defunct, unable to handle the load of users or the server costs, with customer support offline.
@@ -25,7 +25,8 @@ While Spleeter was a game-changer in its time, it now struggles to meet the expe
 
 Freemusicdemixer harnesses the power of Demucs, a state-of-the-art AI model designed for high-quality audio separation. Key advantages include:
 * Superior quality: Demucs excels in separating complex audio, handling overlapping frequencies with precision, and minimizing artifacts.
-* Broader stem support: Freemusicdemixer supports vocals, bass, drums, piano, melody, and ‘other melody’ (e.g., violin, flute).
+* Broader stem support: Freemusicdemixer supports vocals, bass, drums, piano, melody, and ‘other melody’ (e.g., violin, flute) in arbitrary combinations.
+* Even higher quality settings: In ensemble configurations, Demucs can generate much higher qualities than Spleeter, comparable to the best in the world.
 * Ease of use: A simple, web-based platform that works on any operating system, including Linux, Windows, and macOS. No complex parameters (frequency cutoff?) or setup required. No flaky backend that may go offline.
 * Private and secure: Freemusicdemixer respects user privacy and does not store or share uploaded audio files. All processing is done locally.
 
