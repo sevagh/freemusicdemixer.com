@@ -1589,6 +1589,33 @@ iframe {
   width: 100% !important;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse; /* or 'separate' if you prefer spaced borders */
+  margin: 1em 0;
+  overflow-x: auto; /* ensures horizontal scroll if table is wide */
+}
+
+thead th {
+  background-color: #f5f5f5; /* Light gray, adjust as needed */
+  color: #333;
+}
+
+th,
+td {
+  border: 1px solid #ccc; /* Thin gray border */
+  padding: 0.75em 1em;    /* Some horizontal & vertical padding */
+  text-align: left;
+  vertical-align: middle;
+}
+
+/* Responsive container if you want a horizontal scroll */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;   /* horizontal scrolling container */
+  -webkit-overflow-scrolling: touch; /* smooth iOS scrolling */
+}
+
 @media (max-width: 1000px) {
   .wizard-container {
     width: 600px;

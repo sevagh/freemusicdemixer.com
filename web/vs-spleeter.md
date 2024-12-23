@@ -86,12 +86,10 @@ Here’s a quick comparison of Music Demixer and Spleeter:
 |:------------------------|:--------------------------------------------------------|:--------------------------------------------------------|
 | **Audio Quality**       | Clear, artifact-minimized, high fidelity               | Some artifacts and imprecision reported                |
 | **Stems Supported**     | Vocals, Bass, Drums, Piano, Melody, Other (e.g. Violin) | Vocals, Drums, Bass, Accompaniment                     |
-| **Ease of Use**         | **Web-based, no setup**                                 | Requires setup (locally) or reliant on 3rd-party sites  |
+| **Ease of Use**         | Web-based, no setup                                 | Requires setup (locally) or reliant on 3rd-party sites  |
 | **Platform Support**    | Any OS via modern web browser                           | Varies by Spleeter-based site; local install requires Python |
 | **Advanced Features**   | Ensemble models for higher quality                      | None                                                   |
 | **Extra Features**      | MIDI transcription (PRO plan)                           | None                                                   |
-
----
 
 ## Audio Clips
 
