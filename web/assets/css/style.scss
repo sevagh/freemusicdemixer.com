@@ -1145,12 +1145,12 @@ footer {
 }
 
 #main-content p {
-  font-size: 1.25em;
+  font-size: 1.25rem;
 }
 
 #main-content ul,
 #main-content ol {
-  list-style-position: inside; /* Align bullets/numbers with the text */
+  list-style-position: outside;
   padding-left: 20px; /* Add indentation */
   margin-bottom: 20px; /* Add spacing below the entire list */
   font-size: 1.25rem; /* Match font size with paragraphs */
