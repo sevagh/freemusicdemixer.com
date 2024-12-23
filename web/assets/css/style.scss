@@ -45,7 +45,7 @@
     color: #047857; /* a teal shade for light theme */
     text-decoration: none;
   }
-  body a:not(.navbar-links a):not(.footer-container a):not(.supreme-zip-link) {
+  body a:not(.navbar-links a):not(.footer-container a):not(.supreme-zip-link):not(.blog-highlight a) {
     color: #0000EE; /* Standard blue */
   }
   body a:not(.navbar-links a):not(.footer-container a):visited {
@@ -111,6 +111,14 @@
     color: red;
     background: white;
   }
+  .admonition.tip {
+    background: #f0f9ff;       /* Light pastel background */
+    border-color: #209cee;
+    color: #333;   /* Dark text color */
+  }
+  .admonition-title {
+    color: #333;   /* Dark text color */
+  }
 }
 
 .theme-dark {
@@ -121,7 +129,7 @@
     color: #4ade80; /* a lighter green that pops on #333 */
     text-decoration: none;
   }
-  body a:not(.navbar-links a):not(.footer-container a):not(.supreme-zip-link) {
+  body a:not(.navbar-links a):not(.footer-container a):not(.supreme-zip-link):not(.blog-highlight a) {
     color: #87CEEB; /* Light blue for contrast */
   }
   body a:not(.navbar-links a):not(.footer-container a):visited {
@@ -187,6 +195,14 @@
     color: red;
     background: black;
   }
+  .admonition.tip {
+    background: #1f2b38;       /* Light pastel background */
+    border-color: #209cee;
+    color: #ddd;   /* Dark text color */
+  }
+  .admonition-title {
+    color: #ddd;   /* Dark text color */
+  }
 }
 
 @media (prefers-color-scheme: light) {
@@ -197,7 +213,7 @@
     color: #047857; /* a teal shade for light theme */
     text-decoration: none;
   }
-  body a:not(.navbar-links a):not(.footer-container a):not(.supreme-zip-link) {
+  body a:not(.navbar-links a):not(.footer-container a):not(.supreme-zip-link):not(.blog-highlight a) {
     color: #0000EE; /* Standard blue */
   }
   body a:not(.navbar-links a):not(.footer-container a):visited {
@@ -263,6 +279,14 @@
     color: red;
     background: white;
   }
+  .admonition.tip {
+    background: #f0f9ff;       /* Light pastel background */
+    border-color: #209cee;
+    color: #333;   /* Dark text color */
+  }
+  .admonition-title {
+    color: #333;   /* Dark text color */
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -273,7 +297,7 @@
     color: #4ade80; /* a lighter green that pops on #333 */
     text-decoration: none;
   }
-  body a:not(.navbar-links a):not(.footer-container a):not(.supreme-zip-link) {
+  body a:not(.navbar-links a):not(.footer-container a):not(.supreme-zip-link):not(.blog-highlight a) {
     color: #87CEEB; /* Light blue for contrast */
   }
   body a:not(.navbar-links a):not(.footer-container a):visited {
@@ -338,6 +362,14 @@
   .popup-close-button:hover {
     color: red;
     background: black;
+  }
+  .admonition.tip {
+    background: #1f2b38;       /* Light pastel background */
+    border-color: #209cee;
+    color: #ddd;   /* Dark text color */
+  }
+  .admonition.title {
+    color: #ddd;   /* Dark text color */
   }
 }
 
@@ -1113,12 +1145,12 @@ footer {
 }
 
 #main-content p {
-  font-size: 1.25em;
+  font-size: 1.25rem;
 }
 
 #main-content ul,
 #main-content ol {
-  list-style-position: inside; /* Align bullets/numbers with the text */
+  list-style-position: outside;
   padding-left: 20px; /* Add indentation */
   margin-bottom: 20px; /* Add spacing below the entire list */
   font-size: 1.25rem; /* Match font size with paragraphs */
@@ -1339,6 +1371,12 @@ div.tag-cloud {
     font-size: 20px;
 }
 
+// darker color for links inside `.blog-highlight`
+// but still blue so it looks like a link
+.blog-highlight a {
+    color: #0077cc;
+}
+
 .giscus-spacing {
     height: 50px; /* Adjust the value to your preference */
     display: block;
@@ -1541,6 +1579,43 @@ input[type="range"]::-moz-range-thumb {
   vertical-align: middle;
 }
 
+.youtube-container {
+  display: flex;
+  justify-content: center;
+}
+
+iframe {
+  aspect-ratio: 16 / 9;
+  width: 100% !important;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse; /* or 'separate' if you prefer spaced borders */
+  margin: 1em 0;
+  overflow-x: auto; /* ensures horizontal scroll if table is wide */
+}
+
+thead th {
+  background-color: #f5f5f5; /* Light gray, adjust as needed */
+  color: #333;
+}
+
+th,
+td {
+  border: 1px solid #ccc; /* Thin gray border */
+  padding: 0.75em 1em;    /* Some horizontal & vertical padding */
+  text-align: left;
+  vertical-align: middle;
+}
+
+/* Responsive container if you want a horizontal scroll */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;   /* horizontal scrolling container */
+  -webkit-overflow-scrolling: touch; /* smooth iOS scrolling */
+}
+
 @media (max-width: 1000px) {
   .wizard-container {
     width: 600px;
@@ -1555,6 +1630,29 @@ input[type="range"]::-moz-range-thumb {
   img.responsive-img-android {
     width: 50%;
   }
+}
+
+.admonition {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-radius: 4px;
+  border-left: 5px solid #209cee; /* Example color or brand color */
+}
+
+.admonition.tip {
+  background-color: #f0f9ff; /* Light pastel background */
+  border-left-color: #209cee; /* Blue highlight or brand color */
+}
+
+.admonition-title {
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.admonition-body p:last-child {
+  margin-bottom: 0;
 }
 
 /* Responsive Styling for Small Screens */

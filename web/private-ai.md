@@ -1,6 +1,7 @@
 ---
 header_class: karaoke
 description: "An article about the unfair power relationship between record labels, AI companies, copyright law, and your rights as an artist. It introduces a private, offline music separation tool that empowers creators to work without restrictions."
+title: "Privacy, AI, and Music: Empowering Creators with Private, Offline Music Separation"
 ---
 
 # Unleash Unrestricted Music Creation — Private, Offline, and Empowering

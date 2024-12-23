@@ -1,6 +1,7 @@
 ---
 header_class: karaoke
 description: "Create karaoke tracks by removing vocals with our advanced AI-powered music demixer."
+title: Karaoke
 ---
 
 # Karaoke party? Start here!

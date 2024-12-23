@@ -1,6 +1,7 @@
 ---
 header_class: blog
 description: "Explore our blog for expert tips, in-depth guides, and the latest insights on using AI-powered music demixing tools. Learn how to extract vocals, separate instruments, and get the most out of our cutting-edge technology for creating custom mixes, karaoke tracks, and more."
+title: Blog
 ---
 
 # Blog
