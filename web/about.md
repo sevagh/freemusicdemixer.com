@@ -1,7 +1,7 @@
 ---
 header_class: index
 description: "Learn more about our mission and the cutting-edge AI technology powering our music demixing tools."
-title: About us
+title: About Us
 ---
 
 # About us

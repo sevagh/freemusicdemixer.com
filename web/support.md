@@ -1,6 +1,6 @@
 ---
 description: "Get help and support for using our music demixing tools."
-title: Support & legal
+title: Support and Legal
 ---
 
 # Support & legal

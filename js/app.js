@@ -88,6 +88,7 @@ let NUM_WORKERS = 4;
 let workers;
 let workerProgress;
 let dlModelBuffers;
+let jobRunning = false;
 
 let processedSegments = new Array(NUM_WORKERS); // Global accumulator for processed segments
 let completedSegments = 0; // Counter for processed segments
@@ -275,6 +276,17 @@ window.addEventListener('loginSuccess', (event) => {
 
     // Call resetUIElements to handle UI updates after login
     resetUIElements();
+  });
+
+
+// Attach the beforeunload event listener
+window.addEventListener("beforeunload", (event) => {
+    if (jobRunning) {
+      // Show a warning dialog
+      event.preventDefault();
+      event.returnValue = ""; // Modern browsers display a default message
+      return ""; // Necessary for older browsers
+    }
   });
 
 function updateModelBasedOnSelection() {
@@ -589,6 +601,7 @@ function initWorkers() {
                     // reset globals etc.
                     processedSegments = null; // this one will be recreated with appropriate num_workers next time
                     completedSegments = 0;
+                    jobRunning = false;
                 }
             } else if (e.data.msg === 'PROCESSING_DONE_BATCH') {
                 // similar global bs here
@@ -627,6 +640,9 @@ function initWorkers() {
                         });
                         // reset batch globals
                         processedSegments = null;
+
+                        // reset jobRunning flag
+                        jobRunning = false;
                     }
                 }
             } else if (e.data.msg === 'WASM_ERROR') {
@@ -658,6 +674,9 @@ function initWorkers() {
             modelBuffers: dlModelBuffers
         });
     }
+
+    // set global jobRunning flag to true
+    jobRunning = true;
 };
 
 async function initModel() {
