@@ -37,6 +37,12 @@
   box-sizing: border-box;
 }
 
+.hidden-anchor {
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+
 .theme-light {
   .supreme-zip-link {
     color: #047857; /* a teal shade for light theme */

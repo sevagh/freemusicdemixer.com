@@ -29,6 +29,8 @@ header_class: index
 <h3>Enjoy <b>100% privacy in your browser</b> — no cloud. Join our customers who switched from expensive competitors to our superior, simple solution. Get started today!</h3>
 </section>
 
+<a id="demixer-app" class="hidden-anchor"></a>
+
 <!-- Wizard sections here... -->
 <section class="demixer-section">
   <div class="disable-wizard">

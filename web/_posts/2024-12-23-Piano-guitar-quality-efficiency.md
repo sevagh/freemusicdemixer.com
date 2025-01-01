@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Piano and guitar stems just got better!"
-category: announcement
+category: announcements
 header_class: post
 intro: "We just made our high-quality piano and guitar stems better! Continue reading to find out how."
 ---
@@ -11,7 +11,7 @@ intro: "We just made our high-quality piano and guitar stems better! Continue re
 {% include admonitions.html
     type="tip"
     title="Want piano and guitar stems?"
-    content="**Separate them right now for free [directly in your browser and see for yourself!](/)**"
+    content="**Separate them right now for free [directly in your browser and see for yourself!](/#demixer-app)**"
 %}
 
 <img class="responsive-img-android" src="/assets/blog/post15/dalle_graphic.webp" alt="piano-guitar" width="50%"/>
