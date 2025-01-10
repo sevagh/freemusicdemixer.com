@@ -166,10 +166,12 @@ const step3 = document.getElementById('wizard-step-3');
 
 const nextStep1Btn = document.getElementById('next-step-1');
 const nextStep2Btn = document.getElementById('next-step-2');
-const nextStep3Btn = document.getElementById('next-step-3');
+const nextStep3Btn = document.getElementById('next-step-3-sheet-music');
+const nextStep4Btn = document.getElementById('next-step-4');
 
 const prevStep2Btn = document.getElementById('prev-step-2');
 const prevStep3Btn = document.getElementById('prev-step-3');
+const prevStep4Btn = document.getElementById('prev-step-4');
 
 const usageLimits = document.getElementById('usage-limits');
 
@@ -858,8 +860,8 @@ function activateTierUI(userTier) {
     // Enable PRO-tier MIDI feature
     document.getElementById('midi').disabled = false;
     document.getElementById('both').disabled = false;
-    document.querySelector('label[for="both"]').textContent = 'Stems + MIDI';
-    document.querySelector('label[for="midi"]').textContent = 'MIDI-only';
+    document.querySelector('label[for="both"]').textContent = 'Stems + music transcription';
+    document.querySelector('label[for="midi"]').textContent = 'Music transcription only';
 
     // Enable PRO-tier radio buttons (medium, high quality)
     document.getElementById('medium-quality').disabled = false;
@@ -1071,6 +1073,7 @@ let isProcessing = false;
 let midiWorker;
 let midiWasmLoaded = false; // Flag to check if WASM is loaded
 let midiBuffers = {}; // Store MIDI data by stem name
+let mxmlBuffers = {}; // Store MusicXML data by stem name
 let queueTotal = 0; // Total number of items in the queue
 let queueCompleted = 0; // Number of items processed
 let completedSongsBatchMidi = 0; // Counter for processed songs in batch mode
@@ -1107,13 +1110,15 @@ function initializeMidiWorker() {
     };
 
     // Load the WASM module when the worker is created
-    midiWorker.postMessage({ msg: 'LOAD_WASM', scriptName: 'basicpitch.js' });
+    midiWorker.postMessage({ msg: 'LOAD_WASM', scriptName: 'basicpitch_mxml.js' });
 }
 
 function handleMidiDone(data) {
-    const { midiBytes, stemName } = data;
+    const { midiBytes, mxmlBytes, stemName } = data;
     const midiBlob = new Blob([midiBytes], { type: 'audio/midi' });
+    const mxmlBlob = new Blob([mxmlBytes], { type: 'application/xml' });
     midiBuffers[stemName] = midiBlob; // Store the MIDI blob by stem name
+    mxmlBuffers[stemName] = mxmlBlob; // Store the MXML blob by stem name
     console.log(`MIDI generation done for ${stemName}.`);
 }
 
@@ -1333,6 +1338,21 @@ function createDownloadLinks(buffers, midiOnlyMode) {
                     downloadLinksDiv.appendChild(midiLink);
                 }));
             }
+
+            // If MusicXML data exists for this stem, we queue it up
+            if (mxmlBuffers[stemName]) {
+                // Add a task to handle MusicXML arrayBuffer conversion
+                tasks.push(mxmlBuffers[stemName].arrayBuffer().then(function(arrBuf) {
+                    zipFiles[stemName + ".musicxml"] = new Uint8Array(arrBuf);
+
+                    var mxmlUrl = URL.createObjectURL(mxmlBuffers[stemName]);
+                    var mxmlLink = document.createElement('a');
+                    mxmlLink.href = mxmlUrl;
+                    mxmlLink.textContent = stemName + ".musicxml";
+                    mxmlLink.download = stemName + ".musicxml";
+                    downloadLinksDiv.appendChild(mxmlLink);
+                }));
+            }
         });
     } else {
         // MIDI-only mode
@@ -1346,6 +1366,19 @@ function createDownloadLinks(buffers, midiOnlyMode) {
                 midiLink.textContent = stemName + ".mid";
                 midiLink.download = stemName + ".mid";
                 downloadLinksDiv.appendChild(midiLink);
+            }));
+        });
+
+        Object.keys(mxmlBuffers).forEach(function(stemName) {
+            tasks.push(mxmlBuffers[stemName].arrayBuffer().then(function(arrBuf) {
+                zipFiles[stemName + ".mid"] = new Uint8Array(arrBuf);
+
+                var mxmlUrl = URL.createObjectURL(mxmlBuffers[stemName]);
+                var mxmlLink = document.createElement('a');
+                mxmlLink.href = mxmlUrl;
+                mxmlLink.textContent = stemName + ".musicxml";
+                mxmlLink.download = stemName + ".musicxml";
+                downloadLinksDiv.appendChild(mxmlLink);
             }));
         });
     }
@@ -1375,6 +1408,7 @@ function createDownloadLinks(buffers, midiOnlyMode) {
 
         // Clear MIDI buffers after links are created
         midiBuffers = {};
+        mxmlBuffers = {};
         queueTotal = 0; // Reset the total queue items
         queueCompleted = 0; // Reset the current queue item
 

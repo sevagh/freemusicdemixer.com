@@ -49,16 +49,16 @@ header_class: index
             </div>
             <div>
               <input type="radio" id="both" name="processingMode" value="both">
-              <label for="both">Stems + MIDI music transcription</label>
+              <label for="both">Stems + music transcription</label>
             </div>
             <div>
               <input type="radio" id="midi" name="processingMode" value="midi">
-              <label for="midi">MIDI music transcription only</label>
+              <label for="midi">Music transcription only</label>
             </div>
           </form>
         <b><a href="javascript:void(0);" id="midiTooltipToggle" style="text-decoration: none; cursor: pointer;">ℹ️</a></b>
         <div id="midiTooltip" style="display: none;">
-          <a href="/getting-started/2024/12/07/Music-transcription-feature">Learn more about our MIDI music transcription feature</a>
+          <a href="/getting-started/2024/12/07/Music-transcription-feature">Learn more about our MIDI and MusicXML music transcription features</a>
         </div>
         </div>
         <div class="column">
@@ -206,10 +206,21 @@ header_class: index
       <br>
       <div class="wizard-footer">
         <button id="prev-step-3" class="wizard-prev-btn" disabled>Back</button>
-        <button id="next-step-3" class="wizard-next-btn" disabled>New job</button>
+        <button id="next-step-3-sheet-music" class="wizard-next-btn" disabled>View and print sheet music</button>
+      </div>
+      <div id="wizard-step-4-sheet-music" class="wizard-step" style="display: none;">
+      <p>View and print generated sheet music</p>
+      <div class="osmd-container">
+        <div id="sheet-music-display" style="width: 100%; height: 400px;"></div>
+          <button id="zoom-in">Zoom In</button>
+          <button id="zoom-out">Zoom Out</button>
+        </div>
+      <div class="wizard-footer">
+        <button id="prev-step-4" class="wizard-prev-btn">Back</button>
+        <button id="next-step-4" class="wizard-next-btn" disabled>New job</button>
       </div>
     </div>
-
+    </div>
   </div>
 </section>
 
