@@ -210,17 +210,18 @@ header_class: index
         <button id="next-step-3-new-job" class="wizard-next-btn" disabled>New job</button>
       </div>
     </div>
-      <div id="wizard-step-4-sheet-music" class="wizard-step" style="display: none;">
-      <p>View and print generated sheet music</p>
-      <div class="osmd-container">
-        <div id="sheet-music-display" style="width: 100%; height: 400px;"></div>
-          <button id="zoom-in">Zoom In</button>
-          <button id="zoom-out">Zoom Out</button>
-        </div>
-      <div class="wizard-footer">
-        <button id="prev-step-4" class="wizard-prev-btn">Back</button>
-        <button id="next-step-4" class="wizard-next-btn">New job</button>
-      </div>
+    <div id="wizard-step-4-sheet-music" class="wizard-step" style="display: none;">
+    <p>View and print generated sheet music</p>
+    <!-- We'll create this container for the clickable links -->
+    <div id="instrument-links">
+      <!-- Example: "Open, print, and save sheet music for:" -->
+      <p>Open, print, and save sheet music for:</p>
+      <!-- We'll populate links here (Guitar, Vocals, Bass) via JavaScript -->
+    </div>
+    <div class="wizard-footer">
+      <button id="prev-step-4" class="wizard-prev-btn">Back</button>
+      <button id="next-step-4" class="wizard-next-btn">New job</button>
+    </div>
     </div>
   </div>
 </section>

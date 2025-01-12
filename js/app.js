@@ -1076,12 +1076,130 @@ prevStep3Btn.addEventListener('click', function() {
     step2.style.display = 'block';
 });
 
-nextStep3BtnSheetMusic.addEventListener('click', function() {
-    // OSMD display of mxmxlBuffers
-    step4SheetMusic.style.display = 'block';
+function openSheetMusicInNewTab(mxmlData, instrumentName) {
+  const newTab = window.open("", "_blank");
+  if (!newTab) {
+    alert("Please allow pop-ups to see your sheet music.");
+    return;
+  }
 
+  // Convert the raw bytes into a string using TextDecoder.
+  // The assumption is that `mxmlData` is a Uint8Array or ArrayBuffer.
+  const decoder = new TextDecoder();
+  // Ensure mxmlData is a Uint8Array if it's an ArrayBuffer
+  let typedArray = mxmlData instanceof Uint8Array ? mxmlData : new Uint8Array(mxmlData);
+  const xmlString = decoder.decode(typedArray);
+
+  // Write an HTML structure into the new window
+  newTab.document.write(`
+    <html>
+    <head>
+      <title>Sheet Music: ${instrumentName}</title>
+      <style>
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: sans-serif;
+        }
+        #osmdContainer {
+          width: 100%;
+          height: calc(100% - 50px);
+          box-sizing: border-box;
+        }
+        #controls {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          padding: 10px;
+          background: #f0f0f0;
+          border-bottom: 1px solid #ddd;
+        }
+        button {
+          cursor: pointer;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="controls">
+        <button id="saveBtn">Save</button>
+        <button id="printBtn">Print</button>
+      </div>
+      <div id="osmdContainer"></div>
+
+      <!-- Load OpenSheetMusicDisplay via CDN: choose a stable version or the latest -->
+      <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.6.1/build/opensheetmusicdisplay.min.js"></script>
+
+      <script>
+        // We load OSMD after the script is done, so we must wait for DOMContentLoaded
+        document.addEventListener("DOMContentLoaded", async () => {
+          const osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("osmdContainer", {
+            // any OSMD options you want
+            followCursor: true,
+            drawMeasureNumbers: true
+          });
+
+          try {
+            const xml = \`${xmlString.replace(/`/g, "\\`")}\`;
+            await osmd.load(xml);
+            osmd.render();
+          } catch (error) {
+            console.error("OSMD load error:", error);
+          }
+
+          // Save Button - downloads the MusicXML
+          document.getElementById("saveBtn").addEventListener("click", () => {
+            const blob = new Blob([\`${xmlString.replace(/`/g, "\\`")}\`], {
+              type: "application/vnd.recordare.musicxml+xml"
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "${instrumentName}.musicxml";
+            a.click();
+            URL.revokeObjectURL(url);
+          });
+
+          // Print Button
+          document.getElementById("printBtn").addEventListener("click", () => {
+            window.print();
+          });
+        });
+      </script>
+    </body>
+    </html>
+  `);
+
+  // Must close the document to finish writing
+  newTab.document.close();
+}
+
+const instrumentLinksContainer = document.getElementById("instrument-links");
+
+nextStep3BtnSheetMusic.addEventListener('click', function() {
+    // OSMD display of mxmlBuffers
+
+    step4SheetMusic.style.display = 'block';
     step3.style.display = 'none';
-});
+
+    console.log("MXML buffers:", mxmlBuffers);
+    console.log("MXML buffers:", mxmlBuffersSheetMusic);
+
+    // (Re)Generate the instrument links (or do this once if you prefer)
+    instrumentLinksContainer.innerHTML = "";
+    Object.keys(mxmlBuffersSheetMusic).forEach((instrumentName) => {
+      console.log("Adding link for", instrumentName);
+      console.log("Size of uint8 array:", mxmlBuffersSheetMusic[instrumentName].length);
+      const link = document.createElement("a");
+      link.href = "#";
+      link.textContent = `Open new sheet music tab for: ${instrumentName}`;
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        openSheetMusicInNewTab(mxmlBuffersSheetMusic[instrumentName], instrumentName);
+      });
+      instrumentLinksContainer.appendChild(link);
+      instrumentLinksContainer.appendChild(document.createElement("br"));
+    });
+  });
 
 prevStep4Btn.addEventListener('click', function() {
     step4SheetMusic.style.display = 'none';
@@ -1113,6 +1231,7 @@ let midiWorker;
 let midiWasmLoaded = false; // Flag to check if WASM is loaded
 let midiBuffers = {}; // Store MIDI data by stem name
 let mxmlBuffers = {}; // Store MusicXML data by stem name
+let mxmlBuffersSheetMusic = {}; // Store MusicXML data for sheet music
 let queueTotal = 0; // Total number of items in the queue
 let queueCompleted = 0; // Number of items processed
 let completedSongsBatchMidi = 0; // Counter for processed songs in batch mode
@@ -1155,9 +1274,8 @@ function initializeMidiWorker() {
 function handleMidiDone(data) {
     const { midiBytes, mxmlBytes, stemName } = data;
     const midiBlob = new Blob([midiBytes], { type: 'audio/midi' });
-    const mxmlBlob = new Blob([mxmlBytes], { type: 'application/xml' });
     midiBuffers[stemName] = midiBlob; // Store the MIDI blob by stem name
-    mxmlBuffers[stemName] = mxmlBlob; // Store the MXML blob by stem name
+    mxmlBuffers[stemName] = mxmlBytes; // Store the MXML bytes by stem name
     console.log(`MIDI generation done for ${stemName}.`);
 }
 
@@ -1419,6 +1537,14 @@ function createDownloadLinks(buffers, midiOnlyMode) {
 
         // Clear MIDI buffers after links are created
         midiBuffers = {};
+        // copy mxmlBuffers before clearing
+        mxmlBuffersSheetMusic = mxmlBuffers;
+
+        // log the mxmlBuffers for debugging
+        console.log("MusicXML buffers:", mxmlBuffers);
+        // also log the mxmlBuffersSheetMusic for debugging
+        console.log("MusicXML buffers for sheet music:", mxmlBuffersSheetMusic);
+
         mxmlBuffers = {};
         queueTotal = 0; // Reset the total queue items
         queueCompleted = 0; // Reset the current queue item
