@@ -207,7 +207,9 @@ header_class: index
       <div class="wizard-footer">
         <button id="prev-step-3" class="wizard-prev-btn" disabled>Back</button>
         <button id="next-step-3-sheet-music" class="wizard-next-btn" disabled>View and print sheet music</button>
+        <button id="next-step-3-new-job" class="wizard-next-btn" disabled>New job</button>
       </div>
+    </div>
       <div id="wizard-step-4-sheet-music" class="wizard-step" style="display: none;">
       <p>View and print generated sheet music</p>
       <div class="osmd-container">
@@ -217,9 +219,8 @@ header_class: index
         </div>
       <div class="wizard-footer">
         <button id="prev-step-4" class="wizard-prev-btn">Back</button>
-        <button id="next-step-4" class="wizard-next-btn" disabled>New job</button>
+        <button id="next-step-4" class="wizard-next-btn">New job</button>
       </div>
-    </div>
     </div>
   </div>
 </section>

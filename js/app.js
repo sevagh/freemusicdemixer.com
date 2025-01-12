@@ -163,12 +163,15 @@ let selectedInput = null;
 const step1 = document.getElementById('wizard-step-1');
 const step2 = document.getElementById('wizard-step-2');
 const step3 = document.getElementById('wizard-step-3');
+const step4SheetMusic = document.getElementById('wizard-step-4-sheet-music');
 
 const nextStep1Btn = document.getElementById('next-step-1');
 const nextStep2Btn = document.getElementById('next-step-2');
-const nextStep3Btn = document.getElementById('next-step-3-sheet-music');
+const nextStep3BtnSheetMusic = document.getElementById('next-step-3-sheet-music');
+const nextStep3BtnNewJob = document.getElementById('next-step-3-new-job');
 const nextStep4Btn = document.getElementById('next-step-4');
 
+const prevStep1Btn = document.getElementById('prev-step-1');
 const prevStep2Btn = document.getElementById('prev-step-2');
 const prevStep3Btn = document.getElementById('prev-step-3');
 const prevStep4Btn = document.getElementById('prev-step-4');
@@ -255,7 +258,8 @@ function resetUIElements() {
 
     // reset all disabled buttons to disabled
     nextStep2Btn.disabled = true;
-    nextStep3Btn.disabled = true;
+    nextStep3BtnSheetMusic.disabled = true;
+    nextStep3BtnNewJob.disabled = true;
     prevStep3Btn.disabled = true;
 
     initializeInputState();
@@ -691,7 +695,8 @@ async function initModel() {
         try {
             const buffers = await fetchAndCacheFiles(selectedModel, selectedStems);
             // WASM module is ready, enable the buttons
-            nextStep3Btn.disabled = false;
+            nextStep3BtnSheetMusic.disabled = false;
+            nextStep3BtnNewJob.disabled = false;
 
             dlModelBuffers = buffers;
             console.log('Model files downloaded:', buffers);
@@ -841,7 +846,8 @@ function displayStep2Spinner() {
     document.getElementById('step2-overlay').style.display = 'flex';
     document.getElementById('step2-spinner').style.display = 'flex';
     prevStep3Btn.disabled = true;
-    nextStep3Btn.disabled = true;
+    nextStep3BtnSheetMusic.disabled = true;
+    nextStep3BtnNewJob.disabled = true;
 }
 
 // Function to remove the spinner and overlay
@@ -849,7 +855,8 @@ function removeStep2Spinner() {
     document.getElementById('step2-overlay').style.display = 'none';
     document.getElementById('step2-spinner').style.display = 'none';
     prevStep3Btn.disabled = false;
-    nextStep3Btn.disabled = false;
+    nextStep3BtnSheetMusic.disabled = false;
+    nextStep3BtnNewJob.disabled = false;
 }
 
 function activateTierUI(userTier) {
@@ -957,7 +964,8 @@ nextStep2Btn.addEventListener('click', function() {
         step2.style.display = 'none';
 
         prevStep3Btn.disabled = true;
-        nextStep3Btn.disabled = true;
+        nextStep3BtnSheetMusic.disabled = true;
+        nextStep3BtnNewJob.disabled = true;
 
         // Parse the selected memory option from the radio buttons
         const selectedMemory = document.querySelector('input[name="memory"]:checked').value;
@@ -1048,6 +1056,16 @@ nextStep2Btn.addEventListener('click', function() {
     });
 });
 
+prevStep1Btn.addEventListener('click', function() {
+    // from step 3, undisable next/prev buttons
+    prevStep3Btn.disabled = false;
+    nextStep3BtnSheetMusic.disabled = false;
+    nextStep3BtnNewJob.disabled = false;
+
+    step1.style.display = 'none';
+    step3.style.display = 'block';
+});
+
 prevStep2Btn.addEventListener('click', function() {
     step2.style.display = 'none';
     step1.style.display = 'block';
@@ -1058,12 +1076,33 @@ prevStep3Btn.addEventListener('click', function() {
     step2.style.display = 'block';
 });
 
-nextStep3Btn.addEventListener('click', function() {
+nextStep3BtnSheetMusic.addEventListener('click', function() {
+    // OSMD display of mxmxlBuffers
+    step4SheetMusic.style.display = 'block';
+
+    step3.style.display = 'none';
+});
+
+prevStep4Btn.addEventListener('click', function() {
+    step4SheetMusic.style.display = 'none';
+    step3.style.display = 'block';
+});
+
+nextStep3BtnNewJob.addEventListener('click', function() {
+    // reset all buttons etc.
+    //resetUIElements();
+
+    // restart the wizard from step 1
+    step3.style.display = 'none';
+    step1.style.display = 'block';
+});
+
+nextStep4Btn.addEventListener('click', function() {
     // reset all buttons etc.
     resetUIElements();
 
     // restart the wizard from step 1
-    step3.style.display = 'none';
+    step4SheetMusic.style.display = 'none';
     step1.style.display = 'block';
 });
 
@@ -1338,21 +1377,6 @@ function createDownloadLinks(buffers, midiOnlyMode) {
                     downloadLinksDiv.appendChild(midiLink);
                 }));
             }
-
-            // If MusicXML data exists for this stem, we queue it up
-            if (mxmlBuffers[stemName]) {
-                // Add a task to handle MusicXML arrayBuffer conversion
-                tasks.push(mxmlBuffers[stemName].arrayBuffer().then(function(arrBuf) {
-                    zipFiles[stemName + ".musicxml"] = new Uint8Array(arrBuf);
-
-                    var mxmlUrl = URL.createObjectURL(mxmlBuffers[stemName]);
-                    var mxmlLink = document.createElement('a');
-                    mxmlLink.href = mxmlUrl;
-                    mxmlLink.textContent = stemName + ".musicxml";
-                    mxmlLink.download = stemName + ".musicxml";
-                    downloadLinksDiv.appendChild(mxmlLink);
-                }));
-            }
         });
     } else {
         // MIDI-only mode
@@ -1366,19 +1390,6 @@ function createDownloadLinks(buffers, midiOnlyMode) {
                 midiLink.textContent = stemName + ".mid";
                 midiLink.download = stemName + ".mid";
                 downloadLinksDiv.appendChild(midiLink);
-            }));
-        });
-
-        Object.keys(mxmlBuffers).forEach(function(stemName) {
-            tasks.push(mxmlBuffers[stemName].arrayBuffer().then(function(arrBuf) {
-                zipFiles[stemName + ".mid"] = new Uint8Array(arrBuf);
-
-                var mxmlUrl = URL.createObjectURL(mxmlBuffers[stemName]);
-                var mxmlLink = document.createElement('a');
-                mxmlLink.href = mxmlUrl;
-                mxmlLink.textContent = stemName + ".musicxml";
-                mxmlLink.download = stemName + ".musicxml";
-                downloadLinksDiv.appendChild(mxmlLink);
             }));
         });
     }
@@ -1418,7 +1429,8 @@ function createDownloadLinks(buffers, midiOnlyMode) {
         }
 
         prevStep3Btn.disabled = false;
-        nextStep3Btn.disabled = false;
+        nextStep3BtnSheetMusic.disabled = false;
+        nextStep3BtnNewJob.disabled = false;
     });
 }
 
@@ -1501,7 +1513,8 @@ async function processFiles(files, midiOnlyMode) {
         queueCompleted = 0; // Reset the current queue item
 
         prevStep3Btn.disabled = false;
-        nextStep3Btn.disabled = false;
+        nextStep3BtnSheetMusic.disabled = false;
+        nextStep3BtnNewJob.disabled = false;
     }
 
     // for all modes that have midi, increment usage here
@@ -1566,11 +1579,15 @@ function packageAndZip(targetWaveforms, filename) {
         }
 
         prevStep3Btn.disabled = false;
-        nextStep3Btn.disabled = false;
+        nextStep3BtnSheetMusic.disabled = false;
+        nextStep3BtnNewJob.disabled = false;
     });
 }
 
 function incrementUsage() {
+    // now undisable prevStep1Btn, which can lead to the last results
+    prevStep1Btn.disabled = false;
+
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
     if (loggedIn) {
         // dont increment for logged in users
