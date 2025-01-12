@@ -26,7 +26,7 @@ onmessage = function(e) {
 
         // Call the WASM function with the audio buffer, length, and pointers for the MIDI data and size
         // TODO: choose a better stem name
-        loadedModule._convertToMidi(audioPointer, length, midiDataPointer, midiSizePointer, mxmlDataPointer, mxmlSizePointer, e.data.stemName, batchMode);
+        loadedModule._convertToMidi(audioPointer, length, midiDataPointer, midiSizePointer, mxmlDataPointer, mxmlSizePointer, batchMode);
 
         // Retrieve the MIDI data pointer and size from WASM memory
         const midiData = loadedModule.getValue(midiDataPointer, 'i32');  // Get the pointer to MIDI data

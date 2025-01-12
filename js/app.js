@@ -44,6 +44,8 @@ document.getElementById('processingPickerForm').addEventListener('change', (even
   } else if (userTier === 2) {
     // iterate and disable all quality radio buttons
     qualityRadios.forEach(radio => radio.disabled = isMidiOnly);
+    // also iterate and disable all component checkboxes
+    componentsCheckboxes.forEach(checkbox => checkbox.disabled = isMidiOnly);
   }
 
   // also disable the "advancedSettingsToggle" and radios

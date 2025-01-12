@@ -9,6 +9,18 @@ header_class: index
 <h3>Unlock <b>AI stem separation</b> and <b>automatic music transcription</b> in your browser. Effortlessly isolate vocals, drums, bass, melody, guitar, and piano. Generate precise MIDI files. Perfect for musicians, DJs, producers, and creators.</h3>
 </section>
 
+<!--
+insert a flashy visual element here with downward arrows that says
+keep scrolling to start using the demixer
+-->
+
+<section class="flashy-cta">
+  <div class="cta-container">
+    <h3>Keep scrolling to start using the Demixer</h3>
+    <div class="arrow-down"></div>
+  </div>
+</section>
+
 <section class="info-section">
 <h3>Experience advanced stem separation powered by the <b>Demucs AI model</b> and award-winning technologies from the Sony Music Demixing Challenges.</h3>
 </section>
