@@ -9,16 +9,17 @@ header_class: index
 <h3>Unlock <b>AI stem separation</b> and <b>automatic music transcription</b> in your browser. Effortlessly isolate vocals, drums, bass, melody, guitar, and piano. Generate precise MIDI files. Perfect for musicians, DJs, producers, and creators.</h3>
 </section>
 
-<!--
-insert a flashy visual element here with downward arrows that says
-keep scrolling to start using the demixer
--->
-
 <section class="flashy-cta">
-  <div class="cta-container">
-    <h3>Keep scrolling to start using the Demixer</h3>
-    <div class="arrow-down"></div>
-  </div>
+  <a href="#demixer-app" class="cta-link">
+    <div class="cta-container">
+      <span class="cta-text">KEEP SCROLLING TO GET STARTED!</span>
+      <div class="arrow-container">
+        <span class="arrow-down"></span>
+        <span class="arrow-down"></span>
+        <span class="arrow-down"></span>
+      </div>
+    </div>
+  </a>
 </section>
 
 <section class="info-section">
@@ -218,7 +219,9 @@ keep scrolling to start using the demixer
       <br>
       <div class="wizard-footer">
         <button id="prev-step-3" class="wizard-prev-btn" disabled>Back</button>
-        <button id="next-step-3-sheet-music" class="wizard-next-btn" disabled>View and print sheet music</button>
+        <button id="next-step-3-sheet-music" class="wizard-next-btn highlight-btn" disabled>
+          View and print sheet music (New! 🌟)
+        </button>
         <button id="next-step-3-new-job" class="wizard-next-btn" disabled>New job</button>
       </div>
     </div>
