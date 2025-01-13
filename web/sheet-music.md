@@ -12,10 +12,10 @@ Transform your music into professional-quality sheet music with just a few click
 
 ## Why Use FreeMusicDemixer for Sheet Music?
 
-- **Automatic Transcription**: No MIDI keyboard? No problem! Upload audio recordings of harmonic instruments or isolate instrument stems, and let our AI generate accurate scores for you.
-- **MusicXML Format**: Export sheet music in the widely-supported MusicXML format, compatible with most popular notation software like MuseScore, Finale, or Sibelius.
-- **Printable Sheet Music**: Edit, print, or share your sheet music directly from your browser without additional tools.
-- **Stem-Specific Scores**: Generate individual scores for vocals, bass, melody, piano, guitar, and more after stem separation.
+- **Automatic Transcription**: No MIDI keyboard? No problem! Convert audio to sheet music directly in your browser. Upload recordings of harmonic instruments or isolate instrument stems, and let our AI generate accurate scores for you.
+- **MusicXML Format**: Save your sheet music in the universal MusicXML format, compatible with tools like MuseScore, Finale, and Sibelius.
+- **Online Sheet Music Generator**: Edit, print, and share your sheet music without any additional software. Ideal for composers, students, and performers.
+- **Stem-Specific Scores**: Generate individual scores for vocals, bass, melody, piano, guitar, and more after using our AI-powered stem separation.
 
 ---
 
@@ -26,7 +26,6 @@ Using our sheet music feature is simple and streamlined:
 1. **Upload Your Track**: Start by uploading a single harmonic instrument recording, or use our stem separation tool to isolate specific parts of your song.
 2. **Enable MIDI Transcription**: Check the "MIDI Music Transcription" box during the upload process.
 3. **View and Print Sheet Music**: Once the process completes, navigate to the output page to view, print, or save sheet music in MusicXML format.
-
 
 {% include admonitions.html
     type="tip"
@@ -90,6 +89,14 @@ Want to dive deeper into how our tools work? Check out these resources from our 
 
 ## Try It Today
 
-Whether you're composing, teaching, or arranging, our sheet music feature is here to simplify your workflow and bring your music to life. Start transforming your audio into sheet music today!
+Ready to create professional sheet music from your audio? Whether you're composing, teaching, or arranging, our sheet music feature simplifies your workflow.
+
+Start transforming your audio into printable sheet music today with our **free online sheet music generator**!
+
+{% include admonitions.html
+    type="tip"
+    title="Ready to try it?"
+    content="**Generate sheet music for free now online in our [demixer app](/#demixer-app)!**"
+%}
 
 ---
