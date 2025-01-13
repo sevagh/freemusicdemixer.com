@@ -6,7 +6,20 @@ header_class: index
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
 <section class="info-section">
-<h3>Unlock <b>AI stem separation</b> and <b>automatic music transcription</b> in your browser. Effortlessly isolate vocals, drums, bass, melody, guitar, and piano. Generate precise MIDI files. Perfect for musicians, DJs, producers, and creators.</h3>
+<h3>Unlock <b>AI stem separation</b> and <b>automatic music transcription</b> in your browser. Effortlessly isolate vocals, drums, bass, melody, guitar, and piano. Generate precise MIDI files, scores, and sheet music. Perfect for musicians, DJs, producers, and creators.</h3>
+</section>
+
+<section class="flashy-cta">
+  <a href="#demixer-app" class="cta-link">
+    <div class="cta-container">
+      <span class="cta-text">KEEP SCROLLING TO GET STARTED!</span>
+      <div class="arrow-container">
+        <span class="arrow-down"></span>
+        <span class="arrow-down"></span>
+        <span class="arrow-down"></span>
+      </div>
+    </div>
+  </a>
 </section>
 
 <section class="info-section">
@@ -18,7 +31,7 @@ header_class: index
 </section>
 
 <section class="info-section">
-<h3>Save time with our powerful <b>automatic music transcription and MIDI generation</b>. Use your instrument instead of a MIDI controller!</h3>
+<h3>Save time with our powerful <b>automatic music transcription, MIDI generation, and sheet music features</b>. Use your instrument instead of a MIDI controller and quickly transcribe music!</h3>
 </section>
 
 <section class="image-section">
@@ -58,7 +71,7 @@ header_class: index
           </form>
         <b><a href="javascript:void(0);" id="midiTooltipToggle" style="text-decoration: none; cursor: pointer;">ℹ️</a></b>
         <div id="midiTooltip" style="display: none;">
-          <a href="/getting-started/2024/12/07/Music-transcription-feature">Learn more about our MIDI music transcription feature</a>
+          <a href="/getting-started/2024/12/07/Music-transcription-feature">Learn more about our MIDI and MusicXML music transcription features</a>
         </div>
         </div>
         <div class="column">
@@ -206,10 +219,25 @@ header_class: index
       <br>
       <div class="wizard-footer">
         <button id="prev-step-3" class="wizard-prev-btn" disabled>Back</button>
-        <button id="next-step-3" class="wizard-next-btn" disabled>New job</button>
+        <button id="next-step-3-sheet-music" class="wizard-next-btn highlight-btn" disabled>
+          View and print sheet music (New! 🌟)
+        </button>
+        <button id="next-step-3-new-job" class="wizard-next-btn" disabled>New job</button>
       </div>
     </div>
-
+    <div id="wizard-step-4-sheet-music" class="wizard-step" style="display: none;">
+    <p>View and print generated sheet music</p>
+    <!-- We'll create this container for the clickable links -->
+    <div id="instrument-links">
+      <!-- Example: "Open, print, and save sheet music for:" -->
+      <p>Open, print, and save sheet music for:</p>
+      <!-- We'll populate links here (Guitar, Vocals, Bass) via JavaScript -->
+    </div>
+    <div class="wizard-footer">
+      <button id="prev-step-4" class="wizard-prev-btn">Back</button>
+      <button id="next-step-4" class="wizard-next-btn">New job</button>
+    </div>
+    </div>
   </div>
 </section>
 

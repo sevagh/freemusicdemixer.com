@@ -44,6 +44,8 @@ document.getElementById('processingPickerForm').addEventListener('change', (even
   } else if (userTier === 2) {
     // iterate and disable all quality radio buttons
     qualityRadios.forEach(radio => radio.disabled = isMidiOnly);
+    // also iterate and disable all component checkboxes
+    componentsCheckboxes.forEach(checkbox => checkbox.disabled = isMidiOnly);
   }
 
   // also disable the "advancedSettingsToggle" and radios
@@ -163,13 +165,18 @@ let selectedInput = null;
 const step1 = document.getElementById('wizard-step-1');
 const step2 = document.getElementById('wizard-step-2');
 const step3 = document.getElementById('wizard-step-3');
+const step4SheetMusic = document.getElementById('wizard-step-4-sheet-music');
 
 const nextStep1Btn = document.getElementById('next-step-1');
 const nextStep2Btn = document.getElementById('next-step-2');
-const nextStep3Btn = document.getElementById('next-step-3');
+const nextStep3BtnSheetMusic = document.getElementById('next-step-3-sheet-music');
+const nextStep3BtnNewJob = document.getElementById('next-step-3-new-job');
+const nextStep4Btn = document.getElementById('next-step-4');
 
+const prevStep1Btn = document.getElementById('prev-step-1');
 const prevStep2Btn = document.getElementById('prev-step-2');
 const prevStep3Btn = document.getElementById('prev-step-3');
+const prevStep4Btn = document.getElementById('prev-step-4');
 
 const usageLimits = document.getElementById('usage-limits');
 
@@ -253,7 +260,8 @@ function resetUIElements() {
 
     // reset all disabled buttons to disabled
     nextStep2Btn.disabled = true;
-    nextStep3Btn.disabled = true;
+    nextStep3BtnSheetMusic.disabled = true;
+    nextStep3BtnNewJob.disabled = true;
     prevStep3Btn.disabled = true;
 
     initializeInputState();
@@ -689,7 +697,8 @@ async function initModel() {
         try {
             const buffers = await fetchAndCacheFiles(selectedModel, selectedStems);
             // WASM module is ready, enable the buttons
-            nextStep3Btn.disabled = false;
+            nextStep3BtnSheetMusic.disabled = false;
+            nextStep3BtnNewJob.disabled = false;
 
             dlModelBuffers = buffers;
             console.log('Model files downloaded:', buffers);
@@ -839,7 +848,8 @@ function displayStep2Spinner() {
     document.getElementById('step2-overlay').style.display = 'flex';
     document.getElementById('step2-spinner').style.display = 'flex';
     prevStep3Btn.disabled = true;
-    nextStep3Btn.disabled = true;
+    nextStep3BtnSheetMusic.disabled = true;
+    nextStep3BtnNewJob.disabled = true;
 }
 
 // Function to remove the spinner and overlay
@@ -847,7 +857,8 @@ function removeStep2Spinner() {
     document.getElementById('step2-overlay').style.display = 'none';
     document.getElementById('step2-spinner').style.display = 'none';
     prevStep3Btn.disabled = false;
-    nextStep3Btn.disabled = false;
+    nextStep3BtnSheetMusic.disabled = false;
+    nextStep3BtnNewJob.disabled = false;
 }
 
 function activateTierUI(userTier) {
@@ -858,8 +869,8 @@ function activateTierUI(userTier) {
     // Enable PRO-tier MIDI feature
     document.getElementById('midi').disabled = false;
     document.getElementById('both').disabled = false;
-    document.querySelector('label[for="both"]').textContent = 'Stems + MIDI';
-    document.querySelector('label[for="midi"]').textContent = 'MIDI-only';
+    document.querySelector('label[for="both"]').textContent = 'Stems + MIDI music transcription';
+    document.querySelector('label[for="midi"]').textContent = 'MIDI music transcription only';
 
     // Enable PRO-tier radio buttons (medium, high quality)
     document.getElementById('medium-quality').disabled = false;
@@ -955,7 +966,8 @@ nextStep2Btn.addEventListener('click', function() {
         step2.style.display = 'none';
 
         prevStep3Btn.disabled = true;
-        nextStep3Btn.disabled = true;
+        nextStep3BtnSheetMusic.disabled = true;
+        nextStep3BtnNewJob.disabled = true;
 
         // Parse the selected memory option from the radio buttons
         const selectedMemory = document.querySelector('input[name="memory"]:checked').value;
@@ -1046,6 +1058,19 @@ nextStep2Btn.addEventListener('click', function() {
     });
 });
 
+prevStep1Btn.addEventListener('click', function() {
+    // from step 3, undisable next/prev buttons
+    prevStep3Btn.disabled = false;
+    nextStep3BtnNewJob.disabled = false;
+
+    if (processingMode != 'stems') {
+        nextStep3BtnSheetMusic.disabled = false;
+    }
+
+    step1.style.display = 'none';
+    step3.style.display = 'block';
+});
+
 prevStep2Btn.addEventListener('click', function() {
     step2.style.display = 'none';
     step1.style.display = 'block';
@@ -1056,12 +1081,146 @@ prevStep3Btn.addEventListener('click', function() {
     step2.style.display = 'block';
 });
 
-nextStep3Btn.addEventListener('click', function() {
+function openSheetMusicInNewTab(mxmlData, instrumentName) {
+  const newTab = window.open("", "_blank");
+  if (!newTab) {
+    alert("Please allow pop-ups to see your sheet music.");
+    return;
+  }
+
+  // Convert the raw bytes into a string using TextDecoder.
+  // The assumption is that `mxmlData` is a Uint8Array or ArrayBuffer.
+  const decoder = new TextDecoder();
+  // Ensure mxmlData is a Uint8Array if it's an ArrayBuffer
+  let typedArray = mxmlData instanceof Uint8Array ? mxmlData : new Uint8Array(mxmlData);
+  const xmlString = decoder.decode(typedArray);
+
+  // Write an HTML structure into the new window
+  newTab.document.write(`
+    <html>
+    <head>
+      <title>Sheet Music: ${instrumentName}</title>
+      <style>
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: sans-serif;
+        }
+        #osmdContainer {
+          width: 100%;
+          height: calc(100% - 50px);
+          box-sizing: border-box;
+        }
+        #controls {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          padding: 10px;
+          background: #f0f0f0;
+          border-bottom: 1px solid #ddd;
+        }
+        button {
+          cursor: pointer;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="controls">
+        <button id="saveBtn">Save</button>
+        <button id="printBtn">Print</button>
+      </div>
+      <div id="osmdContainer"></div>
+
+      <!-- Load OpenSheetMusicDisplay via CDN: choose a stable version or the latest -->
+      <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.6.1/build/opensheetmusicdisplay.min.js"></script>
+
+      <script>
+        // We load OSMD after the script is done, so we must wait for DOMContentLoaded
+        document.addEventListener("DOMContentLoaded", async () => {
+          const osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("osmdContainer", {
+            // any OSMD options you want
+            followCursor: true,
+            drawMeasureNumbers: true
+          });
+
+          try {
+            const xml = \`${xmlString.replace(/`/g, "\\`")}\`;
+            await osmd.load(xml);
+            osmd.render();
+          } catch (error) {
+            console.error("OSMD load error:", error);
+          }
+
+          // Save Button - downloads the MusicXML
+          document.getElementById("saveBtn").addEventListener("click", () => {
+            const blob = new Blob([\`${xmlString.replace(/`/g, "\\`")}\`], {
+              type: "application/vnd.recordare.musicxml+xml"
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "${instrumentName}.musicxml";
+            a.click();
+            URL.revokeObjectURL(url);
+          });
+
+          // Print Button
+          document.getElementById("printBtn").addEventListener("click", () => {
+            window.print();
+          });
+        });
+      </script>
+    </body>
+    </html>
+  `);
+
+  // Must close the document to finish writing
+  newTab.document.close();
+}
+
+const instrumentLinksContainer = document.getElementById("instrument-links");
+
+nextStep3BtnSheetMusic.addEventListener('click', function() {
+    // OSMD display of mxmlBuffers
+
+    step4SheetMusic.style.display = 'block';
+    step3.style.display = 'none';
+
+    // (Re)Generate the instrument links (or do this once if you prefer)
+    instrumentLinksContainer.innerHTML = "";
+    Object.keys(mxmlBuffersSheetMusic).forEach((instrumentName) => {
+      const link = document.createElement("a");
+      link.href = "#";
+      link.textContent = `Open new sheet music tab for: ${instrumentName}`;
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        openSheetMusicInNewTab(mxmlBuffersSheetMusic[instrumentName], instrumentName);
+      });
+      instrumentLinksContainer.appendChild(link);
+      instrumentLinksContainer.appendChild(document.createElement("br"));
+    });
+  });
+
+prevStep4Btn.addEventListener('click', function() {
+    step4SheetMusic.style.display = 'none';
+    step3.style.display = 'block';
+});
+
+nextStep3BtnNewJob.addEventListener('click', function() {
+    // reset all buttons etc.
+    //resetUIElements();
+
+    // restart the wizard from step 1
+    step3.style.display = 'none';
+    step1.style.display = 'block';
+});
+
+nextStep4Btn.addEventListener('click', function() {
     // reset all buttons etc.
     resetUIElements();
 
     // restart the wizard from step 1
-    step3.style.display = 'none';
+    step4SheetMusic.style.display = 'none';
     step1.style.display = 'block';
 });
 
@@ -1071,6 +1230,8 @@ let isProcessing = false;
 let midiWorker;
 let midiWasmLoaded = false; // Flag to check if WASM is loaded
 let midiBuffers = {}; // Store MIDI data by stem name
+let mxmlBuffers = {}; // Store MusicXML data by stem name
+let mxmlBuffersSheetMusic = {}; // Store MusicXML data for sheet music
 let queueTotal = 0; // Total number of items in the queue
 let queueCompleted = 0; // Number of items processed
 let completedSongsBatchMidi = 0; // Counter for processed songs in batch mode
@@ -1107,13 +1268,14 @@ function initializeMidiWorker() {
     };
 
     // Load the WASM module when the worker is created
-    midiWorker.postMessage({ msg: 'LOAD_WASM', scriptName: 'basicpitch.js' });
+    midiWorker.postMessage({ msg: 'LOAD_WASM', scriptName: 'basicpitch_mxml.js' });
 }
 
 function handleMidiDone(data) {
-    const { midiBytes, stemName } = data;
+    const { midiBytes, mxmlBytes, stemName } = data;
     const midiBlob = new Blob([midiBytes], { type: 'audio/midi' });
     midiBuffers[stemName] = midiBlob; // Store the MIDI blob by stem name
+    mxmlBuffers[stemName] = mxmlBytes; // Store the MXML bytes by stem name
     console.log(`MIDI generation done for ${stemName}.`);
 }
 
@@ -1375,16 +1537,23 @@ function createDownloadLinks(buffers, midiOnlyMode) {
 
         // Clear MIDI buffers after links are created
         midiBuffers = {};
+        // copy mxmlBuffers before clearing
+        mxmlBuffersSheetMusic = mxmlBuffers;
+
+        mxmlBuffers = {};
         queueTotal = 0; // Reset the total queue items
         queueCompleted = 0; // Reset the current queue item
 
         // If in a mode that includes MIDI, increment usage
         if (processingMode != 'stems') {
             incrementUsage(); // Increment the weekly usage counter
+
+            // Enable the sheet music button for MIDI modes
+            nextStep3BtnSheetMusic.disabled = false;
         }
 
         prevStep3Btn.disabled = false;
-        nextStep3Btn.disabled = false;
+        nextStep3BtnNewJob.disabled = false;
     });
 }
 
@@ -1467,7 +1636,8 @@ async function processFiles(files, midiOnlyMode) {
         queueCompleted = 0; // Reset the current queue item
 
         prevStep3Btn.disabled = false;
-        nextStep3Btn.disabled = false;
+        nextStep3BtnSheetMusic.disabled = false;
+        nextStep3BtnNewJob.disabled = false;
     }
 
     // for all modes that have midi, increment usage here
@@ -1532,11 +1702,15 @@ function packageAndZip(targetWaveforms, filename) {
         }
 
         prevStep3Btn.disabled = false;
-        nextStep3Btn.disabled = false;
+        nextStep3BtnSheetMusic.disabled = false;
+        nextStep3BtnNewJob.disabled = false;
     });
 }
 
 function incrementUsage() {
+    // now undisable prevStep1Btn, which can lead to the last results
+    prevStep1Btn.disabled = false;
+
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
     if (loggedIn) {
         // dont increment for logged in users

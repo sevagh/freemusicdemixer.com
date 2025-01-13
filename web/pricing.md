@@ -34,7 +34,7 @@ publishable-key="pk_live_51ObLZ9AmT5bJ3vuwDIgzrNEljt7oK42MqgmnEKZbANz0PDtlzkD3Oc
 
 ## PRO features
 
-* Unlimited usage for stem separation and MIDI generation
+* Unlimited usage for stem separation and music transcription (MIDI and sheet music)
 * Karaoke 2-stem model with **high-performance vocals and instrumental separation**
 * Enhanced quality settings for all stems (vocals, drums, bass, melody, guitar, piano, other melody e.g. violin/flute)
 * We offer among the **best drums and bass separation** available today
