@@ -869,8 +869,8 @@ function activateTierUI(userTier) {
     // Enable PRO-tier MIDI feature
     document.getElementById('midi').disabled = false;
     document.getElementById('both').disabled = false;
-    document.querySelector('label[for="both"]').textContent = 'Stems + music transcription';
-    document.querySelector('label[for="midi"]').textContent = 'Music transcription only';
+    document.querySelector('label[for="both"]').textContent = 'Stems + MIDI music transcription';
+    document.querySelector('label[for="midi"]').textContent = 'MIDI music transcription only';
 
     // Enable PRO-tier radio buttons (medium, high quality)
     document.getElementById('medium-quality').disabled = false;
@@ -1186,14 +1186,9 @@ nextStep3BtnSheetMusic.addEventListener('click', function() {
     step4SheetMusic.style.display = 'block';
     step3.style.display = 'none';
 
-    console.log("MXML buffers:", mxmlBuffers);
-    console.log("MXML buffers:", mxmlBuffersSheetMusic);
-
     // (Re)Generate the instrument links (or do this once if you prefer)
     instrumentLinksContainer.innerHTML = "";
     Object.keys(mxmlBuffersSheetMusic).forEach((instrumentName) => {
-      console.log("Adding link for", instrumentName);
-      console.log("Size of uint8 array:", mxmlBuffersSheetMusic[instrumentName].length);
       const link = document.createElement("a");
       link.href = "#";
       link.textContent = `Open new sheet music tab for: ${instrumentName}`;

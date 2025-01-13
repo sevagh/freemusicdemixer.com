@@ -4,13 +4,11 @@ description: "Learn more about our mission and the cutting-edge AI technology po
 title: About Us
 ---
 
-# About us
+# About Us
 
 ## Contact and team
 
 Contact us via e-mail at [contact@freemusicdemixer.com](mailto:contact@freemusicdemixer.com) for all inquiries.
-
-This project is run by [Sevag H](https://sevag.xyz).
 
 ## What is this tool useful for?
 

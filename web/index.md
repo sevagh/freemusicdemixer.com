@@ -62,11 +62,11 @@ header_class: index
             </div>
             <div>
               <input type="radio" id="both" name="processingMode" value="both">
-              <label for="both">Stems + music transcription</label>
+              <label for="both">Stems + MIDI music transcription</label>
             </div>
             <div>
               <input type="radio" id="midi" name="processingMode" value="midi">
-              <label for="midi">Music transcription only</label>
+              <label for="midi">MIDI music transcription only</label>
             </div>
           </form>
         <b><a href="javascript:void(0);" id="midiTooltipToggle" style="text-decoration: none; cursor: pointer;">ℹ️</a></b>
