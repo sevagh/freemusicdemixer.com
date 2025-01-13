@@ -6,6 +6,8 @@ header_class: post
 intro: "Turning a favorite track into readable music notation no longer has to be a daunting, time-intensive task thanks to AI."
 ---
 
+<span class="blog-highlight">**Last updated: 2025-01-13**</span>
+
 {{ page.intro }}
 
 <img alt="flow-diagram" src="/assets/blog/post14/flow.webp" width="100%">

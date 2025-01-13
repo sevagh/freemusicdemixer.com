@@ -20,7 +20,12 @@ Effortlessly split your songs into individual stems - **vocals, bass, drums, mel
 
 Our tool also provides **automatic music transcription and MIDI generation.** It works best on single instruments, making it the perfect complement to stem separation algorithms. Split your favorite song into stems and generate MIDI files for each harmonic instrument or component, or upload a single instrument track directly and directly convert to MIDI, skipping the stem separation step.
 
-Use your instrument of choice to record pieces for other instruments, and use our MIDI generation tool to convert them into MIDI files. This is a great way to create music with a single instrument without a MIDI controller or hours of manual transcription.
+Use your instrument of choice to record pieces for other instruments, and use our MIDI generation tool to convert them into MIDI files. This is a great way to create music with a single instrument without a MIDI controller or hours of manual transcription. You can also read and print the sheet music directly in the browser!
+
+Read more about each aspect of our integrated product here:
+* [Stem Separation](/stem-separation)
+* [MIDI Conversion](/midi)
+* [Sheet Music](/sheet-music)
 
 ## What is the paid product?
 

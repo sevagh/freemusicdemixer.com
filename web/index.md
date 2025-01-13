@@ -6,7 +6,7 @@ header_class: index
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
 <section class="info-section">
-<h3>Unlock <b>AI stem separation</b> and <b>automatic music transcription</b> in your browser. Effortlessly isolate vocals, drums, bass, melody, guitar, and piano. Generate precise MIDI files. Perfect for musicians, DJs, producers, and creators.</h3>
+<h3>Unlock <b>AI stem separation</b> and <b>automatic music transcription</b> in your browser. Effortlessly isolate vocals, drums, bass, melody, guitar, and piano. Generate precise MIDI files, scores, and sheet music. Perfect for musicians, DJs, producers, and creators.</h3>
 </section>
 
 <section class="flashy-cta">
@@ -31,7 +31,7 @@ header_class: index
 </section>
 
 <section class="info-section">
-<h3>Save time with our powerful <b>automatic music transcription and MIDI generation</b>. Use your instrument instead of a MIDI controller!</h3>
+<h3>Save time with our powerful <b>automatic music transcription, MIDI generation, and sheet music features</b>. Use your instrument instead of a MIDI controller and quickly transcribe music!</h3>
 </section>
 
 <section class="image-section">

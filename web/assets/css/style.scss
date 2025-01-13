@@ -1806,7 +1806,7 @@ td {
   }
 
   /* Reduce the font size slightly for smaller screens */
-  .footer-right nav a,
+  .footer-left nav a, .footer-middle nav a, .footer-right nav a,
   .small-text {
     font-size: 0.85em;
   }
