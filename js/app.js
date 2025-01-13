@@ -1061,8 +1061,11 @@ nextStep2Btn.addEventListener('click', function() {
 prevStep1Btn.addEventListener('click', function() {
     // from step 3, undisable next/prev buttons
     prevStep3Btn.disabled = false;
-    nextStep3BtnSheetMusic.disabled = false;
     nextStep3BtnNewJob.disabled = false;
+
+    if (processingMode != 'stems') {
+        nextStep3BtnSheetMusic.disabled = false;
+    }
 
     step1.style.display = 'none';
     step3.style.display = 'block';
@@ -1542,11 +1545,6 @@ function createDownloadLinks(buffers, midiOnlyMode) {
         // copy mxmlBuffers before clearing
         mxmlBuffersSheetMusic = mxmlBuffers;
 
-        // log the mxmlBuffers for debugging
-        console.log("MusicXML buffers:", mxmlBuffers);
-        // also log the mxmlBuffersSheetMusic for debugging
-        console.log("MusicXML buffers for sheet music:", mxmlBuffersSheetMusic);
-
         mxmlBuffers = {};
         queueTotal = 0; // Reset the total queue items
         queueCompleted = 0; // Reset the current queue item
@@ -1554,10 +1552,12 @@ function createDownloadLinks(buffers, midiOnlyMode) {
         // If in a mode that includes MIDI, increment usage
         if (processingMode != 'stems') {
             incrementUsage(); // Increment the weekly usage counter
+
+            // Enable the sheet music button for MIDI modes
+            nextStep3BtnSheetMusic.disabled = false;
         }
 
         prevStep3Btn.disabled = false;
-        nextStep3BtnSheetMusic.disabled = false;
         nextStep3BtnNewJob.disabled = false;
     });
 }
