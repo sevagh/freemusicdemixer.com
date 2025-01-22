@@ -94,6 +94,7 @@ Interested in how it all works or how to get the best results? Check out our hel
 ### Comparison Landing Pages:
 - [FreeMusicDemixer vs. Spleeter](/vs-spleeter)
 - [FreeMusicDemixer vs. Ezstems.com](/vs-ezstems)
+- [FreeMusicDemixer vs. iZotope RX](/vs-izotope-rx)
 
 ### YouTube Demo:
 Watch our promotional video to see the tool in action:
