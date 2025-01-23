@@ -96,6 +96,7 @@ Interested in how it all works or how to get the best results? Check out our hel
 - [FreeMusicDemixer vs. Ezstems.com](/vs-ezstems)
 - [FreeMusicDemixer vs. iZotope RX](/vs-izotope-rx)
 - [FreeMusicDemixer vs. Vocalremover.org](/vs-vocalremover)
+- [FreeMusicDemixer vs. Lalal.ai](/vs-lalalai)
 
 ### YouTube Demo:
 Watch our promotional video to see the tool in action:
