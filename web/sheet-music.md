@@ -81,7 +81,7 @@ Our sheet music tool is powered by the same AI that drives our industry-leading 
 ## Learn More
 
 Want to dive deeper into how our tools work? Check out these resources from our blog:
-- [Printable Sheet Music Blog Post](/announcements/2024/12/17/Printable-sheet-music-directly-on-our-website)
+- [Printable Sheet Music Blog Post](/announcements/2025/01/13/Printable-sheet-music-directly-on-our-website)
 - [Unlocking the Power of MIDI for Music Transcription](/getting-started/2024/12/07/Music-transcription-feature)
 - [New Music Transcription Feature Announcement](/announcements/2024/11/17/New-music-transcription-midi)
 
