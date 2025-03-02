@@ -1767,6 +1767,28 @@ button#manage-account {
   border: none;
 }
 
+#toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #ffd700; /* Gold for consistency */
+  color: #333;
+  padding: 12px 18px;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  z-index: 9999;
+  font-weight: bold;
+}
+
+#toast.visible {
+  opacity: 1;
+}
+
+.hidden {
+  display: none;
+}
+
 /* Responsive Styling for Small Screens */
 @media (max-width: 768px) {
   .navbar-links {

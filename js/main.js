@@ -46,12 +46,36 @@ window.addEventListener('click', (e) => {
     }
 });
 
+function showToast(message, duration = 2000) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.remove('hidden');
+
+    // Fade in
+    setTimeout(() => toast.classList.add('visible'), 50);
+
+    // Fade out after duration
+    setTimeout(() => {
+        toast.classList.remove('visible');
+        // Hide fully after fade-out transition
+        setTimeout(() => toast.classList.add('hidden'), 500);
+    }, duration);
+}
+
 document.getElementById('activation-form').addEventListener('submit', function(event) {
-    event.preventDefault();
+  event.preventDefault();
 
-    const email = emailInput.value;
+  const email = emailInput.value;
 
-    activateProContent(email);
+  activateProContent(email);
+
+  // Show immediate visual feedback
+  showToast('Login successful! Welcome back.');
+
+  // Smoothly close login modal after brief delay (1.5 seconds feels natural)
+  setTimeout(() => {
+      loginModal.classList.remove('show');
+  }, 2000);
 });
 
 const themeToggle = document.getElementById('theme-toggle');
@@ -164,6 +188,11 @@ document.addEventListener("DOMContentLoaded", function() {
     if (storedEmail) {
         emailInput.value = storedEmail;
         responseMessage.textContent = '';
+    }
+
+    // NEW: Check if "?login" is present in the URL and show login modal
+    if (window.location.search.includes('login')) {
+        loginModal.classList.add('show');
     }
 
     // if the user is logged in, activate tier UIs

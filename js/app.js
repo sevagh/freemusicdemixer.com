@@ -911,7 +911,7 @@ function activateTierUI(userTier) {
     document.getElementById('manage-account').textContent = `👤 Welcome, ${guessedName}! ▼`;
 
     // replace text of loginModal with user's email
-    document.getElementById('active-user-message').textContent = `Logged in as ${storedEmail}`;
+    document.getElementById('active-user-message').innerHTML = `Logged in as <b>${storedEmail}</b>`;
   }
 
   // Find the logo image element and the container for the tier text
