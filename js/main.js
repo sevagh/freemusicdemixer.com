@@ -299,3 +299,32 @@ function activateTierUI(userTier) {
   // Trigger the event on the window or document
   window.dispatchEvent(loginSuccessEvent);
 }
+
+const logoutLink = document.getElementById('logout-link');
+
+// Logout handler
+logoutLink.addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent default link behavior
+
+    // Clear stored data
+    localStorage.removeItem('billingEmail');
+    sessionStorage.removeItem('loggedIn');
+    sessionStorage.removeItem('userTier');
+
+    // Reset UI elements to logged-out state
+    document.getElementById('active-user-buttons').style.display = 'none';
+    document.getElementById('inactive-user-buttons').style.display = 'block';
+
+    // Optionally reset the logo and tier text
+    const logoImage = document.querySelector('#logo-display img');
+    const tierText = document.querySelector('#logo-display small');
+    if (logoImage && tierText) {
+        logoImage.src = tierLogos[0]; // Default (free) logo
+        logoImage.alt = 'freemusicdemixer-free-logo';
+        tierText.textContent = 'Free tier ';
+        tierText.appendChild(logoImage);
+    }
+
+    // Redirect user to homepage (optional)
+    window.location.href = '/';
+});

@@ -862,7 +862,6 @@ function removeStep2Spinner() {
 }
 
 function guessFirstName(email, maxLength = 12) {
-    console.log('Guessing first name from email:', email); // Debugging
   const prefix = email.split('@')[0];
   // Add '-', '_', '.', '+' as separators
   const firstPart = prefix.split(/[\.\_\-\+]/)[0];
@@ -910,6 +909,9 @@ function activateTierUI(userTier) {
     const storedEmail = localStorage.getItem('billingEmail');
     const guessedName = guessFirstName(storedEmail);
     document.getElementById('manage-account').textContent = `👤 Welcome, ${guessedName}! ▼`;
+
+    // replace text of loginModal with user's email
+    document.getElementById('active-user-message').textContent = `Logged in as ${storedEmail}`;
   }
 
   // Find the logo image element and the container for the tier text
