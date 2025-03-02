@@ -68,14 +68,6 @@ document.getElementById('activation-form').addEventListener('submit', function(e
   const email = emailInput.value;
 
   activateProContent(email);
-
-  // Show immediate visual feedback
-  showToast('Login successful! Welcome back.');
-
-  // Smoothly close login modal after brief delay (1.5 seconds feels natural)
-  setTimeout(() => {
-      loginModal.classList.remove('show');
-  }, 2000);
 });
 
 const themeToggle = document.getElementById('theme-toggle');
@@ -298,6 +290,13 @@ function activateProContent(email) {
             sessionStorage.setItem('userTier', userTier);
 
             activateTierUI(userTier);
+
+            showToast('Login successful! Welcome back.');
+
+            setTimeout(() => {
+                loginModal.classList.remove('show');
+            }, 2000);
+
         })
         .catch(error => console.error('Error fetching user tier:', error));
 }
