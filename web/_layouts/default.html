@@ -58,9 +58,13 @@
 
         <!-- Login/Sign up buttons -->
         <div class="navbar-login-signup">
-          <!--<button id="signup-btn">Sign up!</button>-->
-          <a id="signup-btn" href="/pricing/#subscribe-today">Sign up!</a>
-          <button id="login-btn">Login</button>
+          <div id="active-user-buttons" style="display: none;">
+            <button id="manage-account"> Welcome, user! ▼</button>
+          </div>
+          <div id="inactive-user-buttons">
+            <a id="signup-btn" href="/pricing/#subscribe-today">Sign up!</a>
+            <button id="login-btn">Login</button>
+          </div>
         </div>
 
         <!-- Hamburger Menu -->
@@ -74,7 +78,7 @@
   <!-- Modal for login (placed outside of header for better structure) -->
   <div id="login-modal" class="modal">
     <div class="modal-content">
-      <span class="close">&times;</span>
+      <span class="close" id="login-close">&times;</span>
       <form id="activation-form">
         <h3>New customer?</h3>
         <a href="/pricing/#subscribe-today">Sign up for a PRO subscription today!</a>
@@ -90,6 +94,24 @@
           <div class="loader" id="login-spinner"></div>
       </div>
       <div id="response-message"></div>
+      <div class="bottom-right" id="logo-display">
+        <small>Free tier
+        <img src="/assets/images/logo_free.webp" alt="freemusicdemixer-free-logo" height="30px" style="background-color:white;"/></small>
+      </div>
+      <br>
+      <div>
+        <h3>Dark and light mode</h3>
+        <button id="theme-reset" aria-label="reset-theme">Use system theme</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for active users -->
+  <div id="active-user-modal" class="modal">
+    <div class="modal-content">
+      <div id="active-user-message"></div>
+      <h3>Manage your account <a href="" target=_bank>with this link</a></h3>
+      <span class="close" id="active-user-close">&times;</span>
       <div class="bottom-right" id="logo-display">
         <small>Free tier
         <img src="/assets/images/logo_free.webp" alt="freemusicdemixer-free-logo" height="30px" style="background-color:white;"/></small>

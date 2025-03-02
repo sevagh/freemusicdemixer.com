@@ -1759,6 +1759,14 @@ td {
   margin-bottom: 0;
 }
 
+button#manage-account {
+  // make this button gold
+  background-color: #ffd700;
+  color: #333;
+  padding: 10px 15px;
+  border: none;
+}
+
 /* Responsive Styling for Small Screens */
 @media (max-width: 768px) {
   .navbar-links {

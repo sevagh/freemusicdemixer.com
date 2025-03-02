@@ -7,9 +7,13 @@ hamburgerMenu.addEventListener('click', () => {
 });
 
 // Modal functionality for login
-const modal = document.getElementById('login-modal');
+const loginModal = document.getElementById('login-modal');
 const loginBtn = document.getElementById('login-btn');
-const closeModal = document.querySelector('.close');
+const loginCloseModal = document.getElementById('login-close');
+
+const manageAccountBtn = document.getElementById('manage-account');
+const activeUserModal = document.getElementById('active-user-modal');
+const activeUserCloseModal = document.getElementById('active-user-close');
 
 const emailInput = document.getElementById('billing-email');
 const responseMessage = document.getElementById('response-message');
@@ -17,17 +21,29 @@ const tierLogos = {0: '/assets/images/logo_free.webp', 2: '/assets/images/logo_p
 const tierNames = {0: 'Free', 2: 'Pro'};
 
 loginBtn.addEventListener('click', () => {
-  modal.classList.add('show');
+  loginModal.classList.add('show');
 });
 
-closeModal.addEventListener('click', () => {
-  modal.classList.remove('show');
+loginCloseModal.addEventListener('click', () => {
+  loginModal.classList.remove('show');
 });
 
+manageAccountBtn.addEventListener('click', () => {
+    activeUserModal.classList.add('show');
+});
+
+activeUserCloseModal.addEventListener('click', () => {
+    activeUserModal.classList.remove('show');
+});
+
+// click outside of modal to close
 window.addEventListener('click', (e) => {
-  if (e.target === modal) {
-    modal.classList.remove('show');
-  }
+    if (e.target === loginModal) {
+      loginModal.classList.remove('show');
+    }
+    if (e.target === activeUserModal) {
+        activeUserModal.classList.remove('show');
+    }
 });
 
 document.getElementById('activation-form').addEventListener('submit', function(event) {
