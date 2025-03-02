@@ -58,9 +58,13 @@
 
         <!-- Login/Sign up buttons -->
         <div class="navbar-login-signup">
-          <!--<button id="signup-btn">Sign up!</button>-->
-          <a id="signup-btn" href="/pricing/#subscribe-today">Sign up!</a>
-          <button id="login-btn">Login</button>
+          <div id="active-user-buttons" style="display: none;">
+            <button id="manage-account"> Welcome, user! ▼</button>
+          </div>
+          <div id="inactive-user-buttons">
+            <a id="signup-btn" href="/pricing/#subscribe-today">Sign up!</a>
+            <button id="login-btn">Login</button>
+          </div>
         </div>
 
         <!-- Hamburger Menu -->
@@ -74,7 +78,7 @@
   <!-- Modal for login (placed outside of header for better structure) -->
   <div id="login-modal" class="modal">
     <div class="modal-content">
-      <span class="close">&times;</span>
+      <span class="close" id="login-close">&times;</span>
       <form id="activation-form">
         <h3>New customer?</h3>
         <a href="/pricing/#subscribe-today">Sign up for a PRO subscription today!</a>
@@ -94,6 +98,31 @@
         <small>Free tier
         <img src="/assets/images/logo_free.webp" alt="freemusicdemixer-free-logo" height="30px" style="background-color:white;"/></small>
       </div>
+      <br>
+      <div>
+        <h3>Dark and light mode</h3>
+        <button id="theme-reset" aria-label="reset-theme">Use system theme</button>
+      </div>
+      <div id="toast" class="hidden"></div>
+    </div>
+  </div>
+
+  <!-- Modal for active users -->
+  <div id="active-user-modal" class="modal">
+    <div class="modal-content">
+      <h3>Welcome PRO user!</h3>
+      <br>
+      <div id="active-user-message"></div>
+      <br>
+      <a href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww" target=_blank>Click here</a> to manage your subscription
+      <br>
+      <br>
+      <a href="#" id="logout-link">Click here</a> to log out and clear email
+      <br>
+      <br>
+      <a href="mailto:help@freemusicdemixer.com">Click here</a> to contact support or send an email to <b>help@freemusicdemixer.com</b>
+      <br>
+      <span class="close" id="active-user-close">&times;</span>
       <br>
       <div>
         <h3>Dark and light mode</h3>

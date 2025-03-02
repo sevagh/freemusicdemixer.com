@@ -861,6 +861,21 @@ function removeStep2Spinner() {
     nextStep3BtnNewJob.disabled = false;
 }
 
+function guessFirstName(email, maxLength = 12) {
+  const prefix = email.split('@')[0];
+  // Add '-', '_', '.', '+' as separators
+  const firstPart = prefix.split(/[\.\_\-\+]/)[0];
+  let name = capitalize(firstPart);
+  if (name.length > maxLength) {
+    name = name.substring(0, maxLength - 1) + '…'; // Add ellipsis
+  }
+  return name;
+}
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function activateTierUI(userTier) {
   console.log('Enabling UI for user tier:', userTier); // Debugging
   // Enable buttons based on user tier
@@ -884,6 +899,19 @@ function activateTierUI(userTier) {
     document.getElementById('pro-cta').innerHTML = 'Pro content unlocked!';
 
     console.log('PRO-tier UI elements enabled.');
+
+    // Replace Sign up, Log in buttons with "Welcome, user!" message which is also a button
+    // this button should show the "manage your account" and the theme manipulation
+    document.getElementById('inactive-user-buttons').style.display = 'none';
+    document.getElementById('active-user-buttons').style.display = 'block';
+
+    // replace the text of the user button with the user's name
+    const storedEmail = localStorage.getItem('billingEmail');
+    const guessedName = guessFirstName(storedEmail);
+    document.getElementById('manage-account').textContent = `👤 Welcome, ${guessedName}! ▼`;
+
+    // replace text of loginModal with user's email
+    document.getElementById('active-user-message').innerHTML = `Logged in as <b>${storedEmail}</b>`;
   }
 
   // Find the logo image element and the container for the tier text

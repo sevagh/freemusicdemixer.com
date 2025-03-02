@@ -7,9 +7,13 @@ hamburgerMenu.addEventListener('click', () => {
 });
 
 // Modal functionality for login
-const modal = document.getElementById('login-modal');
+const loginModal = document.getElementById('login-modal');
 const loginBtn = document.getElementById('login-btn');
-const closeModal = document.querySelector('.close');
+const loginCloseModal = document.getElementById('login-close');
+
+const manageAccountBtn = document.getElementById('manage-account');
+const activeUserModal = document.getElementById('active-user-modal');
+const activeUserCloseModal = document.getElementById('active-user-close');
 
 const emailInput = document.getElementById('billing-email');
 const responseMessage = document.getElementById('response-message');
@@ -17,25 +21,53 @@ const tierLogos = {0: '/assets/images/logo_free.webp', 2: '/assets/images/logo_p
 const tierNames = {0: 'Free', 2: 'Pro'};
 
 loginBtn.addEventListener('click', () => {
-  modal.classList.add('show');
+  loginModal.classList.add('show');
 });
 
-closeModal.addEventListener('click', () => {
-  modal.classList.remove('show');
+loginCloseModal.addEventListener('click', () => {
+  loginModal.classList.remove('show');
 });
 
+manageAccountBtn.addEventListener('click', () => {
+    activeUserModal.classList.add('show');
+});
+
+activeUserCloseModal.addEventListener('click', () => {
+    activeUserModal.classList.remove('show');
+});
+
+// click outside of modal to close
 window.addEventListener('click', (e) => {
-  if (e.target === modal) {
-    modal.classList.remove('show');
-  }
+    if (e.target === loginModal) {
+      loginModal.classList.remove('show');
+    }
+    if (e.target === activeUserModal) {
+        activeUserModal.classList.remove('show');
+    }
 });
+
+function showToast(message, duration = 2000) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.remove('hidden');
+
+    // Fade in
+    setTimeout(() => toast.classList.add('visible'), 50);
+
+    // Fade out after duration
+    setTimeout(() => {
+        toast.classList.remove('visible');
+        // Hide fully after fade-out transition
+        setTimeout(() => toast.classList.add('hidden'), 500);
+    }, duration);
+}
 
 document.getElementById('activation-form').addEventListener('submit', function(event) {
-    event.preventDefault();
+  event.preventDefault();
 
-    const email = emailInput.value;
+  const email = emailInput.value;
 
-    activateProContent(email);
+  activateProContent(email);
 });
 
 const themeToggle = document.getElementById('theme-toggle');
@@ -150,6 +182,11 @@ document.addEventListener("DOMContentLoaded", function() {
         responseMessage.textContent = '';
     }
 
+    // NEW: Check if "?login" is present in the URL and show login modal
+    if (window.location.search.includes('login')) {
+        loginModal.classList.add('show');
+    }
+
     // if the user is logged in, activate tier UIs
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
     let userTier = 0;
@@ -253,6 +290,13 @@ function activateProContent(email) {
             sessionStorage.setItem('userTier', userTier);
 
             activateTierUI(userTier);
+
+            showToast('Login successful! Welcome back.');
+
+            setTimeout(() => {
+                loginModal.classList.remove('show');
+            }, 2000);
+
         })
         .catch(error => console.error('Error fetching user tier:', error));
 }
@@ -283,3 +327,32 @@ function activateTierUI(userTier) {
   // Trigger the event on the window or document
   window.dispatchEvent(loginSuccessEvent);
 }
+
+const logoutLink = document.getElementById('logout-link');
+
+// Logout handler
+logoutLink.addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent default link behavior
+
+    // Clear stored data
+    localStorage.removeItem('billingEmail');
+    sessionStorage.removeItem('loggedIn');
+    sessionStorage.removeItem('userTier');
+
+    // Reset UI elements to logged-out state
+    document.getElementById('active-user-buttons').style.display = 'none';
+    document.getElementById('inactive-user-buttons').style.display = 'block';
+
+    // Optionally reset the logo and tier text
+    const logoImage = document.querySelector('#logo-display img');
+    const tierText = document.querySelector('#logo-display small');
+    if (logoImage && tierText) {
+        logoImage.src = tierLogos[0]; // Default (free) logo
+        logoImage.alt = 'freemusicdemixer-free-logo';
+        tierText.textContent = 'Free tier ';
+        tierText.appendChild(logoImage);
+    }
+
+    // Redirect user to homepage (optional)
+    window.location.href = '/';
+});

@@ -1759,6 +1759,38 @@ td {
   margin-bottom: 0;
 }
 
+button#manage-account {
+  // make this button gold
+  background-color: #ffd700;
+  color: #333;
+  padding: 10px 15px;
+  border: none;
+}
+
+#toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffd700; /* Gold for consistency */
+  color: #333;
+  padding: 12px 18px;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  z-index: 9999;
+  font-weight: bold;
+  text-align: center;
+}
+
+#toast.visible {
+  opacity: 1;
+}
+
+.hidden {
+  display: none;
+}
+
 /* Responsive Styling for Small Screens */
 @media (max-width: 768px) {
   .navbar-links {
