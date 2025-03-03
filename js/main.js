@@ -80,9 +80,14 @@ const redditImg = document.getElementById('reddit-img');
 const ycImg = document.getElementById('yc-img');
 const fbImg = document.getElementById('fb-img');
 const themeResetButton = document.getElementById('theme-reset');
+const themeResetButton2 = document.getElementById('theme-reset-2');
 
 // Reset theme to system preference
 themeResetButton.addEventListener('click', () => {
+    localStorage.removeItem('theme');
+    loadTheme();
+});
+themeResetButton2.addEventListener('click', () => {
     localStorage.removeItem('theme');
     loadTheme();
 });
