@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Printable sheet music directly on our website"
-category: announcement
+category: announcements
 header_class: post
 intro: "You can now display, print, and save sheet music directly in our website, generated automatically from your music files!"
 ---
