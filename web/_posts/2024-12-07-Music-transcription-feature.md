@@ -20,7 +20,7 @@ Whether you’re a budding musician looking to create sheet music from MP3 files
 
 ## What is AI music transcription and how does it work?
 
-AI music transcription leverages machine learning algorithms trained on vast datasets of audio. When you feed a recording into a MIDI transcription tool, it identifies pitches, rhythms, and instruments, ultimately producing a digital representation of the notes as a MIDI file. By using AI music transcription, you can transform any audio—be it a professional studio track or a home recording—into a format that’s easy to edit, study, and play along with. Unlike manual transcription, which can take hours of painstaking work, AI-driven tools handle the heavy lifting in a fraction of the time.
+AI music transcription leverages machine learning algorithms trained on vast datasets of audio. When you feed a recording into a MIDI transcription tool, it identifies pitches, rhythms, and instruments, ultimately producing a digital representation of the notes as a MIDI file. By using AI music transcription, you can transform any audio — be it a professional studio track or a home recording — into a format that’s easy to edit, study, and play along with. Unlike manual transcription, which can take hours of painstaking work, AI-driven tools handle the heavy lifting in a fraction of the time.
 
 ## Why convert audio to MIDI?
 
@@ -103,7 +103,7 @@ AI has advanced significantly, but complex audio may still require minor manual 
 
 **Will it work for all genres?**
 
-Yes, you can convert audio to MIDI across various genres—classical, jazz, rock, pop, and beyond. The accuracy can vary based on instrumentation and recording quality.
+Yes, you can convert audio to MIDI across various genres — classical, jazz, rock, pop, and beyond. The accuracy can vary based on instrumentation and recording quality.
 
 **Is it legal to transcribe any audio into MIDI?**
 

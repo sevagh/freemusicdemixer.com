@@ -93,7 +93,7 @@ Not necessarily. Thanks to **WebAssembly**, modern browsers can utilize CPU and 
 Music Demixer supports multiple **stem categories** — vocals, bass, drums, piano, guitar, and an “other” track for miscellaneous melodic instruments. This coverage surpasses many older or simplified models.
 
 ### 4. Why not just trust Lalal.ai’s custom engine?
-Lalal.ai is indeed advanced, but if you prefer a **transparent**, open-research approach—or you want local processing for privacy—Demucs v4 via Music Demixer might be better suited to your needs. Some users also find Lalal.ai’s credit-based pricing limiting.
+Lalal.ai is indeed advanced, but if you prefer a **transparent**, open-research approach — or you want local processing for privacy — Demucs v4 via Music Demixer might be better suited to your needs. Some users also find Lalal.ai’s credit-based pricing limiting.
 
 ### 5. Do you plan further Demucs updates?
 Yes! We continuously integrate the latest improvements from the Demucs project and beyond. Our AI model updates are automatically deployed to ensure you always have the **best possible separation quality**.
@@ -109,7 +109,7 @@ Yes! We continuously integrate the latest improvements from the Demucs project a
 - **Budget-friendly**: Free tier for casual users, with an affordable PRO subscription that unlocks unlimited tracks, MIDI, and sheet music features.
 - **Active development & open heritage**: Continuous model enhancements rooted in public research, not hidden behind proprietary walls.
 
-If you want high-quality, device-agnostic, transparent, and privacy-focused stem separation, **Music Demixer** is here to meet—and exceed—your needs.
+If you want high-quality, device-agnostic, transparent, and privacy-focused stem separation, **Music Demixer** is here to meet — and exceed — your needs.
 
 ---
 

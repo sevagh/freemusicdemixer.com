@@ -21,14 +21,14 @@ title: "Music Demixer vs. iZotope RX: Which stem separation tool is right for yo
 - **Desktop-limited**: RX is available on Windows and macOS only, with no official Linux or Chromebook support.
 - **Designed for broad audio repair**: While powerful for noise reduction and restoration, iZotope’s stem separation sometimes plays second fiddle to its main editing features.
 
-In contrast, **Music Demixer** focuses exclusively on advanced AI-based stem separation, delivering clarity without the bloat—or the budget burn.
+In contrast, **Music Demixer** focuses exclusively on advanced AI-based stem separation, delivering clarity without the bloat — or the budget burn.
 
 ---
 
 ## What sets Music Demixer apart
 
 ### 1. State-of-the-art Demucs technology
-We use the **Demucs** model, a highly regarded AI approach backed by cutting-edge research from Meta, Spotify, and leading open-source communities. By specializing in separation, Demucs is exceptionally good at isolating vocals, instruments, drums, bass, and more—even when frequencies overlap. An older version of iZotope RX (7, 8, or 9) was rumored to be powered by Spleeter, an older AI model that has since been completely dethroned by Demucs - check out [our comparison with Spleeter here](/vs-spleeter). The newer versions might have upgraded, but the fact is you're paying thousands of dollars to a **private corporation that is not transparent about the academic AI models and technology they use.**
+We use the **Demucs** model, a highly regarded AI approach backed by cutting-edge research from Meta, Spotify, and leading open-source communities. By specializing in separation, Demucs is exceptionally good at isolating vocals, instruments, drums, bass, and more — even when frequencies overlap. An older version of iZotope RX (7, 8, or 9) was rumored to be powered by Spleeter, an older AI model that has since been completely dethroned by Demucs - check out [our comparison with Spleeter here](/vs-spleeter). The newer versions might have upgraded, but the fact is you're paying thousands of dollars to a **private corporation that is not transparent about the academic AI models and technology they use.**
 
 ### 2. Web-based simplicity
 - **No installation required**: Music Demixer runs entirely in your web browser. No bulky downloads, no OS constraints — just upload (locally or in-browser), separate, and go.

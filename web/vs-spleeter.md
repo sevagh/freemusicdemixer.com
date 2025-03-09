@@ -74,7 +74,7 @@ If you install Spleeter on your computer, your audio files never leave your comp
 
 On web-based versions of Spleeter, your audio files are uploaded to a remote server for processing. This can be a privacy concern, especially if you are working with sensitive or unreleased audio.
 
-**Music Demixer** uses a unique design: it’s web-based, but delivers the AI model to your browser and performs the processing locally. Your audio files never leave your computer, ensuring they remain private and secure. Plus, you don’t need any special setup—simply open our site and start demixing. We continuously test and refine it so you always have the latest and greatest version of our software.
+**Music Demixer** uses a unique design: it’s web-based, but delivers the AI model to your browser and performs the processing locally. Your audio files never leave your computer, ensuring they remain private and secure. Plus, you don’t need any special setup — simply open our site and start demixing. We continuously test and refine it so you always have the latest and greatest version of our software.
 
 ---
 
@@ -220,10 +220,10 @@ Join the growing community of users who have experienced the power of Demucs thr
 **Answer:** Not at all. Music Demixer is fully web-based, so there’s no installation or command-line interface required. Simply upload your audio, choose your settings, and let the AI handle the rest.
 
 ### 5. Is Music Demixer compatible with my operating system (Windows, macOS, Linux)?
-**Answer:** Absolutely. Because it’s browser-based, Music Demixer works on virtually any modern system with an internet connection—no matter if you’re on Windows, macOS, Linux, or even mobile devices.
+**Answer:** Absolutely. Because it’s browser-based, Music Demixer works on virtually any modern system with an internet connection — no matter if you’re on Windows, macOS, Linux, or even mobile devices.
 
 ### 6. How does Demucs differ from Spleeter in terms of audio quality?
-**Answer:** Demucs uses advanced neural network architectures and has undergone multiple iterations (v3, v4) for improved accuracy and fewer artifacts. It excels at separating overlapping frequencies, resulting in clearer stems—particularly noticeable for instruments like piano, guitar, and other melodic lines.
+**Answer:** Demucs uses advanced neural network architectures and has undergone multiple iterations (v3, v4) for improved accuracy and fewer artifacts. It excels at separating overlapping frequencies, resulting in clearer stems — particularly noticeable for instruments like piano, guitar, and other melodic lines.
 
 ### 7. Will Music Demixer provide MIDI files?
 **Answer:** Yes, we offer a MIDI transcription option for PRO subscribers. This feature is especially useful for remixers, producers, or musicians who want a notation reference for their extracted stems.
@@ -249,6 +249,6 @@ Ready to unlock the full potential of Music Demixer?
 
 ## Conclusion
 
-While Spleeter played a pivotal role in the evolution of AI stem separation, many professionals have begun seeking more advanced solutions for top-tier results. **Music Demixer**, powered by Demucs, offers unmatched quality, broader stem support, and seamless usability—all while keeping your audio private on your own device.
+While Spleeter played a pivotal role in the evolution of AI stem separation, many professionals have begun seeking more advanced solutions for top-tier results. **Music Demixer**, powered by Demucs, offers unmatched quality, broader stem support, and seamless usability — all while keeping your audio private on your own device.
 
 Upgrade your stem separation experience today with Music Demixer. [**Start for free**](/#demixer-app) and when you’re ready, [**subscribe to our PRO plan**](/pricing) for unlimited high-quality stems and MIDI transcription.

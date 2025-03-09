@@ -3,7 +3,7 @@ layout: post
 title: "How to Convert YouTube to MP3 to Sheet Music Directly"
 category: announcements
 header_class: post
-intro: "An in-depth guide to extracting audio from YouTube and turning it into printable, editable sheet music—all from your browser!"
+intro: "An in-depth guide to extracting audio from YouTube and turning it into printable, editable sheet music — all from your browser!"
 ---
 
 <img src="/assets/blog/post18/intro_meme.webp" alt="piracy meme" class="responsive-img-android"/>
@@ -20,7 +20,7 @@ intro: "An in-depth guide to extracting audio from YouTube and turning it into p
 
 This blog post dives into a hotly requested feature: how to take a YouTube video, convert it to MP3 (or another audio format), and automatically generate sheet music from it.
 
-If you’ve ever searched for “convert mp3 to sheet music” or “YouTube to sheet music,” you’re not alone. These are popular — and sometimes controversial —topics, because automated transcription has become easier than ever. Our platform aims to simplify this workflow by giving you direct MIDI and MusicXML outputs from your audio files.
+If you’ve ever searched for “convert mp3 to sheet music” or “YouTube to sheet music,” you’re not alone. These are popular — and sometimes controversial — topics, because automated transcription has become easier than ever. Our platform aims to simplify this workflow by giving you direct MIDI and MusicXML outputs from your audio files.
 
 **However**, before we dive in, it’s essential to understand both the technical steps and the ethical implications of converting YouTube content into printable sheet music.
 

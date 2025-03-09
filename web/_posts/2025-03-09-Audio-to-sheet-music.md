@@ -12,11 +12,11 @@ intro: "Music transcends every barrier — cultural, linguistic, and even techni
 * Table of contents
 {:toc}
 
-Music is one of the most profound ways we connect as humans. Whether it’s the pulse-pounding bass of an EDM track or the gentle strum of an acoustic guitar, **music transcends boundaries**—cultural, linguistic, and, yes, even technical. That’s why, at its core, converting between audio files (like MP3), MIDI, and sheet music all revolves around capturing the same universal musical message. But how exactly do we get from an **MP3 to sheet music**—or from any **audio to sheet music**, for that matter?
+Music is one of the most profound ways we connect as humans. Whether it’s the pulse-pounding bass of an EDM track or the gentle strum of an acoustic guitar, **music transcends boundaries** — cultural, linguistic, and, yes, even technical. That’s why, at its core, converting between audio files (like MP3), MIDI, and sheet music all revolves around capturing the same universal musical message. But how exactly do we get from an **MP3 to sheet music** — or from any **audio to sheet music**, for that matter?
 
 ### The Common Misconception: “Aren’t MP3, MIDI, and Sheet Music Completely Different?”
 
-It’s easy to think that **audio to sheet music** conversion might be an impossible feat. After all, a compressed waveform (MP3) and a notated score appear worlds apart. But the truth is, they’re simply different representations of the same musical ideas. Modern AI has gotten incredibly adept at dissecting a track, even one with multiple layers, and pulling out the essential structure—like melody, harmony, and rhythm.
+It’s easy to think that **audio to sheet music** conversion might be an impossible feat. After all, a compressed waveform (MP3) and a notated score appear worlds apart. But the truth is, they’re simply different representations of the same musical ideas. Modern AI has gotten incredibly adept at dissecting a track, even one with multiple layers, and pulling out the essential structure — like melody, harmony, and rhythm.
 
 Of course, it’s not magic; no AI will instantly produce 100% flawless notation for every genre or complex arrangement. But if you can separate a full mix into its distinct parts, the core “musical message” becomes a lot clearer. This is where **AI stem separation** paves the way for more accurate conversion, whether you want to end up with **MIDI to sheet music** or a direct notation export.
 
@@ -34,21 +34,21 @@ We use cutting-edge AI research — like **Meta’s Demucs** — for our own ste
 
 ### Quality Matters
 
-Many tools out there claim high-fidelity separation, but you may end up with muddy artifacts or hints of other instruments leaking in. We leverage a refined machine learning model to deliver crisp, clear stems—often beating major competitors, especially for drums and bass. High-quality stems directly translate to better transcriptions when converting **MP3 to MIDI** or **audio to sheet music**.
+Many tools out there claim high-fidelity separation, but you may end up with muddy artifacts or hints of other instruments leaking in. We leverage a refined machine learning model to deliver crisp, clear stems — often beating major competitors, especially for drums and bass. High-quality stems directly translate to better transcriptions when converting **MP3 to MIDI** or **audio to sheet music**.
 
 {% include admonitions.html
     type="tip"
     title="We Prioritize Quality"
-    content="Read [some of](/announcements/2024/02/17/Pro-site-launch#latest-research) our [many blog posts](/announcements/2024/12/23/Piano-guitar-quality-efficiency) that describe how we are constantly refining our algorithms and models to deliver the best results"
+    content="Read [some of](/announcements/2024/02/17/Pro-site-launch#latest-research) our [many blog posts](/announcements/2024/12/23/Piano-guitar-quality-efficiency) that describe how we are constantly refining our algorithms and models to deliver the best results."
 %}
 
 ## Audio to MIDI: Bridging Waveforms and Events
 
-Converting an entire song—whether **MP3** or WAV—into a sequence of **MIDI** events can feel like alchemy. **MIDI** is symbolic, telling your DAW which note to play, how loud, and for how long. Audio, on the other hand, is a continuous waveform. Bridging that gap requires intelligent signal processing combined with advanced AI.
+Converting an entire song — whether **MP3** or WAV — into a sequence of **MIDI** events can feel like alchemy. **MIDI** is symbolic, telling your DAW which note to play, how loud, and for how long. Audio, on the other hand, is a continuous waveform. Bridging that gap requires intelligent signal processing combined with advanced AI.
 
 ### Our Method
 
-Inspired by **Spotify’s Basic Pitch** research, we’ve integrated an advanced transcription pipeline. Once a track is separated into stems, an AI model examines each part’s frequency and time signatures, matching them to the correct notes or drums in a **MIDI** format. While it’s not perfect—especially for complex or heavily layered music—it provides a huge head start over manual transcription.
+Inspired by **Spotify’s Basic Pitch** research, we’ve integrated an advanced transcription pipeline. Once a track is separated into stems, an AI model examines each part’s frequency and time signatures, matching them to the correct notes or drums in a **MIDI** format. While it’s not perfect — especially for complex or heavily layered music — it provides a huge head start over manual transcription.
 
 {% include admonitions.html
     type="tip"
@@ -62,7 +62,7 @@ Some experts may say **polyphonic transcription** is too challenging for AI. The
 
 ## MusicXML and Sheet Music: Making Music Visible
 
-For many musicians, the ultimate end goal is to see notation on paper or on a screen, whether for practice, performance, or scoring. After generating **MIDI** data, the next logical step is creating **MusicXML** files—or direct sheet music—so you can print your part or import it into programs like Finale, Sibelius, or MuseScore.
+For many musicians, the ultimate end goal is to see notation on paper or on a screen, whether for practice, performance, or scoring. After generating **MIDI** data, the next logical step is creating **MusicXML** files — or direct sheet music — so you can print your part or import it into programs like Finale, Sibelius, or MuseScore.
 
 <img src="/assets/blog/post17/printable-sheet-music.webp" alt="sheet music" class="responsive-img-android"/>
 
@@ -84,11 +84,15 @@ No AI solution is perfect, especially with highly complex mixes or uncommon inst
 
 ## Philosophical Note: The Universal Musical Message
 
-So, are **MP3** and sheet music really galaxies apart? On the surface, yes—one is a compressed waveform, the other is a symbolic notation system. But at their core, they both express the same musical essence. Every format—whether **MP3, WAV, MIDI, MusicXML, or guitar tabs**—encodes the same creative spark.
+So, are **MP3** and sheet music really galaxies apart? On the surface, yes — one is a compressed waveform, the other is a symbolic notation system. But at their core, they both express the same musical essence. Every format — whether **MP3, WAV, MIDI, MusicXML, or guitar tabs**—encodes the same creative spark.
 
 As AI evolves, we inch closer to instant, flawless conversion. In the meantime, you can leverage today’s powerful tools to extract the core of a song and sculpt the details to perfection.
 
-**CTA**: Curious how effortless universal music conversion can be? [Sign up today](#) to explore our all-in-one **audio to MIDI converter** and **mp3 to sheet music** platform!
+{% include admonitions.html
+    type="tip"
+    title="Curious how effortless universal music conversion can be?"
+    content="[Sign up today](/pricing#subscribe-today) to explore our all-in-one **audio to MIDI converter** and **mp3 to sheet music** platform."
+%}
 
 ## Frequently Asked Questions
 
@@ -99,7 +103,7 @@ As AI evolves, we inch closer to instant, flawless conversion. In the meantime, 
    Absolutely. Once you have **MIDI** or **MusicXML**, you can generate any format, including guitar tabs. While we emphasize universal notation, you can easily import our outputs into a tab editor.
 
 3. **Is the stem separation truly “studio quality”?**
-   We rely on **Meta’s Demucs** AI model—plus our own training refinements—to achieve crystal-clear separation. In many cases, it outperforms top competitors, especially for bass and drums.
+   We rely on **Meta’s Demucs** AI model — plus our own training refinements — to achieve crystal-clear separation. In many cases, it outperforms top competitors, especially for bass and drums.
 
 4. **How do you handle copyrighted material?**
    Always ensure you have the right to process the tracks you upload. We respect artists’ rights and your privacy. Use your best judgment and follow all applicable guidelines.
@@ -110,4 +114,8 @@ Turning an audio file into **MIDI** or sheet music is no longer science fiction.
 
 More importantly, these tools serve as a reminder that music isn’t confined to a single format. **MP3, MIDI, or notation**—each one is simply a different language conveying the same musical story. If these innovative solutions help more people learn, create, and share music, we consider that a major win.
 
-**CTA**: Ready to revolutionize your creative process? [Sign up now](#) for our all-in-one **MP3 to MIDI converter** and **audio to sheet music** platform, and experience the future of music transcription today!
+{% include admonitions.html
+    type="tip"
+    title="Ready to revolutionize your creative process?"
+    content="[Sign up now](/pricing#subscribe-today) for our all-in-one **MP3 to MIDI converter** and **audio to sheet music** platform, and experience the future of music transcription today!"
+%}

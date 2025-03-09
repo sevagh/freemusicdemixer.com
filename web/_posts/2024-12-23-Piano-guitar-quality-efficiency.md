@@ -44,13 +44,13 @@ Vocals, drums, bass, and melody can be considered to have distinct characteristi
 
 When you get into separating **piano** and **guitar** from the rest of the melody, it’s more complex because:
 
-1. **Overlap in Frequency Ranges**: Piano covers a very wide frequency range—from deep bass notes to bright treble—while guitars often sit in the midrange but can extend into higher frequencies, especially electric guitars with effects or acoustics with bright overtones.
+1. **Overlap in Frequency Ranges**: Piano covers a very wide frequency range — from deep bass notes to bright treble — while guitars often sit in the midrange but can extend into higher frequencies, especially electric guitars with effects or acoustics with bright overtones.
 
 2. **Similar Harmonic Content**: Both instruments can produce rich harmonics and chords. A single guitar strum or piano chord contains multiple frequencies that can overlap with each other and with other instruments in the mix.
 
 3. **Varied Playing Styles**: Guitarists might use techniques like strumming, picking, palm muting, or distortion (for electric guitars), and pianists can use sustain pedals, staccato playing, or arpeggiation. These variations can blur the lines between instrument “signatures” and make it harder for AI models to distinguish them.
 
-4. **Dynamic and Tonal Variability**: A piano can be played softly with a warm tone or loudly with a bright, percussive attack. Guitars have a wide array of tones—nylon strings, steel strings, electric with distortion, etc. The AI must adapt to these dynamic nuances.
+4. **Dynamic and Tonal Variability**: A piano can be played softly with a warm tone or loudly with a bright, percussive attack. Guitars have a wide array of tones — nylon strings, steel strings, electric with distortion, etc. The AI must adapt to these dynamic nuances.
 
 Because of these factors, extracting piano and guitar separately requires more refined modeling and additional training data. Our latest improvements to Music Demixer’s AI models focus on these specific challenges, allowing our system to better pinpoint each instrument and cleanly isolate it for a more accurate, high-quality stem.
 
