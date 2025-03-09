@@ -86,7 +86,7 @@ Visit our [demixer app](/#demixer-app) to get started. You can upload your MP3 f
 If you need more help, we have written a variety of blog posts and tutorials on how to use our platform. Follow any one of them:
 * [Beginner's guide to stem separation on our website](/getting-started/2023/09/23/Beginners-guide-to-free-stems)
 * [MIDI music transcription feature](/announcements/2024/11/17/New-music-transcription-midi#how-it-works-in-our-tool)
-* [Sheet music feature](getting-started/2024/12/07/Music-transcription-feature#step-by-step-from-raw-audio-to-printable-sheet-music)
+* [Sheet music feature](/getting-started/2024/12/07/Music-transcription-feature#step-by-step-from-raw-audio-to-printable-sheet-music)
 
 <img src="/assets/blog/post1/freemdx3.webp" alt="stem separation" class="responsive-img-android"/>
 
