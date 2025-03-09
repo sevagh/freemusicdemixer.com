@@ -73,7 +73,7 @@ MusicXML files are flexible and widely supported, allowing you to:
 Our sheet music tool is powered by the same AI that drives our industry-leading stem separation and MIDI conversion features. Here's why musicians, students, and creators trust us:
 
 - **AI-Driven Precision**: Leveraging the latest AI technology to produce accurate sheet music.
-- **Privacy-First Design**: All processing happens locally on your device—your music stays yours.
+- **Privacy-First Design**: All processing happens locally on your device — your music stays yours.
 - **Seamless Integration**: Combine with our MIDI and stem separation tools to unlock endless creative possibilities.
 
 ---

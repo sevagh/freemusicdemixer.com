@@ -56,7 +56,7 @@ Customer experience reports
 
 2. Unlimited usage & no backend bottlenecks
 * No artificial caps on usage
-* Music Demixer allows you to separate as many tracks as you want—there’s no pay-per-song requirement for certain subscription tiers.
+* Music Demixer allows you to separate as many tracks as you want — there’s no pay-per-song requirement for certain subscription tiers.
 * Local processing for 100% uptime
 * Our unique platform architecture runs the AI model in your browser rather than on a remote server. As a result, you’re not dependent on third-party hardware or cloud queues, and your separation tasks keep working as long as your device does.
 

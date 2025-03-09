@@ -12,7 +12,7 @@ title: MIDI Converter
 
 # MIDI Converter
 
-Imagine playing a guitar lick, converting it into MIDI, and transforming it into a piano melody with your favorite MIDI software. With our MIDI conversion tool, that’s not just possible—it’s effortless.
+Imagine playing a guitar lick, converting it into MIDI, and transforming it into a piano melody with your favorite MIDI software. With our MIDI conversion tool, that’s not just possible — it’s effortless.
 
 ---
 
@@ -43,7 +43,7 @@ For single-instrument recordings, you can skip the stem separation step entirely
 Don’t own a MIDI keyboard or controller? No problem! Our tool lets you use **any instrument** as a MIDI input:
 1. **Record a Performance**: Play your melody or chord progression on your guitar, piano, or any other instrument.
 2. **Convert to MIDI**: Upload the recording to our tool and generate a MIDI file.
-3. **Transform the Sound**: Import the MIDI file into your favorite software and assign it to a virtual instrument—swap your guitar lick for a piano, violin, or even a synth.
+3. **Transform the Sound**: Import the MIDI file into your favorite software and assign it to a virtual instrument — swap your guitar lick for a piano, violin, or even a synth.
 
 This process is perfect for musicians who want to experiment with different sounds without needing expensive MIDI equipment.
 

@@ -125,6 +125,21 @@
   .admonition-title {
     color: #333;   /* Dark text color */
   }
+  pre,
+  code {
+    background-color: #f0f0f0;
+    color: #333;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+  pre {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  code {
+    padding: 0.2rem 0.4rem;
+  }
 }
 
 .theme-dark {
@@ -208,6 +223,20 @@
   }
   .admonition-title {
     color: #ddd;   /* Dark text color */
+  }
+  pre,
+  code {
+    background-color: #333;
+    color: #f0f0f0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+  pre {
+    padding: 1rem;
+  }
+  code {
+    padding: 0.2rem 0.4rem;
   }
 }
 
@@ -293,6 +322,21 @@
   .admonition-title {
     color: #333;   /* Dark text color */
   }
+  pre,
+  code {
+    background-color: #f0f0f0;
+    color: #333;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+  pre {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  code {
+    padding: 0.2rem 0.4rem;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -376,6 +420,20 @@
   }
   .admonition.title {
     color: #ddd;   /* Dark text color */
+  }
+  pre,
+  code {
+    background-color: #333;
+    color: #f0f0f0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+  pre {
+    padding: 1rem;
+  }
+  code {
+    padding: 0.2rem 0.4rem;
   }
 }
 
@@ -1176,13 +1234,15 @@ footer {
 #main-content ol {
   list-style-position: outside;
   padding-left: 20px; /* Add indentation */
-  margin-bottom: 20px; /* Add spacing below the entire list */
+  margin: 10px; /* Add spacing below the entire list */
+  // except on top
+  margin-top: 0;
   font-size: 1.25rem; /* Match font size with paragraphs */
 }
 
 #main-content ul li,
 #main-content ol li {
-  margin-bottom: 10px; /* Add spacing between list items */
+  margin: 10px; /* Add spacing between list items */
   line-height: 1.2; /* Adjust line-height for better readability */
   text-indent: -29px;
   padding-left: 40px;

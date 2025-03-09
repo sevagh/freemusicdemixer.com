@@ -22,7 +22,7 @@ intro: "We propose a professional workflow for musical artists, producers, mixin
 
 ## Who this is for
 
-Are you a mixing engineer, beat maker, or music producer who needs a reliable way to preview how a track might sound before committing to full-scale production or licensing fees? Our AI-powered music separation tool gives you a quick and clear “test mix” by isolating vocals, drums, bass, and instruments—all without the legal entanglements that come with official stem usage. Below, we’ll walk through how our site helps you test, audition, or preview a track’s potential, so you can make confident decisions in your professional audio workflow.
+Are you a mixing engineer, beat maker, or music producer who needs a reliable way to preview how a track might sound before committing to full-scale production or licensing fees? Our AI-powered music separation tool gives you a quick and clear “test mix” by isolating vocals, drums, bass, and instruments — all without the legal entanglements that come with official stem usage. Below, we’ll walk through how our site helps you test, audition, or preview a track’s potential, so you can make confident decisions in your professional audio workflow.
 
 ## What is track previewing in music production?
 
@@ -34,7 +34,7 @@ In the music industry, “previewing” or “test mixing” refers to evaluatin
 * Identify potential mixing challenges before official production
 * Explore creative possibilities like remixes or rearrangements
 
-With our AI-powered separation tool, you can isolate each part to precisely pinpoint what works—and what doesn’t—before moving into detailed, final production.
+With our AI-powered separation tool, you can isolate each part to precisely pinpoint what works — and what doesn’t — before moving into detailed, final production.
 
 ## High-quality stems without immediate licensing
 
@@ -108,4 +108,4 @@ Whether you’re mixing, producing, or beat making, our AI stem separation servi
 
 ## Ready to try our academic AI model for track previewing?
 
-Click [here](/#demixer-app) to get started and see how our AI-powered separation tool can optimize your audio production process—legally, efficiently, and professionally.
+Click [here](/#demixer-app) to get started and see how our AI-powered separation tool can optimize your audio production process — legally, efficiently, and professionally.

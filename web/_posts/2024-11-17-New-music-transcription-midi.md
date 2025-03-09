@@ -34,7 +34,7 @@ MIDI files offer several advantages:
 
 ## Complementing stem separation
 
-Our core service—stem separation—isolates individual instruments or vocals from a mixed audio track. By integrating automatic music transcription, we're taking this a step further:
+Our core service — stem separation — isolates individual instruments or vocals from a mixed audio track. By integrating automatic music transcription, we're taking this a step further:
 * Isolated Transcriptions: Transcribe individual stems (like vocals, piano, guitars) into separate MIDI tracks.
     * **N.b.!** This feature works best with single-instrument, pitched or harmonic stems, e.g. melody, guitar, piano, vocals
 * Enhanced Remixing: Use the MIDI data from separated stems to create remixes or new compositions.
