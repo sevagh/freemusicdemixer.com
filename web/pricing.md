@@ -12,18 +12,7 @@ Our subscriptions offer the best value with flexible pricing options and a free 
 
 No minutes, no limits, no cloud, no bullshit. 100% unlimited usage that runs privately on your own devices.
 
-<p><strong>Already a member?</strong> <a href="javascript:void(0);" id="login-link">Log in</a> to access your PRO features.</p>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const loginLink = document.getElementById('login-link');
-    if (loginLink) {
-        loginLink.addEventListener('click', () => {
-            modal.classList.add('show');
-        });
-    }
-  });
-</script>
+<p><strong>Already a member?</strong> <a href="/?login">Log in</a> to access your PRO features.</p>
 
 ## Subscribe today!
 
