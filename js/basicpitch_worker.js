@@ -37,9 +37,7 @@ onmessage = function(e) {
 
         if (midiData === 0 && mxmlData === 0) {
             console.error('Failed to generate MIDI and musicxml data.');
-            console.log('midiData:', midiData);
             console.log('midiSize:', midiSize);
-            console.log('mxmlData:', mxmlData);
             console.log('mxmlSize:', mxmlSize);
             postMessage({ msg: 'PROCESSING_FAILED' });
             return;

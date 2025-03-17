@@ -705,7 +705,7 @@ async function initModel() {
             nextStep3BtnNewJob.disabled = false;
 
             dlModelBuffers = buffers;
-            console.log('Model files downloaded:', buffers);
+            console.log('Model files downloaded');
         } catch (error) {
             // Handle errors, maybe keep the overlay visible or show an error message
             console.log('Failed to fetch model files:', error);
@@ -1488,8 +1488,6 @@ function packageAndDownload(targetWaveforms) {
         initializeMidiWorker();
     }
 
-    console.log(targetWaveforms);
-
     // Generate all buffers and stems using the helper function
     const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames);
 
@@ -1498,7 +1496,7 @@ function packageAndDownload(targetWaveforms) {
 }
 
 function packageAndDownloadMidiOnly(inputArrayBuffer) {
-    console.log(`Processing ${inputArrayBuffer} bytes of audio data in MIDI-only mode`);
+    console.log(`Processing audio data in MIDI-only mode`);
     // create the worker
     if (processingMode != 'stems' && !midiWorker) {
         initializeMidiWorker();
@@ -1718,8 +1716,6 @@ function packageAndZip(targetWaveforms, filename) {
     if (processingMode != 'stems' && !midiWorker) {
         initializeMidiWorker();
     }
-
-    console.log(targetWaveforms);
 
     // Generate buffers for all stems, including instrumental/melody logic
     const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames);
