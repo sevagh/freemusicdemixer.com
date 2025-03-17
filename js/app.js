@@ -919,33 +919,63 @@ componenttooltipToggleButton.addEventListener('click', function() {
 });
 
 toggleButton.addEventListener('click', function() {
-    if (advancedSettings.style.display === 'none') {
-        advancedSettings.style.display = 'block';
-    } else {
-        advancedSettings.style.display = 'none';
-    }
+    const nowVisible = advancedSettings.style.display === 'none';
+    advancedSettings.style.display = nowVisible ? 'block' : 'none';
+
+    trackProductEvent('Toggled Advanced Settings', { nowVisible });
 });
 
 tooltipToggleButton.addEventListener('click', function() {
-    if (tooltipContents.style.display === 'none') {
-        tooltipContents.style.display = 'block';
-    } else {
-        tooltipContents.style.display = 'none';
-    }
+    const nowVisible = tooltipContents.style.display === 'none';
+    tooltipContents.style.display = nowVisible ? 'block' : 'none';
+    trackProductEvent('Toggled MIDI Tooltip', { nowVisible });
 });
 
 qualitytooltipToggleButton.addEventListener('click', function() {
-    if (qualityTooltipContents.style.display === 'none') {
-        qualityTooltipContents.style.display = 'block';
-    } else {
-        qualityTooltipContents.style.display = 'none';
-    }
+    const nowVisible = qualityTooltipContents.style.display === 'none';
+    qualityTooltipContents.style.display = nowVisible ? 'block' : 'none';
+    trackProductEvent('Toggled Quality Tooltip', { nowVisible });
 });
+
+function getSelectedProcessingMode() {
+  return document.querySelector('input[name="processingMode"]:checked')?.value || 'unknown';
+}
+
+function getSelectedFeatures() {
+  const checked = [...document.querySelectorAll('#modelPickerForm input[name="feature"]:checked')];
+  return checked.map(input => input.value);
+}
+
+function getSelectedQuality() {
+  return document.querySelector('input[name="quality"]:checked')?.value || 'default';
+}
+
+function getSelectedMemory() {
+  return document.querySelector('input[name="memory"]:checked')?.value || '8gb';
+}
+
+function isSingleModeChosen() {
+  return !!document.getElementById('audio-upload').files.length;
+}
+
+function getSelectedFileCount() {
+  const singleCount = document.getElementById('audio-upload').files.length;
+  const batchCount = document.getElementById('batch-upload').files.length;
+  return singleCount || batchCount; // whichever is not 0
+}
 
 nextStep1Btn.addEventListener('click', function() {
     updateModelBasedOnSelection();
 
-    trackProductEvent('Chose Model', { model: selectedModel });
+    // Add a more explicit step event with additional details
+    //trackProductEvent('Chose Model', { model: selectedModel });
+    trackProductEvent('Chose Model (wizard step 1)', {
+        model: selectedModel,
+        processingMode: getSelectedProcessingMode(), // see below
+        features: getSelectedFeatures(),
+        quality: getSelectedQuality(),
+        memory: getSelectedMemory()
+    });
 
     step1.style.display = 'none';
     step2.style.display = 'block';
@@ -958,6 +988,15 @@ document.getElementById('activation-form').addEventListener('submit', function(e
 nextStep2Btn.addEventListener('click', function() {
     console.log('Is single mode:', isSingleMode);
     console.log('Selected input on next step:', selectedInput);
+
+    trackProductEvent('Wizard Step 2 Completed', {
+        model: selectedModel,
+        processingMode: getSelectedProcessingMode(),
+        features: getSelectedFeatures(),
+        quality: getSelectedQuality(),
+        memory: getSelectedMemory(),
+        fileCount: getSelectedFileCount(),
+    });
 
     initModel().then(() => {
         console.log("Starting demix job");
@@ -982,7 +1021,16 @@ nextStep2Btn.addEventListener('click', function() {
         processedSegments = new Array(NUM_WORKERS).fill(undefined);
         if (isSingleMode) {
             // track the start of the job
-            trackProductEvent('Start Job', { mode: 'single', numWorkers: numWorkers });
+            //trackProductEvent('Start Job', { mode: 'single', numWorkers: numWorkers });
+            trackProductEvent('Start Job', {
+                mode: isSingleMode ? 'single' : 'batch',
+                numWorkers,
+                processingMode,  // stems, midi, or both
+                features: getSelectedFeatures(),
+                quality: getSelectedQuality(),
+                memory: getSelectedMemory(),
+                fileCount: getSelectedFileCount()
+              });
 
             // write log of how many workers are being used
             if (processingMode != 'midi') {
@@ -1059,6 +1107,8 @@ nextStep2Btn.addEventListener('click', function() {
 });
 
 prevStep1Btn.addEventListener('click', function() {
+    trackProductEvent('Wizard Step 2 → 1');
+
     // from step 3, undisable next/prev buttons
     prevStep3Btn.disabled = false;
     nextStep3BtnNewJob.disabled = false;
@@ -1072,11 +1122,15 @@ prevStep1Btn.addEventListener('click', function() {
 });
 
 prevStep2Btn.addEventListener('click', function() {
+    trackProductEvent('Wizard Step 3 → 2');
+
     step2.style.display = 'none';
     step1.style.display = 'block';
 });
 
 prevStep3Btn.addEventListener('click', function() {
+    trackProductEvent('Wizard Step 4 → 3');
+
     step3.style.display = 'none';
     step2.style.display = 'block';
 });
@@ -1181,6 +1235,7 @@ function openSheetMusicInNewTab(mxmlData, instrumentName) {
 const instrumentLinksContainer = document.getElementById("instrument-links");
 
 nextStep3BtnSheetMusic.addEventListener('click', function() {
+    trackProductEvent('Viewed Sheet Music Section');
     // OSMD display of mxmlBuffers
 
     step4SheetMusic.style.display = 'block';
@@ -1194,6 +1249,7 @@ nextStep3BtnSheetMusic.addEventListener('click', function() {
       link.textContent = `Open new sheet music tab for: ${instrumentName}`;
       link.addEventListener("click", (e) => {
         e.preventDefault();
+        trackProductEvent('Opened Sheet Music', { instrumentName });
         openSheetMusicInNewTab(mxmlBuffersSheetMusic[instrumentName], instrumentName);
       });
       instrumentLinksContainer.appendChild(link);
@@ -1202,6 +1258,8 @@ nextStep3BtnSheetMusic.addEventListener('click', function() {
   });
 
 prevStep4Btn.addEventListener('click', function() {
+    trackProductEvent('Wizard Step 5 → 4');
+
     step4SheetMusic.style.display = 'none';
     step3.style.display = 'block';
 });
@@ -1209,6 +1267,7 @@ prevStep4Btn.addEventListener('click', function() {
 nextStep3BtnNewJob.addEventListener('click', function() {
     // reset all buttons etc.
     //resetUIElements();
+    trackProductEvent('New job button');
 
     // restart the wizard from step 1
     step3.style.display = 'none';
@@ -1218,6 +1277,8 @@ nextStep3BtnNewJob.addEventListener('click', function() {
 nextStep4Btn.addEventListener('click', function() {
     // reset all buttons etc.
     resetUIElements();
+
+    trackProductEvent('Finished sheet music button');
 
     // restart the wizard from step 1
     step4SheetMusic.style.display = 'none';
