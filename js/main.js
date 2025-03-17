@@ -4,6 +4,7 @@ const navbarLinks = document.querySelector('.navbar-links');
 
 hamburgerMenu.addEventListener('click', () => {
   navbarLinks.classList.toggle('active');
+  trackProductEvent('Clicked Hamburger Menu');
 });
 
 // Modal functionality for login
@@ -22,14 +23,17 @@ const tierNames = {0: 'Free', 2: 'Pro'};
 
 loginBtn.addEventListener('click', () => {
   loginModal.classList.add('show');
+  trackProductEvent('Opened Login Modal');
 });
 
 loginCloseModal.addEventListener('click', () => {
   loginModal.classList.remove('show');
+  trackProductEvent('Closed Login Modal');
 });
 
 manageAccountBtn.addEventListener('click', () => {
     activeUserModal.classList.add('show');
+    trackProductEvent('Opened Manage Account');
 });
 
 activeUserCloseModal.addEventListener('click', () => {
@@ -176,10 +180,13 @@ themeToggle.addEventListener('click', () => {
 
     localStorage.setItem('theme', newTheme); // Store only if user toggles
     applyTheme(newTheme);
+    trackProductEvent('Toggled Theme', { newTheme });
 });
 
 document.addEventListener("DOMContentLoaded", function() {
     loadTheme();
+    const appliedTheme = document.documentElement.classList.contains('theme-dark') ? 'dark' : 'light';
+    trackProductEvent('Loaded Theme', { appliedTheme });
     const storedEmail = localStorage.getItem('billingEmail');
 
     if (storedEmail) {
@@ -224,6 +231,7 @@ function popupLogic() {
     function hidePopup() {
         if (popupBanner) {
             popupBanner.classList.remove('popup-banner-shown');
+            trackProductEvent('Popup Banner Closed');
         }
         if (popupOverlay) {
             popupOverlay.classList.remove('popup-overlay-shown');
@@ -239,6 +247,7 @@ function popupLogic() {
             if (scrolledPercentage > 30 && shouldShowPopup) { // Trigger at 30% scroll
                 popupBanner.classList.add('popup-banner-shown');
                 popupOverlay.classList.add('popup-overlay-shown');
+                trackProductEvent('Popup Banner Shown');
             }
         });
     }
@@ -281,6 +290,7 @@ function activateProContent(email) {
             if (!response.ok) {
               removeLoginSpinner();
               document.getElementById('response-message').innerHTML = `Login failed. If this is a mistake, <a href="/support" target="_blank" alt="contact-link">contact us</a>.`;
+              trackProductEvent('Login Failed', { email });
               throw new Error('Failed to fetch content');
             }
             return response.json();
@@ -296,6 +306,7 @@ function activateProContent(email) {
 
             activateTierUI(userTier);
 
+            trackProductEvent('Login Succeeded', { email });
             showToast('Login successful! Welcome back.');
 
             setTimeout(() => {
@@ -385,6 +396,8 @@ logoutLink.addEventListener('click', function(event) {
         tierText.textContent = 'Free tier ';
         tierText.appendChild(logoImage);
     }
+
+    trackProductEvent('Logged Out');
 
     // Redirect user to homepage (optional)
     window.location.href = '/';
