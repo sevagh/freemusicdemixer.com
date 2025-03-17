@@ -605,6 +605,7 @@ function initWorkers() {
                         incrementUsage();
                     }
                     const retSummed = sumSegments(processedSegments, originalLength);
+                    trackProductEvent('demix-completed', {model: selectedModel, stems: selectedStems.join(',')});
                     packageAndDownload(retSummed);
                     // reset globals etc.
                     processedSegments = null; // this one will be recreated with appropriate num_workers next time
@@ -622,6 +623,7 @@ function initWorkers() {
                         incrementUsage();
                     }
                     const retSummed = sumSegments(processedSegments, originalLength);
+                    trackProductEvent('batch-demix-completed', {model: selectedModel, stems: selectedStems.join(',')});
                     packageAndZip(retSummed, filename);
                     // reset globals per-song in the batch process
                     completedSegments = 0;
@@ -640,6 +642,7 @@ function initWorkers() {
 
                     // if all songs are done, reset completedSongsBatch
                     if (completedSongsBatch === document.getElementById('batch-upload').files.length) {
+                        trackProductEvent('entire-batch-completed', {model: selectedModel, stems: selectedStems.join(',')});
                         completedSongsBatch = 0;
 
                         // terminate the workers
@@ -656,6 +659,7 @@ function initWorkers() {
             } else if (e.data.msg === 'WASM_ERROR') {
                 // Handle the error by modifying the UI to reflect the error state
                 console.log('Error executing WASM');
+                trackProductEvent('wasm-error', {model: selectedModel, stems: selectedStems.join(',')});
                 // fill the inference progress bar with the color red
                 document.getElementById('inference-progress-bar').style.backgroundColor = 'red';
                 document.getElementById('inference-progress-bar').style.width = "100%";
@@ -1360,6 +1364,8 @@ function processNextMidi() {
 
 // Function to handle MIDI generation
 function generateMidi(inputBuffer, stemName, batchMode, directArrayBuffer = false) {
+    trackProductEvent('MIDI Generation Started', { stem: stemName });
+
     if (directArrayBuffer) {
         // Decode directly from arrayBuffer in MIDI-only mode
         basicpitchAudioContext.decodeAudioData(inputBuffer, async (decodedData) => {
