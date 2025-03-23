@@ -1341,6 +1341,7 @@ function handleMidiDone(data) {
     const midiBlob = new Blob([midiBytes], { type: 'audio/midi' });
     midiBuffers[stemName] = midiBlob; // Store the MIDI blob by stem name
     mxmlBuffers[stemName] = mxmlBytes; // Store the MXML bytes by stem name
+    trackProductEvent('MIDI Generation Completed', { stem: stemName });
     console.log(`MIDI generation done for ${stemName}.`);
 }
 
