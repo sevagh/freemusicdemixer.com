@@ -201,6 +201,18 @@ function getBasicpitchAudioContext() {
 document.addEventListener("DOMContentLoaded", function() {
     registerServiceWorker();
     resetUIElements();
+
+    const tryAnywayBtn = document.getElementById('try-anyway-btn');
+    const wizardContainer = document.querySelector('.wizard-container');
+    //const mobileWarning = document.getElementById('mobile-warning-container');
+
+    tryAnywayBtn.addEventListener('click', function() {
+      // Keep the mobile warning
+      //mobileWarning.style.display = 'none';
+
+      // Show the wizard
+      wizardContainer.style.display = 'block';
+    });
 });
 
 const registerServiceWorker = async () => {

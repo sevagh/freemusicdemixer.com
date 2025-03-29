@@ -44,11 +44,27 @@ header_class: index
 
 <a id="demixer-app" class="hidden-anchor"></a>
 
+<!-- Mobile Banner / Card -->
+<section class="info-section" id="mobile-warning-container">
+  <h3>Better on Computer 💻</h3>
+  <p>
+    Smaller devices might crash.
+    Watch a quick demo, get a reminder, or try anyway:
+  </p>
+  <div class="mobile-warning-actions">
+    <button id="watch-demo-btn">Demo</button>
+    <button id="email-reminder-btn">Email link</button>
+    <br>
+    <button id="try-anyway-btn">Try anyway</button>
+  </div>
+</section>
+
+<!-- save the warning emoji for the "are you sure" button later
+    We see you're on a 📱 small screen. ⚠️ Running the demixer might be slow or crash.
+  -->
+
 <!-- Wizard sections here... -->
 <section class="demixer-section">
-  <div class="disable-wizard">
-    Best experienced on a laptop or desktop.
-  </div>
   <div class="wizard-container">
     <div id="wizard-step-1" class="wizard-step">
       <p>Choose your parameters</p>

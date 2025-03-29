@@ -140,6 +140,11 @@
   code {
     padding: 0.2rem 0.4rem;
   }
+  #mobile-warning-container {
+    background-color: #fee;
+    border: 1px solid #fcc;
+    color: #333; /* Darker text for better contrast */
+  }
 }
 
 .theme-dark {
@@ -237,6 +242,12 @@
   }
   code {
     padding: 0.2rem 0.4rem;
+  }
+  #mobile-warning-container {
+    // background and text color for dark theme
+    background-color: #333;
+    border: 1px solid #300;
+    color: #f0f0f0; /* Lighter text for better contrast */
   }
 }
 
@@ -337,6 +348,11 @@
   code {
     padding: 0.2rem 0.4rem;
   }
+  #mobile-warning-container {
+    background-color: #fee;
+    border: 1px solid #fcc;
+    color: #333; /* Darker text for better contrast */
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -434,6 +450,11 @@
   }
   code {
     padding: 0.2rem 0.4rem;
+  }
+  #mobile-warning-container {
+    background-color: #333;
+    border: 1px solid #300;
+    color: #f0f0f0; /* Lighter text for better contrast */
   }
 }
 
@@ -1884,6 +1905,48 @@ button#manage-account {
   }
 }
 
+/* Only show the warning container on screens <= 512px */
+@media (max-width: 512px) {
+  #mobile-warning-container {
+    display: block;
+    padding: 12px 16px; /* Adjusted: even padding around */
+    margin: 12px auto;
+    border-radius: 8px;
+    text-align: left;
+  }
+
+  #mobile-warning-container h3 {
+    margin-top: 0;
+    margin-bottom: 8px; /* Tighten vertical spacing */
+  }
+
+  #mobile-warning-container p {
+    margin-top: 0;
+    margin-bottom: 12px; /* Spacing to buttons */
+  }
+
+  /* Improved button spacing specifically within this container */
+  #mobile-warning-container .mobile-warning-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px; /* Increased spacing between buttons */
+  }
+
+  #mobile-warning-container .mobile-warning-actions button {
+    padding: 8px 12px; /* Better button size */
+    font-size: 0.9em;
+    flex-grow: 1;
+  }
+}
+
+/* Hide the banner on larger screens */
+@media (min-width: 513px) {
+  #mobile-warning-container {
+    display: none !important;
+  }
+}
+
 /* Media Query for screens at or below 512px */
 @media (max-width: 512px) {
   .footer-container {
@@ -1919,10 +1982,6 @@ button#manage-account {
 
   .wizard-container {
     display: none; /* Hide the wizard */
-  }
-
-  .disable-wizard {
-    display: flex; /* Show the message */
   }
 
   section.title-section h2 {
