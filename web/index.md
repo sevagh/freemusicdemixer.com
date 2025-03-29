@@ -49,13 +49,11 @@ header_class: index
   <h3>Better on Computer 💻</h3>
   <p>
     Smaller devices might crash.
-    Watch a quick demo, get a reminder, or try anyway:
+    Get a reminder, or try anyway:
   </p>
   <div class="mobile-warning-actions">
-    <button id="watch-demo-btn">Demo</button>
-    <button id="email-reminder-btn">Email link</button>
-    <br>
-    <button id="try-anyway-btn">Try anyway</button>
+    <button id="email-reminder-btn" class="highlight-btn">Email link</button>
+    <button id="try-anyway-btn" >Try anyway</button>
   </div>
 </section>
 
