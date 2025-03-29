@@ -210,6 +210,10 @@ tryAnywayBtn.addEventListener('click', function() {
   if (wizardVisible) {
     wizardContainer.style.display = 'block';
     tryAnywayBtn.textContent = 'Hide wizard';
+
+    // set the memory  to 4gb
+    const memory4gb = document.getElementById('4gb');
+    memory4gb.checked = true; // Default to 4 GB
   } else {
     wizardContainer.style.display = 'none';
     tryAnywayBtn.textContent = 'Try anyway';
@@ -274,7 +278,20 @@ function resetUIElements() {
     document.getElementById('default-quality').checked = true;
 
     // set memory radio buttons to default
-    document.getElementById('8gb').checked = true;
+    const mobileWarning = document.getElementById('mobile-warning-container');
+    const memory4gb = document.getElementById('4gb');
+    const memory8gb = document.getElementById('8gb');
+
+    // Check mobile warning visibility at load time to set appropriate default
+    if (mobileWarning && getComputedStyle(mobileWarning).display !== 'none') {
+        // Mobile warning scenario (small screen)
+        memory4gb.checked = true; // Default to 4 GB
+        console.log('Default memory set to 4 GB (small screen).');
+    } else {
+        // Regular scenario (larger screen)
+        memory8gb.checked = true; // Default to 8 GB
+        console.log('Default memory set to 8 GB (large screen).');
+    }
 
     // reset all disabled buttons to disabled
     nextStep2Btn.disabled = true;
@@ -973,11 +990,16 @@ function getSelectedQuality() {
 }
 
 function getSelectedMemory() {
-  return document.querySelector('input[name="memory"]:checked')?.value || '8gb';
-}
+  // adapt this function to return a 4gb default for smaller screens
+  // and 8gb for larger screens
+  const mobileWarning = document.getElementById('mobile-warning-container');
 
-function isSingleModeChosen() {
-  return !!document.getElementById('audio-upload').files.length;
+  // Check mobile warning visibility at load time to set appropriate default
+  let defaultMem = '8gb'; // Default to 8GB for larger screens
+  if (mobileWarning && getComputedStyle(mobileWarning).display !== 'none') {
+      defaultMem = '4gb'; // Use 4GB for smaller screens
+  }
+  return document.querySelector('input[name="memory"]:checked')?.value || defaultMem;
 }
 
 function getSelectedFileCount() {
