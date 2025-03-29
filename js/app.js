@@ -1001,9 +1001,26 @@ document.getElementById('activation-form').addEventListener('submit', function(e
     event.preventDefault();
 });
 
-nextStep2Btn.addEventListener('click', function() {
+nextStep2Btn.addEventListener('click', function(e) {
     console.log('Is single mode:', isSingleMode);
     console.log('Selected input on next step:', selectedInput);
+
+    // Check if mobile warning container exists and is currently hidden
+    const mobileWarning = document.getElementById('mobile-warning-container');
+
+    if (mobileWarning && getComputedStyle(mobileWarning).display !== 'none') {
+        // Mobile warning is visible, meaning we are in mobile-warning scenario
+        const proceed = confirm("⚠️ You're on a 📱 small screen. Running the demixer might be slow or crash. Are you sure you want to continue?");
+        if (!proceed) {
+            // User decided not to proceed, prevent further actions
+            e.preventDefault();
+            console.log("User cancelled due to mobile warning.");
+            return;
+        }
+    } else {
+        // Mobile warning is not visible, meaning we are not in mobile-warning scenario
+        console.log("No mobile warning shown.");
+    }
 
     trackProductEvent('Wizard Step 2 Completed', {
         model: selectedModel,
@@ -1012,6 +1029,7 @@ nextStep2Btn.addEventListener('click', function() {
         quality: getSelectedQuality(),
         memory: getSelectedMemory(),
         fileCount: getSelectedFileCount(),
+        mobileWarning: mobileWarning ? 'shown' : 'not shown'
     });
 
     initModel().then(() => {
