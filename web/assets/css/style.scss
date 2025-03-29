@@ -1938,6 +1938,61 @@ button#manage-account {
     font-size: 0.9em;
     flex-grow: 1;
   }
+
+
+  .wizard-container {
+    width: 95%; /* use almost full screen width */
+    height: auto; /* flexible height for content */
+    padding: 12px;
+    overflow-y: auto;
+    position: relative; /* for absolute footer positioning */
+  }
+
+  .wizard-step {
+    overflow-y: auto;
+    padding-bottom: 80px; /* leave extra space for footer buttons */
+  }
+
+  .wizard-footer {
+    position: absolute; /* anchored at the bottom INSIDE container */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 0;
+    gap: 6px;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+
+  /* Stack columns vertically */
+  .columns-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .columns-container .column {
+    width: 100%; /* full width */
+  }
+
+  /* Smaller, more compact text on mobile */
+  .columns-container .column b,
+  .columns-container label {
+    font-size: 0.9em;
+  }
+
+  .cta-legend {
+    font-size: 13px;
+    padding: 8px;
+    margin-top: 8px;
+  }
+
+  .wizard-footer button {
+    padding: 8px 10px;
+    flex-grow: 1; /* buttons fill available horizontal space */
+    font-size: 0.9em;
+  }
 }
 
 /* Hide the banner on larger screens */
