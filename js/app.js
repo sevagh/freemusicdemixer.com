@@ -846,7 +846,7 @@ function checkAndResetWeeklyLimit() {
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
     if (!loggedIn) {
         const remaining = 3 - usageData.count;
-        usageLimits.innerHTML = `You have ${remaining} free jobs remaining this week. Your limit will reset on ${new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}. 🔒 <b><a href="/pricing#subscribe-today" target="_blank">Click here to buy unlimited demixes!</a></b>`;
+        usageLimits.innerHTML = `You have ${remaining} free jobs remaining this week. Your limit will reset on ${new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}. 🔒 <b><a href="/pricing#subscribe-today" target="_blank" rel="noopener noreferrer">Click here to buy unlimited demixes!</a></b>`;
     } else {
         usageLimits.textContent = 'You have unlimited jobs with your PRO subscription!';
 

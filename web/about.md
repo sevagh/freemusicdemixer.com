@@ -12,7 +12,7 @@ Contact us via e-mail at [contact@freemusicdemixer.com](mailto:contact@freemusic
 
 We are a proud partner of the McGill Dobson Center.
 
-<a href="https://www.mcgill.ca/dobson/entrepreneurship-programs/mcgill-dobson-cup" target="_blank"><img src="/assets/images/dobson_logo.webp" class="responsive-img-android"></a>
+<a href="https://www.mcgill.ca/dobson/entrepreneurship-programs/mcgill-dobson-cup" target="_blank" rel="noopener noreferrer"><img src="/assets/images/dobson_logo.webp" class="responsive-img-android"></a>
 
 **Music Demixer** is a property of **Technologies Tonal Mesh Inc.**, a Canadian company based in Montreal.
 <br>

@@ -289,7 +289,7 @@ function activateProContent(email) {
         .then(response => {
             if (!response.ok) {
               removeLoginSpinner();
-              document.getElementById('response-message').innerHTML = `Login failed. If this is a mistake, <a href="/support" target="_blank" alt="contact-link">contact us</a>.`;
+              document.getElementById('response-message').innerHTML = `Login failed. If this is a mistake, <a href="/support" target="_blank" rel="noopener noreferrer" alt="contact-link">contact us</a>.`;
               trackProductEvent('Login Failed', { email });
               throw new Error('Failed to fetch content');
             }

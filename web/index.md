@@ -177,12 +177,12 @@ header_class: index
             <br>
             ⚠️ More memory is faster,  with a higher risk of crashing❗
             <br>
-            ℹ️ Read <a href="/getting-started/2024/09/20/How-to-pick-max-memory" target="_blank" alt="memory-guide">our guide on how to pick max memory.</a>
+            ℹ️ Read <a href="/getting-started/2024/09/20/How-to-pick-max-memory" target="_blank" rel="noopener noreferrer" alt="memory-guide">our guide on how to pick max memory.</a>
         </div>
         </div>
       </div>
       <div class="cta-legend">
-        <p id="pro-cta">🔒 <a href="/pricing#subscribe-today" target="_blank">Click here to unlock higher qualities!</a></p>
+        <p id="pro-cta">🔒 <a href="/pricing#subscribe-today" target="_blank" rel="noopener noreferrer">Click here to unlock higher qualities!</a></p>
       </div>
       <div class="wizard-footer">
         <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>
@@ -225,7 +225,7 @@ header_class: index
         </div>
         This may take a while, go grab a coffee! ☕️
         <br>
-        <b>Slow?</b> Start a new job and set Advanced -> Max memory higher. Read <a href="/getting-started/2024/09/20/How-to-pick-max-memory" target="_blank" alt="memory-guide">our guide for info</a> 💻
+        <b>Slow?</b> Start a new job and set Advanced -> Max memory higher. Read <a href="/getting-started/2024/09/20/How-to-pick-max-memory" target="_blank" alt="memory-guide" rel="noopener noreferrer">our guide for info</a> 💻
       </div>
       <div class="output-container">
         <div class="output-text" id="output-progress-text">Outputs...</div>
