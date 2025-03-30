@@ -767,6 +767,10 @@ nextStep2Btn.addEventListener('click', function(e) {
         mobileWarning: mobileWarningShown ? 'shown' : 'not shown'
     });
 
+    // clear mxml sheet music buffers here, at start of new job - this is  THE place we want to do it
+    // since we are fine discarding old results and there's no more navigating back to the previous step
+    midiManager.mxmlBuffersSheetMusic = {};
+
     initModel().then(() => {
         console.log("Starting demix job");
 
@@ -1189,7 +1193,7 @@ async function processFiles(files, midiOnlyMode) {
                     midiManager.queueMidiRequest(arrayBuffer, filenameWithoutExt, false, true);
 
                     // Update the progress bar for each MIDI file
-                    waitForMidiProcessing().then(() => {
+                    midiManager.waitForMidiProcessing().then(() => {
                         completedMidiFiles++;
                         const midiProgress = (completedMidiFiles / files.length) * 100;
                         document.getElementById('midi-progress-bar').style.width = `${midiProgress}%`;
@@ -1240,6 +1244,13 @@ async function processFiles(files, midiOnlyMode) {
 
         // Clear midiBuffers after links are created
         midiManager.midiBuffers = {};
+
+        // create sheet music buffers
+        Object.keys(midiManager.mxmlBuffers).forEach(key => {
+            midiManager.mxmlBuffersSheetMusic[`${key}`] = midiManager.mxmlBuffers[key];
+        });
+        // Now clear mxmlBuffers
+        midiManager.mxmlBuffers = {};
         midiManager.queueTotal = 0;
         midiManager.queueCompleted = 0;
 
@@ -1301,7 +1312,6 @@ function packageAndZip(targetWaveforms, filename) {
 
         // copy mxmlBuffers before clearing, but prepend filename since this is a batch
         // and we need to distinguish between songs
-        // for each key in mxmlBuffers, copy it as "${filename}_${key}" into mxmlBuffersSheetMusic
          Object.keys(midiManager.mxmlBuffers).forEach(key => {
             midiManager.mxmlBuffersSheetMusic[`${filename}_${key}`] = midiManager.mxmlBuffers[key];
         });
