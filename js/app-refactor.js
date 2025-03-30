@@ -94,10 +94,6 @@ function segmentWaveform(left, right, n_segments, overlapSamples) {
 export function processSegments(workers, leftChannel, rightChannel, numSegments, originalLength, overlapSamples, filename = null) {
     let segments = segmentWaveform(leftChannel, rightChannel, numSegments, overlapSamples);
 
-    // log the number of segments, original len, etc.
-    console.log(`Processing ${numSegments} segments, original length: ${originalLength}, overlap samples: ${overlapSamples}`);
-
-
     segments.forEach((segment, index) => {
         workers[index].postMessage({
             msg: filename ? 'PROCESS_AUDIO_BATCH' : 'PROCESS_AUDIO',
@@ -368,7 +364,6 @@ export class MidiWorkerManager {
     this.workerScript = workerScript;
     this.wasmScript = wasmScript;
     this.basicpitchAudioContext = basicpitchAudioContext;
-    console.log(`Basicpitch AudioContext: ${this.basicpitchAudioContext}`);
     this.trackProductEvent = trackProductEvent;
     this.encodeWavFileFromAudioBuffer = encodeWavFileFromAudioBuffer;
 
@@ -383,6 +378,8 @@ export class MidiWorkerManager {
     this.queueTotal = 0;
     this.queueCompleted = 0;
     this.completedSongsBatchMidi = 0;
+
+    this.batchCount = 1;
   }
 
   initializeMidiWorker() {
@@ -399,10 +396,15 @@ export class MidiWorkerManager {
         document.getElementById('midi-progress-bar').style.width = `${totalProgress}%`;
       } else if (e.data.msg === 'PROGRESS_UPDATE_BATCH') {
         const prog = e.data.data;
-        const trackProgressInBatch = ((this.queueCompleted + prog) / this.queueTotal) * globalProgressIncrement;
-        const startingPointForCurrentSong = this.completedSongsBatchMidi * globalProgressIncrement;
-        const newBatchWidth = startingPointForCurrentSong + trackProgressInBatch;
-        document.getElementById('midi-progress-bar').style.width = `${newBatchWidth}%`;
+        const fileChunk = 100 / this.batchCount;
+        const startingPointForCurrentSong = this.completedSongsBatchMidi * fileChunk;
+        // get old width
+        const oldWidth = document.getElementById('midi-progress-bar').style.width;
+        const newWidth = startingPointForCurrentSong + (prog * fileChunk);
+        // only update the progress bar if the new width is greater than the old width
+        if (newWidth > parseFloat(oldWidth)) {
+          document.getElementById('midi-progress-bar').style.width = `${newWidth}%`;
+        }
       } else if (e.data.msg === 'PROCESSING_DONE') {
         this.queueCompleted += 1;
         this.handleMidiDone(e.data);
@@ -431,8 +433,9 @@ export class MidiWorkerManager {
   /**
    * Queue a new MIDI job.
    */
-  queueMidiRequest(audioBuffer, stemName, batchMode, directArrayBuffer = false) {
-    this.midiQueue.push({ audioBuffer, stemName, batchMode, directArrayBuffer });
+  queueMidiRequest(audioBuffer, stemName, batchCount, directArrayBuffer = false) {
+    this.batchCount = batchCount;
+    this.midiQueue.push({ audioBuffer, stemName, batchCount, directArrayBuffer });
     this.queueTotal += 1;
     this.processNextMidi();
   }
@@ -444,15 +447,16 @@ export class MidiWorkerManager {
     if (this.isProcessing || this.midiQueue.length === 0 || !this.midiWasmLoaded) return;
 
     this.isProcessing = true;
-    const { audioBuffer, stemName, batchMode, directArrayBuffer } = this.midiQueue.shift();
-    this.generateMidi(audioBuffer, stemName, batchMode, directArrayBuffer);
+    const { audioBuffer, stemName, batchCount, directArrayBuffer } = this.midiQueue.shift();
+    this.generateMidi(audioBuffer, stemName, batchCount, directArrayBuffer);
   }
 
   /**
    * The core function that does "encode if needed, decode to mono, postMessage to worker."
    */
-  generateMidi(inputBuffer, stemName, batchMode, directArrayBuffer = false) {
+  generateMidi(inputBuffer, stemName, batchCount, directArrayBuffer = false) {
     this.trackProductEvent('MIDI Generation Started', { stem: stemName });
+    const batchMode = batchCount > 1;
 
     const postToWorker = (monoAudioData) => {
       this.midiWorker.postMessage({
@@ -465,7 +469,6 @@ export class MidiWorkerManager {
     };
 
     if (directArrayBuffer) {
-      console.log(`Basicpitch AudioContext: ${this.basicpitchAudioContext}`);
       this.basicpitchAudioContext.decodeAudioData(inputBuffer, decodedData => {
         const leftChannel = decodedData.getChannelData(0);
         const rightChannel = (decodedData.numberOfChannels > 1) ? decodedData.getChannelData(1) : leftChannel;

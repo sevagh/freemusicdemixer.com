@@ -376,16 +376,17 @@ function initWorkers() {
                 const filename = e.data.filename;
                 processedSegments[i] = e.data.waveforms;
                 completedSegments += 1;
-                console.log(`Worker ${i} completed processing for ${filename}?? With this many completed segments: ${completedSegments}`);
                 let originalLength = e.data.originalLength;
                 if (completedSegments === NUM_WORKERS) {
                     console.log(`Completed all segments for ${filename}`);
                     if (processingMode === 'stems') {
                         incrementUsage();
                     }
+                    const totalFiles = document.getElementById('batch-upload').files.length;
+
                     const retSummed = sumSegments(processedSegments, originalLength, DEMUCS_OVERLAP_SAMPLES);
                     trackProductEvent('batch-demix-completed', {model: selectedModel, stems: selectedStems.join(',')});
-                    packageAndZip(retSummed, filename);
+                    packageAndZip(retSummed, filename, totalFiles);
                     // reset globals per-song in the batch process
                     completedSegments = 0;
 
@@ -402,7 +403,7 @@ function initWorkers() {
                     }
 
                     // if all songs are done, reset completedSongsBatch
-                    if (completedSongsBatch === document.getElementById('batch-upload').files.length) {
+                    if (completedSongsBatch === totalFiles) {
                         trackProductEvent('entire-batch-completed', {model: selectedModel, stems: selectedStems.join(',')});
                         completedSongsBatch = 0;
 
@@ -416,12 +417,11 @@ function initWorkers() {
                         // reset jobRunning flag
                         jobRunning = false;
 
-                        // re-enable UI buttons
-                        prevStep3Btn.disabled = false;
-                        nextStep3BtnNewJob.disabled = false;
-                        // only enable sheet music button if processing mode includes midi
-                        if (processingMode === 'both') {
-                            nextStep3BtnSheetMusic.disabled = false;
+                        // re-enable UI buttons only if pure-stems
+                        // if in mixed mode (any kind of midi or _only_ midi), we should wait
+                        if (processingMode === 'stems') {
+                            prevStep3Btn.disabled = false;
+                            nextStep3BtnNewJob.disabled = false;
                         }
                     }
                 }
@@ -972,7 +972,7 @@ const midiManager = new MidiWorkerManager({
 
 const midiStemNames = ['vocals', 'bass', 'melody', 'other_melody', 'piano', 'guitar'];
 
-function generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames) {
+function generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames, batchCount) {
     let stemNames = selectedStems.filter(stem => stem !== 'instrumental');
 
     // If model is free-6s or pro-cust, exclude melody from stems
@@ -991,7 +991,7 @@ function generateBuffers(targetWaveforms, selectedStems, selectedModel, processi
 
         // Queue MIDI generation if required
         if (processingMode !== 'stems' && midiStemNames.includes(name)) {
-            midiManager.queueMidiRequest(buffer, name, false);
+            midiManager.queueMidiRequest(buffer, name, batchCount);
         }
     });
 
@@ -1048,7 +1048,8 @@ function packageAndDownload(targetWaveforms) {
     }
 
     // Generate all buffers and stems using the helper function
-    const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames);
+    // batch count is 1, this is a single file
+    const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames, 1);
 
     // Wait for MIDI files to finish, then create download links
     midiManager.waitForMidiProcessing().then(() => {
@@ -1065,7 +1066,8 @@ function packageAndDownloadMidiOnly(inputArrayBuffer) {
 
     // use the stem name 'output' for the midi-only output
     // directly operating on the user input
-    midiManager.queueMidiRequest(inputArrayBuffer, "output", false, true);
+    // batch count = 1 because this is strictly a single-file case
+    midiManager.queueMidiRequest(inputArrayBuffer, "output", 1, true);
 
     // Wait for all MIDI files to complete processing, then create download links
     midiManager.waitForMidiProcessing().then(() => {
@@ -1174,7 +1176,6 @@ async function processFiles(files, midiOnlyMode) {
     if (!files || files.length === 0) return;
 
     globalProgressIncrement = 100 / files.length; // Progress increment per file
-    let completedMidiFiles = 0; // Track completed MIDI files
 
     if (midiOnlyMode && !midiManager.midiWorker) {
         midiManager.initializeMidiWorker();
@@ -1190,15 +1191,13 @@ async function processFiles(files, midiOnlyMode) {
 
                 if (midiOnlyMode) {
                     // Directly queue for MIDI processing in MIDI-only mode
-                    midiManager.queueMidiRequest(arrayBuffer, filenameWithoutExt, false, true);
+                    // batch count = files.length
+                    midiManager.queueMidiRequest(arrayBuffer, filenameWithoutExt, files.length, true);
 
                     // Update the progress bar for each MIDI file
                     midiManager.waitForMidiProcessing().then(() => {
-                        completedMidiFiles++;
-                        const midiProgress = (completedMidiFiles / files.length) * 100;
-                        document.getElementById('midi-progress-bar').style.width = `${midiProgress}%`;
-
                         // Resolve the current file’s processing
+                        midiManager.completedSongsBatchMidi += 1;
                         resolve();
                     });
                 } else {
@@ -1224,8 +1223,8 @@ async function processFiles(files, midiOnlyMode) {
         });
     }
 
-    // Reset progress tracking after all files are processed
-    if (midiOnlyMode) {
+    // Handle pure-midi here: mixed stems + midi is handled in different functions, keep reading below
+    if (processingMode === 'midi') {
         console.log("All MIDI files processed.");
 
         // Iterate over each completed MIDI file in midiBuffers and append links
@@ -1259,20 +1258,22 @@ async function processFiles(files, midiOnlyMode) {
         nextStep3BtnNewJob.disabled = false;
     }
 
+    // in the case of processingMode === 'both', that's handled in packageAndDownload or packageAndZip
+
     // for all modes that have midi, increment usage here
     if (processingMode != 'stems') {
         incrementUsage(); // Increment the weekly usage counter
     }
 }
 
-function packageAndZip(targetWaveforms, filename) {
+function packageAndZip(targetWaveforms, filename, batchCount) {
     // create the worker if needed
     if (processingMode != 'stems' && !midiManager.midiWorker) {
         midiManager.initializeMidiWorker();
     }
 
     // Generate buffers for all stems, including instrumental/melody logic
-    const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames);
+    const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames, batchCount);
 
     // Now we don't need to redo logic. Just zip all stems and MIDI files.
     const directoryName = `${filename}_stems/`;
@@ -1322,10 +1323,12 @@ function packageAndZip(targetWaveforms, filename) {
 
         if (midiManager.completedSongsBatchMidi < document.getElementById('batch-upload').files.length - 1) {
             midiManager.completedSongsBatchMidi += 1;
-            midiManager.completedSongsBatchMidi += 1;
         } else {
             midiManager.completedSongsBatchMidi = 0;
-            midiManager.completedSongsBatchMidi = 0;
+            // Enable the next buttons
+            prevStep3Btn.disabled = false;
+            nextStep3BtnSheetMusic.disabled = false;
+            nextStep3BtnNewJob.disabled = false;
         }
     });
 }
