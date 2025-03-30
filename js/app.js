@@ -487,7 +487,7 @@ function initWorkers() {
 
    for (let i = 0; i < NUM_WORKERS; i++) {
         // push new worker onto workers array
-        workers[i] = new Worker('worker.js');
+        workers[i] = new Worker('stem-worker.js');
 
         workers[i].onmessage = function(e) {
             if (e.data.msg == 'WASM_READY') {
@@ -1220,7 +1220,7 @@ let queueCompleted = 0; // Number of items processed
 let completedSongsBatchMidi = 0; // Counter for processed songs in batch mode
 
 function initializeMidiWorker() {
-    midiWorker = new Worker('basicpitch_worker.js');
+    midiWorker = new Worker('midi-worker.js');
 
     midiWorker.onmessage = function(e) {
         if (e.data.msg === 'WASM_READY') {
