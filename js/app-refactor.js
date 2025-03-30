@@ -356,3 +356,154 @@ export function openSheetMusicInNewTab(mxmlData, instrumentName) {
   // Must close the document to finish writing
   newTab.document.close();
 }
+
+export class MidiWorkerManager {
+  constructor({
+    workerScript = 'midi-worker.js',
+    wasmScript = 'basicpitch_mxml.js',
+    basicpitchAudioContext,
+    trackProductEvent,
+    encodeWavFileFromAudioBuffer,
+  }) {
+    this.workerScript = workerScript;
+    this.wasmScript = wasmScript;
+    this.basicpitchAudioContext = basicpitchAudioContext;
+    console.log(`Basicpitch AudioContext: ${this.basicpitchAudioContext}`);
+    this.trackProductEvent = trackProductEvent;
+    this.encodeWavFileFromAudioBuffer = encodeWavFileFromAudioBuffer;
+
+    // Internal state
+    this.midiQueue = [];
+    this.isProcessing = false;
+    this.midiWorker = null;
+    this.midiWasmLoaded = false;
+    this.midiBuffers = {};
+    this.mxmlBuffers = {};
+    this.mxmlBuffersSheetMusic = {};
+    this.queueTotal = 0;
+    this.queueCompleted = 0;
+    this.completedSongsBatchMidi = 0;
+  }
+
+  initializeMidiWorker() {
+    this.midiWorker = new Worker(this.workerScript);
+
+    this.midiWorker.onmessage = (e) => {
+      if (e.data.msg === 'WASM_READY') {
+        console.log('Basicpitch WASM module loaded successfully');
+        this.midiWasmLoaded = true;
+        this.processNextMidi();
+      } else if (e.data.msg === 'PROGRESS_UPDATE') {
+        const prog = e.data.data;
+        const totalProgress = ((this.queueCompleted + prog) / this.queueTotal) * 100;
+        document.getElementById('midi-progress-bar').style.width = `${totalProgress}%`;
+      } else if (e.data.msg === 'PROGRESS_UPDATE_BATCH') {
+        const prog = e.data.data;
+        const trackProgressInBatch = ((this.queueCompleted + prog) / this.queueTotal) * globalProgressIncrement;
+        const startingPointForCurrentSong = this.completedSongsBatchMidi * globalProgressIncrement;
+        const newBatchWidth = startingPointForCurrentSong + trackProgressInBatch;
+        document.getElementById('midi-progress-bar').style.width = `${newBatchWidth}%`;
+      } else if (e.data.msg === 'PROCESSING_DONE') {
+        this.queueCompleted += 1;
+        this.handleMidiDone(e.data);
+        this.isProcessing = false;
+        this.processNextMidi();
+      } else if (e.data.msg === 'PROCESSING_FAILED') {
+        console.error(`Failed to generate MIDI for ${e.data.stemName}.`);
+        this.isProcessing = false;
+        this.processNextMidi();
+      }
+    };
+
+    // Load the WASM module
+    this.midiWorker.postMessage({ msg: 'LOAD_WASM', scriptName: this.wasmScript });
+  }
+
+  handleMidiDone(data) {
+    const { midiBytes, mxmlBytes, stemName } = data;
+    const midiBlob = new Blob([midiBytes], { type: 'audio/midi' });
+    this.midiBuffers[stemName] = midiBlob;
+    this.mxmlBuffers[stemName] = mxmlBytes;
+    this.trackProductEvent('MIDI Generation Completed', { stem: stemName });
+    console.log(`MIDI generation done for ${stemName}.`);
+  }
+
+  /**
+   * Queue a new MIDI job.
+   */
+  queueMidiRequest(audioBuffer, stemName, batchMode, directArrayBuffer = false) {
+    this.midiQueue.push({ audioBuffer, stemName, batchMode, directArrayBuffer });
+    this.queueTotal += 1;
+    this.processNextMidi();
+  }
+
+  /**
+   * Process next item if we're not busy and WASM is ready.
+   */
+  processNextMidi() {
+    if (this.isProcessing || this.midiQueue.length === 0 || !this.midiWasmLoaded) return;
+
+    this.isProcessing = true;
+    const { audioBuffer, stemName, batchMode, directArrayBuffer } = this.midiQueue.shift();
+    this.generateMidi(audioBuffer, stemName, batchMode, directArrayBuffer);
+  }
+
+  /**
+   * The core function that does "encode if needed, decode to mono, postMessage to worker."
+   */
+  generateMidi(inputBuffer, stemName, batchMode, directArrayBuffer = false) {
+    this.trackProductEvent('MIDI Generation Started', { stem: stemName });
+
+    const postToWorker = (monoAudioData) => {
+      this.midiWorker.postMessage({
+        msg: 'PROCESS_AUDIO',
+        inputData: monoAudioData.buffer,
+        length: monoAudioData.length,
+        stemName,
+        batchMode,
+      }, [monoAudioData.buffer]); // Transfer ownership
+    };
+
+    if (directArrayBuffer) {
+      console.log(`Basicpitch AudioContext: ${this.basicpitchAudioContext}`);
+      this.basicpitchAudioContext.decodeAudioData(inputBuffer, decodedData => {
+        const leftChannel = decodedData.getChannelData(0);
+        const rightChannel = (decodedData.numberOfChannels > 1) ? decodedData.getChannelData(1) : leftChannel;
+        const monoAudioData = new Float32Array(leftChannel.length);
+
+        for (let i = 0; i < leftChannel.length; i++) {
+          monoAudioData[i] = (leftChannel[i] + rightChannel[i]) / 2.0;
+        }
+        postToWorker(monoAudioData);
+      });
+    } else {
+      const wavArrayBuffer = this.encodeWavFileFromAudioBuffer(inputBuffer, 0);
+      this.basicpitchAudioContext.decodeAudioData(wavArrayBuffer, decodedData => {
+        const leftChannel = decodedData.getChannelData(0);
+        const rightChannel = (decodedData.numberOfChannels > 1) ? decodedData.getChannelData(1) : leftChannel;
+        const monoAudioData = new Float32Array(leftChannel.length);
+
+        for (let i = 0; i < leftChannel.length; i++) {
+          monoAudioData[i] = (leftChannel[i] + rightChannel[i]) / 2.0;
+        }
+        postToWorker(monoAudioData);
+      });
+    }
+  }
+
+  /**
+   * Wait for entire MIDI queue to be processed (i.e. no pending items or current processing).
+   */
+  waitForMidiProcessing() {
+    return new Promise(resolve => {
+      const checkQueueCompletion = () => {
+        if (this.midiQueue.length === 0 && !this.isProcessing) {
+          resolve(); // All MIDI files are processed
+        } else {
+          setTimeout(checkQueueCompletion, 100);
+        }
+      };
+      checkQueueCompletion();
+    });
+  }
+}

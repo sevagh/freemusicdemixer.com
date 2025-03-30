@@ -4,7 +4,8 @@ import {
     sumSegments,
     fetchAndCacheFiles,
     computeModelAndStems,
-    openSheetMusicInNewTab
+    openSheetMusicInNewTab,
+    MidiWorkerManager
 } from './app-refactor.js';
 
 //import createFFmpegCore from './ffmpeg-core.js';
@@ -122,10 +123,7 @@ const DEMUCS_SAMPLE_RATE = 44100;
 const DEMUCS_OVERLAP_S = 0.75;
 const DEMUCS_OVERLAP_SAMPLES = Math.floor(DEMUCS_SAMPLE_RATE * DEMUCS_OVERLAP_S);
 
-const BASICPITCH_SAMPLE_RATE = 22050;
-
 const tierNames = {0: 'Free', 2: 'Pro'};
-
 
 const fileInput = document.getElementById('audio-upload');
 const folderInput = document.getElementById('batch-upload');
@@ -151,23 +149,12 @@ const prevStep4Btn = document.getElementById('prev-step-4');
 
 const usageLimits = document.getElementById('usage-limits');
 
-let demucsAudioContext;
-
-function getDemucsAudioContext() {
-    if (!demucsAudioContext) {
-        demucsAudioContext = new (window.AudioContext || window.webkitAudioContext)({sampleRate: DEMUCS_SAMPLE_RATE});
-    }
-    return demucsAudioContext;
+function getAudioContext(sampleRate) {
+    return new (window.AudioContext || window.webkitAudioContext)({sampleRate: sampleRate});
 }
 
-let basicpitchAudioContext;
-
-function getBasicpitchAudioContext() {
-    if (!basicpitchAudioContext) {
-        basicpitchAudioContext = new (window.AudioContext || window.webkitAudioContext)({sampleRate: BASICPITCH_SAMPLE_RATE});
-    }
-    return basicpitchAudioContext;
-}
+const demucsAudioContext = getAudioContext(44100);
+const basicpitchAudioContext = getAudioContext(22050);
 
 // Global toggle state
 let wizardVisible = false;
@@ -322,13 +309,11 @@ function updateModelBasedOnSelection() {
 
 // Event listener for user interaction
 document.addEventListener('click', function() {
-    let context1 = getDemucsAudioContext();
-    if (context1.state === 'suspended') {
-        context1.resume();
+    if (demucsAudioContext.state === 'suspended') {
+        demucsAudioContext.resume();
     }
-    let context2 = getBasicpitchAudioContext();
-    if (context2.state === 'suspended') {
-        context2.resume();
+    if (basicpitchAudioContext.state === 'suspended') {
+        basicpitchAudioContext.resume();
     }
 });
 
@@ -930,14 +915,14 @@ nextStep3BtnSheetMusic.addEventListener('click', function() {
 
     // (Re)Generate the instrument links (or do this once if you prefer)
     instrumentLinksContainer.innerHTML = "";
-    Object.keys(mxmlBuffersSheetMusic).forEach((instrumentName) => {
+    Object.keys(midiManager.mxmlBuffersSheetMusic).forEach((instrumentName) => {
       const link = document.createElement("a");
       link.href = "#";
       link.textContent = `Open new sheet music tab for: ${instrumentName}`;
       link.addEventListener("click", (e) => {
         e.preventDefault();
         trackProductEvent('Opened Sheet Music', { instrumentName });
-        openSheetMusicInNewTab(mxmlBuffersSheetMusic[instrumentName], instrumentName);
+        openSheetMusicInNewTab(midiManager.mxmlBuffersSheetMusic[instrumentName], instrumentName);
       });
       instrumentLinksContainer.appendChild(link);
       instrumentLinksContainer.appendChild(document.createElement("br"));
@@ -972,128 +957,14 @@ nextStep4Btn.addEventListener('click', function() {
     step1.style.display = 'block';
 });
 
-// MIDI globals
-const midiQueue = [];
-let isProcessing = false;
-let midiWorker;
-let midiWasmLoaded = false; // Flag to check if WASM is loaded
-let midiBuffers = {}; // Store MIDI data by stem name
-let mxmlBuffers = {}; // Store MusicXML data by stem name
-let mxmlBuffersSheetMusic = {}; // Store MusicXML data for sheet music
-let queueTotal = 0; // Total number of items in the queue
-let queueCompleted = 0; // Number of items processed
-let completedSongsBatchMidi = 0; // Counter for processed songs in batch mode
-
-function initializeMidiWorker() {
-    midiWorker = new Worker('midi-worker.js');
-
-    midiWorker.onmessage = function(e) {
-        if (e.data.msg === 'WASM_READY') {
-            console.log('Basicpitch WASM module loaded successfully');
-            midiWasmLoaded = true;
-            processNextMidi(); // Start processing the queue
-        } else if (e.data.msg === 'PROGRESS_UPDATE') {
-            let prog = e.data.data; // `prog` represents the current track's progress from 0 to 1
-            const totalProgress = ((queueCompleted + prog) / queueTotal) * 100;
-            // log each aspect of the progress for debugging: prog, totalProgress, queueCompleted, queueTotal
-            document.getElementById('midi-progress-bar').style.width = `${totalProgress}%`;
-        } else if (e.data.msg === 'PROGRESS_UPDATE_BATCH') {
-            let prog = e.data.data;
-            const trackProgressInBatch = ((queueCompleted + prog) / queueTotal) * globalProgressIncrement;
-            const startingPointForCurrentSong = completedSongsBatchMidi * globalProgressIncrement;
-            const newBatchWidth = startingPointForCurrentSong + trackProgressInBatch;
-            document.getElementById('midi-progress-bar').style.width = `${newBatchWidth}%`;
-        } else if (e.data.msg === 'PROCESSING_DONE') {
-            queueCompleted += 1;
-            handleMidiDone(e.data);
-            isProcessing = false;
-            processNextMidi();
-        } else if (e.data.msg === 'PROCESSING_FAILED') {
-            console.error(`Failed to generate MIDI for ${e.data.stemName}.`);
-            isProcessing = false;
-            processNextMidi();
-        }
-    };
-
-    // Load the WASM module when the worker is created
-    midiWorker.postMessage({ msg: 'LOAD_WASM', scriptName: 'basicpitch_mxml.js' });
-}
-
-function handleMidiDone(data) {
-    const { midiBytes, mxmlBytes, stemName } = data;
-    const midiBlob = new Blob([midiBytes], { type: 'audio/midi' });
-    midiBuffers[stemName] = midiBlob; // Store the MIDI blob by stem name
-    mxmlBuffers[stemName] = mxmlBytes; // Store the MXML bytes by stem name
-    trackProductEvent('MIDI Generation Completed', { stem: stemName });
-    console.log(`MIDI generation done for ${stemName}.`);
-}
-
-// Add a new function to queue the request
-function queueMidiRequest(audioBuffer, stemName, batchMode, directArrayBuffer = false) {
-    midiQueue.push({ audioBuffer, stemName, batchMode, directArrayBuffer });
-    queueTotal += 1;
-    processNextMidi();
-}
-
-// Process the next item in the queue if not currently processing
-function processNextMidi() {
-    if (isProcessing || midiQueue.length === 0 || !midiWasmLoaded) return;
-
-    isProcessing = true;
-    const { audioBuffer, stemName, batchMode, directArrayBuffer } = midiQueue.shift();
-
-    // Call generateMidi with the next item in the queue
-    generateMidi(audioBuffer, stemName, batchMode, directArrayBuffer);
-}
-
-// Function to handle MIDI generation
-function generateMidi(inputBuffer, stemName, batchMode, directArrayBuffer = false) {
-    trackProductEvent('MIDI Generation Started', { stem: stemName });
-
-    if (directArrayBuffer) {
-        // Decode directly from arrayBuffer in MIDI-only mode
-        basicpitchAudioContext.decodeAudioData(inputBuffer, async (decodedData) => {
-            const leftChannel = decodedData.getChannelData(0);
-            const rightChannel = decodedData.numberOfChannels > 1 ? decodedData.getChannelData(1) : leftChannel;
-            const monoAudioData = new Float32Array(leftChannel.length);
-
-            // Mix stereo to mono by averaging channels
-            for (let i = 0; i < leftChannel.length; i++) {
-                monoAudioData[i] = (leftChannel[i] + rightChannel[i]) / 2.0;
-            }
-
-            // Send to the worker for MIDI processing
-            midiWorker.postMessage({
-                msg: 'PROCESS_AUDIO',
-                inputData: monoAudioData.buffer,
-                length: monoAudioData.length,
-                stemName: stemName,
-                batchMode: batchMode
-            }, [monoAudioData.buffer]); // Transfer buffer ownership
-        });
-    } else {
-        // Existing behavior for audioBuffer
-        const wavArrayBuffer = encodeWavFileFromAudioBuffer(inputBuffer, 0);
-
-        basicpitchAudioContext.decodeAudioData(wavArrayBuffer, async (decodedData) => {
-            const leftChannel = decodedData.getChannelData(0);
-            const rightChannel = decodedData.numberOfChannels > 1 ? decodedData.getChannelData(1) : leftChannel;
-            const monoAudioData = new Float32Array(leftChannel.length);
-
-            for (let i = 0; i < leftChannel.length; i++) {
-                monoAudioData[i] = (leftChannel[i] + rightChannel[i]) / 2.0;
-            }
-
-            midiWorker.postMessage({
-                msg: 'PROCESS_AUDIO',
-                inputData: monoAudioData.buffer,
-                length: monoAudioData.length,
-                stemName: stemName,
-                batchMode: batchMode
-            }, [monoAudioData.buffer]); // Transfer buffer ownership
-        });
-    }
-}
+// Now create the manager
+const midiManager = new MidiWorkerManager({
+    workerScript: 'midi-worker.js',
+    wasmScript: 'basicpitch_mxml.js',
+    basicpitchAudioContext,
+    trackProductEvent,
+    encodeWavFileFromAudioBuffer
+});
 
 const midiStemNames = ['vocals', 'bass', 'melody', 'other_melody', 'piano', 'guitar'];
 
@@ -1116,7 +987,7 @@ function generateBuffers(targetWaveforms, selectedStems, selectedModel, processi
 
         // Queue MIDI generation if required
         if (processingMode !== 'stems' && midiStemNames.includes(name)) {
-            queueMidiRequest(buffer, name, false);
+            midiManager.queueMidiRequest(buffer, name, false);
         }
     });
 
@@ -1168,42 +1039,33 @@ function generateBuffers(targetWaveforms, selectedStems, selectedModel, processi
 
 function packageAndDownload(targetWaveforms) {
     // create the worker if needed
-    if (processingMode != 'stems' && !midiWorker) {
-        initializeMidiWorker();
+    if (processingMode != 'stems' && !midiManager.midiWorker) {
+        midiManager.initializeMidiWorker();
     }
 
     // Generate all buffers and stems using the helper function
     const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames);
 
     // Wait for MIDI files to finish, then create download links
-    waitForMidiProcessing().then(() => createDownloadLinks(buffers, false));
+    midiManager.waitForMidiProcessing().then(() => {
+        createDownloadLinks(buffers, false);
+    });
 }
 
 function packageAndDownloadMidiOnly(inputArrayBuffer) {
     console.log(`Processing audio data in MIDI-only mode`);
     // create the worker
-    if (processingMode != 'stems' && !midiWorker) {
-        initializeMidiWorker();
+    if (processingMode != 'stems' && !midiManager.midiWorker) {
+        midiManager.initializeMidiWorker();
     }
 
     // use the stem name 'output' for the midi-only output
     // directly operating on the user input
-    queueMidiRequest(inputArrayBuffer, "output", false, true);
+    midiManager.queueMidiRequest(inputArrayBuffer, "output", false, true);
 
     // Wait for all MIDI files to complete processing, then create download links
-    waitForMidiProcessing().then(() => createDownloadLinks(null, true));
-}
-
-function waitForMidiProcessing() {
-    return new Promise(resolve => {
-        const checkQueueCompletion = () => {
-            if (midiQueue.length === 0 && !isProcessing) {
-                resolve(); // All MIDI files are processed
-            } else {
-                setTimeout(checkQueueCompletion, 100); // Check again in 100ms
-            }
-        };
-        checkQueueCompletion();
+    midiManager.waitForMidiProcessing().then(() => {
+        createDownloadLinks(null, true);
     });
 }
 
@@ -1231,12 +1093,11 @@ function createDownloadLinks(buffers, midiOnlyMode) {
             downloadLinksDiv.appendChild(wavLink);
 
             // If MIDI data exists for this stem, we queue it up
-            if (midiBuffers[stemName]) {
-                // Add a task to handle MIDI arrayBuffer conversion
-                tasks.push(midiBuffers[stemName].arrayBuffer().then(function(arrBuf) {
+            if (midiManager.midiBuffers[stemName]) {
+                tasks.push(midiManager.midiBuffers[stemName].arrayBuffer().then(arrBuf => {
                     zipFiles[stemName + ".mid"] = new Uint8Array(arrBuf);
 
-                    var midiUrl = URL.createObjectURL(midiBuffers[stemName]);
+                    const midiUrl = URL.createObjectURL(midiManager.midiBuffers[stemName]);
                     var midiLink = document.createElement('a');
                     midiLink.href = midiUrl;
                     midiLink.textContent = stemName + ".mid";
@@ -1247,11 +1108,11 @@ function createDownloadLinks(buffers, midiOnlyMode) {
         });
     } else {
         // MIDI-only mode
-        Object.keys(midiBuffers).forEach(function(stemName) {
-            tasks.push(midiBuffers[stemName].arrayBuffer().then(function(arrBuf) {
+        Object.keys(midiManager.midiBuffers).forEach(stemName => {
+            tasks.push(midiManager.midiBuffers[stemName].arrayBuffer().then(arrBuf => {
                 zipFiles[stemName + ".mid"] = new Uint8Array(arrBuf);
 
-                var midiUrl = URL.createObjectURL(midiBuffers[stemName]);
+                const midiUrl = URL.createObjectURL(midiManager.midiBuffers[stemName]);
                 var midiLink = document.createElement('a');
                 midiLink.href = midiUrl;
                 midiLink.textContent = stemName + ".mid";
@@ -1285,13 +1146,11 @@ function createDownloadLinks(buffers, midiOnlyMode) {
         }
 
         // Clear MIDI buffers after links are created
-        midiBuffers = {};
-        // copy mxmlBuffers before clearing
-        mxmlBuffersSheetMusic = mxmlBuffers;
-
-        mxmlBuffers = {};
-        queueTotal = 0; // Reset the total queue items
-        queueCompleted = 0; // Reset the current queue item
+        midiManager.midiBuffers = {};
+        midiManager.mxmlBuffersSheetMusic = midiManager.mxmlBuffers;
+        midiManager.mxmlBuffers = {};
+        midiManager.queueTotal = 0;
+        midiManager.queueCompleted = 0;
 
         // If in a mode that includes MIDI, increment usage
         if (processingMode != 'stems') {
@@ -1313,8 +1172,8 @@ async function processFiles(files, midiOnlyMode) {
     globalProgressIncrement = 100 / files.length; // Progress increment per file
     let completedMidiFiles = 0; // Track completed MIDI files
 
-    if (midiOnlyMode && !midiWorker) {
-        initializeMidiWorker();
+    if (midiOnlyMode && !midiManager.midiWorker) {
+        midiManager.initializeMidiWorker();
     }
 
     for (const file of files) {
@@ -1327,7 +1186,7 @@ async function processFiles(files, midiOnlyMode) {
 
                 if (midiOnlyMode) {
                     // Directly queue for MIDI processing in MIDI-only mode
-                    queueMidiRequest(arrayBuffer, filenameWithoutExt, false, true);
+                    midiManager.queueMidiRequest(arrayBuffer, filenameWithoutExt, false, true);
 
                     // Update the progress bar for each MIDI file
                     waitForMidiProcessing().then(() => {
@@ -1366,8 +1225,8 @@ async function processFiles(files, midiOnlyMode) {
         console.log("All MIDI files processed.");
 
         // Iterate over each completed MIDI file in midiBuffers and append links
-        for (const filename in midiBuffers) {
-            const midiBlob = midiBuffers[filename];
+        for (const filename in midiManager.midiBuffers) {
+            const midiBlob = midiManager.midiBuffers[filename];
             if (midiBlob) {
                 const midiUrl = URL.createObjectURL(midiBlob);
                 const link = document.createElement('a');
@@ -1380,9 +1239,9 @@ async function processFiles(files, midiOnlyMode) {
         }
 
         // Clear midiBuffers after links are created
-        midiBuffers = {};
-        queueTotal = 0; // Reset the total queue items
-        queueCompleted = 0; // Reset the current queue item
+        midiManager.midiBuffers = {};
+        midiManager.queueTotal = 0;
+        midiManager.queueCompleted = 0;
 
         prevStep3Btn.disabled = false;
         nextStep3BtnSheetMusic.disabled = false;
@@ -1397,8 +1256,8 @@ async function processFiles(files, midiOnlyMode) {
 
 function packageAndZip(targetWaveforms, filename) {
     // create the worker if needed
-    if (processingMode != 'stems' && !midiWorker) {
-        initializeMidiWorker();
+    if (processingMode != 'stems' && !midiManager.midiWorker) {
+        midiManager.initializeMidiWorker();
     }
 
     // Generate buffers for all stems, including instrumental/melody logic
@@ -1415,11 +1274,11 @@ function packageAndZip(targetWaveforms, filename) {
     });
 
     // Wait for MIDI
-    waitForMidiProcessing().then(() => {
+    midiManager.waitForMidiProcessing().then(() => {
         // Add MIDI files to zipFiles once processing is complete
         return Promise.all(
-            Object.keys(midiBuffers).map(stemName =>
-                midiBuffers[stemName].arrayBuffer().then(arrayBuffer => {
+            Object.keys(midiManager.midiBuffers).map(stemName =>
+                midiManager.midiBuffers[stemName].arrayBuffer().then(arrayBuffer => {
                     zipFiles[`${directoryName}${stemName}.mid`] = new Uint8Array(arrayBuffer);
                 })
             )
@@ -1438,24 +1297,25 @@ function packageAndZip(targetWaveforms, filename) {
         document.getElementById('output-links').appendChild(zipLink);
 
         // Clear midiBuffers after zip creation
-        midiBuffers = {};
+        midiManager.midiBuffers = {};
 
         // copy mxmlBuffers before clearing, but prepend filename since this is a batch
         // and we need to distinguish between songs
         // for each key in mxmlBuffers, copy it as "${filename}_${key}" into mxmlBuffersSheetMusic
-        Object.keys(mxmlBuffers).forEach(key => {
-            mxmlBuffersSheetMusic[`${filename}_${key}`] = mxmlBuffers[key];
+         Object.keys(midiManager.mxmlBuffers).forEach(key => {
+            midiManager.mxmlBuffersSheetMusic[`${filename}_${key}`] = midiManager.mxmlBuffers[key];
         });
         // Now clear mxmlBuffers
-        mxmlBuffers = {};
+        midiManager.mxmlBuffers = {};
+        midiManager.queueTotal = 0;
+        midiManager.queueCompleted = 0;
 
-        queueTotal = 0; // Reset
-        queueCompleted = 0; // Reset
-
-        if (completedSongsBatchMidi < document.getElementById('batch-upload').files.length - 1) {
-            completedSongsBatchMidi += 1;
+        if (midiManager.completedSongsBatchMidi < document.getElementById('batch-upload').files.length - 1) {
+            midiManager.completedSongsBatchMidi += 1;
+            midiManager.completedSongsBatchMidi += 1;
         } else {
-            completedSongsBatchMidi = 0;
+            midiManager.completedSongsBatchMidi = 0;
+            midiManager.completedSongsBatchMidi = 0;
         }
     });
 }
