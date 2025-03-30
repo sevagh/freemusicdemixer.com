@@ -89,10 +89,6 @@ onmessage = async function(e) {
         console.log("Model name is:", modelName);
         console.log("Selected stems are:", selectedStems);
 
-        // log the length of the left and right channels
-        console.log("Left channel length:", leftChannel.length);
-        console.log("Right channel length:", rightChannel.length);
-
         // modelBuffers is already an array of array buffers sent from the main thread
         // Directly prepare data for initialization
         const modelDataArray = modelBuffers.map(buffer => new Uint8Array(buffer));
