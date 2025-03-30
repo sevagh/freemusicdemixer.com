@@ -1,4 +1,5 @@
 import { encodeWavFileFromAudioBuffer } from './WavFileEncoder.js';
+import { processSegments } from './app_refactor.js';
 
 //import createFFmpegCore from './ffmpeg-core.js';
 //
@@ -503,47 +504,6 @@ function updateModelBasedOnSelection() {
     });
 }
 
-function segmentWaveform(left, right, n_segments) {
-    const totalLength = left.length;
-    const segmentLength = Math.ceil(totalLength / n_segments);
-    const segments = [];
-
-    for (let i = 0; i < n_segments; i++) {
-        const start = i * segmentLength;
-        const end = Math.min(totalLength, start + segmentLength);
-        const leftSegment = new Float32Array(end - start + 2 * DEMUCS_OVERLAP_SAMPLES);
-        const rightSegment = new Float32Array(end - start + 2 * DEMUCS_OVERLAP_SAMPLES);
-
-        // Overlap-padding for the left and right channels
-        // For the first segment, no padding at the start
-        if (i === 0) {
-            leftSegment.fill(left[0], 0, DEMUCS_OVERLAP_SAMPLES);
-            rightSegment.fill(right[0], 0, DEMUCS_OVERLAP_SAMPLES);
-        } else {
-            leftSegment.set(left.slice(start - DEMUCS_OVERLAP_SAMPLES, start), 0);
-            rightSegment.set(right.slice(start - DEMUCS_OVERLAP_SAMPLES, start), 0);
-        }
-
-        // For the last segment, no padding at the end
-        if (i === n_segments - 1) {
-            const remainingSamples = totalLength - end;
-            leftSegment.set(left.slice(end, end + Math.min(DEMUCS_OVERLAP_SAMPLES, remainingSamples)), end - start + DEMUCS_OVERLAP_SAMPLES);
-            rightSegment.set(right.slice(end, end + Math.min(DEMUCS_OVERLAP_SAMPLES, remainingSamples)), end - start + DEMUCS_OVERLAP_SAMPLES);
-        } else {
-            leftSegment.set(left.slice(end, end + DEMUCS_OVERLAP_SAMPLES), end - start + DEMUCS_OVERLAP_SAMPLES);
-            rightSegment.set(right.slice(end, end + DEMUCS_OVERLAP_SAMPLES), end - start + DEMUCS_OVERLAP_SAMPLES);
-        }
-
-        // Assign the original segment data
-        leftSegment.set(left.slice(start, end), DEMUCS_OVERLAP_SAMPLES);
-        rightSegment.set(right.slice(start, end), DEMUCS_OVERLAP_SAMPLES);
-
-        segments.push([leftSegment, rightSegment]);
-    }
-
-    return segments;
-}
-
 function sumSegments(segments, desiredLength) {
     const totalLength = desiredLength;
     const segmentLengthWithPadding = segments[0][0].length;
@@ -665,8 +625,10 @@ function initWorkers() {
                 const filename = e.data.filename;
                 processedSegments[i] = e.data.waveforms;
                 completedSegments += 1;
+                console.log(`Worker ${i} completed processing for ${filename}?? With this many completed segments: ${completedSegments}`);
                 let originalLength = e.data.originalLength;
                 if (completedSegments === NUM_WORKERS) {
+                    console.log(`Completed all segments for ${filename}`);
                     if (processingMode === 'stems') {
                         incrementUsage();
                     }
@@ -702,6 +664,14 @@ function initWorkers() {
 
                         // reset jobRunning flag
                         jobRunning = false;
+
+                        // re-enable UI buttons
+                        prevStep3Btn.disabled = false;
+                        nextStep3BtnNewJob.disabled = false;
+                        // only enable sheet music button if processing mode includes midi
+                        if (processingMode === 'both') {
+                            nextStep3BtnSheetMusic.disabled = false;
+                        }
                     }
                 }
             } else if (e.data.msg === 'WASM_ERROR') {
@@ -763,21 +733,6 @@ async function initModel() {
         removeStep2Spinner();
     }
 }
-
-function processSegments(leftChannel, rightChannel, numSegments, originalLength, filename = null) {
-    let segments = segmentWaveform(leftChannel, rightChannel, numSegments);
-
-    segments.forEach((segment, index) => {
-        workers[index].postMessage({
-            msg: filename ? 'PROCESS_AUDIO_BATCH' : 'PROCESS_AUDIO',
-            leftChannel: segment[0],
-            rightChannel: segment[1],
-            originalLength,
-            ...(filename && { filename })
-        });
-    });
-}
-
 function initializeInputState() {
     if (fileInput.files.length > 0) {
         isSingleMode = true;
@@ -1034,8 +989,9 @@ nextStep2Btn.addEventListener('click', function(e) {
 
     // Check if mobile warning container exists and is currently hidden
     const mobileWarning = document.getElementById('mobile-warning-container');
+    const mobileWarningShown = mobileWarning && getComputedStyle(mobileWarning).display !== 'none';
 
-    if (mobileWarning && getComputedStyle(mobileWarning).display !== 'none') {
+    if (mobileWarningShown) {
         // Mobile warning is visible, meaning we are in mobile-warning scenario
         const proceed = confirm("⚠️ You're on a 📱 small screen. Running the demixer might be slow or crash. Are you sure you want to continue?");
         if (!proceed) {
@@ -1056,7 +1012,7 @@ nextStep2Btn.addEventListener('click', function(e) {
         quality: getSelectedQuality(),
         memory: getSelectedMemory(),
         fileCount: getSelectedFileCount(),
-        mobileWarning: mobileWarning ? 'shown' : 'not shown'
+        mobileWarning: mobileWarningShown ? 'shown' : 'not shown'
     });
 
     initModel().then(() => {
@@ -1130,7 +1086,7 @@ nextStep2Btn.addEventListener('click', function(e) {
                         // set original length of track
                         let originalLength = leftChannel.length;
 
-                        processSegments(leftChannel, rightChannel, NUM_WORKERS, originalLength);
+                        processSegments(workers, leftChannel, rightChannel, NUM_WORKERS, DEMUCS_OVERLAP_SAMPLES, originalLength);
                     });
                 } else {
                     console.log("Converting input file to MIDI directly");
@@ -1725,7 +1681,7 @@ async function processFiles(files, midiOnlyMode) {
                         }
 
                         let originalLength = leftChannel.length;
-                        processSegments(leftChannel, rightChannel, NUM_WORKERS, originalLength, filenameWithoutExt);
+                        processSegments(workers, leftChannel, rightChannel, NUM_WORKERS, originalLength, DEMUCS_OVERLAP_SAMPLES, filenameWithoutExt);
                         batchNextFileResolveCallback = resolve;
                     });
                 }
@@ -1813,6 +1769,16 @@ function packageAndZip(targetWaveforms, filename) {
 
         // Clear midiBuffers after zip creation
         midiBuffers = {};
+
+        // copy mxmlBuffers before clearing, but prepend filename since this is a batch
+        // and we need to distinguish between songs
+        // for each key in mxmlBuffers, copy it as "${filename}_${key}" into mxmlBuffersSheetMusic
+        Object.keys(mxmlBuffers).forEach(key => {
+            mxmlBuffersSheetMusic[`${filename}_${key}`] = mxmlBuffers[key];
+        });
+        // Now clear mxmlBuffers
+        mxmlBuffers = {};
+
         queueTotal = 0; // Reset
         queueCompleted = 0; // Reset
 
@@ -1821,10 +1787,6 @@ function packageAndZip(targetWaveforms, filename) {
         } else {
             completedSongsBatchMidi = 0;
         }
-
-        prevStep3Btn.disabled = false;
-        nextStep3BtnSheetMusic.disabled = false;
-        nextStep3BtnNewJob.disabled = false;
     });
 }
 
