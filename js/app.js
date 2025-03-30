@@ -2,7 +2,8 @@ import { encodeWavFileFromAudioBuffer } from './WavFileEncoder.js';
 import {
     processSegments,
     sumSegments,
-    fetchAndCacheFiles
+    fetchAndCacheFiles,
+    computeModelAndStems
 } from './app_refactor.js';
 
 //import createFFmpegCore from './ffmpeg-core.js';
@@ -41,67 +42,67 @@ componentsCheckboxes.forEach((checkbox) => {
 let processingMode = 'stems';
 
 document.getElementById('processingPickerForm').addEventListener('change', (event) => {
-  const isMidiOnly = document.getElementById('midi').checked;
-  const isBoth = document.getElementById('both').checked;
+    const isMidiOnly = document.getElementById('midi').checked;
+    const isBoth = document.getElementById('both').checked;
 
-  // if the user is logged in, activate tier UIs
-  const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
-  let userTier = 0;
-  if (loggedIn) {
-      userTier = parseInt(sessionStorage.getItem('userTier'));
-      if ((userTier === -1) || isNaN(userTier)) {
-          userTier = 0;
-      }
-  }
+    // if the user is logged in, activate tier UIs
+    const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
+    let userTier = 0;
+    if (loggedIn) {
+        userTier = parseInt(sessionStorage.getItem('userTier'));
+        if ((userTier === -1) || isNaN(userTier)) {
+            userTier = 0;
+        }
+    }
 
-  // if userTier is 0, keep default/medium/high quality radio buttons disabled
-  if (userTier === 0) {
-    ['vocals', 'drums', 'bass', 'melody', 'instrumental', 'piano', 'guitar', 'other_melody', 'default-quality'].forEach(element => {
-        document.getElementById(element).disabled = isMidiOnly;
-    });
-  } else if (userTier === 2) {
-    // iterate and disable all quality radio buttons
-    qualityRadios.forEach(radio => radio.disabled = isMidiOnly);
-    // also iterate and disable all component checkboxes
-    componentsCheckboxes.forEach(checkbox => checkbox.disabled = isMidiOnly);
-  }
+    // if userTier is 0, keep default/medium/high quality radio buttons disabled
+    if (userTier === 0) {
+      ['vocals', 'drums', 'bass', 'melody', 'instrumental', 'piano', 'guitar', 'other_melody', 'default-quality'].forEach(element => {
+          document.getElementById(element).disabled = isMidiOnly;
+      });
+    } else if (userTier === 2) {
+      // iterate and disable all quality radio buttons
+      qualityRadios.forEach(radio => radio.disabled = isMidiOnly);
+      // also iterate and disable all component checkboxes
+      componentsCheckboxes.forEach(checkbox => checkbox.disabled = isMidiOnly);
+    }
 
-  // also disable the "advancedSettingsToggle" and radios
-  memoryRadios.forEach(radio => radio.disabled = isMidiOnly);
+    // also disable the "advancedSettingsToggle" and radios
+    memoryRadios.forEach(radio => radio.disabled = isMidiOnly);
 
-  // Hide and disable advanced settings toggle button
-  const advancedSettings = document.getElementById('advancedSettings');
+    // Hide and disable advanced settings toggle button
+    const advancedSettings = document.getElementById('advancedSettings');
 
-  if (isMidiOnly) {
-    // Hide and disable the advanced settings dropdown
-    advancedSettings.style.display = 'none'; // Ensure advanced settings are hidden
-  }
+    if (isMidiOnly) {
+      // Hide and disable the advanced settings dropdown
+      advancedSettings.style.display = 'none'; // Ensure advanced settings are hidden
+    }
 
-  let inferenceStyle = '';
-  let midiStyle = '';
-  if (isMidiOnly) {
-    processingMode = 'midi';
-    inferenceStyle = 'none';
-    midiStyle = 'block';
-  } else if (isBoth) {
-    processingMode = 'both';
-    inferenceStyle = 'block';
-    midiStyle = 'block';
-  } else {
-    processingMode = 'stems';
-    inferenceStyle = 'block';
-    midiStyle = 'none';
-  }
+    let inferenceStyle = '';
+    let midiStyle = '';
+    if (isMidiOnly) {
+      processingMode = 'midi';
+      inferenceStyle = 'none';
+      midiStyle = 'block';
+    } else if (isBoth) {
+      processingMode = 'both';
+      inferenceStyle = 'block';
+      midiStyle = 'block';
+    } else {
+      processingMode = 'stems';
+      inferenceStyle = 'block';
+      midiStyle = 'none';
+    }
 
-  document.getElementById('inference-progress-bar').style.display = inferenceStyle;
-  document.getElementById('inference-progress-text').style.display = inferenceStyle;
-  document.getElementById('inference-progress-bar-outer').style.display = inferenceStyle;
-  document.getElementById('midi-progress-bar').style.display = midiStyle;
-  document.getElementById('midi-progress-text').style.display = midiStyle;
-  document.getElementById('midi-progress-bar-outer').style.display = midiStyle;
+    document.getElementById('inference-progress-bar').style.display = inferenceStyle;
+    document.getElementById('inference-progress-text').style.display = inferenceStyle;
+    document.getElementById('inference-progress-bar-outer').style.display = inferenceStyle;
+    document.getElementById('midi-progress-bar').style.display = midiStyle;
+    document.getElementById('midi-progress-text').style.display = midiStyle;
+    document.getElementById('midi-progress-bar-outer').style.display = midiStyle;
 
-  console.log("Setting processing mode to:", processingMode);
-  updateModelBasedOnSelection();
+    console.log("Setting processing mode to:", processingMode);
+    updateModelBasedOnSelection();
 });
 
 let NUM_WORKERS = 4;
@@ -304,159 +305,18 @@ window.addEventListener("beforeunload", (event) => {
 function updateModelBasedOnSelection() {
     console.log('Updating model based on selection');
 
-    if (processingMode === 'midi') {
-        // a no-op/passthrough demixing model for MIDI-only processing
-        selectedModel = 'basicpitch';
-        return;
-    }
-
-    const selectedFeatures = Array.from(componentsCheckboxes)
-    .filter(checkbox => checkbox.checked)
-    .map(checkbox => checkbox.value);
-
     const selectedQuality = document.querySelector('input[type="radio"][name="quality"]:checked').value;
 
-    let selectedModelLocal = "4-SOURCE (FREE)"; // Default model
+    const selectedFeatures = Array.from(componentsCheckboxes)
+      .filter(checkbox => checkbox.checked)
+      .map(checkbox => checkbox.value);
 
-    // Rule 1: If the sources contain piano and/or guitar
-    if (selectedFeatures.includes("piano") || selectedFeatures.includes("guitar") || selectedFeatures.includes("other_melody")) {
-        if (selectedQuality === "default") {
-            selectedModelLocal = "6-SOURCE (PRO)";
-        } else if (selectedQuality === "medium") {
-            selectedModelLocal = "CUSTOM (PRO)";
-        } else if (selectedQuality === "high") {
-            selectedModelLocal = "CUSTOM SPECIAL (PRO)";
-        }
-    }
-    // Rule 2: If the sources contain only vocals and/or instrumental (with no other stems)
-    else if (selectedFeatures.every(item => ["vocals", "instrumental"].includes(item))) {
-        if (selectedQuality === "default") {
-            selectedModelLocal = "4-SOURCE (FREE)";
-        } else if (selectedQuality === "medium") {
-            selectedModelLocal = "FINE-TUNED (PRO)";
-        } else if (selectedQuality === "high") {
-            selectedModelLocal = "KARAOKE (PRO)";
-        }
-    }
-    // Rule 3: Normal case (any of vocals, drums, bass, but no piano/guitar)
-    else if (selectedFeatures.some(item => ["vocals", "drums", "bass", "melody"].includes(item))) {
-        if (selectedQuality === "default") {
-            selectedModelLocal = "4-SOURCE (FREE)";
-        } else if (selectedQuality === "medium") {
-            selectedModelLocal = "FINE-TUNED (PRO)";
-        } else if (selectedQuality === "high") {
-            selectedModelLocal = "DELUXE (PRO)";
-        }
-    }
+    const { model, stems } = computeModelAndStems(processingMode, selectedFeatures, selectedQuality);
 
-    if (selectedModelLocal === "4-SOURCE (FREE)") {
-        selectedModel = 'demucs-free-4s';
-    } else if (selectedModelLocal === "6-SOURCE (PRO)") {
-        selectedModel = 'demucs-free-6s';
-    } else if (selectedModelLocal === "FINE-TUNED (PRO)") {
-        selectedModel = 'demucs-pro-ft';
-    } else if (selectedModelLocal === "KARAOKE (PRO)") {
-        selectedModel = 'demucs-karaoke';
-    } else if (selectedModelLocal === "CUSTOM (PRO)") {
-        selectedModel = 'demucs-pro-cust';
-    } else if (selectedModelLocal === "DELUXE (PRO)") {
-        selectedModel = 'demucs-pro-deluxe';
-    } else if (selectedModelLocal === "CUSTOM SPECIAL (PRO)") {
-        selectedModel = 'demucs-pro-cust-spec';
-    }
+    selectedModel = model;      // or some other variable
+    selectedStems = stems;
 
-    // finally, store selected components
-    selectedStems = selectedFeatures;
-
-    // now, tricky - if selectedStems incudes instrumental and it's not
-    // the demucs-karaoke model, we need to include other stems by necessity
-    if (selectedStems.includes('instrumental') && selectedModel !== 'demucs-karaoke') {
-        // for free-4s, ft, and deluxe, include drums, bass, melody (if not already there)
-        if (['demucs-free-4s', 'demucs-pro-ft', 'demucs-pro-deluxe'].includes(selectedModel)) {
-            if (!selectedStems.includes('drums')) {
-                selectedStems.push('drums');
-            }
-            if (!selectedStems.includes('bass')) {
-                selectedStems.push('bass');
-            }
-            if (!selectedStems.includes('melody')) {
-                selectedStems.push('melody');
-            }
-        }
-
-        // for free-6s, pro-cust, include drums, bass, other_melody, guitar, piano
-        if (['demucs-free-6s', 'demucs-pro-cust', 'demucs-pro-cust-spec'].includes(selectedModel)) {
-            if (!selectedStems.includes('drums')) {
-                selectedStems.push('drums');
-            }
-            if (!selectedStems.includes('bass')) {
-                selectedStems.push('bass');
-            }
-            if (!selectedStems.includes('other_melody')) {
-                selectedStems.push('other_melody');
-            }
-            if (!selectedStems.includes('guitar')) {
-                selectedStems.push('guitar');
-            }
-            if (!selectedStems.includes('piano')) {
-                selectedStems.push('piano');
-            }
-        }
-    }
-
-    // another edge case - if selectedStems includes melody and it's
-    // free-6s or pro-cust, then we need other_melody, guitar, piano
-    if (selectedStems.includes('melody') && ['demucs-free-6s', 'demucs-pro-cust', 'demucs-pro-cust-spec'].includes(selectedModel)) {
-        if (!selectedStems.includes('other_melody')) {
-            selectedStems.push('other_melody');
-        }
-        if (!selectedStems.includes('guitar')) {
-            selectedStems.push('guitar');
-        }
-        if (!selectedStems.includes('piano')) {
-            selectedStems.push('piano');
-        }
-    }
-
-    // we need to enforce a sorting order on selectedStems
-    // it should go in this order:
-    // drums, bass, melody, vocals
-    // so that the model outputs are in the correct order
-
-    // go ahead and sort the selectedStems
-    // instrumental goes last
-    selectedStems.sort((a, b) => {
-        if (a === 'drums') {
-            return -1;
-        } else if (b === 'drums') {
-            return 1;
-        } else if (a === 'bass') {
-            return -1;
-        } else if (b === 'bass') {
-            return 1;
-        } else if (a === 'melody') {
-            return -1;
-        } else if (b === 'melody') {
-            return 1;
-        } else if (a === 'vocals') {
-            return -1;
-        } else if (b === 'vocals') {
-            return 1;
-        } else if (a === 'guitar') {
-            return -1;
-        } else if (b === 'guitar') {
-            return 1;
-        } else if (a === 'piano') {
-            return -1;
-        } else if (b === 'piano') {
-            return 1;
-        } else if (a === 'instrumental') {
-            return -1;
-        } else if (b === 'instrumental') {
-            return 1;
-        }
-        return 0;
-    });
+    console.log(`New model: ${selectedModel}, stems: ${selectedStems.join(",")}`);
 }
 
 // Event listener for user interaction
@@ -517,7 +377,7 @@ function initWorkers() {
                     if (processingMode === 'stems') {
                         incrementUsage();
                     }
-                    const retSummed = sumSegments(processedSegments, originalLength);
+                    const retSummed = sumSegments(processedSegments, originalLength, DEMUCS_OVERLAP_SAMPLES);
                     trackProductEvent('demix-completed', {model: selectedModel, stems: selectedStems.join(',')});
                     packageAndDownload(retSummed);
                     // reset globals etc.
@@ -537,7 +397,7 @@ function initWorkers() {
                     if (processingMode === 'stems') {
                         incrementUsage();
                     }
-                    const retSummed = sumSegments(processedSegments, originalLength);
+                    const retSummed = sumSegments(processedSegments, originalLength, DEMUCS_OVERLAP_SAMPLES);
                     trackProductEvent('batch-demix-completed', {model: selectedModel, stems: selectedStems.join(',')});
                     packageAndZip(retSummed, filename);
                     // reset globals per-song in the batch process

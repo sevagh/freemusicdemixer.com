@@ -1,7 +1,7 @@
-export function sumSegments(segments, desiredLength) {
+export function sumSegments(segments, desiredLength, overlapSamples) {
     const totalLength = desiredLength;
     const segmentLengthWithPadding = segments[0][0].length;
-    const actualSegmentLength = segmentLengthWithPadding - 2 * DEMUCS_OVERLAP_SAMPLES;
+    const actualSegmentLength = segmentLengthWithPadding - 2 * overlapSamples;
     const output = new Array(segments[0].length).fill().map(() => new Float32Array(totalLength));
 
     // Create weights for the segment
@@ -23,7 +23,7 @@ export function sumSegments(segments, desiredLength) {
             const channelSegment = segment[target];
 
             for (let i = 0; i < channelSegment.length; i++) {
-                const segmentPos = i - DEMUCS_OVERLAP_SAMPLES;
+                const segmentPos = i - overlapSamples;
                 const outputIndex = start + segmentPos;
 
                 if (outputIndex >= 0 && outputIndex < totalLength) {
@@ -150,3 +150,106 @@ export function fetchAndCacheFiles(model, components, dlPrefix = "https://bucket
     );
     return Promise.all(fetchPromises);
 }
+
+export function computeModelAndStems(processingMode, selectedFeatures, selectedQuality) {
+    // 1) If strictly MIDI mode, short-circuit
+    if (processingMode === 'midi') {
+      return {
+        model: 'basicpitch',
+        stems: [] // or however you handle stems in midi-only
+      };
+    }
+
+    // Default textual label
+    let selectedModelLocal = "4-SOURCE (FREE)";
+
+    // 2) Determine model label by rules
+    if (selectedFeatures.includes("piano") || selectedFeatures.includes("guitar") || selectedFeatures.includes("other_melody")) {
+      // Rule 1
+      if (selectedQuality === "default") {
+        selectedModelLocal = "6-SOURCE (PRO)";
+      } else if (selectedQuality === "medium") {
+        selectedModelLocal = "CUSTOM (PRO)";
+      } else if (selectedQuality === "high") {
+        selectedModelLocal = "CUSTOM SPECIAL (PRO)";
+      }
+    } else if (selectedFeatures.every(item => ["vocals", "instrumental"].includes(item))) {
+      // Rule 2
+      if (selectedQuality === "default") {
+        selectedModelLocal = "4-SOURCE (FREE)";
+      } else if (selectedQuality === "medium") {
+        selectedModelLocal = "FINE-TUNED (PRO)";
+      } else if (selectedQuality === "high") {
+        selectedModelLocal = "KARAOKE (PRO)";
+      }
+    } else if (selectedFeatures.some(item => ["vocals", "drums", "bass", "melody"].includes(item))) {
+      // Rule 3
+      if (selectedQuality === "default") {
+        selectedModelLocal = "4-SOURCE (FREE)";
+      } else if (selectedQuality === "medium") {
+        selectedModelLocal = "FINE-TUNED (PRO)";
+      } else if (selectedQuality === "high") {
+        selectedModelLocal = "DELUXE (PRO)";
+      }
+    }
+
+    // 3) Convert textual label => internal model ID
+    let model = '';
+    switch (selectedModelLocal) {
+      case "4-SOURCE (FREE)":
+        model = 'demucs-free-4s';
+        break;
+      case "6-SOURCE (PRO)":
+        model = 'demucs-free-6s';
+        break;
+      case "FINE-TUNED (PRO)":
+        model = 'demucs-pro-ft';
+        break;
+      case "KARAOKE (PRO)":
+        model = 'demucs-karaoke';
+        break;
+      case "CUSTOM (PRO)":
+        model = 'demucs-pro-cust';
+        break;
+      case "DELUXE (PRO)":
+        model = 'demucs-pro-deluxe';
+        break;
+      case "CUSTOM SPECIAL (PRO)":
+        model = 'demucs-pro-cust-spec';
+        break;
+    }
+
+    // 4) Copy the user’s stems
+    let stems = [...selectedFeatures];
+
+    // If stems includes "instrumental" but model != demucs-karaoke => expand
+    if (stems.includes('instrumental') && model !== 'demucs-karaoke') {
+      if (['demucs-free-4s', 'demucs-pro-ft', 'demucs-pro-deluxe'].includes(model)) {
+        if (!stems.includes('drums')) stems.push('drums');
+        if (!stems.includes('bass')) stems.push('bass');
+        if (!stems.includes('melody')) stems.push('melody');
+      }
+      if (['demucs-free-6s', 'demucs-pro-cust', 'demucs-pro-cust-spec'].includes(model)) {
+        if (!stems.includes('drums')) stems.push('drums');
+        if (!stems.includes('bass')) stems.push('bass');
+        if (!stems.includes('other_melody')) stems.push('other_melody');
+        if (!stems.includes('guitar')) stems.push('guitar');
+        if (!stems.includes('piano')) stems.push('piano');
+      }
+    }
+
+    // If stems includes "melody" & model in big-6 => expand
+    if (stems.includes('melody') && ['demucs-free-6s', 'demucs-pro-cust', 'demucs-pro-cust-spec'].includes(model)) {
+      if (!stems.includes('other_melody')) stems.push('other_melody');
+      if (!stems.includes('guitar')) stems.push('guitar');
+      if (!stems.includes('piano')) stems.push('piano');
+    }
+
+    // 5) Sort stems
+    stems.sort((a, b) => {
+      const order = ["drums", "bass", "melody", "vocals", "guitar", "piano", "instrumental"];
+      return order.indexOf(a) - order.indexOf(b);
+    });
+
+    return { model, stems };
+  }
