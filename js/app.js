@@ -1,5 +1,18 @@
 import { encodeWavFileFromAudioBuffer } from './WavFileEncoder.js';
 
+//import createFFmpegCore from './ffmpeg-core.js';
+//
+//const coreModule = await createFFmpegCore({
+//  locateFile: path => path.endsWith('.wasm') ? './ffmpeg-core.wasm' : path
+//});
+//
+//// Use the FS and callMain API directly
+//const { FS, callMain } = coreModule;
+//
+//// do something with FS, callMain so that I know it worked
+//const ffmpeg = coreModule.FS;
+//console.log('FFmpeg core module loaded successfully: ', ffmpeg);
+
 const componentsCheckboxes = document.querySelectorAll('#modelPickerForm input[type="checkbox"]');
 const qualityRadios = document.querySelectorAll('#qualityPickerForm input[type="radio"]');
 const memoryRadios = document.querySelectorAll('#memorySelectorForm input[type="radio"]');
@@ -751,30 +764,16 @@ async function initModel() {
     }
 }
 
-// Function to handle the segmented audio processing
-function processAudioSegments(leftChannel, rightChannel, numSegments, originalLength) {
+function processSegments(leftChannel, rightChannel, numSegments, originalLength, filename = null) {
     let segments = segmentWaveform(leftChannel, rightChannel, numSegments);
-    segments.forEach((segment, index) => {
-        workers[index].postMessage({
-            msg: 'PROCESS_AUDIO',
-            leftChannel: segment[0],
-            rightChannel: segment[1],
-            originalLength: originalLength
-        });
-    });
-}
 
-// Function to handle the segmented audio processing
-// for the batch case
-function processBatchSegments(leftChannel, rightChannel, numSegments, filename, originalLength) {
-    let segments = segmentWaveform(leftChannel, rightChannel, numSegments);
     segments.forEach((segment, index) => {
         workers[index].postMessage({
-            msg: 'PROCESS_AUDIO_BATCH',
+            msg: filename ? 'PROCESS_AUDIO_BATCH' : 'PROCESS_AUDIO',
             leftChannel: segment[0],
             rightChannel: segment[1],
-            filename: filename,
-            originalLength: originalLength
+            originalLength,
+            ...(filename && { filename })
         });
     });
 }
@@ -1131,7 +1130,7 @@ nextStep2Btn.addEventListener('click', function(e) {
                         // set original length of track
                         let originalLength = leftChannel.length;
 
-                        processAudioSegments(leftChannel, rightChannel, NUM_WORKERS, originalLength);
+                        processSegments(leftChannel, rightChannel, NUM_WORKERS, originalLength);
                     });
                 } else {
                     console.log("Converting input file to MIDI directly");
@@ -1726,7 +1725,7 @@ async function processFiles(files, midiOnlyMode) {
                         }
 
                         let originalLength = leftChannel.length;
-                        processBatchSegments(leftChannel, rightChannel, NUM_WORKERS, filenameWithoutExt, originalLength);
+                        processSegments(leftChannel, rightChannel, NUM_WORKERS, originalLength, filenameWithoutExt);
                         batchNextFileResolveCallback = resolve;
                     });
                 }
