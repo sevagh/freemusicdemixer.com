@@ -3,8 +3,9 @@ import {
     processSegments,
     sumSegments,
     fetchAndCacheFiles,
-    computeModelAndStems
-} from './app_refactor.js';
+    computeModelAndStems,
+    openSheetMusicInNewTab
+} from './app-refactor.js';
 
 //import createFFmpegCore from './ffmpeg-core.js';
 //
@@ -535,6 +536,7 @@ folderInput.addEventListener('change', function() {
         updateSelectedInputMessage();
     }
     toggleNextButton();
+    checkAndResetWeeklyLimit();
 });
 
 // Function to toggle the Next button's disabled state
@@ -851,7 +853,7 @@ nextStep2Btn.addEventListener('click', function(e) {
                         // set original length of track
                         let originalLength = leftChannel.length;
 
-                        processSegments(workers, leftChannel, rightChannel, NUM_WORKERS, DEMUCS_OVERLAP_SAMPLES, originalLength);
+                        processSegments(workers, leftChannel, rightChannel, NUM_WORKERS, originalLength, DEMUCS_OVERLAP_SAMPLES);
                     });
                 } else {
                     console.log("Converting input file to MIDI directly");
@@ -916,103 +918,6 @@ prevStep3Btn.addEventListener('click', function() {
     step3.style.display = 'none';
     step2.style.display = 'block';
 });
-
-function openSheetMusicInNewTab(mxmlData, instrumentName) {
-  const newTab = window.open("", "_blank");
-  if (!newTab) {
-    alert("Please allow pop-ups to see your sheet music.");
-    return;
-  }
-
-  // Convert the raw bytes into a string using TextDecoder.
-  // The assumption is that `mxmlData` is a Uint8Array or ArrayBuffer.
-  const decoder = new TextDecoder();
-  // Ensure mxmlData is a Uint8Array if it's an ArrayBuffer
-  let typedArray = mxmlData instanceof Uint8Array ? mxmlData : new Uint8Array(mxmlData);
-  const xmlString = decoder.decode(typedArray);
-
-  // Write an HTML structure into the new window
-  newTab.document.write(`
-    <html>
-    <head>
-      <title>Sheet Music: ${instrumentName}</title>
-      <style>
-        body {
-          margin: 0;
-          padding: 0;
-          font-family: sans-serif;
-        }
-        #osmdContainer {
-          width: 100%;
-          height: calc(100% - 50px);
-          box-sizing: border-box;
-        }
-        #controls {
-          display: flex;
-          gap: 10px;
-          align-items: center;
-          padding: 10px;
-          background: #f0f0f0;
-          border-bottom: 1px solid #ddd;
-        }
-        button {
-          cursor: pointer;
-        }
-      </style>
-    </head>
-    <body>
-      <div id="controls">
-        <button id="saveBtn">Save</button>
-        <button id="printBtn">Print</button>
-      </div>
-      <div id="osmdContainer"></div>
-
-      <!-- Load OpenSheetMusicDisplay via CDN: choose a stable version or the latest -->
-      <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.6.1/build/opensheetmusicdisplay.min.js"></script>
-
-      <script>
-        // We load OSMD after the script is done, so we must wait for DOMContentLoaded
-        document.addEventListener("DOMContentLoaded", async () => {
-          const osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("osmdContainer", {
-            // any OSMD options you want
-            followCursor: true,
-            drawMeasureNumbers: true
-          });
-
-          try {
-            const xml = \`${xmlString.replace(/`/g, "\\`")}\`;
-            await osmd.load(xml);
-            osmd.render();
-          } catch (error) {
-            console.error("OSMD load error:", error);
-          }
-
-          // Save Button - downloads the MusicXML
-          document.getElementById("saveBtn").addEventListener("click", () => {
-            const blob = new Blob([\`${xmlString.replace(/`/g, "\\`")}\`], {
-              type: "application/vnd.recordare.musicxml+xml"
-            });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "${instrumentName}.musicxml";
-            a.click();
-            URL.revokeObjectURL(url);
-          });
-
-          // Print Button
-          document.getElementById("printBtn").addEventListener("click", () => {
-            window.print();
-          });
-        });
-      </script>
-    </body>
-    </html>
-  `);
-
-  // Must close the document to finish writing
-  newTab.document.close();
-}
 
 const instrumentLinksContainer = document.getElementById("instrument-links");
 
