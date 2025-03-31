@@ -8,19 +8,6 @@ import {
     MidiWorkerManager
 } from './app-refactor.js';
 
-//import createFFmpegCore from './ffmpeg-core.js';
-//
-//const coreModule = await createFFmpegCore({
-//  locateFile: path => path.endsWith('.wasm') ? './ffmpeg-core.wasm' : path
-//});
-//
-//// Use the FS and callMain API directly
-//const { FS, callMain } = coreModule;
-//
-//// do something with FS, callMain so that I know it worked
-//const ffmpeg = coreModule.FS;
-//console.log('FFmpeg core module loaded successfully: ', ffmpeg);
-
 const componentsCheckboxes = document.querySelectorAll('#modelPickerForm input[type="checkbox"]');
 const qualityRadios = document.querySelectorAll('#qualityPickerForm input[type="radio"]');
 const memoryRadios = document.querySelectorAll('#memorySelectorForm input[type="radio"]');
@@ -156,6 +143,29 @@ function getAudioContext(sampleRate) {
 const demucsAudioContext = getAudioContext(44100);
 const basicpitchAudioContext = getAudioContext(22050);
 
+const mobileWarning = document.getElementById('mobile-warning-container');
+const mediaQuery = window.matchMedia('(max-width: 512px)');
+
+function handleMediaQueryChange(e) {
+  if (e.matches) {
+    // user is on a small screen
+    // verify that it is visible to track the event
+    if (mobileWarning && getComputedStyle(mobileWarning).display !== 'none') {
+      // Track the event
+      trackProductEvent('mobile-warning-displayed');
+    } else {
+      // Track the event
+      trackProductEvent('mobile-warning-failed-to-display');
+    }
+  }
+}
+mediaQuery.addEventListener('change', handleMediaQueryChange);
+
+// also check on initial load:
+if (mediaQuery.matches) {
+  trackProductEvent('mobile-warning-displayed');
+}
+
 // Global toggle state
 let wizardVisible = false;
 
@@ -172,6 +182,11 @@ tryAnywayBtn.addEventListener('click', function() {
     // set the memory  to 4gb
     const memory4gb = document.getElementById('4gb');
     memory4gb.checked = true; // Default to 4 GB
+
+    // Track the user’s action here
+    trackProductEvent('mobile-try-anyway', {
+        memorySetTo: '4gb'
+    });
   } else {
     wizardContainer.style.display = 'none';
     tryAnywayBtn.textContent = 'Try anyway';
@@ -188,6 +203,11 @@ const emailCancelBtn = document.getElementById('email-cancel-btn');
 emailMeLinkButton.addEventListener('click', function() {
   // Show the modal
   emailModal.classList.add('show');
+
+  // instrumentation:
+  trackProductEvent('mobile-email-modal-opened', {
+    reason: 'user clicked email reminder button'
+  });
 });
 
 // Cancel button hides the modal
@@ -209,6 +229,11 @@ emailSendBtn.addEventListener('click', async function() {
     alert('Please enter a valid email address.');
     return;
   }
+
+  // instrumentation - user attempts to send
+  trackProductEvent('mobile-email-send-attempt', {
+    typedEmail: email
+  });
 
   try {
     // Example: We do a GET request with the email in query param
