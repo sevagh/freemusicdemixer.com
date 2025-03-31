@@ -178,6 +178,58 @@ tryAnywayBtn.addEventListener('click', function() {
   }
 });
 
+// Grab references to the elements
+const emailMeLinkButton = document.getElementById('email-reminder-btn');
+const emailModal = document.getElementById('email-modal');
+const emailInput = document.getElementById('email-input');
+const emailSendBtn = document.getElementById('email-send-btn');
+const emailCancelBtn = document.getElementById('email-cancel-btn');
+
+emailMeLinkButton.addEventListener('click', function() {
+  // Show the modal
+  emailModal.classList.add('show');
+});
+
+// Cancel button hides the modal
+emailCancelBtn.addEventListener('click', function() {
+  emailModal.classList.remove('show');
+});
+
+// click outside of modal to close
+window.addEventListener('click', (e) => {
+    if (e.target === emailModal) {
+      emailModal.classList.remove('show');
+    }
+});
+
+// When the user clicks "Send"
+emailSendBtn.addEventListener('click', async function() {
+  const email = emailInput.value.trim();
+  if (!email) {
+    alert('Please enter a valid email address.');
+    return;
+  }
+
+  try {
+    // Example: We do a GET request with the email in query param
+    // Adjust the path if your function is at /functions/sendmobileemail or something else
+    const baseUrl = window.location.origin;  // e.g. "https://freemusicdemixer.com"
+    const sendUrl = `${baseUrl}/sendmobileemail?email=${encodeURIComponent(email)}`;
+
+    const resp = await fetch(sendUrl);
+    if (!resp.ok) {
+      // Handle error
+      alert('Failed to send email. Please try again or contact support.');
+    } else {
+      alert('Success! Email sent. Check your inbox shortly.');
+      emailModal.classList.remove('show');
+    }
+  } catch (err) {
+    console.error('Error calling sendmobileemail:', err);
+    alert('Something went wrong sending the email.');
+  }
+});
+
 document.addEventListener("DOMContentLoaded", function() {
     registerServiceWorker();
     resetUIElements();

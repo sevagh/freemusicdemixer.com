@@ -57,9 +57,16 @@ header_class: index
   </div>
 </section>
 
-<!-- save the warning emoji for the "are you sure" button later
-    We see you're on a 📱 small screen. ⚠️ Running the demixer might be slow or crash.
-  -->
+<!-- Hidden modal for collecting email -->
+<div id="email-modal" class="modal">
+  <div class="modal-content">
+    <h3>Enter your email address</h3>
+    <p>We’ll send you a reminder to visit us on a desktop!</p>
+    <input type="email" id="email-input" placeholder="you@example.com" style="width: 100%; margin-bottom: 0.5rem;" />
+    <button id="email-send-btn" class="highlight-btn">Send</button>
+    <button id="email-cancel-btn" style="margin-left: 0.5rem;">Cancel</button>
+  </div>
+</div>
 
 <!-- Wizard sections here... -->
 <section class="demixer-section">
