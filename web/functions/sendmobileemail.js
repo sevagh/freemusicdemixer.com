@@ -25,7 +25,7 @@ export async function onRequest(context) {
       Subject: 'Hello from Music Demixer!',
       TextBody: `Hello from Music Demixer!
 
-We're thrilled that you found our website. This is a reminder to visit us on a desktop or laptop computer for the best results: https://freemusicdemixer.com/
+We're thrilled that you found our website. This is a reminder to visit us on a desktop or laptop computer for the best results: https://freemusicdemixer.com/#demixer-app
 
 Best regards,
 Music Demixer team`
