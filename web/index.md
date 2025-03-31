@@ -59,7 +59,7 @@ header_class: index
 
 <!-- Hidden modal for collecting email -->
 <div id="email-modal" class="modal">
-  <div class="modal-content">
+  <div class="modal-content" id="email-modal">
     <h3>Enter your email address</h3>
     <p>We’ll send you a reminder to visit us on a desktop!</p>
     <input type="email" id="email-input" placeholder="you@example.com" style="width: 100%; margin-bottom: 0.5rem;" />

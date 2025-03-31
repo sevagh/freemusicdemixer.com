@@ -1287,6 +1287,12 @@ footer {
   margin-bottom: 20px; /* Add space below the h3 */
 }
 
+// remove the h3 margin when inside the new email modal
+#email-modal h3 {
+  margin-top: 0 !important;
+  margin-bottom: 0.75rem; /* some smaller spacing, if you like */
+}
+
 /* Ensure progress container is centered and styled */
 .progress-container {
   width: 100%;
