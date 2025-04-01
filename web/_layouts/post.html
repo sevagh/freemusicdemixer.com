@@ -14,11 +14,11 @@ layout: default
     Category: <a href="/blog?category={{ page.category }}">{{ page.category }}</a>
 </h4>
 
-<div class="giscus-spacing"></div> <!-- Spacer div -->
+<div class="blog-spacing"></div> <!-- Spacer div -->
 
 {{ content }}
 
-<div class="giscus-spacing"></div>
+<div class="blog-spacing"></div>
 
 <div class="social-share-bar">
   <span class="share-text">Share this post!</span>
@@ -44,48 +44,4 @@ layout: default
   document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${currentUrl}&title=${title}`;
   document.getElementById('share-hackernews').href = `https://news.ycombinator.com/submitlink?u=${currentUrl}&t=${title}`;
   document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
-</script>
-
-<div id="giscus-script">
-  <!-- leave empty for now, will dynamically import script appropriately -->
-</div>
-
-<script>
-  // Detect theme preference from localStorage or system
-  function getTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        return savedTheme;
-    } else {
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-  }
-
-  const giscusScriptDiv = document.getElementById('giscus-script');
-  function importGiscusWithTheme(theme) {
-    // Create a new script element
-    const script = document.createElement('script');
-    script.src = "https://giscus.app/client.js";
-    script.setAttribute('data-repo', "sevagh/free-music-demixer");
-    script.setAttribute('data-repo-id', "R_kgDOJ6arlA");
-    script.setAttribute('data-category', "Announcements");
-    script.setAttribute('data-category-id', "DIC_kwDOJ6arlM4CZiTv");
-    script.setAttribute('data-mapping', "pathname");
-    script.setAttribute('data-strict', "0");
-    script.setAttribute('data-reactions-enabled', "1");
-    script.setAttribute('data-emit-metadata', "0");
-    script.setAttribute('data-input-position', "top");
-    script.setAttribute('data-theme', theme);
-    script.setAttribute('data-lang', "en");
-    script.setAttribute('crossorigin', "anonymous");
-    script.async = true;
-
-    // Append the script to the giscusScriptDiv
-    giscusScriptDiv.appendChild(script);
-  }
-
-  // Apply initial theme once the window has fully loaded
-  const theme = getTheme();
-  console.log('Importing giscus with:', theme);
-  importGiscusWithTheme(theme);
 </script>

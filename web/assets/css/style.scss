@@ -463,6 +463,9 @@
 img.responsive-img-android {
   width: 100%; /* default width for mobile devices */
 }
+.responsive-img-android-portrait {
+  width: 25%;
+}
 
 // Smooth scrolling
 html {
@@ -1484,7 +1487,7 @@ div.tag-cloud {
     color: #0077cc;
 }
 
-.giscus-spacing {
+.blog-spacing {
     height: 50px; /* Adjust the value to your preference */
     display: block;
 }
@@ -1817,6 +1820,9 @@ td {
   img.responsive-img-android {
     width: 50%;
   }
+  .responsive-img-android-portrait {
+    width: 35%;
+  }
 }
 
 .admonition {
@@ -1904,6 +1910,9 @@ button#manage-account {
 
   img.responsive-img-android {
     width: 65%;
+  }
+  .responsive-img-android-portrait {
+    width: 50%;
   }
 }
 
@@ -2047,6 +2056,9 @@ button#manage-account {
 
   img.responsive-img-android {
     width: 100%;
+  }
+  .responsive-img-android-portrait {
+    width: 75%;
   }
 }
 
