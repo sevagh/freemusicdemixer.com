@@ -11,7 +11,7 @@ We are excited to announce that all of our web features now work on small device
 {% include admonitions.html
     type="tip"
     title="Mobile devices can be powerful! 🔥"
-    content="Modern phones and tablets can have 4+ GB of RAM and multicore processors. Our website is best experienced on a desktop or laptop computer, but give it a shot!"
+    content="Modern phones and tablets can have 4+ GB of RAM and multicore processors. Our website is best experienced on a desktop or laptop computer, but try it out on your mobile devices today! You may be pleasantly surprised."
 %}
 
 The screenshots below are from my Google Pixel 7, demixing a 20-second clip ("Shimmy Shimmy Ya" by Ol' Dirty Bastard):
