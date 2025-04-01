@@ -6,7 +6,7 @@ title: iOS and iPhone Support
 
 We’re excited to announce that our website now works on iOS devices with smaller screens like iPhones! 🎉
 
-Read the [announcement here](/2025/04/01/mobile-now-supported)!
+Read the [full announcement here](/announcements/2025/04/01/Mobile-now-supported)!
 
 <img src="/assets/blog/post20/screen2.webp" alt="mobile-screenshot-2" class="responsive-img-android-portrait"/>
 <img src="/assets/blog/post20/screen4.webp" alt="mobile-screenshot-4" class="responsive-img-android-portrait"/>
