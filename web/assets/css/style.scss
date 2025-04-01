@@ -140,6 +140,10 @@
   code {
     padding: 0.2rem 0.4rem;
   }
+  #mobile-warning-container {
+    background-color: #e0e0e0;
+    color: #333; /* Darker text for better contrast */
+  }
 }
 
 .theme-dark {
@@ -237,6 +241,11 @@
   }
   code {
     padding: 0.2rem 0.4rem;
+  }
+  #mobile-warning-container {
+    // background and text color for dark theme
+    background-color: #333;
+    color: #f0f0f0; /* Lighter text for better contrast */
   }
 }
 
@@ -337,6 +346,10 @@
   code {
     padding: 0.2rem 0.4rem;
   }
+  #mobile-warning-container {
+    background-color: #e0e0e0;
+    color: #333; /* Darker text for better contrast */
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -434,6 +447,10 @@
   }
   code {
     padding: 0.2rem 0.4rem;
+  }
+  #mobile-warning-container {
+    background-color: #333;
+    color: #f0f0f0; /* Lighter text for better contrast */
   }
 }
 
@@ -1270,6 +1287,12 @@ footer {
   margin-bottom: 20px; /* Add space below the h3 */
 }
 
+// remove the h3 margin when inside the new email modal
+#email-modal h3 {
+  margin-top: 0 !important;
+  margin-bottom: 0.75rem; /* some smaller spacing, if you like */
+}
+
 /* Ensure progress container is centered and styled */
 .progress-container {
   width: 100%;
@@ -1884,6 +1907,103 @@ button#manage-account {
   }
 }
 
+/* Only show the warning container on screens <= 512px */
+@media (max-width: 512px) {
+  #mobile-warning-container {
+    display: block;
+    padding: 12px 16px; /* Adjusted: even padding around */
+    margin: 12px auto;
+    border-radius: 8px;
+    text-align: left;
+  }
+
+  #mobile-warning-container h3 {
+    margin-top: 0;
+    margin-bottom: 8px; /* Tighten vertical spacing */
+  }
+
+  #mobile-warning-container p {
+    margin-top: 0;
+    margin-bottom: 12px; /* Spacing to buttons */
+  }
+
+  /* Improved button spacing specifically within this container */
+  #mobile-warning-container .mobile-warning-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px; /* Increased spacing between buttons */
+  }
+
+  #mobile-warning-container .mobile-warning-actions button {
+    padding: 8px 12px; /* Better button size */
+    font-size: 0.9em;
+    flex-grow: 1;
+  }
+
+
+  .wizard-container {
+    width: 95%; /* use almost full screen width */
+    height: auto; /* flexible height for content */
+    padding: 12px;
+    overflow-y: auto;
+    position: relative; /* for absolute footer positioning */
+  }
+
+  .wizard-step {
+    overflow-y: auto;
+    padding-bottom: 80px; /* leave extra space for footer buttons */
+  }
+
+  .wizard-footer {
+    position: absolute; /* anchored at the bottom INSIDE container */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 0;
+    gap: 6px;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+
+  /* Stack columns vertically */
+  .columns-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .columns-container .column {
+    width: 100%; /* full width */
+  }
+
+  /* Smaller, more compact text on mobile */
+  .columns-container .column b,
+  .columns-container label {
+    font-size: 0.9em;
+  }
+
+  .cta-legend {
+    font-size: 13px;
+    padding: 8px;
+    margin-top: 8px;
+  }
+
+  .wizard-footer button {
+    padding: 8px 10px;
+    flex-grow: 1; /* buttons fill available horizontal space */
+    font-size: 0.9em;
+  }
+}
+
+/* Hide the banner on larger screens */
+@media (min-width: 513px) {
+  #mobile-warning-container {
+    display: none !important;
+  }
+}
+
 /* Media Query for screens at or below 512px */
 @media (max-width: 512px) {
   .footer-container {
@@ -1919,10 +2039,6 @@ button#manage-account {
 
   .wizard-container {
     display: none; /* Hide the wizard */
-  }
-
-  .disable-wizard {
-    display: flex; /* Show the message */
   }
 
   section.title-section h2 {

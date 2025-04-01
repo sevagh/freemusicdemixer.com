@@ -86,6 +86,8 @@ onmessage = async function(e) {
         }
 
         let inferenceResults = [];
+        console.log("Model name is:", modelName);
+        console.log("Selected stems are:", selectedStems);
 
         // modelBuffers is already an array of array buffers sent from the main thread
         // Directly prepare data for initialization

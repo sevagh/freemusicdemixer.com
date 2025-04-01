@@ -44,11 +44,32 @@ header_class: index
 
 <a id="demixer-app" class="hidden-anchor"></a>
 
+<!-- Mobile Banner / Card -->
+<section class="info-section" id="mobile-warning-container">
+  <h3>Better on Computer 💻</h3>
+  <p>
+    Smaller devices might crash.
+    Get a reminder, or try anyway:
+  </p>
+  <div class="mobile-warning-actions">
+    <button id="email-reminder-btn" class="highlight-btn">Email link</button>
+    <button id="try-anyway-btn" >Try anyway</button>
+  </div>
+</section>
+
+<!-- Hidden modal for collecting email -->
+<div id="email-modal" class="modal">
+  <div class="modal-content" id="email-modal">
+    <h3>Enter your email address</h3>
+    <p>We’ll send you a reminder to visit us on a desktop!</p>
+    <input type="email" id="email-input" placeholder="you@example.com" style="width: 100%; margin-bottom: 0.5rem;" />
+    <button id="email-send-btn" class="highlight-btn">Send</button>
+    <button id="email-cancel-btn" style="margin-left: 0.5rem;">Cancel</button>
+  </div>
+</div>
+
 <!-- Wizard sections here... -->
 <section class="demixer-section">
-  <div class="disable-wizard">
-    Best experienced on a laptop or desktop.
-  </div>
   <div class="wizard-container">
     <div id="wizard-step-1" class="wizard-step">
       <p>Choose your parameters</p>
@@ -161,12 +182,12 @@ header_class: index
             <br>
             ⚠️ More memory is faster,  with a higher risk of crashing❗
             <br>
-            ℹ️ Read <a href="/getting-started/2024/09/20/How-to-pick-max-memory" target="_blank" alt="memory-guide">our guide on how to pick max memory.</a>
+            ℹ️ Read <a href="/getting-started/2024/09/20/How-to-pick-max-memory" target="_blank" rel="noopener noreferrer" alt="memory-guide">our guide on how to pick max memory.</a>
         </div>
         </div>
       </div>
       <div class="cta-legend">
-        <p id="pro-cta">🔒 <a href="/pricing#subscribe-today" target="_blank">Click here to unlock higher qualities!</a></p>
+        <p id="pro-cta">🔒 <a href="/pricing#subscribe-today" target="_blank" rel="noopener noreferrer">Click here to unlock higher qualities!</a></p>
       </div>
       <div class="wizard-footer">
         <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>
@@ -209,7 +230,7 @@ header_class: index
         </div>
         This may take a while, go grab a coffee! ☕️
         <br>
-        <b>Slow?</b> Start a new job and set Advanced -> Max memory higher. Read <a href="/getting-started/2024/09/20/How-to-pick-max-memory" target="_blank" alt="memory-guide">our guide for info</a> 💻
+        <b>Slow?</b> Start a new job and set Advanced -> Max memory higher. Read <a href="/getting-started/2024/09/20/How-to-pick-max-memory" target="_blank" alt="memory-guide" rel="noopener noreferrer">our guide for info</a> 💻
       </div>
       <div class="output-container">
         <div class="output-text" id="output-progress-text">Outputs...</div>

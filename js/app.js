@@ -1,4 +1,12 @@
 import { encodeWavFileFromAudioBuffer } from './WavFileEncoder.js';
+import {
+    processSegments,
+    sumSegments,
+    fetchAndCacheFiles,
+    computeModelAndStems,
+    openSheetMusicInNewTab,
+    MidiWorkerManager
+} from './app-refactor.js';
 
 const componentsCheckboxes = document.querySelectorAll('#modelPickerForm input[type="checkbox"]');
 const qualityRadios = document.querySelectorAll('#qualityPickerForm input[type="radio"]');
@@ -23,67 +31,67 @@ componentsCheckboxes.forEach((checkbox) => {
 let processingMode = 'stems';
 
 document.getElementById('processingPickerForm').addEventListener('change', (event) => {
-  const isMidiOnly = document.getElementById('midi').checked;
-  const isBoth = document.getElementById('both').checked;
+    const isMidiOnly = document.getElementById('midi').checked;
+    const isBoth = document.getElementById('both').checked;
 
-  // if the user is logged in, activate tier UIs
-  const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
-  let userTier = 0;
-  if (loggedIn) {
-      userTier = parseInt(sessionStorage.getItem('userTier'));
-      if ((userTier === -1) || isNaN(userTier)) {
-          userTier = 0;
-      }
-  }
+    // if the user is logged in, activate tier UIs
+    const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
+    let userTier = 0;
+    if (loggedIn) {
+        userTier = parseInt(sessionStorage.getItem('userTier'));
+        if ((userTier === -1) || isNaN(userTier)) {
+            userTier = 0;
+        }
+    }
 
-  // if userTier is 0, keep default/medium/high quality radio buttons disabled
-  if (userTier === 0) {
-    ['vocals', 'drums', 'bass', 'melody', 'instrumental', 'piano', 'guitar', 'other_melody', 'default-quality'].forEach(element => {
-        document.getElementById(element).disabled = isMidiOnly;
-    });
-  } else if (userTier === 2) {
-    // iterate and disable all quality radio buttons
-    qualityRadios.forEach(radio => radio.disabled = isMidiOnly);
-    // also iterate and disable all component checkboxes
-    componentsCheckboxes.forEach(checkbox => checkbox.disabled = isMidiOnly);
-  }
+    // if userTier is 0, keep default/medium/high quality radio buttons disabled
+    if (userTier === 0) {
+      ['vocals', 'drums', 'bass', 'melody', 'instrumental', 'piano', 'guitar', 'other_melody', 'default-quality'].forEach(element => {
+          document.getElementById(element).disabled = isMidiOnly;
+      });
+    } else if (userTier === 2) {
+      // iterate and disable all quality radio buttons
+      qualityRadios.forEach(radio => radio.disabled = isMidiOnly);
+      // also iterate and disable all component checkboxes
+      componentsCheckboxes.forEach(checkbox => checkbox.disabled = isMidiOnly);
+    }
 
-  // also disable the "advancedSettingsToggle" and radios
-  memoryRadios.forEach(radio => radio.disabled = isMidiOnly);
+    // also disable the "advancedSettingsToggle" and radios
+    memoryRadios.forEach(radio => radio.disabled = isMidiOnly);
 
-  // Hide and disable advanced settings toggle button
-  const advancedSettings = document.getElementById('advancedSettings');
+    // Hide and disable advanced settings toggle button
+    const advancedSettings = document.getElementById('advancedSettings');
 
-  if (isMidiOnly) {
-    // Hide and disable the advanced settings dropdown
-    advancedSettings.style.display = 'none'; // Ensure advanced settings are hidden
-  }
+    if (isMidiOnly) {
+      // Hide and disable the advanced settings dropdown
+      advancedSettings.style.display = 'none'; // Ensure advanced settings are hidden
+    }
 
-  let inferenceStyle = '';
-  let midiStyle = '';
-  if (isMidiOnly) {
-    processingMode = 'midi';
-    inferenceStyle = 'none';
-    midiStyle = 'block';
-  } else if (isBoth) {
-    processingMode = 'both';
-    inferenceStyle = 'block';
-    midiStyle = 'block';
-  } else {
-    processingMode = 'stems';
-    inferenceStyle = 'block';
-    midiStyle = 'none';
-  }
+    let inferenceStyle = '';
+    let midiStyle = '';
+    if (isMidiOnly) {
+      processingMode = 'midi';
+      inferenceStyle = 'none';
+      midiStyle = 'block';
+    } else if (isBoth) {
+      processingMode = 'both';
+      inferenceStyle = 'block';
+      midiStyle = 'block';
+    } else {
+      processingMode = 'stems';
+      inferenceStyle = 'block';
+      midiStyle = 'none';
+    }
 
-  document.getElementById('inference-progress-bar').style.display = inferenceStyle;
-  document.getElementById('inference-progress-text').style.display = inferenceStyle;
-  document.getElementById('inference-progress-bar-outer').style.display = inferenceStyle;
-  document.getElementById('midi-progress-bar').style.display = midiStyle;
-  document.getElementById('midi-progress-text').style.display = midiStyle;
-  document.getElementById('midi-progress-bar-outer').style.display = midiStyle;
+    document.getElementById('inference-progress-bar').style.display = inferenceStyle;
+    document.getElementById('inference-progress-text').style.display = inferenceStyle;
+    document.getElementById('inference-progress-bar-outer').style.display = inferenceStyle;
+    document.getElementById('midi-progress-bar').style.display = midiStyle;
+    document.getElementById('midi-progress-text').style.display = midiStyle;
+    document.getElementById('midi-progress-bar-outer').style.display = midiStyle;
 
-  console.log("Setting processing mode to:", processingMode);
-  updateModelBasedOnSelection();
+    console.log("Setting processing mode to:", processingMode);
+    updateModelBasedOnSelection();
 });
 
 let NUM_WORKERS = 4;
@@ -102,59 +110,7 @@ const DEMUCS_SAMPLE_RATE = 44100;
 const DEMUCS_OVERLAP_S = 0.75;
 const DEMUCS_OVERLAP_SAMPLES = Math.floor(DEMUCS_SAMPLE_RATE * DEMUCS_OVERLAP_S);
 
-const BASICPITCH_SAMPLE_RATE = 22050;
-
 const tierNames = {0: 'Free', 2: 'Pro'};
-
-const dl_prefix = "https://bucket.freemusicdemixer.com";
-
-function fetchAndCacheFiles(model, components) {
-    let modelFiles = [];
-    if (model === 'demucs-free-4s') {
-        modelFiles.push('htdemucs.ort.gz');
-    } else if (model === 'demucs-free-6s') {
-        modelFiles.push('htdemucs_6s.ort.gz');
-    } else if (model === 'demucs-karaoke') {
-        modelFiles.push('htdemucs_2s_cust.ort.gz');
-    } else if (model === 'demucs-pro-ft' || model === 'demucs-pro-deluxe') {
-        if (components.includes('drums')) {
-            modelFiles.push('htdemucs_ft_drums.ort.gz');
-        }
-        if (components.includes('bass')) {
-            modelFiles.push('htdemucs_ft_bass.ort.gz');
-        }
-        if (components.includes('melody')) {
-            modelFiles.push('htdemucs_ft_other.ort.gz');
-        }
-        if (components.includes('vocals')) {
-            modelFiles.push(model === 'demucs-pro-ft' ? 'htdemucs_ft_vocals.ort.gz' : 'htdemucs_2s_cust.ort.gz');
-        }
-    } else if (model === 'demucs-pro-cust') {
-        modelFiles.push('htdemucs_ft_vocals.ort.gz');
-        modelFiles.push('htdemucs_6s.ort.gz');
-    } else if (model === 'demucs-pro-cust-spec') {
-        modelFiles.push('htdemucs_2s_cust.ort.gz');
-        modelFiles.push('htdemucs_ft_drums.ort.gz');
-        modelFiles.push('htdemucs_ft_bass.ort.gz');
-        modelFiles.push('htdemucs_6s.ort.gz');
-    }
-
-    // prepend raw gh url to all modelFiles
-    modelFiles = modelFiles.map(file =>
-        `${dl_prefix}/${file}`
-    )
-
-    // Map each file to a fetch request and then process the response
-    const fetchPromises = modelFiles.map(file =>
-        fetch(file).then(response => {
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${file}`);
-            }
-            return response.arrayBuffer(); // Or another appropriate method depending on the file type
-        })
-    );
-    return Promise.all(fetchPromises);
-}
 
 const fileInput = document.getElementById('audio-upload');
 const folderInput = document.getElementById('batch-upload');
@@ -180,23 +136,124 @@ const prevStep4Btn = document.getElementById('prev-step-4');
 
 const usageLimits = document.getElementById('usage-limits');
 
-let demucsAudioContext;
-
-function getDemucsAudioContext() {
-    if (!demucsAudioContext) {
-        demucsAudioContext = new (window.AudioContext || window.webkitAudioContext)({sampleRate: DEMUCS_SAMPLE_RATE});
-    }
-    return demucsAudioContext;
+function getAudioContext(sampleRate) {
+    return new (window.AudioContext || window.webkitAudioContext)({sampleRate: sampleRate});
 }
 
-let basicpitchAudioContext;
+const demucsAudioContext = getAudioContext(44100);
+const basicpitchAudioContext = getAudioContext(22050);
 
-function getBasicpitchAudioContext() {
-    if (!basicpitchAudioContext) {
-        basicpitchAudioContext = new (window.AudioContext || window.webkitAudioContext)({sampleRate: BASICPITCH_SAMPLE_RATE});
+const mobileWarning = document.getElementById('mobile-warning-container');
+const mediaQuery = window.matchMedia('(max-width: 512px)');
+
+function handleMediaQueryChange(e) {
+  if (e.matches) {
+    // user is on a small screen
+    // verify that it is visible to track the event
+    if (mobileWarning && getComputedStyle(mobileWarning).display !== 'none') {
+      // Track the event
+      trackProductEvent('mobile-warning-displayed');
+    } else {
+      // Track the event
+      trackProductEvent('mobile-warning-failed-to-display');
     }
-    return basicpitchAudioContext;
+  }
 }
+mediaQuery.addEventListener('change', handleMediaQueryChange);
+
+// also check on initial load:
+if (mediaQuery.matches) {
+  trackProductEvent('mobile-warning-displayed');
+}
+
+// Global toggle state
+let wizardVisible = false;
+
+const tryAnywayBtn = document.getElementById('try-anyway-btn');
+const wizardContainer = document.querySelector('.wizard-container');
+
+tryAnywayBtn.addEventListener('click', function() {
+  wizardVisible = !wizardVisible; // flip the toggle
+
+  if (wizardVisible) {
+    wizardContainer.style.display = 'block';
+    tryAnywayBtn.textContent = 'Hide wizard';
+
+    // set the memory  to 4gb
+    const memory4gb = document.getElementById('4gb');
+    memory4gb.checked = true; // Default to 4 GB
+
+    // Track the user’s action here
+    trackProductEvent('mobile-try-anyway', {
+        memorySetTo: '4gb'
+    });
+  } else {
+    wizardContainer.style.display = 'none';
+    tryAnywayBtn.textContent = 'Try anyway';
+  }
+});
+
+// Grab references to the elements
+const emailMeLinkButton = document.getElementById('email-reminder-btn');
+const emailModal = document.getElementById('email-modal');
+const emailInput = document.getElementById('email-input');
+const emailSendBtn = document.getElementById('email-send-btn');
+const emailCancelBtn = document.getElementById('email-cancel-btn');
+
+emailMeLinkButton.addEventListener('click', function() {
+  // Show the modal
+  emailModal.classList.add('show');
+
+  // instrumentation:
+  trackProductEvent('mobile-email-modal-opened', {
+    reason: 'user clicked email reminder button'
+  });
+});
+
+// Cancel button hides the modal
+emailCancelBtn.addEventListener('click', function() {
+  emailModal.classList.remove('show');
+});
+
+// click outside of modal to close
+window.addEventListener('click', (e) => {
+    if (e.target === emailModal) {
+      emailModal.classList.remove('show');
+    }
+});
+
+// When the user clicks "Send"
+emailSendBtn.addEventListener('click', async function() {
+  const email = emailInput.value.trim();
+  if (!email) {
+    alert('Please enter a valid email address.');
+    return;
+  }
+
+  // instrumentation - user attempts to send
+  trackProductEvent('mobile-email-send-attempt', {
+    typedEmail: email
+  });
+
+  try {
+    // Example: We do a GET request with the email in query param
+    // Adjust the path if your function is at /functions/sendmobileemail or something else
+    const baseUrl = window.location.origin;  // e.g. "https://freemusicdemixer.com"
+    const sendUrl = `${baseUrl}/sendmobileemail?email=${encodeURIComponent(email)}`;
+
+    const resp = await fetch(sendUrl);
+    if (!resp.ok) {
+      // Handle error
+      alert('Failed to send email. Please try again or contact support.');
+    } else {
+      alert('Success! Email sent. Check your inbox shortly.');
+      emailModal.classList.remove('show');
+    }
+  } catch (err) {
+    console.error('Error calling sendmobileemail:', err);
+    alert('Something went wrong sending the email.');
+  }
+});
 
 document.addEventListener("DOMContentLoaded", function() {
     registerServiceWorker();
@@ -256,7 +313,20 @@ function resetUIElements() {
     document.getElementById('default-quality').checked = true;
 
     // set memory radio buttons to default
-    document.getElementById('8gb').checked = true;
+    const mobileWarning = document.getElementById('mobile-warning-container');
+    const memory4gb = document.getElementById('4gb');
+    const memory8gb = document.getElementById('8gb');
+
+    // Check mobile warning visibility at load time to set appropriate default
+    if (mobileWarning && getComputedStyle(mobileWarning).display !== 'none') {
+        // Mobile warning scenario (small screen)
+        memory4gb.checked = true; // Default to 4 GB
+        console.log('Default memory set to 4 GB (small screen).');
+    } else {
+        // Regular scenario (larger screen)
+        memory8gb.checked = true; // Default to 8 GB
+        console.log('Default memory set to 8 GB (large screen).');
+    }
 
     // reset all disabled buttons to disabled
     nextStep2Btn.disabled = true;
@@ -300,261 +370,27 @@ window.addEventListener("beforeunload", (event) => {
 function updateModelBasedOnSelection() {
     console.log('Updating model based on selection');
 
-    if (processingMode === 'midi') {
-        // a no-op/passthrough demixing model for MIDI-only processing
-        selectedModel = 'basicpitch';
-        return;
-    }
-
-    const selectedFeatures = Array.from(componentsCheckboxes)
-    .filter(checkbox => checkbox.checked)
-    .map(checkbox => checkbox.value);
-
     const selectedQuality = document.querySelector('input[type="radio"][name="quality"]:checked').value;
 
-    let selectedModelLocal = "4-SOURCE (FREE)"; // Default model
+    const selectedFeatures = Array.from(componentsCheckboxes)
+      .filter(checkbox => checkbox.checked)
+      .map(checkbox => checkbox.value);
 
-    // Rule 1: If the sources contain piano and/or guitar
-    if (selectedFeatures.includes("piano") || selectedFeatures.includes("guitar") || selectedFeatures.includes("other_melody")) {
-        if (selectedQuality === "default") {
-            selectedModelLocal = "6-SOURCE (PRO)";
-        } else if (selectedQuality === "medium") {
-            selectedModelLocal = "CUSTOM (PRO)";
-        } else if (selectedQuality === "high") {
-            selectedModelLocal = "CUSTOM SPECIAL (PRO)";
-        }
-    }
-    // Rule 2: If the sources contain only vocals and/or instrumental (with no other stems)
-    else if (selectedFeatures.every(item => ["vocals", "instrumental"].includes(item))) {
-        if (selectedQuality === "default") {
-            selectedModelLocal = "4-SOURCE (FREE)";
-        } else if (selectedQuality === "medium") {
-            selectedModelLocal = "FINE-TUNED (PRO)";
-        } else if (selectedQuality === "high") {
-            selectedModelLocal = "KARAOKE (PRO)";
-        }
-    }
-    // Rule 3: Normal case (any of vocals, drums, bass, but no piano/guitar)
-    else if (selectedFeatures.some(item => ["vocals", "drums", "bass", "melody"].includes(item))) {
-        if (selectedQuality === "default") {
-            selectedModelLocal = "4-SOURCE (FREE)";
-        } else if (selectedQuality === "medium") {
-            selectedModelLocal = "FINE-TUNED (PRO)";
-        } else if (selectedQuality === "high") {
-            selectedModelLocal = "DELUXE (PRO)";
-        }
-    }
+    const { model, stems } = computeModelAndStems(processingMode, selectedFeatures, selectedQuality);
 
-    if (selectedModelLocal === "4-SOURCE (FREE)") {
-        selectedModel = 'demucs-free-4s';
-    } else if (selectedModelLocal === "6-SOURCE (PRO)") {
-        selectedModel = 'demucs-free-6s';
-    } else if (selectedModelLocal === "FINE-TUNED (PRO)") {
-        selectedModel = 'demucs-pro-ft';
-    } else if (selectedModelLocal === "KARAOKE (PRO)") {
-        selectedModel = 'demucs-karaoke';
-    } else if (selectedModelLocal === "CUSTOM (PRO)") {
-        selectedModel = 'demucs-pro-cust';
-    } else if (selectedModelLocal === "DELUXE (PRO)") {
-        selectedModel = 'demucs-pro-deluxe';
-    } else if (selectedModelLocal === "CUSTOM SPECIAL (PRO)") {
-        selectedModel = 'demucs-pro-cust-spec';
-    }
+    selectedModel = model;      // or some other variable
+    selectedStems = stems;
 
-    // finally, store selected components
-    selectedStems = selectedFeatures;
-
-    // now, tricky - if selectedStems incudes instrumental and it's not
-    // the demucs-karaoke model, we need to include other stems by necessity
-    if (selectedStems.includes('instrumental') && selectedModel !== 'demucs-karaoke') {
-        // for free-4s, ft, and deluxe, include drums, bass, melody (if not already there)
-        if (['demucs-free-4s', 'demucs-pro-ft', 'demucs-pro-deluxe'].includes(selectedModel)) {
-            if (!selectedStems.includes('drums')) {
-                selectedStems.push('drums');
-            }
-            if (!selectedStems.includes('bass')) {
-                selectedStems.push('bass');
-            }
-            if (!selectedStems.includes('melody')) {
-                selectedStems.push('melody');
-            }
-        }
-
-        // for free-6s, pro-cust, include drums, bass, other_melody, guitar, piano
-        if (['demucs-free-6s', 'demucs-pro-cust', 'demucs-pro-cust-spec'].includes(selectedModel)) {
-            if (!selectedStems.includes('drums')) {
-                selectedStems.push('drums');
-            }
-            if (!selectedStems.includes('bass')) {
-                selectedStems.push('bass');
-            }
-            if (!selectedStems.includes('other_melody')) {
-                selectedStems.push('other_melody');
-            }
-            if (!selectedStems.includes('guitar')) {
-                selectedStems.push('guitar');
-            }
-            if (!selectedStems.includes('piano')) {
-                selectedStems.push('piano');
-            }
-        }
-    }
-
-    // another edge case - if selectedStems includes melody and it's
-    // free-6s or pro-cust, then we need other_melody, guitar, piano
-    if (selectedStems.includes('melody') && ['demucs-free-6s', 'demucs-pro-cust', 'demucs-pro-cust-spec'].includes(selectedModel)) {
-        if (!selectedStems.includes('other_melody')) {
-            selectedStems.push('other_melody');
-        }
-        if (!selectedStems.includes('guitar')) {
-            selectedStems.push('guitar');
-        }
-        if (!selectedStems.includes('piano')) {
-            selectedStems.push('piano');
-        }
-    }
-
-    // we need to enforce a sorting order on selectedStems
-    // it should go in this order:
-    // drums, bass, melody, vocals
-    // so that the model outputs are in the correct order
-
-    // go ahead and sort the selectedStems
-    // instrumental goes last
-    selectedStems.sort((a, b) => {
-        if (a === 'drums') {
-            return -1;
-        } else if (b === 'drums') {
-            return 1;
-        } else if (a === 'bass') {
-            return -1;
-        } else if (b === 'bass') {
-            return 1;
-        } else if (a === 'melody') {
-            return -1;
-        } else if (b === 'melody') {
-            return 1;
-        } else if (a === 'vocals') {
-            return -1;
-        } else if (b === 'vocals') {
-            return 1;
-        } else if (a === 'guitar') {
-            return -1;
-        } else if (b === 'guitar') {
-            return 1;
-        } else if (a === 'piano') {
-            return -1;
-        } else if (b === 'piano') {
-            return 1;
-        } else if (a === 'instrumental') {
-            return -1;
-        } else if (b === 'instrumental') {
-            return 1;
-        }
-        return 0;
-    });
-}
-
-function segmentWaveform(left, right, n_segments) {
-    const totalLength = left.length;
-    const segmentLength = Math.ceil(totalLength / n_segments);
-    const segments = [];
-
-    for (let i = 0; i < n_segments; i++) {
-        const start = i * segmentLength;
-        const end = Math.min(totalLength, start + segmentLength);
-        const leftSegment = new Float32Array(end - start + 2 * DEMUCS_OVERLAP_SAMPLES);
-        const rightSegment = new Float32Array(end - start + 2 * DEMUCS_OVERLAP_SAMPLES);
-
-        // Overlap-padding for the left and right channels
-        // For the first segment, no padding at the start
-        if (i === 0) {
-            leftSegment.fill(left[0], 0, DEMUCS_OVERLAP_SAMPLES);
-            rightSegment.fill(right[0], 0, DEMUCS_OVERLAP_SAMPLES);
-        } else {
-            leftSegment.set(left.slice(start - DEMUCS_OVERLAP_SAMPLES, start), 0);
-            rightSegment.set(right.slice(start - DEMUCS_OVERLAP_SAMPLES, start), 0);
-        }
-
-        // For the last segment, no padding at the end
-        if (i === n_segments - 1) {
-            const remainingSamples = totalLength - end;
-            leftSegment.set(left.slice(end, end + Math.min(DEMUCS_OVERLAP_SAMPLES, remainingSamples)), end - start + DEMUCS_OVERLAP_SAMPLES);
-            rightSegment.set(right.slice(end, end + Math.min(DEMUCS_OVERLAP_SAMPLES, remainingSamples)), end - start + DEMUCS_OVERLAP_SAMPLES);
-        } else {
-            leftSegment.set(left.slice(end, end + DEMUCS_OVERLAP_SAMPLES), end - start + DEMUCS_OVERLAP_SAMPLES);
-            rightSegment.set(right.slice(end, end + DEMUCS_OVERLAP_SAMPLES), end - start + DEMUCS_OVERLAP_SAMPLES);
-        }
-
-        // Assign the original segment data
-        leftSegment.set(left.slice(start, end), DEMUCS_OVERLAP_SAMPLES);
-        rightSegment.set(right.slice(start, end), DEMUCS_OVERLAP_SAMPLES);
-
-        segments.push([leftSegment, rightSegment]);
-    }
-
-    return segments;
-}
-
-function sumSegments(segments, desiredLength) {
-    const totalLength = desiredLength;
-    const segmentLengthWithPadding = segments[0][0].length;
-    const actualSegmentLength = segmentLengthWithPadding - 2 * DEMUCS_OVERLAP_SAMPLES;
-    const output = new Array(segments[0].length).fill().map(() => new Float32Array(totalLength));
-
-    // Create weights for the segment
-    const weight = new Float32Array(actualSegmentLength);
-    for (let i = 0; i < actualSegmentLength; i++) {
-        weight[i] = (i + 1);
-        weight[actualSegmentLength - 1 - i] = (i + 1);
-    }
-    // normalize by its max coefficient
-    const maxWeight = weight.reduce((max, x) => Math.max(max, x), -Infinity);
-    const ramp = weight.map(x => x / maxWeight);
-
-    const sumWeight = new Float32Array(totalLength).fill(0);
-
-    segments.forEach((segment, index) => {
-        const start = index * actualSegmentLength;
-
-        for (let target = 0; target < segment.length; target++) {
-            const channelSegment = segment[target];
-
-            for (let i = 0; i < channelSegment.length; i++) {
-                const segmentPos = i - DEMUCS_OVERLAP_SAMPLES;
-                const outputIndex = start + segmentPos;
-
-                if (outputIndex >= 0 && outputIndex < totalLength) {
-                    output[target][outputIndex] += ramp[i % actualSegmentLength] * channelSegment[i];
-                    // accumulate weight n_targets times
-                    sumWeight[outputIndex] += ramp[i % actualSegmentLength];
-                }
-            }
-        }
-    });
-
-    // Normalize the output by the sum of weights
-    for (let target = 0; target < output.length; target++) {
-        for (let i = 0; i < totalLength; i++) {
-            if (sumWeight[i] !== 0) {
-                // divide by sum of weights with 1/n_targets adjustment
-                output[target][i] /= (sumWeight[i]/(output.length));
-            }
-        }
-    }
-
-    return output;
+    console.log(`New model: ${selectedModel}, stems: ${selectedStems.join(",")}`);
 }
 
 // Event listener for user interaction
 document.addEventListener('click', function() {
-    let context1 = getDemucsAudioContext();
-    if (context1.state === 'suspended') {
-        context1.resume();
+    if (demucsAudioContext.state === 'suspended') {
+        demucsAudioContext.resume();
     }
-    let context2 = getBasicpitchAudioContext();
-    if (context2.state === 'suspended') {
-        context2.resume();
+    if (basicpitchAudioContext.state === 'suspended') {
+        basicpitchAudioContext.resume();
     }
 });
 
@@ -574,7 +410,7 @@ function initWorkers() {
 
    for (let i = 0; i < NUM_WORKERS; i++) {
         // push new worker onto workers array
-        workers[i] = new Worker('worker.js');
+        workers[i] = new Worker('stem-worker.js');
 
         workers[i].onmessage = function(e) {
             if (e.data.msg == 'WASM_READY') {
@@ -604,7 +440,7 @@ function initWorkers() {
                     if (processingMode === 'stems') {
                         incrementUsage();
                     }
-                    const retSummed = sumSegments(processedSegments, originalLength);
+                    const retSummed = sumSegments(processedSegments, originalLength, DEMUCS_OVERLAP_SAMPLES);
                     trackProductEvent('demix-completed', {model: selectedModel, stems: selectedStems.join(',')});
                     packageAndDownload(retSummed);
                     // reset globals etc.
@@ -619,12 +455,15 @@ function initWorkers() {
                 completedSegments += 1;
                 let originalLength = e.data.originalLength;
                 if (completedSegments === NUM_WORKERS) {
+                    console.log(`Completed all segments for ${filename}`);
                     if (processingMode === 'stems') {
                         incrementUsage();
                     }
-                    const retSummed = sumSegments(processedSegments, originalLength);
+                    const totalFiles = document.getElementById('batch-upload').files.length;
+
+                    const retSummed = sumSegments(processedSegments, originalLength, DEMUCS_OVERLAP_SAMPLES);
                     trackProductEvent('batch-demix-completed', {model: selectedModel, stems: selectedStems.join(',')});
-                    packageAndZip(retSummed, filename);
+                    packageAndZip(retSummed, filename, totalFiles);
                     // reset globals per-song in the batch process
                     completedSegments = 0;
 
@@ -641,7 +480,7 @@ function initWorkers() {
                     }
 
                     // if all songs are done, reset completedSongsBatch
-                    if (completedSongsBatch === document.getElementById('batch-upload').files.length) {
+                    if (completedSongsBatch === totalFiles) {
                         trackProductEvent('entire-batch-completed', {model: selectedModel, stems: selectedStems.join(',')});
                         completedSongsBatch = 0;
 
@@ -654,6 +493,13 @@ function initWorkers() {
 
                         // reset jobRunning flag
                         jobRunning = false;
+
+                        // re-enable UI buttons only if pure-stems
+                        // if in mixed mode (any kind of midi or _only_ midi), we should wait
+                        if (processingMode === 'stems') {
+                            prevStep3Btn.disabled = false;
+                            nextStep3BtnNewJob.disabled = false;
+                        }
                     }
                 }
             } else if (e.data.msg === 'WASM_ERROR') {
@@ -701,7 +547,6 @@ async function initModel() {
         try {
             const buffers = await fetchAndCacheFiles(selectedModel, selectedStems);
             // WASM module is ready, enable the buttons
-            nextStep3BtnSheetMusic.disabled = false;
             nextStep3BtnNewJob.disabled = false;
 
             dlModelBuffers = buffers;
@@ -715,35 +560,6 @@ async function initModel() {
         removeStep2Spinner();
     }
 }
-
-// Function to handle the segmented audio processing
-function processAudioSegments(leftChannel, rightChannel, numSegments, originalLength) {
-    let segments = segmentWaveform(leftChannel, rightChannel, numSegments);
-    segments.forEach((segment, index) => {
-        workers[index].postMessage({
-            msg: 'PROCESS_AUDIO',
-            leftChannel: segment[0],
-            rightChannel: segment[1],
-            originalLength: originalLength
-        });
-    });
-}
-
-// Function to handle the segmented audio processing
-// for the batch case
-function processBatchSegments(leftChannel, rightChannel, numSegments, filename, originalLength) {
-    let segments = segmentWaveform(leftChannel, rightChannel, numSegments);
-    segments.forEach((segment, index) => {
-        workers[index].postMessage({
-            msg: 'PROCESS_AUDIO_BATCH',
-            leftChannel: segment[0],
-            rightChannel: segment[1],
-            filename: filename,
-            originalLength: originalLength
-        });
-    });
-}
-
 function initializeInputState() {
     if (fileInput.files.length > 0) {
         isSingleMode = true;
@@ -781,6 +597,7 @@ folderInput.addEventListener('change', function() {
         updateSelectedInputMessage();
     }
     toggleNextButton();
+    checkAndResetWeeklyLimit();
 });
 
 // Function to toggle the Next button's disabled state
@@ -834,7 +651,7 @@ function checkAndResetWeeklyLimit() {
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
     if (!loggedIn) {
         const remaining = 3 - usageData.count;
-        usageLimits.innerHTML = `You have ${remaining} free jobs remaining this week. Your limit will reset on ${new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}. 🔒 <b><a href="/pricing#subscribe-today" target="_blank">Click here to buy unlimited demixes!</a></b>`;
+        usageLimits.innerHTML = `You have ${remaining} free jobs remaining this week. Your limit will reset on ${new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}. 🔒 <b><a href="/pricing#subscribe-today" target="_blank" rel="noopener noreferrer">Click here to buy unlimited demixes!</a></b>`;
     } else {
         usageLimits.textContent = 'You have unlimited jobs with your PRO subscription!';
 
@@ -861,7 +678,7 @@ function removeStep2Spinner() {
     document.getElementById('step2-overlay').style.display = 'none';
     document.getElementById('step2-spinner').style.display = 'none';
     prevStep3Btn.disabled = false;
-    nextStep3BtnSheetMusic.disabled = false;
+    //nextStep3BtnSheetMusic.disabled = false;
     nextStep3BtnNewJob.disabled = false;
 }
 
@@ -955,11 +772,16 @@ function getSelectedQuality() {
 }
 
 function getSelectedMemory() {
-  return document.querySelector('input[name="memory"]:checked')?.value || '8gb';
-}
+  // adapt this function to return a 4gb default for smaller screens
+  // and 8gb for larger screens
+  const mobileWarning = document.getElementById('mobile-warning-container');
 
-function isSingleModeChosen() {
-  return !!document.getElementById('audio-upload').files.length;
+  // Check mobile warning visibility at load time to set appropriate default
+  let defaultMem = '8gb'; // Default to 8GB for larger screens
+  if (mobileWarning && getComputedStyle(mobileWarning).display !== 'none') {
+      defaultMem = '4gb'; // Use 4GB for smaller screens
+  }
+  return document.querySelector('input[name="memory"]:checked')?.value || defaultMem;
 }
 
 function getSelectedFileCount() {
@@ -989,9 +811,26 @@ document.getElementById('activation-form').addEventListener('submit', function(e
     event.preventDefault();
 });
 
-nextStep2Btn.addEventListener('click', function() {
-    console.log('Is single mode:', isSingleMode);
-    console.log('Selected input on next step:', selectedInput);
+nextStep2Btn.addEventListener('click', function(e) {
+    console.log('Selected input on next step:', selectedInput, 'isSingleMode:', isSingleMode);
+
+    // Check if mobile warning container exists and is currently hidden
+    const mobileWarning = document.getElementById('mobile-warning-container');
+    const mobileWarningShown = mobileWarning && getComputedStyle(mobileWarning).display !== 'none';
+
+    if (mobileWarningShown) {
+        // Mobile warning is visible, meaning we are in mobile-warning scenario
+        const proceed = confirm("⚠️ You're on a 📱 small screen. Running the demixer might be slow or crash. Are you sure you want to continue?");
+        if (!proceed) {
+            // User decided not to proceed, prevent further actions
+            e.preventDefault();
+            console.log("User cancelled due to mobile warning.");
+            return;
+        }
+    } else {
+        // Mobile warning is not visible, meaning we are not in mobile-warning scenario
+        console.log("No mobile warning shown.");
+    }
 
     trackProductEvent('Wizard Step 2 Completed', {
         model: selectedModel,
@@ -1000,7 +839,12 @@ nextStep2Btn.addEventListener('click', function() {
         quality: getSelectedQuality(),
         memory: getSelectedMemory(),
         fileCount: getSelectedFileCount(),
+        mobileWarning: mobileWarningShown ? 'shown' : 'not shown'
     });
+
+    // clear mxml sheet music buffers here, at start of new job - this is  THE place we want to do it
+    // since we are fine discarding old results and there's no more navigating back to the previous step
+    midiManager.mxmlBuffersSheetMusic = {};
 
     initModel().then(() => {
         console.log("Starting demix job");
@@ -1073,7 +917,7 @@ nextStep2Btn.addEventListener('click', function() {
                         // set original length of track
                         let originalLength = leftChannel.length;
 
-                        processAudioSegments(leftChannel, rightChannel, NUM_WORKERS, originalLength);
+                        processSegments(workers, leftChannel, rightChannel, NUM_WORKERS, originalLength, DEMUCS_OVERLAP_SAMPLES);
                     });
                 } else {
                     console.log("Converting input file to MIDI directly");
@@ -1139,103 +983,6 @@ prevStep3Btn.addEventListener('click', function() {
     step2.style.display = 'block';
 });
 
-function openSheetMusicInNewTab(mxmlData, instrumentName) {
-  const newTab = window.open("", "_blank");
-  if (!newTab) {
-    alert("Please allow pop-ups to see your sheet music.");
-    return;
-  }
-
-  // Convert the raw bytes into a string using TextDecoder.
-  // The assumption is that `mxmlData` is a Uint8Array or ArrayBuffer.
-  const decoder = new TextDecoder();
-  // Ensure mxmlData is a Uint8Array if it's an ArrayBuffer
-  let typedArray = mxmlData instanceof Uint8Array ? mxmlData : new Uint8Array(mxmlData);
-  const xmlString = decoder.decode(typedArray);
-
-  // Write an HTML structure into the new window
-  newTab.document.write(`
-    <html>
-    <head>
-      <title>Sheet Music: ${instrumentName}</title>
-      <style>
-        body {
-          margin: 0;
-          padding: 0;
-          font-family: sans-serif;
-        }
-        #osmdContainer {
-          width: 100%;
-          height: calc(100% - 50px);
-          box-sizing: border-box;
-        }
-        #controls {
-          display: flex;
-          gap: 10px;
-          align-items: center;
-          padding: 10px;
-          background: #f0f0f0;
-          border-bottom: 1px solid #ddd;
-        }
-        button {
-          cursor: pointer;
-        }
-      </style>
-    </head>
-    <body>
-      <div id="controls">
-        <button id="saveBtn">Save</button>
-        <button id="printBtn">Print</button>
-      </div>
-      <div id="osmdContainer"></div>
-
-      <!-- Load OpenSheetMusicDisplay via CDN: choose a stable version or the latest -->
-      <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.6.1/build/opensheetmusicdisplay.min.js"></script>
-
-      <script>
-        // We load OSMD after the script is done, so we must wait for DOMContentLoaded
-        document.addEventListener("DOMContentLoaded", async () => {
-          const osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("osmdContainer", {
-            // any OSMD options you want
-            followCursor: true,
-            drawMeasureNumbers: true
-          });
-
-          try {
-            const xml = \`${xmlString.replace(/`/g, "\\`")}\`;
-            await osmd.load(xml);
-            osmd.render();
-          } catch (error) {
-            console.error("OSMD load error:", error);
-          }
-
-          // Save Button - downloads the MusicXML
-          document.getElementById("saveBtn").addEventListener("click", () => {
-            const blob = new Blob([\`${xmlString.replace(/`/g, "\\`")}\`], {
-              type: "application/vnd.recordare.musicxml+xml"
-            });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "${instrumentName}.musicxml";
-            a.click();
-            URL.revokeObjectURL(url);
-          });
-
-          // Print Button
-          document.getElementById("printBtn").addEventListener("click", () => {
-            window.print();
-          });
-        });
-      </script>
-    </body>
-    </html>
-  `);
-
-  // Must close the document to finish writing
-  newTab.document.close();
-}
-
 const instrumentLinksContainer = document.getElementById("instrument-links");
 
 nextStep3BtnSheetMusic.addEventListener('click', function() {
@@ -1247,14 +994,14 @@ nextStep3BtnSheetMusic.addEventListener('click', function() {
 
     // (Re)Generate the instrument links (or do this once if you prefer)
     instrumentLinksContainer.innerHTML = "";
-    Object.keys(mxmlBuffersSheetMusic).forEach((instrumentName) => {
+    Object.keys(midiManager.mxmlBuffersSheetMusic).forEach((instrumentName) => {
       const link = document.createElement("a");
       link.href = "#";
       link.textContent = `Open new sheet music tab for: ${instrumentName}`;
       link.addEventListener("click", (e) => {
         e.preventDefault();
         trackProductEvent('Opened Sheet Music', { instrumentName });
-        openSheetMusicInNewTab(mxmlBuffersSheetMusic[instrumentName], instrumentName);
+        openSheetMusicInNewTab(midiManager.mxmlBuffersSheetMusic[instrumentName], instrumentName);
       });
       instrumentLinksContainer.appendChild(link);
       instrumentLinksContainer.appendChild(document.createElement("br"));
@@ -1271,6 +1018,10 @@ prevStep4Btn.addEventListener('click', function() {
 nextStep3BtnNewJob.addEventListener('click', function() {
     // reset all buttons etc.
     //resetUIElements();
+    midiManager.completedSongsBatchMidi = 0;
+    midiManager.queueTotal = 0;
+    midiManager.queueCompleted = 0;
+
     trackProductEvent('New job button');
 
     // restart the wizard from step 1
@@ -1289,132 +1040,18 @@ nextStep4Btn.addEventListener('click', function() {
     step1.style.display = 'block';
 });
 
-// MIDI globals
-const midiQueue = [];
-let isProcessing = false;
-let midiWorker;
-let midiWasmLoaded = false; // Flag to check if WASM is loaded
-let midiBuffers = {}; // Store MIDI data by stem name
-let mxmlBuffers = {}; // Store MusicXML data by stem name
-let mxmlBuffersSheetMusic = {}; // Store MusicXML data for sheet music
-let queueTotal = 0; // Total number of items in the queue
-let queueCompleted = 0; // Number of items processed
-let completedSongsBatchMidi = 0; // Counter for processed songs in batch mode
-
-function initializeMidiWorker() {
-    midiWorker = new Worker('basicpitch_worker.js');
-
-    midiWorker.onmessage = function(e) {
-        if (e.data.msg === 'WASM_READY') {
-            console.log('Basicpitch WASM module loaded successfully');
-            midiWasmLoaded = true;
-            processNextMidi(); // Start processing the queue
-        } else if (e.data.msg === 'PROGRESS_UPDATE') {
-            let prog = e.data.data; // `prog` represents the current track's progress from 0 to 1
-            const totalProgress = ((queueCompleted + prog) / queueTotal) * 100;
-            // log each aspect of the progress for debugging: prog, totalProgress, queueCompleted, queueTotal
-            document.getElementById('midi-progress-bar').style.width = `${totalProgress}%`;
-        } else if (e.data.msg === 'PROGRESS_UPDATE_BATCH') {
-            let prog = e.data.data;
-            const trackProgressInBatch = ((queueCompleted + prog) / queueTotal) * globalProgressIncrement;
-            const startingPointForCurrentSong = completedSongsBatchMidi * globalProgressIncrement;
-            const newBatchWidth = startingPointForCurrentSong + trackProgressInBatch;
-            document.getElementById('midi-progress-bar').style.width = `${newBatchWidth}%`;
-        } else if (e.data.msg === 'PROCESSING_DONE') {
-            queueCompleted += 1;
-            handleMidiDone(e.data);
-            isProcessing = false;
-            processNextMidi();
-        } else if (e.data.msg === 'PROCESSING_FAILED') {
-            console.error(`Failed to generate MIDI for ${e.data.stemName}.`);
-            isProcessing = false;
-            processNextMidi();
-        }
-    };
-
-    // Load the WASM module when the worker is created
-    midiWorker.postMessage({ msg: 'LOAD_WASM', scriptName: 'basicpitch_mxml.js' });
-}
-
-function handleMidiDone(data) {
-    const { midiBytes, mxmlBytes, stemName } = data;
-    const midiBlob = new Blob([midiBytes], { type: 'audio/midi' });
-    midiBuffers[stemName] = midiBlob; // Store the MIDI blob by stem name
-    mxmlBuffers[stemName] = mxmlBytes; // Store the MXML bytes by stem name
-    trackProductEvent('MIDI Generation Completed', { stem: stemName });
-    console.log(`MIDI generation done for ${stemName}.`);
-}
-
-// Add a new function to queue the request
-function queueMidiRequest(audioBuffer, stemName, batchMode, directArrayBuffer = false) {
-    midiQueue.push({ audioBuffer, stemName, batchMode, directArrayBuffer });
-    queueTotal += 1;
-    processNextMidi();
-}
-
-// Process the next item in the queue if not currently processing
-function processNextMidi() {
-    if (isProcessing || midiQueue.length === 0 || !midiWasmLoaded) return;
-
-    isProcessing = true;
-    const { audioBuffer, stemName, batchMode, directArrayBuffer } = midiQueue.shift();
-
-    // Call generateMidi with the next item in the queue
-    generateMidi(audioBuffer, stemName, batchMode, directArrayBuffer);
-}
-
-// Function to handle MIDI generation
-function generateMidi(inputBuffer, stemName, batchMode, directArrayBuffer = false) {
-    trackProductEvent('MIDI Generation Started', { stem: stemName });
-
-    if (directArrayBuffer) {
-        // Decode directly from arrayBuffer in MIDI-only mode
-        basicpitchAudioContext.decodeAudioData(inputBuffer, async (decodedData) => {
-            const leftChannel = decodedData.getChannelData(0);
-            const rightChannel = decodedData.numberOfChannels > 1 ? decodedData.getChannelData(1) : leftChannel;
-            const monoAudioData = new Float32Array(leftChannel.length);
-
-            // Mix stereo to mono by averaging channels
-            for (let i = 0; i < leftChannel.length; i++) {
-                monoAudioData[i] = (leftChannel[i] + rightChannel[i]) / 2.0;
-            }
-
-            // Send to the worker for MIDI processing
-            midiWorker.postMessage({
-                msg: 'PROCESS_AUDIO',
-                inputData: monoAudioData.buffer,
-                length: monoAudioData.length,
-                stemName: stemName,
-                batchMode: batchMode
-            }, [monoAudioData.buffer]); // Transfer buffer ownership
-        });
-    } else {
-        // Existing behavior for audioBuffer
-        const wavArrayBuffer = encodeWavFileFromAudioBuffer(inputBuffer, 0);
-
-        basicpitchAudioContext.decodeAudioData(wavArrayBuffer, async (decodedData) => {
-            const leftChannel = decodedData.getChannelData(0);
-            const rightChannel = decodedData.numberOfChannels > 1 ? decodedData.getChannelData(1) : leftChannel;
-            const monoAudioData = new Float32Array(leftChannel.length);
-
-            for (let i = 0; i < leftChannel.length; i++) {
-                monoAudioData[i] = (leftChannel[i] + rightChannel[i]) / 2.0;
-            }
-
-            midiWorker.postMessage({
-                msg: 'PROCESS_AUDIO',
-                inputData: monoAudioData.buffer,
-                length: monoAudioData.length,
-                stemName: stemName,
-                batchMode: batchMode
-            }, [monoAudioData.buffer]); // Transfer buffer ownership
-        });
-    }
-}
+// Now create the manager
+const midiManager = new MidiWorkerManager({
+    workerScript: 'midi-worker.js',
+    wasmScript: 'basicpitch_mxml.js',
+    basicpitchAudioContext,
+    trackProductEvent,
+    encodeWavFileFromAudioBuffer
+});
 
 const midiStemNames = ['vocals', 'bass', 'melody', 'other_melody', 'piano', 'guitar'];
 
-function generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames) {
+function generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames, batchCount) {
     let stemNames = selectedStems.filter(stem => stem !== 'instrumental');
 
     // If model is free-6s or pro-cust, exclude melody from stems
@@ -1433,7 +1070,7 @@ function generateBuffers(targetWaveforms, selectedStems, selectedModel, processi
 
         // Queue MIDI generation if required
         if (processingMode !== 'stems' && midiStemNames.includes(name)) {
-            queueMidiRequest(buffer, name, false);
+            midiManager.queueMidiRequest(buffer, name, batchCount);
         }
     });
 
@@ -1485,42 +1122,35 @@ function generateBuffers(targetWaveforms, selectedStems, selectedModel, processi
 
 function packageAndDownload(targetWaveforms) {
     // create the worker if needed
-    if (processingMode != 'stems' && !midiWorker) {
-        initializeMidiWorker();
+    if (processingMode != 'stems' && !midiManager.midiWorker) {
+        midiManager.initializeMidiWorker();
     }
 
     // Generate all buffers and stems using the helper function
-    const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames);
+    // batch count is 1, this is a single file
+    const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames, 1);
 
     // Wait for MIDI files to finish, then create download links
-    waitForMidiProcessing().then(() => createDownloadLinks(buffers, false));
+    midiManager.waitForMidiProcessing().then(() => {
+        createDownloadLinks(buffers, false);
+    });
 }
 
 function packageAndDownloadMidiOnly(inputArrayBuffer) {
     console.log(`Processing audio data in MIDI-only mode`);
     // create the worker
-    if (processingMode != 'stems' && !midiWorker) {
-        initializeMidiWorker();
+    if (processingMode != 'stems' && !midiManager.midiWorker) {
+        midiManager.initializeMidiWorker();
     }
 
     // use the stem name 'output' for the midi-only output
     // directly operating on the user input
-    queueMidiRequest(inputArrayBuffer, "output", false, true);
+    // batch count = 1 because this is strictly a single-file case
+    midiManager.queueMidiRequest(inputArrayBuffer, "output", 1, true);
 
     // Wait for all MIDI files to complete processing, then create download links
-    waitForMidiProcessing().then(() => createDownloadLinks(null, true));
-}
-
-function waitForMidiProcessing() {
-    return new Promise(resolve => {
-        const checkQueueCompletion = () => {
-            if (midiQueue.length === 0 && !isProcessing) {
-                resolve(); // All MIDI files are processed
-            } else {
-                setTimeout(checkQueueCompletion, 100); // Check again in 100ms
-            }
-        };
-        checkQueueCompletion();
+    midiManager.waitForMidiProcessing().then(() => {
+        createDownloadLinks(null, true);
     });
 }
 
@@ -1548,12 +1178,11 @@ function createDownloadLinks(buffers, midiOnlyMode) {
             downloadLinksDiv.appendChild(wavLink);
 
             // If MIDI data exists for this stem, we queue it up
-            if (midiBuffers[stemName]) {
-                // Add a task to handle MIDI arrayBuffer conversion
-                tasks.push(midiBuffers[stemName].arrayBuffer().then(function(arrBuf) {
+            if (midiManager.midiBuffers[stemName]) {
+                tasks.push(midiManager.midiBuffers[stemName].arrayBuffer().then(arrBuf => {
                     zipFiles[stemName + ".mid"] = new Uint8Array(arrBuf);
 
-                    var midiUrl = URL.createObjectURL(midiBuffers[stemName]);
+                    const midiUrl = URL.createObjectURL(midiManager.midiBuffers[stemName]);
                     var midiLink = document.createElement('a');
                     midiLink.href = midiUrl;
                     midiLink.textContent = stemName + ".mid";
@@ -1564,11 +1193,11 @@ function createDownloadLinks(buffers, midiOnlyMode) {
         });
     } else {
         // MIDI-only mode
-        Object.keys(midiBuffers).forEach(function(stemName) {
-            tasks.push(midiBuffers[stemName].arrayBuffer().then(function(arrBuf) {
+        Object.keys(midiManager.midiBuffers).forEach(stemName => {
+            tasks.push(midiManager.midiBuffers[stemName].arrayBuffer().then(arrBuf => {
                 zipFiles[stemName + ".mid"] = new Uint8Array(arrBuf);
 
-                var midiUrl = URL.createObjectURL(midiBuffers[stemName]);
+                const midiUrl = URL.createObjectURL(midiManager.midiBuffers[stemName]);
                 var midiLink = document.createElement('a');
                 midiLink.href = midiUrl;
                 midiLink.textContent = stemName + ".mid";
@@ -1602,19 +1231,18 @@ function createDownloadLinks(buffers, midiOnlyMode) {
         }
 
         // Clear MIDI buffers after links are created
-        midiBuffers = {};
-        // copy mxmlBuffers before clearing
-        mxmlBuffersSheetMusic = mxmlBuffers;
-
-        mxmlBuffers = {};
-        queueTotal = 0; // Reset the total queue items
-        queueCompleted = 0; // Reset the current queue item
+        midiManager.midiBuffers = {};
+        midiManager.mxmlBuffersSheetMusic = midiManager.mxmlBuffers;
+        midiManager.mxmlBuffers = {};
+        midiManager.queueTotal = 0;
+        midiManager.queueCompleted = 0;
 
         // If in a mode that includes MIDI, increment usage
         if (processingMode != 'stems') {
             incrementUsage(); // Increment the weekly usage counter
 
             // Enable the sheet music button for MIDI modes
+            // this is non-batch mode
             nextStep3BtnSheetMusic.disabled = false;
         }
 
@@ -1628,10 +1256,9 @@ async function processFiles(files, midiOnlyMode) {
     if (!files || files.length === 0) return;
 
     globalProgressIncrement = 100 / files.length; // Progress increment per file
-    let completedMidiFiles = 0; // Track completed MIDI files
 
-    if (midiOnlyMode && !midiWorker) {
-        initializeMidiWorker();
+    if (midiOnlyMode && !midiManager.midiWorker) {
+        midiManager.initializeMidiWorker();
     }
 
     for (const file of files) {
@@ -1644,15 +1271,13 @@ async function processFiles(files, midiOnlyMode) {
 
                 if (midiOnlyMode) {
                     // Directly queue for MIDI processing in MIDI-only mode
-                    queueMidiRequest(arrayBuffer, filenameWithoutExt, false, true);
+                    // batch count = files.length
+                    midiManager.queueMidiRequest(arrayBuffer, filenameWithoutExt, files.length, true);
 
                     // Update the progress bar for each MIDI file
-                    waitForMidiProcessing().then(() => {
-                        completedMidiFiles++;
-                        const midiProgress = (completedMidiFiles / files.length) * 100;
-                        document.getElementById('midi-progress-bar').style.width = `${midiProgress}%`;
-
+                    midiManager.waitForMidiProcessing().then(() => {
                         // Resolve the current file’s processing
+                        midiManager.completedSongsBatchMidi += 1;
                         resolve();
                     });
                 } else {
@@ -1668,7 +1293,7 @@ async function processFiles(files, midiOnlyMode) {
                         }
 
                         let originalLength = leftChannel.length;
-                        processBatchSegments(leftChannel, rightChannel, NUM_WORKERS, filenameWithoutExt, originalLength);
+                        processSegments(workers, leftChannel, rightChannel, NUM_WORKERS, originalLength, DEMUCS_OVERLAP_SAMPLES, filenameWithoutExt);
                         batchNextFileResolveCallback = resolve;
                     });
                 }
@@ -1678,13 +1303,13 @@ async function processFiles(files, midiOnlyMode) {
         });
     }
 
-    // Reset progress tracking after all files are processed
-    if (midiOnlyMode) {
+    // Handle pure-midi here: mixed stems + midi is handled in different functions, keep reading below
+    if (processingMode === 'midi') {
         console.log("All MIDI files processed.");
 
         // Iterate over each completed MIDI file in midiBuffers and append links
-        for (const filename in midiBuffers) {
-            const midiBlob = midiBuffers[filename];
+        for (const filename in midiManager.midiBuffers) {
+            const midiBlob = midiManager.midiBuffers[filename];
             if (midiBlob) {
                 const midiUrl = URL.createObjectURL(midiBlob);
                 const link = document.createElement('a');
@@ -1697,14 +1322,23 @@ async function processFiles(files, midiOnlyMode) {
         }
 
         // Clear midiBuffers after links are created
-        midiBuffers = {};
-        queueTotal = 0; // Reset the total queue items
-        queueCompleted = 0; // Reset the current queue item
+        midiManager.midiBuffers = {};
+
+        // create sheet music buffers
+        Object.keys(midiManager.mxmlBuffers).forEach(key => {
+            midiManager.mxmlBuffersSheetMusic[`${key}`] = midiManager.mxmlBuffers[key];
+        });
+        // Now clear mxmlBuffers
+        midiManager.mxmlBuffers = {};
+        midiManager.queueTotal = 0;
+        midiManager.queueCompleted = 0;
 
         prevStep3Btn.disabled = false;
         nextStep3BtnSheetMusic.disabled = false;
         nextStep3BtnNewJob.disabled = false;
     }
+
+    // in the case of processingMode === 'both', that's handled in packageAndDownload or packageAndZip
 
     // for all modes that have midi, increment usage here
     if (processingMode != 'stems') {
@@ -1712,14 +1346,14 @@ async function processFiles(files, midiOnlyMode) {
     }
 }
 
-function packageAndZip(targetWaveforms, filename) {
+function packageAndZip(targetWaveforms, filename, batchCount) {
     // create the worker if needed
-    if (processingMode != 'stems' && !midiWorker) {
-        initializeMidiWorker();
+    if (processingMode != 'stems' && !midiManager.midiWorker) {
+        midiManager.initializeMidiWorker();
     }
 
     // Generate buffers for all stems, including instrumental/melody logic
-    const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames);
+    const buffers = generateBuffers(targetWaveforms, selectedStems, selectedModel, processingMode, midiStemNames, batchCount);
 
     // Now we don't need to redo logic. Just zip all stems and MIDI files.
     const directoryName = `${filename}_stems/`;
@@ -1732,11 +1366,11 @@ function packageAndZip(targetWaveforms, filename) {
     });
 
     // Wait for MIDI
-    waitForMidiProcessing().then(() => {
+    midiManager.waitForMidiProcessing().then(() => {
         // Add MIDI files to zipFiles once processing is complete
         return Promise.all(
-            Object.keys(midiBuffers).map(stemName =>
-                midiBuffers[stemName].arrayBuffer().then(arrayBuffer => {
+            Object.keys(midiManager.midiBuffers).map(stemName =>
+                midiManager.midiBuffers[stemName].arrayBuffer().then(arrayBuffer => {
                     zipFiles[`${directoryName}${stemName}.mid`] = new Uint8Array(arrayBuffer);
                 })
             )
@@ -1755,19 +1389,32 @@ function packageAndZip(targetWaveforms, filename) {
         document.getElementById('output-links').appendChild(zipLink);
 
         // Clear midiBuffers after zip creation
-        midiBuffers = {};
-        queueTotal = 0; // Reset
-        queueCompleted = 0; // Reset
+        midiManager.midiBuffers = {};
 
-        if (completedSongsBatchMidi < document.getElementById('batch-upload').files.length - 1) {
-            completedSongsBatchMidi += 1;
+        // copy mxmlBuffers before clearing, but prepend filename since this is a batch
+        // and we need to distinguish between songs
+         Object.keys(midiManager.mxmlBuffers).forEach(key => {
+            midiManager.mxmlBuffersSheetMusic[`${filename}_${key}`] = midiManager.mxmlBuffers[key];
+        });
+        // Now clear mxmlBuffers
+        midiManager.mxmlBuffers = {};
+        midiManager.queueTotal = 0;
+        midiManager.queueCompleted = 0;
+
+        if (midiManager.completedSongsBatchMidi < document.getElementById('batch-upload').files.length - 1) {
+            midiManager.completedSongsBatchMidi += 1;
         } else {
-            completedSongsBatchMidi = 0;
-        }
+            midiManager.completedSongsBatchMidi = 0;
+            // Enable the next buttons
+            prevStep3Btn.disabled = false;
 
-        prevStep3Btn.disabled = false;
-        nextStep3BtnSheetMusic.disabled = false;
-        nextStep3BtnNewJob.disabled = false;
+            // Enable the sheet music button for MIDI modes
+            // this is batch mode
+            if (processingMode != 'stems') {
+                nextStep3BtnSheetMusic.disabled = false;
+            }
+            nextStep3BtnNewJob.disabled = false;
+        }
     });
 }
 
