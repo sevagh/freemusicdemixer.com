@@ -1020,6 +1020,10 @@ prevStep4Btn.addEventListener('click', function() {
 nextStep3BtnNewJob.addEventListener('click', function() {
     // reset all buttons etc.
     //resetUIElements();
+    midiManager.completedSongsBatchMidi = 0;
+    midiManager.queueTotal = 0;
+    midiManager.queueCompleted = 0;
+
     trackProductEvent('New job button');
 
     // restart the wizard from step 1
