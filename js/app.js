@@ -547,7 +547,6 @@ async function initModel() {
         try {
             const buffers = await fetchAndCacheFiles(selectedModel, selectedStems);
             // WASM module is ready, enable the buttons
-            nextStep3BtnSheetMusic.disabled = false;
             nextStep3BtnNewJob.disabled = false;
 
             dlModelBuffers = buffers;
@@ -679,7 +678,7 @@ function removeStep2Spinner() {
     document.getElementById('step2-overlay').style.display = 'none';
     document.getElementById('step2-spinner').style.display = 'none';
     prevStep3Btn.disabled = false;
-    nextStep3BtnSheetMusic.disabled = false;
+    //nextStep3BtnSheetMusic.disabled = false;
     nextStep3BtnNewJob.disabled = false;
 }
 
@@ -813,8 +812,7 @@ document.getElementById('activation-form').addEventListener('submit', function(e
 });
 
 nextStep2Btn.addEventListener('click', function(e) {
-    console.log('Is single mode:', isSingleMode);
-    console.log('Selected input on next step:', selectedInput);
+    console.log('Selected input on next step:', selectedInput, 'isSingleMode:', isSingleMode);
 
     // Check if mobile warning container exists and is currently hidden
     const mobileWarning = document.getElementById('mobile-warning-container');
@@ -1244,6 +1242,7 @@ function createDownloadLinks(buffers, midiOnlyMode) {
             incrementUsage(); // Increment the weekly usage counter
 
             // Enable the sheet music button for MIDI modes
+            // this is non-batch mode
             nextStep3BtnSheetMusic.disabled = false;
         }
 
@@ -1408,7 +1407,12 @@ function packageAndZip(targetWaveforms, filename, batchCount) {
             midiManager.completedSongsBatchMidi = 0;
             // Enable the next buttons
             prevStep3Btn.disabled = false;
-            nextStep3BtnSheetMusic.disabled = false;
+
+            // Enable the sheet music button for MIDI modes
+            // this is batch mode
+            if (processingMode != 'stems') {
+                nextStep3BtnSheetMusic.disabled = false;
+            }
             nextStep3BtnNewJob.disabled = false;
         }
     });
