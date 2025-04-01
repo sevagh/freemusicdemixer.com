@@ -48,13 +48,14 @@ header_class: index
 <section class="info-section" id="mobile-warning-container">
   <h3>Better on Computer 💻</h3>
   <p>
-    Smaller devices might crash.
-    Get a reminder, or try anyway:
+    Smaller devices might crash. Get a reminder:
   </p>
   <div class="mobile-warning-actions">
     <button id="email-reminder-btn" class="highlight-btn">Email link</button>
-    <button id="try-anyway-btn" >Try anyway</button>
   </div>
+  <p style="margin-top: 0.5rem;">
+    ... or try it anyway!
+  </p>
 </section>
 
 <!-- Hidden modal for collecting email -->

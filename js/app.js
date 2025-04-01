@@ -157,41 +157,25 @@ function handleMediaQueryChange(e) {
       // Track the event
       trackProductEvent('mobile-warning-failed-to-display');
     }
-  }
-}
-mediaQuery.addEventListener('change', handleMediaQueryChange);
-
-// also check on initial load:
-if (mediaQuery.matches) {
-  trackProductEvent('mobile-warning-displayed');
-}
-
-// Global toggle state
-let wizardVisible = false;
-
-const tryAnywayBtn = document.getElementById('try-anyway-btn');
-const wizardContainer = document.querySelector('.wizard-container');
-
-tryAnywayBtn.addEventListener('click', function() {
-  wizardVisible = !wizardVisible; // flip the toggle
-
-  if (wizardVisible) {
-    wizardContainer.style.display = 'block';
-    tryAnywayBtn.textContent = 'Hide wizard';
 
     // set the memory  to 4gb
     const memory4gb = document.getElementById('4gb');
     memory4gb.checked = true; // Default to 4 GB
 
     // Track the user’s action here
-    trackProductEvent('mobile-try-anyway', {
+    trackProductEvent('mobile-lower-mem', {
         memorySetTo: '4gb'
     });
-  } else {
-    wizardContainer.style.display = 'none';
-    tryAnywayBtn.textContent = 'Try anyway';
+
   }
-});
+}
+mediaQuery.addEventListener('change', handleMediaQueryChange);
+
+// also check on initial load:
+if (mediaQuery.matches) {
+    // reuse the function to track the event
+    handleMediaQueryChange(mediaQuery);
+}
 
 // Grab references to the elements
 const emailMeLinkButton = document.getElementById('email-reminder-btn');
