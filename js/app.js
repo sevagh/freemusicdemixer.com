@@ -320,6 +320,7 @@ function resetUIElements() {
     bitDepth16.checked = true; // Default to 16-bit
 
     // reset all disabled buttons to disabled
+    prevStep1Btn.disabled = true;
     nextStep2Btn.disabled = true;
     nextStep3BtnSheetMusic.disabled = true;
     nextStep3BtnNewJob.disabled = true;
@@ -432,7 +433,16 @@ function initWorkers() {
                         incrementUsage();
                     }
                     const retSummed = sumSegments(processedSegments, originalLength, DEMUCS_OVERLAP_SAMPLES);
-                    trackProductEvent('demix-completed', {model: selectedModel, stems: selectedStems.join(',')});
+                    trackProductEvent('demix-completed', {
+                        model: selectedModel,
+                        stems: selectedStems.join(','),
+                        processingMode: getSelectedProcessingMode(),
+                        features: getSelectedFeatures(),
+                        quality: getSelectedQuality(),
+                        memory: getSelectedMemory(),
+                        mobileWarning: getMobileWarningShown(),
+                        wavBitDepth: getSelectedWavBitDepth(),
+                    });
                     packageAndDownload(retSummed);
                     // reset globals etc.
                     processedSegments = null; // this one will be recreated with appropriate num_workers next time
