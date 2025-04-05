@@ -161,6 +161,18 @@ header_class: index
         <div class="column">
         <b><a href="javascript:void(0);" id="advancedSettingsToggle" style="text-decoration: none; cursor: pointer;">Advanced &#x25BC;</a></b>
         <div id="advancedSettings" style="display: none;">
+            <b>Wav bit depth:</b>
+            <form id="bitPickerForm">
+            <div>
+                <input type="radio" id="16bit" name="bit-depth" value="16bit" checked>
+                <label for="16bit">16-bit</label>
+            </div>
+            <div>
+                <input type="radio" id="32bit" name="bit-depth" value="32bit">
+                <label for="32bit">32-bit</label>
+            </div>
+            </form>
+            <br>
             <b>Max memory:</b>
             <form id="memorySelectorForm">
             <div>

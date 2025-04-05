@@ -100,6 +100,8 @@ let workerProgress;
 let dlModelBuffers;
 let jobRunning = false;
 
+let WAV_BIT_DEPTH_SETTING = 0; // Default to 16-bit WAV
+
 let processedSegments = new Array(NUM_WORKERS); // Global accumulator for processed segments
 let completedSegments = 0; // Counter for processed segments
 let completedSongsBatch = 0; // Counter for processed songs in batch mode
@@ -300,6 +302,9 @@ function resetUIElements() {
     const mobileWarning = document.getElementById('mobile-warning-container');
     const memory4gb = document.getElementById('4gb');
     const memory8gb = document.getElementById('8gb');
+
+    // set wav bit depth to default
+    WAV_BIT_DEPTH_SETTING = 0; // Default to 16-bit WAV
 
     // Check mobile warning visibility at load time to set appropriate default
     if (mobileWarning && getComputedStyle(mobileWarning).display !== 'none') {
@@ -847,6 +852,13 @@ nextStep2Btn.addEventListener('click', function(e) {
         // Set the global NUM_WORKERS variable directly
         NUM_WORKERS = numWorkers;
 
+        // Set global WAV_BIT_DEPTH to toggle between 16 and 32 bit WAV
+        const selectedBitDepth = document.querySelector('input[name="bit-depth"]:checked').value;
+        const wavBitDepthSetting = selectedBitDepth === '16bit' ? 0 : 1; // this is the argument to the wav file encoder function
+        console.log("WAV Bit Depth Setting:", wavBitDepthSetting, "for bit depth:", selectedBitDepth);
+        // Set global WAV_BIT_DEPTH_SETTING
+        WAV_BIT_DEPTH_SETTING = wavBitDepthSetting;
+
         // we only enable the next/back buttons after the job returns
 
         // reset some globals e.g. progress
@@ -1149,7 +1161,7 @@ function createDownloadLinks(buffers, midiOnlyMode) {
         // WAV + MIDI mode
         Object.keys(buffers).forEach(function(stemName) {
             // Create WAV file data
-            var wavData = encodeWavFileFromAudioBuffer(buffers[stemName], 0);
+            var wavData = encodeWavFileFromAudioBuffer(buffers[stemName], WAV_BIT_DEPTH_SETTING);
             zipFiles[stemName + ".wav"] = new Uint8Array(wavData);
 
             // WAV download link
@@ -1345,7 +1357,7 @@ function packageAndZip(targetWaveforms, filename, batchCount) {
 
     // Encode WAV data from buffers and add them to zip
     Object.keys(buffers).forEach(stemName => {
-        const wavData = encodeWavFileFromAudioBuffer(buffers[stemName], 0);
+        const wavData = encodeWavFileFromAudioBuffer(buffers[stemName], WAV_BIT_DEPTH_SETTING);
         zipFiles[`${directoryName}${stemName}.wav`] = new Uint8Array(wavData);
     });
 

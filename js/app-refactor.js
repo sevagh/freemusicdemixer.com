@@ -480,7 +480,8 @@ export class MidiWorkerManager {
         postToWorker(monoAudioData);
       });
     } else {
-      const wavArrayBuffer = this.encodeWavFileFromAudioBuffer(inputBuffer, 0);
+      // Encode the audio buffer to WAV format; use 32-bit float representation in the hopes that it will be more accurate
+      const wavArrayBuffer = this.encodeWavFileFromAudioBuffer(inputBuffer, 1);
       this.basicpitchAudioContext.decodeAudioData(wavArrayBuffer, decodedData => {
         const leftChannel = decodedData.getChannelData(0);
         const rightChannel = (decodedData.numberOfChannels > 1) ? decodedData.getChannelData(1) : leftChannel;
