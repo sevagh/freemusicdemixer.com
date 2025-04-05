@@ -100,6 +100,8 @@ let workerProgress;
 let dlModelBuffers;
 let jobRunning = false;
 
+let WAV_BIT_DEPTH_SETTING = 0; // Default to 16-bit WAV
+
 let processedSegments = new Array(NUM_WORKERS); // Global accumulator for processed segments
 let completedSegments = 0; // Counter for processed segments
 let completedSongsBatch = 0; // Counter for processed songs in batch mode
@@ -312,7 +314,13 @@ function resetUIElements() {
         console.log('Default memory set to 8 GB (large screen).');
     }
 
+    // set wav bit depth to default
+    WAV_BIT_DEPTH_SETTING = 0; // Default to 16-bit WAV
+    const bitDepth16 = document.getElementById('16bit');
+    bitDepth16.checked = true; // Default to 16-bit
+
     // reset all disabled buttons to disabled
+    prevStep1Btn.disabled = true;
     nextStep2Btn.disabled = true;
     nextStep3BtnSheetMusic.disabled = true;
     nextStep3BtnNewJob.disabled = true;
@@ -425,7 +433,16 @@ function initWorkers() {
                         incrementUsage();
                     }
                     const retSummed = sumSegments(processedSegments, originalLength, DEMUCS_OVERLAP_SAMPLES);
-                    trackProductEvent('demix-completed', {model: selectedModel, stems: selectedStems.join(',')});
+                    trackProductEvent('demix-completed', {
+                        model: selectedModel,
+                        stems: selectedStems.join(','),
+                        processingMode: getSelectedProcessingMode(),
+                        features: getSelectedFeatures(),
+                        quality: getSelectedQuality(),
+                        memory: getSelectedMemory(),
+                        mobileWarning: getMobileWarningShown(),
+                        wavBitDepth: getSelectedWavBitDepth(),
+                    });
                     packageAndDownload(retSummed);
                     // reset globals etc.
                     processedSegments = null; // this one will be recreated with appropriate num_workers next time
@@ -774,6 +791,17 @@ function getSelectedFileCount() {
   return singleCount || batchCount; // whichever is not 0
 }
 
+function getSelectedWavBitDepth() {
+    const bitDepth32 = document.getElementById('32bit');
+    return bitDepth32.checked ? '32bit' : '16bit';
+}
+
+function getMobileWarningShown() {
+    const mobileWarning = document.getElementById('mobile-warning-container');
+    const mobileWarningShown = mobileWarning && getComputedStyle(mobileWarning).display !== 'none';
+    return mobileWarningShown ? 'shown' : 'not shown'
+}
+
 nextStep1Btn.addEventListener('click', function() {
     updateModelBasedOnSelection();
 
@@ -784,7 +812,9 @@ nextStep1Btn.addEventListener('click', function() {
         processingMode: getSelectedProcessingMode(), // see below
         features: getSelectedFeatures(),
         quality: getSelectedQuality(),
-        memory: getSelectedMemory()
+        memory: getSelectedMemory(),
+        mobileWarning: getMobileWarningShown(),
+        wavBitDepth: getSelectedWavBitDepth(),
     });
 
     step1.style.display = 'none';
@@ -823,7 +853,8 @@ nextStep2Btn.addEventListener('click', function(e) {
         quality: getSelectedQuality(),
         memory: getSelectedMemory(),
         fileCount: getSelectedFileCount(),
-        mobileWarning: mobileWarningShown ? 'shown' : 'not shown'
+        mobileWarning: getMobileWarningShown(),
+        wavBitDepth: getSelectedWavBitDepth(),
     });
 
     // clear mxml sheet music buffers here, at start of new job - this is  THE place we want to do it
@@ -847,22 +878,32 @@ nextStep2Btn.addEventListener('click', function(e) {
         // Set the global NUM_WORKERS variable directly
         NUM_WORKERS = numWorkers;
 
+        // Set global WAV_BIT_DEPTH to toggle between 16 and 32 bit WAV
+        const selectedBitDepth = document.querySelector('input[name="bit-depth"]:checked').value;
+        const wavBitDepthSetting = selectedBitDepth === '16bit' ? 0 : 1; // this is the argument to the wav file encoder function
+        console.log("WAV Bit Depth Setting:", wavBitDepthSetting, "for bit depth:", selectedBitDepth);
+        // Set global WAV_BIT_DEPTH_SETTING
+        WAV_BIT_DEPTH_SETTING = wavBitDepthSetting;
+
         // we only enable the next/back buttons after the job returns
+
+        // track the start of the job
+        //trackProductEvent('Start Job', { mode: 'single', numWorkers: numWorkers });
+        trackProductEvent('Start Job', {
+            mode: isSingleMode ? 'single' : 'batch',
+            numWorkers,
+            processingMode,  // stems, midi, or both
+            features: getSelectedFeatures(),
+            quality: getSelectedQuality(),
+            memory: getSelectedMemory(),
+            fileCount: getSelectedFileCount(),
+            wavBitDepth: selectedBitDepth,
+        });
 
         // reset some globals e.g. progress
         processedSegments = new Array(NUM_WORKERS).fill(undefined);
+
         if (isSingleMode) {
-            // track the start of the job
-            //trackProductEvent('Start Job', { mode: 'single', numWorkers: numWorkers });
-            trackProductEvent('Start Job', {
-                mode: isSingleMode ? 'single' : 'batch',
-                numWorkers,
-                processingMode,  // stems, midi, or both
-                features: getSelectedFeatures(),
-                quality: getSelectedQuality(),
-                memory: getSelectedMemory(),
-                fileCount: getSelectedFileCount()
-              });
 
             // write log of how many workers are being used
             if (processingMode != 'midi') {
@@ -912,9 +953,6 @@ nextStep2Btn.addEventListener('click', function(e) {
             reader.readAsArrayBuffer(fileInput.files[0]);
         } else {
             const files = folderInput.files;
-
-            // track the start of the job
-            trackProductEvent('Start Job', { mode: 'batch', numWorkers: numWorkers });
 
             // write log of how many workers are being used
             if (processingMode != 'midi') {
@@ -1000,8 +1038,6 @@ prevStep4Btn.addEventListener('click', function() {
 });
 
 nextStep3BtnNewJob.addEventListener('click', function() {
-    // reset all buttons etc.
-    //resetUIElements();
     midiManager.completedSongsBatchMidi = 0;
     midiManager.queueTotal = 0;
     midiManager.queueCompleted = 0;
@@ -1014,9 +1050,6 @@ nextStep3BtnNewJob.addEventListener('click', function() {
 });
 
 nextStep4Btn.addEventListener('click', function() {
-    // reset all buttons etc.
-    resetUIElements();
-
     trackProductEvent('Finished sheet music button');
 
     // restart the wizard from step 1
@@ -1149,7 +1182,7 @@ function createDownloadLinks(buffers, midiOnlyMode) {
         // WAV + MIDI mode
         Object.keys(buffers).forEach(function(stemName) {
             // Create WAV file data
-            var wavData = encodeWavFileFromAudioBuffer(buffers[stemName], 0);
+            var wavData = encodeWavFileFromAudioBuffer(buffers[stemName], WAV_BIT_DEPTH_SETTING);
             zipFiles[stemName + ".wav"] = new Uint8Array(wavData);
 
             // WAV download link
@@ -1345,7 +1378,7 @@ function packageAndZip(targetWaveforms, filename, batchCount) {
 
     // Encode WAV data from buffers and add them to zip
     Object.keys(buffers).forEach(stemName => {
-        const wavData = encodeWavFileFromAudioBuffer(buffers[stemName], 0);
+        const wavData = encodeWavFileFromAudioBuffer(buffers[stemName], WAV_BIT_DEPTH_SETTING);
         zipFiles[`${directoryName}${stemName}.wav`] = new Uint8Array(wavData);
     });
 
