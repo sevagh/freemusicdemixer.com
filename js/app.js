@@ -303,9 +303,6 @@ function resetUIElements() {
     const memory4gb = document.getElementById('4gb');
     const memory8gb = document.getElementById('8gb');
 
-    // set wav bit depth to default
-    WAV_BIT_DEPTH_SETTING = 0; // Default to 16-bit WAV
-
     // Check mobile warning visibility at load time to set appropriate default
     if (mobileWarning && getComputedStyle(mobileWarning).display !== 'none') {
         // Mobile warning scenario (small screen)
@@ -316,6 +313,11 @@ function resetUIElements() {
         memory8gb.checked = true; // Default to 8 GB
         console.log('Default memory set to 8 GB (large screen).');
     }
+
+    // set wav bit depth to default
+    WAV_BIT_DEPTH_SETTING = 0; // Default to 16-bit WAV
+    const bitDepth16 = document.getElementById('16bit');
+    bitDepth16.checked = true; // Default to 16-bit
 
     // reset all disabled buttons to disabled
     nextStep2Btn.disabled = true;
@@ -779,6 +781,18 @@ function getSelectedFileCount() {
   return singleCount || batchCount; // whichever is not 0
 }
 
+function getSelectedWavBitDepth() {
+    const bitDepth32 = document.getElementById('32bit');
+    return bitDepth32.checked ? '32bit' : '16bit';
+}
+
+
+function getMobileWarningShown() {
+    const mobileWarning = document.getElementById('mobile-warning-container');
+    const mobileWarningShown = mobileWarning && getComputedStyle(mobileWarning).display !== 'none';
+    return mobileWarningShown ? 'shown' : 'not shown'
+}
+
 nextStep1Btn.addEventListener('click', function() {
     updateModelBasedOnSelection();
 
@@ -789,7 +803,9 @@ nextStep1Btn.addEventListener('click', function() {
         processingMode: getSelectedProcessingMode(), // see below
         features: getSelectedFeatures(),
         quality: getSelectedQuality(),
-        memory: getSelectedMemory()
+        memory: getSelectedMemory(),
+        mobileWarning: getMobileWarningShown(),
+        wavBitDepth: getSelectedWavBitDepth(),
     });
 
     step1.style.display = 'none';
@@ -828,7 +844,8 @@ nextStep2Btn.addEventListener('click', function(e) {
         quality: getSelectedQuality(),
         memory: getSelectedMemory(),
         fileCount: getSelectedFileCount(),
-        mobileWarning: mobileWarningShown ? 'shown' : 'not shown'
+        mobileWarning: getMobileWarningShown(),
+        wavBitDepth: getSelectedWavBitDepth(),
     });
 
     // clear mxml sheet music buffers here, at start of new job - this is  THE place we want to do it
@@ -861,20 +878,23 @@ nextStep2Btn.addEventListener('click', function(e) {
 
         // we only enable the next/back buttons after the job returns
 
+        // track the start of the job
+        //trackProductEvent('Start Job', { mode: 'single', numWorkers: numWorkers });
+        trackProductEvent('Start Job', {
+            mode: isSingleMode ? 'single' : 'batch',
+            numWorkers,
+            processingMode,  // stems, midi, or both
+            features: getSelectedFeatures(),
+            quality: getSelectedQuality(),
+            memory: getSelectedMemory(),
+            fileCount: getSelectedFileCount(),
+            wavBitDepth: selectedBitDepth,
+        });
+
         // reset some globals e.g. progress
         processedSegments = new Array(NUM_WORKERS).fill(undefined);
+
         if (isSingleMode) {
-            // track the start of the job
-            //trackProductEvent('Start Job', { mode: 'single', numWorkers: numWorkers });
-            trackProductEvent('Start Job', {
-                mode: isSingleMode ? 'single' : 'batch',
-                numWorkers,
-                processingMode,  // stems, midi, or both
-                features: getSelectedFeatures(),
-                quality: getSelectedQuality(),
-                memory: getSelectedMemory(),
-                fileCount: getSelectedFileCount()
-              });
 
             // write log of how many workers are being used
             if (processingMode != 'midi') {
@@ -924,9 +944,6 @@ nextStep2Btn.addEventListener('click', function(e) {
             reader.readAsArrayBuffer(fileInput.files[0]);
         } else {
             const files = folderInput.files;
-
-            // track the start of the job
-            trackProductEvent('Start Job', { mode: 'batch', numWorkers: numWorkers });
 
             // write log of how many workers are being used
             if (processingMode != 'midi') {
@@ -1012,8 +1029,6 @@ prevStep4Btn.addEventListener('click', function() {
 });
 
 nextStep3BtnNewJob.addEventListener('click', function() {
-    // reset all buttons etc.
-    //resetUIElements();
     midiManager.completedSongsBatchMidi = 0;
     midiManager.queueTotal = 0;
     midiManager.queueCompleted = 0;
@@ -1026,9 +1041,6 @@ nextStep3BtnNewJob.addEventListener('click', function() {
 });
 
 nextStep4Btn.addEventListener('click', function() {
-    // reset all buttons etc.
-    resetUIElements();
-
     trackProductEvent('Finished sheet music button');
 
     // restart the wizard from step 1
