@@ -796,7 +796,6 @@ function getSelectedWavBitDepth() {
     return bitDepth32.checked ? '32bit' : '16bit';
 }
 
-
 function getMobileWarningShown() {
     const mobileWarning = document.getElementById('mobile-warning-container');
     const mobileWarningShown = mobileWarning && getComputedStyle(mobileWarning).display !== 'none';
