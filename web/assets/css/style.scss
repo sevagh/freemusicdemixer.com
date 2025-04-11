@@ -1726,11 +1726,6 @@ td {
   -webkit-overflow-scrolling: touch; /* smooth iOS scrolling */
 }
 
-.flashy-cta {
-  text-align: center;
-  padding: 20px 10px;
-}
-
 .cta-container {
   display: inline-block;
   text-align: center;
@@ -1740,39 +1735,6 @@ td {
   font-size: 1.2rem;
   font-weight: bold;
   color: #0077cc;
-}
-
-.arrow-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 5px;
-  gap: 5px;
-}
-
-.arrow-down {
-  width: 15px;
-  height: 15px;
-  border-left: 2px solid #3498db;
-  border-bottom: 2px solid #3498db;
-  transform: rotate(-45deg);
-  animation: bounce 1.5s infinite;
-}
-
-.arrow-down:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.arrow-down:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0) rotate(-45deg);
-  }
-  50% {
-    transform: translateY(5px) rotate(-45deg);
-  }
 }
 
 .highlight-btn {

@@ -321,7 +321,7 @@ function resetUIElements() {
 
     // reset all disabled buttons to disabled
     prevStep1Btn.disabled = true;
-    nextStep2Btn.disabled = true;
+    nextStep1Btn.disabled = true;
     nextStep3BtnSheetMusic.disabled = true;
     nextStep3BtnNewJob.disabled = true;
     prevStep3Btn.disabled = true;
@@ -610,11 +610,11 @@ function toggleNextButton() {
 
     // Check if input is selected and either user is logged in or they have remaining demixes
     if (selectedInput && (loggedIn || remaining > 0)) {
-        nextStep2Btn.disabled = false;
-        nextStep2Btn.textContent = 'Start job';
+        nextStep1Btn.disabled = false;
+        nextStep1Btn.textContent = 'Next';
     } else {
-        nextStep2Btn.disabled = true;
-        nextStep2Btn.textContent = remaining <= 0 && !loggedIn ? 'Limit reached' : 'Start job';
+        nextStep1Btn.disabled = true;
+        nextStep1Btn.textContent = remaining <= 0 && !loggedIn ? 'Limit reached' : 'Next';
     }
 }
 
@@ -652,7 +652,7 @@ function checkAndResetWeeklyLimit() {
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
     if (!loggedIn) {
         const remaining = 3 - usageData.count;
-        usageLimits.innerHTML = `You have ${remaining} free jobs remaining this week. Your limit will reset on ${new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}. 🔒 <b><a href="/pricing#subscribe-today" target="_blank" rel="noopener noreferrer">Click here to buy unlimited demixes!</a></b>`;
+        usageLimits.innerHTML = `You have ${remaining} free jobs remaining this week. Your limit will reset on ${new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}. 🔒 <b><a href="/pricing#subscribe-today" target="_blank" rel="noopener noreferrer">Click here to buy unlimited jobs!</a></b>`;
     } else {
         usageLimits.textContent = 'You have unlimited jobs with your PRO subscription!';
 
@@ -803,20 +803,7 @@ function getMobileWarningShown() {
 }
 
 nextStep1Btn.addEventListener('click', function() {
-    updateModelBasedOnSelection();
-
-    // Add a more explicit step event with additional details
-    //trackProductEvent('Chose Model', { model: selectedModel });
-    trackProductEvent('Chose Model (wizard step 1)', {
-        model: selectedModel,
-        processingMode: getSelectedProcessingMode(), // see below
-        features: getSelectedFeatures(),
-        quality: getSelectedQuality(),
-        memory: getSelectedMemory(),
-        mobileWarning: getMobileWarningShown(),
-        wavBitDepth: getSelectedWavBitDepth(),
-    });
-
+    // simply toggle the visibility of the step 1 and step 2 divs
     step1.style.display = 'none';
     step2.style.display = 'block';
 });
@@ -826,6 +813,18 @@ document.getElementById('activation-form').addEventListener('submit', function(e
 });
 
 nextStep2Btn.addEventListener('click', function(e) {
+    updateModelBasedOnSelection();
+
+    trackProductEvent('Chose Model (wizard step 2)', {
+        model: selectedModel,
+        processingMode: getSelectedProcessingMode(), // see below
+        features: getSelectedFeatures(),
+        quality: getSelectedQuality(),
+        memory: getSelectedMemory(),
+        mobileWarning: getMobileWarningShown(),
+        wavBitDepth: getSelectedWavBitDepth(),
+    });
+
     console.log('Selected input on next step:', selectedInput, 'isSingleMode:', isSingleMode);
 
     // Check if mobile warning container exists and is currently hidden
