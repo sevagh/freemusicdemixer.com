@@ -36,6 +36,23 @@ header_class: index
 <section class="demixer-section">
   <div class="wizard-container">
     <div id="wizard-step-1" class="wizard-step">
+      <p id="usage-limits"></p>
+      <p>Choose either a file or a folder as your input:</p>
+      <div class="input-group">
+          <input type="file" id="audio-upload" aria-label="Choose a file">
+      </div>
+      <div class="input-group">
+          <input type="file" id="batch-upload" webkitdirectory directory multiple aria-label="Choose a folder">
+      </div>
+      <br>
+      <div id="selectedInputMessage">Selected input:</div>
+      <br>
+      <div class="wizard-footer">
+        <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>
+        <button id="next-step-1" class="wizard-next-btn" disabled>Next</button>
+      </div>
+    </div>
+    <div id="wizard-step-2" class="wizard-step" style="display: none;">
       <p>Choose your parameters</p>
       <div class="columns-container">
         <div class="column">
@@ -164,25 +181,8 @@ header_class: index
         <p id="pro-cta">🔒 <a href="/pricing#subscribe-today" target="_blank" rel="noopener noreferrer">Click here to unlock higher qualities!</a></p>
       </div>
       <div class="wizard-footer">
-        <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>
-        <button id="next-step-1" class="wizard-next-btn">Next</button>
-      </div>
-    </div>
-    <div id="wizard-step-2" class="wizard-step" style="display: none;">
-      <p id="usage-limits"></p>
-      <p>Choose either a file or a folder as your input:</p>
-      <div class="input-group">
-          <input type="file" id="audio-upload" aria-label="Choose a file">
-      </div>
-      <div class="input-group">
-          <input type="file" id="batch-upload" webkitdirectory directory multiple aria-label="Choose a folder">
-      </div>
-      <br>
-      <div id="selectedInputMessage">Selected input:</div>
-      <br>
-      <div class="wizard-footer">
         <button id="prev-step-2" class="wizard-prev-btn">Back</button>
-        <button id="next-step-2" class="wizard-next-btn" disabled>Start job</button>
+        <button id="next-step-2" class="wizard-next-btn">Start job</button>
       </div>
       <!-- Overlay and Spinner -->
       <div id="step2-overlay" class="overlay" style="display: none;">
