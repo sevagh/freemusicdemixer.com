@@ -5,43 +5,6 @@ header_class: index
 <script src="app.js" type="module"></script>
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
-<section class="info-section">
-<h3>Unlock <b>AI stem separation</b> and <b>automatic music transcription</b> in your browser. Effortlessly isolate vocals, drums, bass, melody, guitar, and piano. Generate precise MIDI files, scores, and sheet music. Perfect for musicians, DJs, producers, and creators.</h3>
-</section>
-
-<section class="flashy-cta">
-  <a href="#demixer-app" class="cta-link">
-    <div class="cta-container">
-      <span class="cta-text">KEEP SCROLLING TO GET STARTED!</span>
-      <div class="arrow-container">
-        <span class="arrow-down"></span>
-        <span class="arrow-down"></span>
-        <span class="arrow-down"></span>
-      </div>
-    </div>
-  </a>
-</section>
-
-<section class="info-section">
-<h3>Experience advanced stem separation powered by the <b>Demucs AI model</b> and award-winning technologies from the Sony Music Demixing Challenges.</h3>
-</section>
-
-<section class="image-section">
-<img id="music-demix-img" class="title-img" src="/assets/images/music-demix.webp" alt="music-demixing-diagram"/>
-</section>
-
-<section class="info-section">
-<h3>Save time with our powerful <b>automatic music transcription, MIDI generation, and sheet music features</b>. Use your instrument instead of a MIDI controller and quickly transcribe music!</h3>
-</section>
-
-<section class="image-section">
-<img id="amt-img" class="title-img" src="/assets/images/midi-amt.webp" alt="midi-amt-diagram"/>
-</section>
-
-<section class="info-section">
-<h3>Enjoy <b>100% privacy in your browser</b> — no cloud. Join our customers who switched from expensive competitors to our superior, simple solution. Get started today!</h3>
-</section>
-
 <a id="demixer-app" class="hidden-anchor"></a>
 
 <!-- Mobile Banner / Card -->
@@ -273,10 +236,64 @@ header_class: index
   </div>
 </section>
 
+<!-- 4. Original Info/CTA Prompt -->
+<section class="info-section">
+  <h3>
+    Unlock <b>AI stem separation</b> and
+    <b>automatic music transcription</b> in your browser.
+    Effortlessly isolate vocals, drums, bass, melody, guitar, and piano.
+    Generate precise MIDI files, scores, and sheet music.
+    Perfect for musicians, DJs, producers, and creators.
+  </h3>
+</section>
+
+<!-- 5. Stem Separation Description & Diagram -->
+<section class="info-section">
+  <h3>
+    Experience advanced stem separation powered by the
+    <b>Demucs AI model</b> and award-winning technologies
+    from the Sony Music Demixing Challenges.
+  </h3>
+</section>
+
+<section class="image-section">
+  <img
+    id="music-demix-img"
+    class="title-img"
+    src="/assets/images/music-demix.webp"
+    alt="music-demixing-diagram"
+  />
+</section>
+
+<!-- 6. MIDI & Sheet Music Description & Diagram -->
+<section class="info-section">
+  <h3>
+    Save time with our powerful <b>automatic music transcription</b>,
+    <b>MIDI generation</b>, and <b>sheet music</b> features.
+    Use your instrument instead of a MIDI controller and quickly transcribe music!
+  </h3>
+</section>
+
+<section class="image-section">
+  <img
+    id="amt-img"
+    class="title-img"
+    src="/assets/images/midi-amt.webp"
+    alt="midi-amt-diagram"
+  />
+</section>
+
+<!-- 7. Final Privacy & Offline Blurb -->
+<section class="info-section">
+  <h3>
+    Enjoy <b>100% privacy in your browser</b> — no cloud.
+    Join our customers who switched from expensive competitors
+    to our superior, simple solution. <a href="/#demixer-app">Get started today!</a>
+  </h3>
+</section>
+
 <section class="featured-section">
 <div class="featured-badges">
 <a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="40" src="https://media.theresanaiforthat.com/featured5.png" alt="theresanaiforthat-promo"></a>
 </div>
 </section>
-
-<br>
