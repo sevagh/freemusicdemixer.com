@@ -37,7 +37,7 @@ header_class: index
   <div class="wizard-container">
     <div id="wizard-step-1" class="wizard-step">
       <p id="usage-limits"></p>
-      <p>Choose either a file or a folder as your input:</p>
+      <p>Upload an audio file or folder containing your music:</p>
       <div class="input-group">
           <input type="file" id="audio-upload" aria-label="Choose a file">
       </div>
