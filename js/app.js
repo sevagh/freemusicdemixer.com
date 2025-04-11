@@ -825,8 +825,6 @@ nextStep2Btn.addEventListener('click', function(e) {
         wavBitDepth: getSelectedWavBitDepth(),
     });
 
-    step1.style.display = 'none';
-    step2.style.display = 'block';
     console.log('Selected input on next step:', selectedInput, 'isSingleMode:', isSingleMode);
 
     // Check if mobile warning container exists and is currently hidden
