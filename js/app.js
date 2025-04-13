@@ -537,30 +537,72 @@ function initWorkers() {
     // set global jobRunning flag to true
     jobRunning = true;
 };
-
 async function initModel() {
     if (processingMode === 'midi') {
         return;
     }
-    displayStep2Spinner();
+
+    // Show step 3 immediately
+    step3.style.display = 'block';
+    step2.style.display = 'none';
+
+    // reset the progress bar
+    document.getElementById('inference-progress-bar').style.width = '0%';
+    document.getElementById('midi-progress-bar').style.width = '0%';
+
+    // delete the previous download links
+    let downloadLinksDiv = document.getElementById('output-links');
+    while (downloadLinksDiv.firstChild) {
+        downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
+    }
+
+    // Create disabled placeholder links for each expected stem
+    selectedStems.forEach(stem => {
+        const placeholderLink = document.createElement('a');
+        placeholderLink.href = '#';
+        placeholderLink.className = 'download-link disabled';
+        placeholderLink.style.color = '#999';
+        placeholderLink.style.pointerEvents = 'none';
+        placeholderLink.textContent = `${stem}.wav (preparing...)`;
+        downloadLinksDiv.appendChild(placeholderLink);
+        downloadLinksDiv.appendChild(document.createElement('br'));
+    });
+
+    // Show progress bar and start at 0
+    document.getElementById('inference-progress-bar').style.width = '0%';
 
     try {
-        try {
-            const buffers = await fetchAndCacheFiles(selectedModel, selectedStems);
-            // WASM module is ready, enable the buttons
-            nextStep3BtnNewJob.disabled = false;
+        // Fetch model files with progress updates
+        const buffers = await fetchAndCacheFiles(
+            selectedModel,
+            selectedStems,
+            (progress, fileName) => {
+                // Update progress bar
+                document.getElementById('inference-progress-bar').style.width = `${progress}%`;
+                document.getElementById('inference-progress-text').textContent =
+                    `Downloading ${fileName}... ${Math.round(progress)}%`;
+            }
+        );
 
-            dlModelBuffers = buffers;
-            console.log('Model files downloaded');
-        } catch (error) {
-            // Handle errors, maybe keep the overlay visible or show an error message
-            console.log('Failed to fetch model files:', error);
-        }
-    } finally {
-        // Remove the spinner and re-enable the buttons
-        removeStep2Spinner();
+        console.log('Model files fetched:', buffers);
+
+        // Store buffers and update UI
+        dlModelBuffers = buffers;
+        nextStep3BtnNewJob.disabled = false;
+
+        // Update message to show download completion
+        console.log('Model files downloaded');
+
+        // reset the progress bar and text to move onto stem processing
+        document.getElementById('inference-progress-bar').style.width = '0%';
+        document.getElementById('inference-progress-text').textContent = 'Stems progress...';
+    } catch (error) {
+        // Show error in UI
+        prepMessage.innerHTML = '❌ Failed to download models. Please try again.';
+        console.error('Failed to fetch model files:', error);
     }
 }
+
 function initializeInputState() {
     if (fileInput.files.length > 0) {
         isSingleMode = true;
@@ -583,6 +625,9 @@ fileInput.addEventListener('change', function() {
         isSingleMode = true;
         selectedInput = fileInput.files[0];
         updateSelectedInputMessage();
+
+        // Start preloading the default model (4-source free)
+        fetchAndCacheFiles('demucs-free-4s', ['vocals', 'drums', 'bass', 'melody']);
     }
     toggleNextButton();
     checkAndResetWeeklyLimit();
@@ -596,6 +641,9 @@ folderInput.addEventListener('change', function() {
         isSingleMode = false;
         selectedInput = folderInput.files;
         updateSelectedInputMessage();
+
+        // Start preloading the default model (4-source free)
+        fetchAndCacheFiles('demucs-free-4s', ['vocals', 'drums', 'bass', 'melody']);
     }
     toggleNextButton();
     checkAndResetWeeklyLimit();
@@ -662,25 +710,6 @@ function checkAndResetWeeklyLimit() {
         }
     }
     toggleNextButton(); // Re-check both input and usage limits
-}
-
-// Function to display the spinner and overlay
-function displayStep2Spinner() {
-    console.log("Displaying spinner");
-    document.getElementById('step2-overlay').style.display = 'flex';
-    document.getElementById('step2-spinner').style.display = 'flex';
-    prevStep3Btn.disabled = true;
-    nextStep3BtnSheetMusic.disabled = true;
-    nextStep3BtnNewJob.disabled = true;
-}
-
-// Function to remove the spinner and overlay
-function removeStep2Spinner() {
-    document.getElementById('step2-overlay').style.display = 'none';
-    document.getElementById('step2-spinner').style.display = 'none';
-    prevStep3Btn.disabled = false;
-    //nextStep3BtnSheetMusic.disabled = false;
-    nextStep3BtnNewJob.disabled = false;
 }
 
 function activateTierUI(userTier) {
@@ -863,9 +892,6 @@ nextStep2Btn.addEventListener('click', function(e) {
     initModel().then(() => {
         console.log("Starting demix job");
 
-        step3.style.display = 'block';
-        step2.style.display = 'none';
-
         prevStep3Btn.disabled = true;
         nextStep3BtnSheetMusic.disabled = true;
         nextStep3BtnNewJob.disabled = true;
@@ -913,14 +939,6 @@ nextStep2Btn.addEventListener('click', function(e) {
             const reader = new FileReader();
 
             reader.onload = function(event) {
-                // reset the progress bar
-                document.getElementById('inference-progress-bar').style.width = '0%';
-                document.getElementById('midi-progress-bar').style.width = '0%';
-                // delete the previous download links
-                let downloadLinksDiv = document.getElementById('output-links');
-                while (downloadLinksDiv.firstChild) {
-                    downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
-                }
 
                 const arrayBuffer = event.target.result;
 
@@ -957,15 +975,6 @@ nextStep2Btn.addEventListener('click', function(e) {
             if (processingMode != 'midi') {
                 // else we are in midi mode and don't need to init workers
                 initWorkers();
-            }
-
-            document.getElementById('inference-progress-bar').style.width = '0%';
-            document.getElementById('midi-progress-bar').style.width = '0%';
-
-            // delete the previous download links
-            let downloadLinksDiv = document.getElementById('output-links');
-            while (downloadLinksDiv.firstChild) {
-                downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
             }
 
             processFiles(files, processingMode === 'midi');

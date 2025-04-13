@@ -105,7 +105,7 @@ export function processSegments(workers, leftChannel, rightChannel, numSegments,
     });
 }
 
-export function fetchAndCacheFiles(model, components, dlPrefix = "https://bucket.freemusicdemixer.com") {
+export function fetchAndCacheFiles(model, components, onProgress = null, dlPrefix = "https://bucket.freemusicdemixer.com") {
     let modelFiles = [];
     if (model === 'demucs-free-4s') {
         modelFiles.push('htdemucs.ort.gz');
@@ -141,16 +141,62 @@ export function fetchAndCacheFiles(model, components, dlPrefix = "https://bucket
         `${dlPrefix}/${file}`
     )
 
-    // Map each file to a fetch request and then process the response
-    const fetchPromises = modelFiles.map(file =>
-        fetch(file).then(response => {
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${file}`);
+    // Track progress for each file
+    const progressTracker = {
+        totalProgress: 0,
+        fileProgress: new Array(modelFiles.length).fill(0),
+        updateProgress: function(fileIndex, progress) {
+            // Update this file's progress
+            this.fileProgress[fileIndex] = progress;
+
+            // Calculate total progress as average of all files
+            const newTotal = this.fileProgress.reduce((a, b) => a + b, 0) / this.fileProgress.length;
+
+            // Only update if new total is greater than previous
+            if (newTotal > this.totalProgress) {
+                this.totalProgress = newTotal;
+                return true;
             }
-            return response.arrayBuffer(); // Or another appropriate method depending on the file type
-        })
-    );
-    return Promise.all(fetchPromises);
+            return false;
+        }
+    };
+
+    const fetchPromises = modelFiles.map((file, fileIndex) => {
+        return fetch(file)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch ${file}`);
+                }
+
+                const total = parseInt(response.headers.get('content-length'), 10);
+                let loaded = 0;
+
+                const reader = response.body.getReader();
+                return new Response(
+                    new ReadableStream({
+                        async start(controller) {
+                            while (true) {
+                                const {done, value} = await reader.read();
+                                if (done) break;
+
+                                loaded += value.length;
+                                const fileProgress = (loaded / total) * 100;
+
+                                // Only call onProgress if total progress actually increased
+                                if (onProgress && progressTracker.updateProgress(fileIndex, fileProgress)) {
+                                    onProgress(progressTracker.totalProgress, file.split('/').pop());
+                                }
+
+                                controller.enqueue(value);
+                            }
+                            controller.close();
+                        }
+                    })
+                ).arrayBuffer();
+            });
+    });
+
+  return Promise.all(fetchPromises);
 }
 
 export function computeModelAndStems(processingMode, selectedFeatures, selectedQuality) {
