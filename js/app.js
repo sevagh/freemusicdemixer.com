@@ -557,13 +557,22 @@ async function initModel() {
     }
 
     // Create disabled placeholder links for each expected stem
+    // add "all_stems.zip" before the placeholder links - also disabled
+    const allStemsLink = document.createElement('a');
+    allStemsLink.href = '#';
+    allStemsLink.className = 'download-link disabled';
+    allStemsLink.style.color = '#999';
+    allStemsLink.style.pointerEvents = 'none';
+    allStemsLink.textContent = 'all_stems.zip';
+    downloadLinksDiv.appendChild(allStemsLink);
+    downloadLinksDiv.appendChild(document.createElement('br'));
     selectedStems.forEach(stem => {
         const placeholderLink = document.createElement('a');
         placeholderLink.href = '#';
         placeholderLink.className = 'download-link disabled';
         placeholderLink.style.color = '#999';
         placeholderLink.style.pointerEvents = 'none';
-        placeholderLink.textContent = `${stem}.wav (preparing...)`;
+        placeholderLink.textContent = `${stem}.wav`;
         downloadLinksDiv.appendChild(placeholderLink);
         downloadLinksDiv.appendChild(document.createElement('br'));
     });
@@ -576,11 +585,11 @@ async function initModel() {
         const buffers = await fetchAndCacheFiles(
             selectedModel,
             selectedStems,
-            (progress, fileName) => {
+            (progress) => {
                 // Update progress bar
                 document.getElementById('inference-progress-bar').style.width = `${progress}%`;
                 document.getElementById('inference-progress-text').textContent =
-                    `Downloading ${fileName}... ${Math.round(progress)}%`;
+                    `Downloading AI weights... ${Math.round(progress)}%`;
             }
         );
 

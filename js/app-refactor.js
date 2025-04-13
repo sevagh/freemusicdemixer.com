@@ -184,7 +184,7 @@ export function fetchAndCacheFiles(model, components, onProgress = null, dlPrefi
 
                                 // Only call onProgress if total progress actually increased
                                 if (onProgress && progressTracker.updateProgress(fileIndex, fileProgress)) {
-                                    onProgress(progressTracker.totalProgress, file.split('/').pop());
+                                    onProgress(progressTracker.totalProgress);
                                 }
 
                                 controller.enqueue(value);
