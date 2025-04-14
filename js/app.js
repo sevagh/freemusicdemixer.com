@@ -558,24 +558,44 @@ async function initModel() {
 
     // Create disabled placeholder links for each expected stem
     // add "all_stems.zip" before the placeholder links - also disabled
-    const allStemsLink = document.createElement('a');
-    allStemsLink.href = '#';
-    allStemsLink.className = 'download-link disabled';
-    allStemsLink.style.color = '#999';
-    allStemsLink.style.pointerEvents = 'none';
-    allStemsLink.textContent = 'all_stems.zip';
-    downloadLinksDiv.appendChild(allStemsLink);
-    downloadLinksDiv.appendChild(document.createElement('br'));
-    selectedStems.forEach(stem => {
-        const placeholderLink = document.createElement('a');
-        placeholderLink.href = '#';
-        placeholderLink.className = 'download-link disabled';
-        placeholderLink.style.color = '#999';
-        placeholderLink.style.pointerEvents = 'none';
-        placeholderLink.textContent = `${stem}.wav`;
-        downloadLinksDiv.appendChild(placeholderLink);
+    // in single mode
+    if (isSingleMode) {
+        const allStemsLink = document.createElement('a');
+        allStemsLink.href = '#';
+        allStemsLink.className = 'download-link disabled';
+        allStemsLink.style.color = '#999';
+        allStemsLink.style.pointerEvents = 'none';
+        allStemsLink.textContent = 'all_stems.zip';
+        downloadLinksDiv.appendChild(allStemsLink);
         downloadLinksDiv.appendChild(document.createElement('br'));
-    });
+        selectedStems.forEach(stem => {
+            const placeholderLink = document.createElement('a');
+            placeholderLink.href = '#';
+            placeholderLink.className = 'download-link disabled';
+            placeholderLink.style.color = '#999';
+            placeholderLink.style.pointerEvents = 'none';
+            placeholderLink.textContent = `${stem}.wav`;
+            downloadLinksDiv.appendChild(placeholderLink);
+            downloadLinksDiv.appendChild(document.createElement('br'));
+        });
+    } else {
+        // in batch mode, generate placeholders for the zip associated to each song
+        const files = folderInput.files;
+        const totalFiles = files.length;
+        for (let i = 0; i < totalFiles; i++) {
+            const file = files[i];
+            const filenameWithoutExt = file.name.slice(0, file.name.lastIndexOf('.'));
+
+            const placeholderLink = document.createElement('a');
+            placeholderLink.href = '#';
+            placeholderLink.className = 'download-link disabled';
+            placeholderLink.style.color = '#999';
+            placeholderLink.style.pointerEvents = 'none';
+            placeholderLink.textContent = `${filenameWithoutExt}_stems.zip`;
+            downloadLinksDiv.appendChild(placeholderLink);
+            downloadLinksDiv.appendChild(document.createElement('br'));
+        }
+    }
 
     // Show progress bar and start at 0
     document.getElementById('inference-progress-bar').style.width = '0%';
@@ -1008,6 +1028,9 @@ nextStep2Btn.addEventListener('click', function(e) {
 
             reader.readAsArrayBuffer(fileInput.files[0]);
         } else {
+            var downloadLinksDiv = document.getElementById('output-links');
+            downloadLinksDiv.innerHTML = ''; // Clear existing links
+
             const files = folderInput.files;
 
             // write log of how many workers are being used

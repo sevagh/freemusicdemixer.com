@@ -84,9 +84,6 @@
     background-color: #f0f0f0; /* Light gray background to match the site */
     color: #333; /* Darker gray text */
   }
-  .demixer-section {
-    background-color: #f5f5f5; /* Light gray background for the section */
-  }
   .progress-container {
     background-color: #ddd;
   }
@@ -200,9 +197,6 @@
   .output-link-container {
     background-color: #333; /* Dark gray background to match the site */
     color: #f0f0f0; /* Lighter gray text */
-  }
-  .demixer-section {
-    background-color: #121212; /* Dark gray background for the section */
   }
   .progress-container {
     background-color: #4c4c4c;
@@ -318,9 +312,6 @@
     background-color: #f0f0f0; /* Light gray background to match the site */
     color: #333; /* Darker gray text */
   }
-  .demixer-section {
-    background-color: #f5f5f5; /* Light gray background for the section */
-  }
   .progress-container {
     background-color: #ddd;
   }
@@ -434,9 +425,6 @@
   .output-link-container {
     background-color: #333; /* Dark gray background to match the site */
     color: #f0f0f0; /* Lighter gray text */
-  }
-  .demixer-section {
-    background-color: #333; /* Dark gray background for the section */
   }
   .progress-container {
     background-color: #4c4c4c;
@@ -995,14 +983,6 @@ section.featured-badges {
   width: 100%; /* Make the image expand to fill the parent container */
   height: auto; /* Maintain the aspect ratio */
   max-width: 100%; /* Optional: Limit the maximum width to avoid stretching too much */
-}
-
-  /* Container for the wizard application */
-.demixer-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  //padding: 30px 0;
 }
 
 /* Style the input and buttons consistently */
@@ -1867,6 +1847,12 @@ td {
 @media (max-width: 1000px) {
   .wizard-container {
     width: 600px;
+    height: 500px;
+    margin: 0 auto;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-y: auto;
+    position: relative;
   }
 }
 
@@ -1966,18 +1952,24 @@ button#manage-account {
     max-width: 25%;
   }
 
-  .wizard-container {
-    width: 500px;
-  }
-
   img.responsive-img-android {
     width: 65%;
   }
   .responsive-img-android-portrait {
     width: 50%;
   }
-}
 
+  /* Wizard container: more mobile-friendly layout */
+  .wizard-container {
+    width: 100%;
+    height: 500px;
+    margin: 0 auto;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-y: auto;
+    position: relative;
+  }
+}
 
 /*
    MAIN MEDIA QUERY:
@@ -2019,7 +2011,7 @@ button#manage-account {
 
   /* Wizard container: more mobile-friendly layout */
   .wizard-container {
-    width: 95%;
+    width: 100%;
     margin: 0 auto;
     height: auto;
     padding: 12px;
