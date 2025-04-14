@@ -688,6 +688,9 @@ function checkAndResetWeeklyLimit() {
 
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
 
+    // when user logs in, clear limit-related messages
+    clearErrorMessage();
+
     if (!loggedIn) {
         const remaining = MAX_FREE_JOBS - usageData.count;
         usageLimits.innerHTML = `
