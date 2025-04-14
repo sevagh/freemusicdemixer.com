@@ -47,9 +47,10 @@ header_class: index
       <br>
       <div id="selectedInputMessage">Selected input:</div>
       <br>
+      <p id="upload-error" class="error-message" style="display:none"></p>
       <div class="wizard-footer">
         <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>
-        <button id="next-step-1" class="wizard-next-btn" disabled>Next</button>
+        <button id="next-step-1" class="wizard-next-btn">Next</button>
       </div>
     </div>
     <div id="wizard-step-2" class="wizard-step" style="display: none;">
@@ -202,8 +203,6 @@ header_class: index
         <div class="progress-bar" id="midi-progress-bar-outer">
             <div class="progress-bar-inner" id="midi-progress-bar" style="width: 0%"></div>
         </div>
-        This may take a while, go grab a coffee! ☕️
-        <br>
         <b>Slow?</b> Start a new job and set Advanced -> Max memory higher. Read <a href="/getting-started/2024/09/20/How-to-pick-max-memory" target="_blank" alt="memory-guide" rel="noopener noreferrer">our guide for info</a> 💻
       </div>
       <div class="output-container">

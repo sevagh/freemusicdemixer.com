@@ -11,6 +11,7 @@ import {
 const componentsCheckboxes = document.querySelectorAll('#modelPickerForm input[type="checkbox"]');
 const qualityRadios = document.querySelectorAll('#qualityPickerForm input[type="radio"]');
 const memoryRadios = document.querySelectorAll('#memorySelectorForm input[type="radio"]');
+const MAX_FREE_JOBS = 3;
 qualityRadios.forEach(radio => radio.addEventListener('change', updateModelBasedOnSelection));
 let selectedModel;
 let selectedStems;
@@ -321,7 +322,6 @@ function resetUIElements() {
 
     // reset all disabled buttons to disabled
     prevStep1Btn.disabled = true;
-    nextStep1Btn.disabled = true;
     nextStep3BtnSheetMusic.disabled = true;
     nextStep3BtnNewJob.disabled = true;
     prevStep3Btn.disabled = true;
@@ -538,10 +538,6 @@ function initWorkers() {
     jobRunning = true;
 };
 async function initModel() {
-    if (processingMode === 'midi') {
-        return;
-    }
-
     // Show step 3 immediately
     step3.style.display = 'block';
     step2.style.display = 'none';
@@ -554,6 +550,10 @@ async function initModel() {
     let downloadLinksDiv = document.getElementById('output-links');
     while (downloadLinksDiv.firstChild) {
         downloadLinksDiv.removeChild(downloadLinksDiv.firstChild);
+    }
+
+    if (processingMode === 'midi') {
+        return;
     }
 
     // Create disabled placeholder links for each expected stem
@@ -622,7 +622,6 @@ function initializeInputState() {
         selectedInput = folderInput.files;
         updateSelectedInputMessage();
     }
-    toggleNextButton();
     checkAndResetWeeklyLimit();
 }
 
@@ -638,7 +637,6 @@ fileInput.addEventListener('change', function() {
         // Start preloading the default model (4-source free)
         fetchAndCacheFiles('demucs-free-4s', ['vocals', 'drums', 'bass', 'melody']);
     }
-    toggleNextButton();
     checkAndResetWeeklyLimit();
 });
 
@@ -654,26 +652,8 @@ folderInput.addEventListener('change', function() {
         // Start preloading the default model (4-source free)
         fetchAndCacheFiles('demucs-free-4s', ['vocals', 'drums', 'bass', 'melody']);
     }
-    toggleNextButton();
     checkAndResetWeeklyLimit();
 });
-
-// Function to toggle the Next button's disabled state
-function toggleNextButton() {
-    const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
-    const remaining = usageData ? 3 - usageData.count : 0;
-
-    const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
-
-    // Check if input is selected and either user is logged in or they have remaining demixes
-    if (selectedInput && (loggedIn || remaining > 0)) {
-        nextStep1Btn.disabled = false;
-        nextStep1Btn.textContent = 'Next';
-    } else {
-        nextStep1Btn.disabled = true;
-        nextStep1Btn.textContent = remaining <= 0 && !loggedIn ? 'Limit reached' : 'Next';
-    }
-}
 
 // Function to update the selected input message
 function updateSelectedInputMessage() {
@@ -707,18 +687,20 @@ function checkAndResetWeeklyLimit() {
     }
 
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
-    if (!loggedIn) {
-        const remaining = 3 - usageData.count;
-        usageLimits.innerHTML = `You have ${remaining} free jobs remaining this week. Your limit will reset on ${new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}. 🔒 <b><a href="/pricing#subscribe-today" target="_blank" rel="noopener noreferrer">Click here to buy unlimited jobs!</a></b>`;
-    } else {
-        usageLimits.textContent = 'You have unlimited jobs with your PRO subscription!';
 
-        let userTier = parseInt(sessionStorage.getItem('userTier'));
-        if ((userTier === -1) || isNaN(userTier)) {
-            userTier = 0;
-        }
+    if (!loggedIn) {
+        const remaining = MAX_FREE_JOBS - usageData.count;
+        usageLimits.innerHTML = `
+          Enjoy ${remaining} free demixes this week.
+          <small>(Resets on ${new Date(weekStart.getTime() + 7*24*60*60*1000).toLocaleDateString()})</small>
+          <br>
+          <a href="/pricing#subscribe-today" target="_blank" rel="noopener noreferrer">
+            Upgrade for unlimited!
+          </a>
+        `;
+      } else {
+        usageLimits.textContent = 'You have unlimited jobs with your PRO subscription!';
     }
-    toggleNextButton(); // Re-check both input and usage limits
 }
 
 function activateTierUI(userTier) {
@@ -841,16 +823,61 @@ function getMobileWarningShown() {
 }
 
 nextStep1Btn.addEventListener('click', function() {
+    const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
+    const remaining = usageData ? MAX_FREE_JOBS - usageData.count : 0;
+    const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
+
+    // 1) Check if a file/folder was selected
+    if (!selectedInput) {
+        // e.g., show an inline error:
+        showErrorMessage("Please select an audio file or folder first.");
+        return;
+    }
+
+    // 2) Check if free limit is reached (if not logged in)
+    if (!loggedIn && remaining <= 0) {
+        showErrorMessage(
+            "You’ve reached your free limit. " +
+            "<a href='/pricing#subscribe-today' target='_blank'>Upgrade</a> for unlimited!"
+        );
+        return;
+    }
+
     // simply toggle the visibility of the step 1 and step 2 divs
     step1.style.display = 'none';
     step2.style.display = 'block';
 });
+
+function showErrorMessage(msg) {
+    const errorElem = document.getElementById('upload-error');
+    errorElem.style.display = 'block';
+    errorElem.innerHTML = msg;
+
+    // Shake the Next button:
+    nextStep1Btn.classList.remove('shake');
+    // Force a reflow so the class can be re-applied for consecutive shakes
+    void nextStep1Btn.offsetWidth;
+    nextStep1Btn.classList.add('shake');
+
+    // Optional: remove the shake class automatically after animation
+    setTimeout(() => {
+      nextStep1Btn.classList.remove('shake');
+    }, 400); // match the 0.4s animation time
+}
+
+function clearErrorMessage() {
+    const errorElem = document.getElementById('upload-error');
+    errorElem.style.display = 'none';
+}
 
 document.getElementById('activation-form').addEventListener('submit', function(event) {
     event.preventDefault();
 });
 
 nextStep2Btn.addEventListener('click', function(e) {
+    // clear any previous error messages
+    clearErrorMessage();
+
     updateModelBasedOnSelection();
 
     trackProductEvent('Chose Model (wizard step 2)', {

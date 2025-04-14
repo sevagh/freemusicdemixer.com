@@ -144,6 +144,11 @@
     background-color: #e0e0e0;
     color: #333; /* Darker text for better contrast */
   }
+  .error-message {
+    color: #cc0000; /* or #ff4d4f, #cc0000, etc. */
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
 }
 
 .theme-dark {
@@ -246,6 +251,11 @@
     // background and text color for dark theme
     background-color: #333;
     color: #f0f0f0; /* Lighter text for better contrast */
+  }
+  .error-message {
+    color: #ff7878; /* or #ff4d4f, #cc0000, etc. */
+    font-weight: 600;
+    margin-top: 0.5rem;
   }
 }
 
@@ -350,6 +360,11 @@
     background-color: #e0e0e0;
     color: #333; /* Darker text for better contrast */
   }
+  .error-message {
+    color: #cc0000; /* or #ff4d4f, #cc0000, etc. */
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -452,6 +467,25 @@
     background-color: #333;
     color: #f0f0f0; /* Lighter text for better contrast */
   }
+  .error-message {
+    color: #ff7878; /* or #ff4d4f, #cc0000, etc. */
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Add this to your main CSS file or a <style> block */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 0.4s ease-in-out;
 }
 
 .supreme-zip-link {
@@ -1839,6 +1873,10 @@ button#manage-account {
 }
 
 .hidden {
+  display: none;
+}
+
+#usage-limits {
   display: none;
 }
 
