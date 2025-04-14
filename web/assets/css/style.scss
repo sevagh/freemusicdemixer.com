@@ -149,6 +149,15 @@
     font-weight: 600;
     margin-top: 0.5rem;
   }
+  .hero-cta-button {
+    /* Darker gold to ensure decent contrast on white-ish backgrounds */
+    background-color: #ebc600; /* Adjust as needed */
+    color: #000; /* White text */
+  }
+  .hero-cta-button:hover {
+    background-color: #d8b600;
+    transform: scale(1.02);
+  }
 }
 
 .theme-dark {
@@ -256,6 +265,15 @@
     color: #ff7878; /* or #ff4d4f, #cc0000, etc. */
     font-weight: 600;
     margin-top: 0.5rem;
+  }
+  .hero-cta-button {
+    /* Brighter gold that pops against dark background */
+    background-color: #ffd700;
+    color: #333;
+  }
+  .hero-cta-button:hover {
+    background-color: #ffc300;
+    transform: scale(1.02);
   }
 }
 
@@ -365,6 +383,15 @@
     font-weight: 600;
     margin-top: 0.5rem;
   }
+  .hero-cta-button {
+    /* Darker gold to ensure decent contrast on white-ish backgrounds */
+    background-color: #ebc600; /* Adjust as needed */
+    color: #000; /* White text */
+  }
+  .hero-cta-button:hover {
+    background-color: #d8b600;
+    transform: scale(1.02);
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -472,6 +499,15 @@
     font-weight: 600;
     margin-top: 0.5rem;
   }
+  .hero-cta-button {
+    /* Brighter gold that pops against dark background */
+    background-color: #ffd700;
+    color: #333;
+  }
+  .hero-cta-button:hover {
+    background-color: #ffc300;
+    transform: scale(1.02);
+  }
 }
 
 /* Add this to your main CSS file or a <style> block */
@@ -569,16 +605,21 @@ section.title-section {
   padding-bottom: 5%;
   min-height: 5vh; /* Maintain a large height */
   text-align: left;
+  margin-bottom: 2rem;
 }
 
 section.title-section h1 {
-  margin-bottom: 20px;
+  margin-bottom: 0.5rem; /* small gap after H1 */
 }
 
 section.title-section h2 {
-  margin-left: 80px;
-  margin-top: -20px;
-  margin-bottom: 20px;
+  margin-top: 0;        /* remove negative margin */
+  margin-bottom: 1rem;  /* a bit larger gap after H2 */
+}
+
+section.title-section h4 {
+  margin-top: 0;        /* remove any default top margin */
+  margin-bottom: 1.5rem; /* a slightly bigger gap before next section */
 }
 
 /* Remove underline from title link */
@@ -675,7 +716,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   position: relative; /* To ensure the footer is positioned inside the container */
-  padding: 20px;
+  padding: 2rem;  /* or 2rem for extra breathing room */
   box-sizing: border-box; /* Ensures padding is included in width and height */
 }
 
@@ -961,7 +1002,7 @@ section.featured-badges {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 30px 0;
+  //padding: 30px 0;
 }
 
 /* Style the input and buttons consistently */
@@ -1802,6 +1843,27 @@ td {
   box-shadow: none;
 }
 
+.hero-cta-button {
+  border: none;
+  padding: 1rem 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  display: inline-block;
+  margin-top: 1rem; /* slight space above the button */
+}
+
+.hero-cta-button:hover {
+  transform: scale(1.02);    /* small hover scale for emphasis */
+}
+
+.hero-cta-button:focus {
+  //outline: 2px solid #FFC300;
+  outline-offset: 2px;
+}
+
 @media (max-width: 1000px) {
   .wizard-container {
     width: 600px;
@@ -2046,20 +2108,10 @@ button#manage-account {
     padding: 15px;
   }
 
-  section.title-section h2 {
-    margin-left: 30px;
-  }
-
   img.responsive-img-android {
     width: 100%;
   }
   .responsive-img-android-portrait {
     width: 75%;
-  }
-}
-
-@media (max-width: 350px) {
-  section.title-section h2 {
-    margin-left: 30px;
   }
 }

@@ -140,6 +140,14 @@
     </a>
     <h2>powered by AI</h2>
     <h4>Vocal remover and extractor. Music separator and stem splitter. Instrumental breakdowns. Music transcription and MIDI. Private and offline. We got you covered.</h4>
+    <!-- Only show this CTA on the homepage -->
+    {% if page.url == "/" %}
+      <button class="hero-cta-button"
+              onclick="document.getElementById('wizard-step-1')
+              .scrollIntoView({ behavior: 'smooth' });">
+        Start Demixing Now!
+      </button>
+    {% endif %}
   </section>
 
   <div class="container">
