@@ -1978,56 +1978,63 @@ button#manage-account {
   }
 }
 
-/* Only show the warning container on screens <= 512px */
+
+/*
+   MAIN MEDIA QUERY:
+   We only apply these styles on small screens (<= 512px).
+*/
 @media (max-width: 512px) {
+  /* Show the mobile warning container on small screens */
   #mobile-warning-container {
     display: block;
-    padding: 12px 16px; /* Adjusted: even padding around */
     margin: 12px auto;
+    padding: 12px 16px;
     border-radius: 8px;
+    background-color: #3e3e3e; /* or your desired color */
+    color: #fff;
     text-align: left;
   }
 
   #mobile-warning-container h3 {
     margin-top: 0;
-    margin-bottom: 8px; /* Tighten vertical spacing */
+    margin-bottom: 8px;
   }
 
   #mobile-warning-container p {
     margin-top: 0;
-    margin-bottom: 12px; /* Spacing to buttons */
+    margin-bottom: 12px;
   }
 
-  /* Improved button spacing specifically within this container */
-  #mobile-warning-container .mobile-warning-actions {
+  .mobile-warning-actions {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 8px; /* Increased spacing between buttons */
+    gap: 8px;
   }
 
-  #mobile-warning-container .mobile-warning-actions button {
-    padding: 8px 12px; /* Better button size */
+  .mobile-warning-actions button {
+    padding: 8px 12px;
     font-size: 0.9em;
     flex-grow: 1;
   }
 
-
+  /* Wizard container: more mobile-friendly layout */
   .wizard-container {
-    width: 95%; /* use almost full screen width */
-    height: auto; /* flexible height for content */
+    width: 95%;
+    margin: 0 auto;
+    height: auto;
     padding: 12px;
+    border-radius: 8px;
     overflow-y: auto;
-    position: relative; /* for absolute footer positioning */
+    position: relative;
   }
 
   .wizard-step {
     overflow-y: auto;
-    padding-bottom: 80px; /* leave extra space for footer buttons */
+    padding-bottom: 80px; /* extra space so we can fit the footer inside if pinned */
   }
 
   .wizard-footer {
-    position: absolute; /* anchored at the bottom INSIDE container */
+    position: absolute; /* pinned at bottom of container */
     bottom: 0;
     left: 0;
     width: 100%;
@@ -2038,7 +2045,13 @@ button#manage-account {
     box-sizing: border-box;
   }
 
-  /* Stack columns vertically */
+  .wizard-footer button {
+    padding: 8px 10px;
+    flex-grow: 1;
+    font-size: 0.9em;
+  }
+
+  /* If you have columns in your wizard step, stack them */
   .columns-container {
     display: flex;
     flex-direction: column;
@@ -2046,10 +2059,10 @@ button#manage-account {
   }
 
   .columns-container .column {
-    width: 100%; /* full width */
+    width: 100%;
   }
 
-  /* Smaller, more compact text on mobile */
+  /* Smaller text in label/bold elements */
   .columns-container .column b,
   .columns-container label {
     font-size: 0.9em;
@@ -2060,15 +2073,9 @@ button#manage-account {
     padding: 8px;
     margin-top: 8px;
   }
-
-  .wizard-footer button {
-    padding: 8px 10px;
-    flex-grow: 1; /* buttons fill available horizontal space */
-    font-size: 0.9em;
-  }
 }
 
-/* Hide the banner on larger screens */
+/* If you also want to explicitly hide the banner on screens > 512px */
 @media (min-width: 513px) {
   #mobile-warning-container {
     display: none !important;

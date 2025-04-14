@@ -7,28 +7,34 @@ header_class: index
 
 <a id="demixer-app" class="hidden-anchor"></a>
 
-<!-- Mobile Banner / Card -->
+<!-- Anchor for scrolling, if needed -->
+<a id="demixer-app" class="hidden-anchor"></a>
+
+<!-- Mobile-Only Warning Banner/Card -->
 <section class="info-section" id="mobile-warning-container">
   <h3>Better on Computer 💻</h3>
-  <p>
-    Smaller devices might crash. Get a reminder:
-  </p>
+  <p>Smaller devices might crash. Get a reminder:</p>
   <div class="mobile-warning-actions">
     <button id="email-reminder-btn" class="highlight-btn">Email link</button>
   </div>
   <p style="margin-top: 0.5rem;">
-    ... or try it anyway!
+    … or try it anyway!
   </p>
 </section>
 
-<!-- Hidden modal for collecting email -->
+<!-- Hidden Modal for Email Collection -->
 <div id="email-modal" class="modal">
-  <div class="modal-content" id="email-modal">
+  <div class="modal-content">
     <h3>Enter your email address</h3>
     <p>We’ll send you a reminder to visit us on a desktop!</p>
-    <input type="email" id="email-input" placeholder="you@example.com" style="width: 100%; margin-bottom: 0.5rem;" />
+    <input
+      type="email"
+      id="email-input"
+      placeholder="you@example.com"
+      class="email-input"
+    />
     <button id="email-send-btn" class="highlight-btn">Send</button>
-    <button id="email-cancel-btn" style="margin-left: 0.5rem;">Cancel</button>
+    <button id="email-cancel-btn" class="cancel-btn">Cancel</button>
   </div>
 </div>
 
