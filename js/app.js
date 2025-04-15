@@ -565,7 +565,6 @@ async function initModel() {
         allStemsLink.style.pointerEvents = 'none';
         allStemsLink.textContent = 'all_stems.zip';
         downloadLinksDiv.appendChild(allStemsLink);
-        downloadLinksDiv.appendChild(document.createElement('br'));
         selectedStems.forEach(stem => {
             const placeholderLink = document.createElement('a');
             placeholderLink.href = '#';
@@ -574,7 +573,6 @@ async function initModel() {
             placeholderLink.style.pointerEvents = 'none';
             placeholderLink.textContent = `${stem}.wav`;
             downloadLinksDiv.appendChild(placeholderLink);
-            downloadLinksDiv.appendChild(document.createElement('br'));
         });
     } else {
         // in batch mode, generate placeholders for the zip associated to each song
@@ -591,7 +589,6 @@ async function initModel() {
             placeholderLink.style.pointerEvents = 'none';
             placeholderLink.textContent = `${filenameWithoutExt}_stems.zip`;
             downloadLinksDiv.appendChild(placeholderLink);
-            downloadLinksDiv.appendChild(document.createElement('br'));
         }
     }
 
