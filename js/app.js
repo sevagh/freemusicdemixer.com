@@ -931,17 +931,6 @@ nextStep2Btn.addEventListener('click', function(e) {
         console.log("No mobile warning shown.");
     }
 
-    trackProductEvent('Wizard Step 2 Completed', {
-        model: selectedModel,
-        processingMode: getSelectedProcessingMode(),
-        features: getSelectedFeatures(),
-        quality: getSelectedQuality(),
-        memory: getSelectedMemory(),
-        fileCount: getSelectedFileCount(),
-        mobileWarning: getMobileWarningShown(),
-        wavBitDepth: getSelectedWavBitDepth(),
-    });
-
     // clear mxml sheet music buffers here, at start of new job - this is  THE place we want to do it
     // since we are fine discarding old results and there's no more navigating back to the previous step
     midiManager.mxmlBuffersSheetMusic = {};
