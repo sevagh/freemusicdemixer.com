@@ -718,6 +718,10 @@ button:hover {
   overflow: auto; /* Allow content to scroll if it overflows */
 }
 
+.error-message {
+  margin-bottom: 50px;
+}
+
 /* Wizard Footer positioned absolutely */
 .wizard-footer {
   display: flex;
@@ -2067,6 +2071,10 @@ button#manage-account {
     font-size: 13px;
     padding: 8px;
     margin-top: 8px;
+  }
+
+  .error-message {
+    margin-bottom: 20px;
   }
 }
 

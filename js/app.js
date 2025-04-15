@@ -889,7 +889,7 @@ nextStep2Btn.addEventListener('click', function(e) {
     if (!loggedIn && remaining <= 0) {
         showErrorMessage(
         "You’ve reached your free limit. " +
-        "<a href='/pricing#subscribe-today' target='_blank'>Upgrade</a> or <a href='/?login'>log in</a> for unlimited!",
+        "<a href='/pricing#subscribe-today' target='_blank'>Upgrade</a> or log in for unlimited!",
         "runjob-error",
         nextStep2Btn
         );
