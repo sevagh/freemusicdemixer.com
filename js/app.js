@@ -835,6 +835,10 @@ nextStep1Btn.addEventListener('click', function() {
         return;
     }
 
+    trackProductEvent('Uploaded File (wizard step 1)', {
+        batchMode: !isSingleMode,
+    });
+
     // simply toggle the visibility of the step 1 and step 2 divs
     step1.style.display = 'none';
     step2.style.display = 'block';
