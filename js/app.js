@@ -709,7 +709,7 @@ function checkAndResetWeeklyLimit() {
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
 
     // when user logs in, clear limit-related messages
-    clearErrorMessage();
+    clearErrorMessage('runjob-error');
 
     if (!loggedIn) {
         const remaining = MAX_FREE_JOBS - usageData.count;
@@ -846,23 +846,10 @@ function getMobileWarningShown() {
 }
 
 nextStep1Btn.addEventListener('click', function() {
-    const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
-    const remaining = usageData ? MAX_FREE_JOBS - usageData.count : 0;
-    const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
-
     // 1) Check if a file/folder was selected
     if (!selectedInput) {
         // e.g., show an inline error:
-        showErrorMessage("Please select an audio file or folder first.");
-        return;
-    }
-
-    // 2) Check if free limit is reached (if not logged in)
-    if (!loggedIn && remaining <= 0) {
-        showErrorMessage(
-            "You’ve reached your free limit. " +
-            "<a href='/pricing#subscribe-today' target='_blank'>Upgrade</a> for unlimited!"
-        );
+        showErrorMessage("Please select an audio file or folder first.", "upload-error", nextStep1Btn);
         return;
     }
 
@@ -871,25 +858,25 @@ nextStep1Btn.addEventListener('click', function() {
     step2.style.display = 'block';
 });
 
-function showErrorMessage(msg) {
-    const errorElem = document.getElementById('upload-error');
+function showErrorMessage(msg, elementId, buttonToShake) {
+    const errorElem = document.getElementById(elementId);
     errorElem.style.display = 'block';
     errorElem.innerHTML = msg;
 
     // Shake the Next button:
-    nextStep1Btn.classList.remove('shake');
+    buttonToShake.classList.remove('shake');
     // Force a reflow so the class can be re-applied for consecutive shakes
-    void nextStep1Btn.offsetWidth;
-    nextStep1Btn.classList.add('shake');
+    void buttonToShake.offsetWidth;
+    buttonToShake.classList.add('shake');
 
     // Optional: remove the shake class automatically after animation
     setTimeout(() => {
-      nextStep1Btn.classList.remove('shake');
+      buttonToShake.classList.remove('shake');
     }, 400); // match the 0.4s animation time
 }
 
-function clearErrorMessage() {
-    const errorElem = document.getElementById('upload-error');
+function clearErrorMessage(elementId) {
+    const errorElem = document.getElementById(elementId);
     errorElem.style.display = 'none';
 }
 
@@ -899,7 +886,23 @@ document.getElementById('activation-form').addEventListener('submit', function(e
 
 nextStep2Btn.addEventListener('click', function(e) {
     // clear any previous error messages
-    clearErrorMessage();
+    const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
+    const remaining = usageData ? MAX_FREE_JOBS - usageData.count : 0;
+    const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
+
+    // 2) Check if free limit is reached (if not logged in)
+    if (!loggedIn && remaining <= 0) {
+        showErrorMessage(
+            "You’ve reached your free limit. " +
+            "<a href='/pricing#subscribe-today' target='_blank'>Upgrade</a> for unlimited!",
+            "runjob-error",
+            nextStep2Btn
+        );
+        return;
+    }
+
+    clearErrorMessage('runjob-error');
+    clearErrorMessage('upload-error');
 
     updateModelBasedOnSelection();
 

@@ -52,7 +52,9 @@ header_class: index
     <br>
     <div id="selectedInputMessage">Selected input:</div>
     <br>
-    <p id="upload-error" class="error-message" style="display:none"></p>
+    <div class="wizard-message">
+      <p id="upload-error" class="error-message" style="display:none"></p>
+    </div>
     <div class="wizard-footer">
       <button id="prev-step-1" class="wizard-prev-btn" disabled>Back</button>
       <button id="next-step-1" class="wizard-next-btn">Next</button>
@@ -185,6 +187,9 @@ header_class: index
     </div>
     <div class="cta-legend">
       <p id="pro-cta">🔒 <a href="/pricing#subscribe-today" target="_blank" rel="noopener noreferrer">Click here to unlock higher qualities!</a></p>
+    </div>
+    <div class="wizard-message">
+      <p id="runjob-error" class="error-message" style="display:none"></p>
     </div>
     <div class="wizard-footer">
       <button id="prev-step-2" class="wizard-prev-btn">Back</button>

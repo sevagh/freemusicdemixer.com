@@ -252,7 +252,7 @@
   }
   #mobile-warning-container {
     // background and text color for dark theme
-    background-color: #333;
+    background-color: #4c4c4c;
     color: #f0f0f0; /* Lighter text for better contrast */
   }
   .error-message {
@@ -593,7 +593,7 @@ section.title-section {
   padding-bottom: 5%;
   min-height: 5vh; /* Maintain a large height */
   text-align: left;
-  margin-bottom: 2rem;
+  margin-bottom: 0rem;
 }
 
 section.title-section h1 {
@@ -607,7 +607,7 @@ section.title-section h2 {
 
 section.title-section h4 {
   margin-top: 0;        /* remove any default top margin */
-  margin-bottom: 1.5rem; /* a slightly bigger gap before next section */
+  margin-bottom: 3rem; /* a slightly bigger gap before next section */
 }
 
 /* Remove underline from title link */
@@ -706,6 +706,9 @@ button:hover {
   position: relative; /* To ensure the footer is positioned inside the container */
   padding: 2rem;  /* or 2rem for extra breathing room */
   box-sizing: border-box; /* Ensures padding is included in width and height */
+  justify-content: center;
+  // ensure the wizard-container itself is centered
+  margin: 0 auto; /* Center the container */
 }
 
 /* Wizard Step */
@@ -2039,7 +2042,7 @@ button#manage-account {
 
   .wizard-footer button {
     padding: 8px 10px;
-    flex-grow: 1;
+    //flex-grow: 1;
     font-size: 0.9em;
   }
 
