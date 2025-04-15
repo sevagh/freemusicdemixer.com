@@ -137,8 +137,6 @@ const prevStep2Btn = document.getElementById('prev-step-2');
 const prevStep3Btn = document.getElementById('prev-step-3');
 const prevStep4Btn = document.getElementById('prev-step-4');
 
-const usageLimits = document.getElementById('usage-limits');
-
 function getAudioContext(sampleRate) {
     return new (window.AudioContext || window.webkitAudioContext)({sampleRate: sampleRate});
 }
@@ -637,12 +635,13 @@ function initializeInputState() {
         isSingleMode = true;
         selectedInput = fileInput.files[0];
         updateSelectedInputMessage();
+        clearErrorMessage('upload-error');
     } else if (folderInput.files.length > 0) {
         isSingleMode = false;
         selectedInput = folderInput.files;
         updateSelectedInputMessage();
+        clearErrorMessage('upload-error');
     }
-    checkAndResetWeeklyLimit();
 }
 
 // Event listener for file input
@@ -656,8 +655,8 @@ fileInput.addEventListener('change', function() {
 
         // Start preloading the default model (4-source free)
         fetchAndCacheFiles('demucs-free-4s', ['vocals', 'drums', 'bass', 'melody']);
+        clearErrorMessage('upload-error');
     }
-    checkAndResetWeeklyLimit();
 });
 
 // Event listener for folder input
@@ -671,8 +670,8 @@ folderInput.addEventListener('change', function() {
 
         // Start preloading the default model (4-source free)
         fetchAndCacheFiles('demucs-free-4s', ['vocals', 'drums', 'bass', 'melody']);
+        clearErrorMessage('upload-error');
     }
-    checkAndResetWeeklyLimit();
 });
 
 // Function to update the selected input message
@@ -686,44 +685,27 @@ function updateSelectedInputMessage() {
     }
 }
 
-function checkAndResetWeeklyLimit() {
+function initAndResetWeeklyUsage() {
     let usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
-
     if (!usageData) {
-        usageData = {
-            count: 0,
-            weekStart: new Date().toISOString()
-        };
-        localStorage.setItem('weeklyUsage', JSON.stringify(usageData));
+      usageData = {
+        count: 0,
+        weekStart: new Date().toISOString(),
+      };
+      localStorage.setItem('weeklyUsage', JSON.stringify(usageData));
     }
 
     const weekStart = new Date(usageData.weekStart);
     const now = new Date();
 
+    // If more than a week has passed, reset usage
     if ((now - weekStart) > 7 * 24 * 60 * 60 * 1000) {
-        usageData.count = 0;
-        usageData.weekStart = now.toISOString();
-        localStorage.setItem('weeklyUsage', JSON.stringify(usageData));
+      usageData.count = 0;
+      usageData.weekStart = now.toISOString();
+      localStorage.setItem('weeklyUsage', JSON.stringify(usageData));
     }
 
-    const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
-
-    // when user logs in, clear limit-related messages
-    clearErrorMessage('runjob-error');
-
-    if (!loggedIn) {
-        const remaining = MAX_FREE_JOBS - usageData.count;
-        usageLimits.innerHTML = `
-          Enjoy ${remaining} free demixes this week.
-          <small>(Resets on ${new Date(weekStart.getTime() + 7*24*60*60*1000).toLocaleDateString()})</small>
-          <br>
-          <a href="/pricing#subscribe-today" target="_blank" rel="noopener noreferrer">
-            Upgrade for unlimited!
-          </a>
-        `;
-      } else {
-        usageLimits.textContent = 'You have unlimited jobs with your PRO subscription!';
-    }
+    return usageData;
 }
 
 function activateTierUI(userTier) {
@@ -763,7 +745,7 @@ function activateTierUI(userTier) {
       tierText.appendChild(logoImage); // Ensure the image stays within the <small> tag
   }
 
-  checkAndResetWeeklyLimit();
+  initAndResetWeeklyUsage();
 }
 
 const toggleButton = document.getElementById('advancedSettingsToggle');
@@ -885,24 +867,26 @@ document.getElementById('activation-form').addEventListener('submit', function(e
 });
 
 nextStep2Btn.addEventListener('click', function(e) {
-    // clear any previous error messages
-    const usageData = JSON.parse(localStorage.getItem('weeklyUsage'));
-    const remaining = usageData ? MAX_FREE_JOBS - usageData.count : 0;
+    clearErrorMessage('upload-error');
+
+    // 1) Make sure usageData is initialized & possibly reset for a new week
+    const usageData = initAndResetWeeklyUsage();
+
+    const remaining = MAX_FREE_JOBS - usageData.count;
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
 
-    // 2) Check if free limit is reached (if not logged in)
+    // 2) Check if free limit is reached
     if (!loggedIn && remaining <= 0) {
         showErrorMessage(
-            "You’ve reached your free limit. " +
-            "<a href='/pricing#subscribe-today' target='_blank'>Upgrade</a> for unlimited!",
-            "runjob-error",
-            nextStep2Btn
+        "You’ve reached your free limit. " +
+        "<a href='/pricing#subscribe-today' target='_blank'>Upgrade</a> for unlimited!",
+        "runjob-error",
+        nextStep2Btn
         );
         return;
     }
 
     clearErrorMessage('runjob-error');
-    clearErrorMessage('upload-error');
 
     updateModelBasedOnSelection();
 
@@ -1521,5 +1505,5 @@ function incrementUsage() {
     usageData.count += 1;
     localStorage.setItem('weeklyUsage', JSON.stringify(usageData));
 
-    checkAndResetWeeklyLimit();
+    initAndResetWeeklyUsage();
 }

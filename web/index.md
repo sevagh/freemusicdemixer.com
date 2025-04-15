@@ -195,11 +195,6 @@ header_class: index
       <button id="prev-step-2" class="wizard-prev-btn">Back</button>
       <button id="next-step-2" class="wizard-next-btn">Start job</button>
     </div>
-    <!-- Overlay and Spinner -->
-    <div id="step2-overlay" class="overlay" style="display: none;">
-        <h3 style="color: #ffffff; margin-top: 20px;">Downloading model files...</h3>
-        <div class="loader" id="step2-spinner"></div>
-    </div>
   </div>
   <div id="wizard-step-3" class="wizard-step" style="display: none;">
   <p>Progress and outputs</p>
