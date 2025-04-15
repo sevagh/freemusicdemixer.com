@@ -731,6 +731,9 @@ function activateTierUI(userTier) {
     document.getElementById('pro-cta').innerHTML = 'Pro content unlocked!';
 
     console.log('PRO-tier UI elements enabled.');
+
+    // clear the usage limits error message
+    clearErrorMessage('runjob-error');
   }
 
   // Find the logo image element and the container for the tier text
@@ -855,6 +858,13 @@ function showErrorMessage(msg, elementId, buttonToShake) {
     setTimeout(() => {
       buttonToShake.classList.remove('shake');
     }, 400); // match the 0.4s animation time
+
+    // force scroll to the error message
+    errorElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // set focus on the error message
+    errorElem.focus();
+    // set focus on the button
+    buttonToShake.focus();
 }
 
 function clearErrorMessage(elementId) {
@@ -879,7 +889,7 @@ nextStep2Btn.addEventListener('click', function(e) {
     if (!loggedIn && remaining <= 0) {
         showErrorMessage(
         "You’ve reached your free limit. " +
-        "<a href='/pricing#subscribe-today' target='_blank'>Upgrade</a> for unlimited!",
+        "<a href='/pricing#subscribe-today' target='_blank'>Upgrade</a> or <a href='/?login'>log in</a> for unlimited!",
         "runjob-error",
         nextStep2Btn
         );
