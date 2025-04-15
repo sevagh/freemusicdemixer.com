@@ -5,7 +5,11 @@ header_class: index
 <script src="app.js" type="module"></script>
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
 
-<a id="demixer-app" class="hidden-anchor"></a>
+<section class="info-section">
+  <h3>
+  Customers prefer our award-winning quality. Ditch the expensive competitors and <a href="/pricing">join us today!</a>
+  </h3>
+</section>
 
 <!-- Anchor for scrolling, if needed -->
 <a id="demixer-app" class="hidden-anchor"></a>
